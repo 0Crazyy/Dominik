@@ -1,22 +1,13 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Dominik</title>
-  <link rel="icon" type="image/png" href="img/hexinnormal01.webp">
-  <link rel="stylesheet" href="css/style.css">
-</head>
 <body>
-
   <!-- MENU LATERAL -->
   <div class="sidebar">
-    <!-- Topo da barra lateral com ícone e nome -->
+    <!-- Topo da barra lateral -->
     <div class="sidebar-header">
-      <img src="img/hexinnormal01.webp" class="sidebar-icon">
+      <img src="img/hexinnormal01.webp" class="sidebar-icon" alt="Ícone do site">
       <span class="sidebar-title">DOMINIK</span>
     </div>
 
-    <!-- Menu de categorias -->
+    <!-- Botões do menu -->
     <button onclick="showCategory('characters')">Personagens</button>
     <button onclick="showCategory('memories')">Memórias</button>
     <button onclick="showCategory('weapons')">Armas</button>
@@ -26,30 +17,26 @@
 
   <!-- CONTEÚDO PRINCIPAL -->
   <div class="content">
+    <!-- Categorias -->
     <div class="build-card" id="characters">
       <h2>Personagens</h2>
-      <p>Conteúdo de personagens aqui. Ex: Wanashi, Qu, Teddy...</p>
-      <img src="img/characters/wanashi.webp" alt="Wanashi">
+      <p>Conteúdo de personagens aqui...</p>
     </div>
-
     <div class="build-card" id="memories" style="display:none;">
       <h2>Memórias</h2>
-      <p>Placeholder para memórias.</p>
+      <p>Placeholder</p>
     </div>
-
     <div class="build-card" id="weapons" style="display:none;">
       <h2>Armas</h2>
-      <p>Placeholder para armas.</p>
+      <p>Placeholder</p>
     </div>
-
     <div class="build-card" id="cubes" style="display:none;">
       <h2>CUBs</h2>
-      <p>Placeholder para cubos.</p>
+      <p>Placeholder</p>
     </div>
-
     <div class="build-card" id="guides" style="display:none;">
       <h2>Guias</h2>
-      <p>Placeholder para guias e dicas.</p>
+      <p>Placeholder</p>
     </div>
   </div>
 
@@ -62,6 +49,4 @@
       });
     }
   </script>
-
 </body>
-</html>
