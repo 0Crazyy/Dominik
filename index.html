@@ -4,9 +4,97 @@
   <meta charset="UTF-8">
   <title>Dominik</title>
   <link rel="icon" type="image/png" href="img/hexinnormal01.png">
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ----- GERAL ----- */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #171717; /* fundo correto */
+      color: white;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ----- MENU LATERAL ----- */
+    .sidebar {
+      width: 220px;
+      background-color: #1f1f1f;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+      gap: 10px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    }
+
+    /* Topo da barra lateral */
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 2px solid #2aa8ff;
+    }
+
+    .sidebar-icon {
+      width: 50px;        /* largura da imagem */
+      height: 50px;       /* altura da imagem */
+      object-fit: contain; /* mantém proporção */
+    }
+
+    .sidebar-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2aa8ff;
+    }
+
+    /* Botões do menu */
+    .sidebar button {
+      background-color: transparent;
+      border: none;
+      color: white;
+      text-align: left;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border-left: 4px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .sidebar button:hover {
+      background-color: #292929;
+      border-left: 4px solid #2aa8ff;
+    }
+
+    /* ----- CONTEÚDO ----- */
+    .content {
+      margin-left: 220px; /* espaço para a barra lateral */
+      padding: 20px;
+      flex-grow: 1;
+      overflow-y: auto;
+      background-color: #171717; /* garante fundo correto */
+    }
+
+    .build-card {
+      background-color: #151515;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .build-card h2 {
+      color: #2aa8ff;
+    }
+
+    .build-card img {
+      width: 64px; /* tamanho das imagens dentro dos cards */
+      margin: 5px;
+    }
+  </style>
 </head>
 <body>
+
   <!-- MENU LATERAL -->
   <div class="sidebar">
     <!-- Topo da barra lateral -->
@@ -29,22 +117,27 @@
     <div class="build-card" id="characters">
       <h2>Personagens</h2>
       <p>Conteúdo de personagens aqui...</p>
+      <img src="img/hexinnormal01.png" alt="Hexin Normal">
     </div>
+
     <div class="build-card" id="memories" style="display:none;">
       <h2>Memórias</h2>
-      <p>Placeholder</p>
+      <p>Placeholder para memórias.</p>
     </div>
+
     <div class="build-card" id="weapons" style="display:none;">
       <h2>Armas</h2>
-      <p>Placeholder</p>
+      <p>Placeholder para armas.</p>
     </div>
+
     <div class="build-card" id="cubes" style="display:none;">
       <h2>CUBs</h2>
-      <p>Placeholder</p>
+      <p>Placeholder para cubos.</p>
     </div>
+
     <div class="build-card" id="guides" style="display:none;">
       <h2>Guias</h2>
-      <p>Placeholder</p>
+      <p>Placeholder para guias e dicas.</p>
     </div>
   </div>
 
@@ -58,5 +151,4 @@
     }
   </script>
 </body>
-
 </html>
