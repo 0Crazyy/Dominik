@@ -1,1 +1,31 @@
+body {
+  background: #0b0e14;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
 
+.card img {
+  width: 150px;
+}
+
+.character {
+  max-width: 900px;
+  margin: auto;
+  background: #151a24;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.character.blue {
+  border-top: 6px solid #2aa8ff;
+}
+
+.portrait {
+  width: 200px;
+}
+
+.memories img {
+  width: 64px;
+  margin: 4px;
+}
