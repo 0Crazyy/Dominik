@@ -1,2 +1,2 @@
 # Dominik
-Protótipo da revolução informativa 
+WIP
