@@ -2,73 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>PGR Builds</title>
-  <style>
-    /* ----- GERAL ----- */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #171717; /* Fundo do site */
-      color: white;
-      display: flex;
-      height: 100vh;
-    }
-
-    /* ----- MENU LATERAL ----- */
-    .sidebar {
-      width: 220px;
-      background-color: #1f1f1f;
-      padding-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      position: fixed;
-      height: 100%;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-    }
-
-    .sidebar button {
-      background-color: transparent;
-      border: none;
-      color: white;
-      text-align: left;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-size: 16px;
-      border-left: 4px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .sidebar button:hover {
-      background-color: #292929;
-      border-left: 4px solid #2aa8ff;
-    }
-
-    /* ----- CONTEÚDO ----- */
-    .content {
-      margin-left: 220px;
-      padding: 20px;
-      flex-grow: 1;
-      overflow-y: auto;
-    }
-
-    .build-card {
-      background-color: #151515;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .build-card h2 {
-      color: #2aa8ff;
-    }
-
-    .build-card img {
-      width: 64px;
-      margin: 5px;
-    }
-
-  </style>
+  <title>Dominik</title>
+  <link rel="icon" type="image/png" href="hexinnormal01.webp">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -81,11 +17,19 @@
     <button onclick="showCategory('guides')">Guias</button>
   </div>
 
+  <!-- TOPO DO SITE -->
+  <div class="topbar">
+    <img src="img/favicon.png" class="top-icon">
+    <span class="top-title">DOMINIK</span>
+  </div>
+
   <!-- CONTEÚDO PRINCIPAL -->
   <div class="content" id="mainContent">
+
     <div class="build-card" id="characters">
       <h2>Personagens</h2>
       <p>Conteúdo de personagens aqui. Ex: Wanashi, Qu, Teddy...</p>
+      <img src="img/characters/wanashi.png" alt="Wanashi">
     </div>
 
     <div class="build-card" id="memories" style="display:none;">
@@ -100,13 +44,14 @@
 
     <div class="build-card" id="cubes" style="display:none;">
       <h2>CUBs</h2>
-      <p>Placeholder para cubos.</p>
+      <p>Placeholder para CUBs.</p>
     </div>
 
     <div class="build-card" id="guides" style="display:none;">
       <h2>Guias</h2>
       <p>Placeholder para guias e dicas.</p>
     </div>
+
   </div>
 
   <!-- JAVASCRIPT -->
