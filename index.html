@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Dominik</title>
-  <link rel="icon" type="image/png" href="img/hexinnormal01.webp">
+  <link rel="icon" type="image/png" href="img/favicon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <!-- MENU LATERAL -->
   <div class="sidebar">
+    <!-- Topo da barra lateral com ícone e nome -->
+    <div class="sidebar-header">
+      <img src="img/favicon.png" class="sidebar-icon">
+      <span class="sidebar-title">DOMINIK</span>
+    </div>
+
+    <!-- Menu de categorias -->
     <button onclick="showCategory('characters')">Personagens</button>
     <button onclick="showCategory('memories')">Memórias</button>
     <button onclick="showCategory('weapons')">Armas</button>
@@ -17,19 +24,12 @@
     <button onclick="showCategory('guides')">Guias</button>
   </div>
 
-  <!-- TOPO DO SITE -->
-  <div class="topbar">
-    <img src="img/hexinnormal01.webp" class="top-icon">
-    <span class="top-title">DOMINIK</span>
-  </div>
-
   <!-- CONTEÚDO PRINCIPAL -->
-  <div class="content" id="mainContent">
-
+  <div class="content">
     <div class="build-card" id="characters">
       <h2>Personagens</h2>
       <p>Conteúdo de personagens aqui. Ex: Wanashi, Qu, Teddy...</p>
-      <img src="img/characters/wanashi.png" alt="Wanashi">
+      <img src="img/characters/wanashi.webp" alt="Wanashi">
     </div>
 
     <div class="build-card" id="memories" style="display:none;">
@@ -44,14 +44,13 @@
 
     <div class="build-card" id="cubes" style="display:none;">
       <h2>CUBs</h2>
-      <p>Placeholder para CUBs.</p>
+      <p>Placeholder para cubos.</p>
     </div>
 
     <div class="build-card" id="guides" style="display:none;">
       <h2>Guias</h2>
       <p>Placeholder para guias e dicas.</p>
     </div>
-
   </div>
 
   <!-- JAVASCRIPT -->
