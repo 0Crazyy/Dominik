@@ -2,10 +2,10 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #171717; /* Fundo do site */
+  background-color: #171717; /* fundo correto */
   color: white;
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 /* ----- MENU LATERAL ----- */
@@ -21,6 +21,29 @@ body {
   box-shadow: 2px 0 10px rgba(0,0,0,0.5);
 }
 
+/* Topo da barra lateral */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px 20px 10px;
+  border-bottom: 2px solid #2aa8ff;
+  margin-bottom: 10px;
+}
+
+.sidebar-icon {
+  width: 40px;   /* tamanho da imagem, pode ajustar aqui */
+  height: 40px;
+  object-fit: contain; /* mantém proporção */
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2aa8ff;
+}
+
+/* Botões do menu */
 .sidebar button {
   background-color: transparent;
   border: none;
@@ -38,36 +61,10 @@ body {
   border-left: 4px solid #2aa8ff;
 }
 
-/* ----- TOPO DO SITE ----- */
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
-  background-color: #1a1a1a;
-  border-bottom: 2px solid #2aa8ff;
-  position: fixed;
-  top: 0;
-  left: 220px; /* desloca para não cobrir o menu lateral */
-  right: 0;
-  z-index: 1000;
-}
-
-.topbar .top-icon {
-  width: 32px;
-  height: 32px;
-}
-
-.topbar .top-title {
-  font-size: 30px;
-  font-weight: bold;
-  color: #2aa8ff;
-}
-
 /* ----- CONTEÚDO ----- */
 .content {
   margin-left: 220px;
-  padding: 70px 20px 20px 20px; /* padding-top para não ficar atrás da topbar */
+  padding: 20px;
   flex-grow: 1;
   overflow-y: auto;
 }
