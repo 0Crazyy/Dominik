@@ -2,153 +2,90 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Dominik</title>
+  <title>Dominik - Comps</title>
   <link rel="icon" type="image/png" href="img/hexinnormal01.png">
+  <link rel="stylesheet" href="css/style.css">
   <style>
-    /* ----- GERAL ----- */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #171717; /* fundo correto */
-      color: white;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* ----- MENU LATERAL ----- */
-    .sidebar {
-      width: 220px;
-      background-color: #1f1f1f;
-      display: flex;
-      flex-direction: column;
-      padding-top: 20px;
-      gap: 10px;
-      position: fixed;
-      height: 100%;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-    }
-
-    /* Topo da barra lateral */
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-bottom: 2px solid #2aa8ff;
-    }
-
-    .sidebar-icon {
-      width: 50px;        /* largura da imagem */
-      height: 50px;       /* altura da imagem */
-      object-fit: contain; /* mantém proporção */
-    }
-
-    .sidebar-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #2aa8ff;
-    }
-
-    /* Botões do menu */
-    .sidebar button {
-      background-color: transparent;
-      border: none;
-      color: white;
-      text-align: left;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-size: 16px;
-      border-left: 4px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .sidebar button:hover {
-      background-color: #292929;
-      border-left: 4px solid #2aa8ff;
-    }
-
-    /* ----- CONTEÚDO ----- */
-    .content {
-      margin-left: 220px; /* espaço para a barra lateral */
-      padding: 20px;
-      flex-grow: 1;
-      overflow-y: auto;
-      background-color: #171717; /* garante fundo correto */
-    }
-
-    .build-card {
-      background-color: #151515;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .build-card h2 {
-      color: #2aa8ff;
-    }
-
-    .build-card img {
-      width: 64px; /* tamanho das imagens dentro dos cards */
-      margin: 5px;
-    }
+    body { display: flex; margin:0; font-family: Arial, sans-serif; }
+    .sidebar { width: 220px; background: #222; color: #fff; min-height: 100vh; padding: 10px; box-sizing: border-box; }
+    .sidebar-header { display: flex; align-items: center; margin-bottom: 20px; }
+    .sidebar-header img { width: 40px; height: 40px; margin-right: 10px; }
+    .sidebar-header .sidebar-title { font-size: 1.2em; font-weight: bold; }
+    .sidebar a { display: block; color: #fff; text-decoration: none; margin: 5px 0; padding: 8px; background: #333; border-radius: 4px; }
+    .sidebar a:hover { background: #444; }
+    .content { flex: 1; padding: 20px; box-sizing: border-box; }
+    .comp-list { display: flex; flex-wrap: wrap; gap: 15px; }
+    .comp-card { width: 180px; padding: 10px; background: #333; border-radius: 8px; text-align: center; color: #fff; }
+    .comp-card img { width: 100%; border-radius: 6px; }
+    .comp-card a { display: block; margin-top: 8px; color: #fff; text-decoration: none; }
+    .comp-card a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
   <!-- MENU LATERAL -->
   <div class="sidebar">
-    <!-- Topo da barra lateral -->
     <div class="sidebar-header">
-      <img src="img/hexinnormal01.png" class="sidebar-icon" alt="Ícone do site">
+      <img src="img/hexinnormal01.png" alt="Ícone">
       <span class="sidebar-title">DOMINIK</span>
     </div>
-
-    <!-- Botões do menu -->
-    <button onclick="showCategory('characters')">Personagens</button>
-    <button onclick="showCategory('memories')">Memórias</button>
-    <button onclick="showCategory('weapons')">Armas</button>
-    <button onclick="showCategory('cubes')">CUBs</button>
-    <button onclick="showCategory('guides')">Guias</button>
+    <a href="index.html">Comps</a>
+    <a href="memories.html">Memórias</a>
+    <a href="weapons.html">Armas</a>
+    <a href="cubes.html">CUBs</a>
+    <a href="guides.html">Guias</a>
   </div>
 
-  <!-- CONTEÚDO PRINCIPAL -->
+  <!-- CONTEÚDO -->
   <div class="content">
-    <!-- Categorias -->
-    <div class="build-card" id="characters">
-      <h2>Personagens</h2>
-      <p>Conteúdo de personagens aqui...</p>
-      <img src="img/hexinnormal01.png" alt="Hexin Normal">
-    </div>
-
-    <div class="build-card" id="memories" style="display:none;">
-      <h2>Memórias</h2>
-      <p>Placeholder para memórias.</p>
-    </div>
-
-    <div class="build-card" id="weapons" style="display:none;">
-      <h2>Armas</h2>
-      <p>Placeholder para armas.</p>
-    </div>
-
-    <div class="build-card" id="cubes" style="display:none;">
-      <h2>CUBs</h2>
-      <p>Placeholder para cubos.</p>
-    </div>
-
-    <div class="build-card" id="guides" style="display:none;">
-      <h2>Guias</h2>
-      <p>Placeholder para guias e dicas.</p>
+    <h2>Composições de Times</h2>
+    <div class="comp-list">
+      <div class="comp-card">
+        <img src="img/comps/ice.png" alt="Ice">
+        <a href="comps/ice.html">Ice</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/fire.png" alt="Fire">
+        <a href="comps/fire.html">Fire</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/lightning.png" alt="Lightning">
+        <a href="comps/lightning.html">Lightning</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/darkness.png" alt="Darkness">
+        <a href="comps/darkness.html">Darkness</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/physical.png" alt="Physical">
+        <a href="comps/physical.html">Physical</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/nihil.png" alt="Nihil">
+        <a href="comps/nihil.html">Nihil</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/ultima_slash.png" alt="Ultima Slash">
+        <a href="comps/ultima_slash.html">Ultima Slash</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/plasma_beam.png" alt="Plasma Beam">
+        <a href="comps/plasma_beam.html">Plasma Beam</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/darkflow.png" alt="Darkflow">
+        <a href="comps/darkflow.html">Darkflow</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/ignition.png" alt="Ignition">
+        <a href="comps/ignition.html">Ignition</a>
+      </div>
+      <div class="comp-card">
+        <img src="img/comps/glaciation.png" alt="Glaciation">
+        <a href="comps/glaciation.html">Glaciation</a>
+      </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT -->
-  <script>
-    function showCategory(categoryId) {
-      const categories = ['characters','memories','weapons','cubes','guides'];
-      categories.forEach(id => {
-        document.getElementById(id).style.display = (id === categoryId) ? 'block' : 'none';
-      });
-    }
-  </script>
 </body>
 </html>

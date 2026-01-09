@@ -1,0 +1,132 @@
+/* RESET */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #171717;
+  color: #ffffff;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #1e1e1e;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* TOPO DA SIDEBAR */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sidebar-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar-title {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* BOTÕES */
+.sidebar button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #ccc;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar button:hover {
+  background: #333;
+  color: #fff;
+}
+
+/* CONTEÚDO */
+.content {
+  margin-left: 240px;
+  padding: 20px;
+}
+
+/* CARDS */
+.build-card {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+/* LINKS PERSONAGENS */
+.character-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.character-links button {
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.character-links button:hover {
+  background: #333;
+}
+
+/* LAYOUT BUILD */
+.build-layout {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.build-column {
+  width: 300px;
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* CORES */
+.build-column.blue {
+  border-top: 5px solid #2aa8ff;
+}
+
+.build-column.red {
+  border-top: 5px solid #ff3b3b;
+}
+
+.build-column.yellow {
+  border-top: 5px solid #ffcc33;
+}
+
+/* PLACEHOLDERS */
+.build-placeholder {
+  background: #2a2a2a;
+  height: 120px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* TEXTO */
+.build-text {
+  font-size: 13px;
+  color: #ccc;
+  margin-top: 10px;
+}

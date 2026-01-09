@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Comp: Ice</title>
+  <link rel="icon" type="image/png" href="../img/hexinnormal01.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body { display: flex; margin:0; font-family: Arial, sans-serif; }
+    .sidebar { width: 220px; background: #222; color: #fff; min-height: 100vh; padding: 10px; box-sizing: border-box; }
+    .sidebar-header { display: flex; align-items: center; margin-bottom: 20px; }
+    .sidebar-header img { width: 40px; height: 40px; margin-right: 10px; }
+    .sidebar-header .sidebar-title { font-size: 1.2em; font-weight: bold; }
+    .sidebar a { display: block; color: #fff; text-decoration: none; margin: 5px 0; padding: 8px; background: #333; border-radius: 0; }
+    .sidebar a:hover { background: #444; }
+
+    .content { flex: 1; padding: 20px; box-sizing: border-box; }
+    h2 { margin-top: 0; }
+
+    /* Layout do time */
+    .team-container { display: flex; gap: 15px; margin-top: 20px; justify-content: space-between; }
+
+    .member-card {
+      background: rgba(85, 85, 85, 0.400);
+      padding: 15px;
+      width: 32%;
+      box-sizing: border-box;
+    }
+
+    /* Nome do personagem */
+    .member-name {
+      background: #666;
+      border: 1px solid #fff;
+      padding: 8px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* Classe, Icon e Rank */
+    .member-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .member-top img {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #fff;
+      background: #888;
+    }
+
+    /* Memórias em 3x3 */
+    .memories-container {
+      background: rgba(120, 120, 120, 0.6);
+      border: 1px solid #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .memories{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6x;
+    }
+
+    .memories img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      border: 1px solid #fff;
+      background: #888;
+    }
+
+    /* Arma e Harmony */
+    .equipment {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .equipment img {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #fff;
+      background: #888;
+    }
+
+    /* Ressonâncias */
+    .resonances {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+    }
+
+    .resonances div {
+      width: 35px;
+      height: 35px;
+      background: #888;
+      border: 1px solid #fff;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- MENU LATERAL -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <img src="../img/hexinnormal01.png" alt="Ícone">
+      <span class="sidebar-title">DOMINIK</span>
+    </div>
+    <a href="../index.html">Comps</a>
+    <a href="../memories.html">Memórias</a>
+    <a href="../weapons.html">Armas</a>
+    <a href="../cubes.html">CUBs</a>
+    <a href="../guides.html">Guias</a>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div class="content">
+    <h2>Comp: Ice</h2>
+
+    <div class="team-container">
+
+      <!-- MEMBRO 1 -->
+      <div class="member-card">
+        <div class="member-name">Wanshi: Lucid Dreamer</div>
+        <div class="member-top">
+          <img src="../img/classes/knight.png" alt="Classe">
+          <img src="../img/personagens/wanshi.png" alt="Personagem">
+          <img src="../img/ranks/s.png" alt="Rank">
+        </div>
+        <div class="memories">
+          <img src="../img/memories/sign/liston_1.png" alt="Mem 1">
+          <img src="../img/memories/sign/liston_2.png" alt="Mem 2">
+          <img src="../img/memories/sign/liston_3.png" alt="Mem 3">
+          <img src="../img/memories/element/ChenJiyuan-Icon-1.png" alt="Mem 4">
+          <img src="../img/memories/sign/liston_2.png" alt="Mem 5">
+          <img src="../img/memories/element/ChenJiyuan-Icon-3.png" alt="Mem 6">
+        </div>
+        <div class="equipment">
+          <img src="../img/weapons/weapon.png" alt="Arma">
+          <img src="../img/memories/harmony.png" alt="Harmony">
+        </div>
+        <div class="resonances">
+          <div></div><div></div><div></div>
+        </div>
+      </div>
+
+      <!-- MEMBRO 2 -->
+      <div class="member-card">
+        <div class="member-name">Qu: Shukra</div>
+        <div class="member-top">
+          <img src="../img/classes/mage.png" alt="Classe">
+          <img src="../img/personagens/qu.png" alt="Personagem">
+          <img src="../img/ranks/a.png" alt="Rank">
+        </div>
+        <div class="memories">
+          <img src="../img/memories/1.png" alt="Mem 1">
+          <img src="../img/memories/2.png" alt="Mem 2">
+          <img src="../img/memories/3.png" alt="Mem 3">
+          <img src="../img/memories/4.png" alt="Mem 4">
+          <img src="../img/memories/5.png" alt="Mem 5">
+          <img src="../img/memories/6.png" alt="Mem 6">
+        </div>
+        <div class="equipment">
+          <img src="../img/weapons/weapon.png" alt="Arma">
+          <img src="../img/memories/harmony.png" alt="Harmony">
+        </div>
+        <div class="resonances">
+          <div></div><div></div><div></div>
+        </div>
+      </div>
+
+      <!-- MEMBRO 3 -->
+      <div class="member-card">
+        <div class="member-name">Teddy: Spectre</div>
+        <div class="member-top">
+          <img src="../img/classes/assassin.png" alt="Classe">
+          <img src="../img/personagens/teddy.png" alt="Personagem">
+          <img src="../img/ranks/s.png" alt="Rank">
+        </div>
+        <div class="memories">
+          <img src="../img/memories/1.png" alt="Mem 1">
+          <img src="../img/memories/2.png" alt="Mem 2">
+          <img src="../img/memories/3.png" alt="Mem 3">
+          <img src="../img/memories/4.png" alt="Mem 4">
+          <img src="../img/memories/5.png" alt="Mem 5">
+          <img src="../img/memories/6.png" alt="Mem 6">
+        </div>
+        <div class="equipment">
+          <img src="../img/weapons/weapon.png" alt="Arma">
+          <img src="../img/memories/harmony.png" alt="Harmony">
+        </div>
+        <div class="resonances">
+          <div></div><div></div><div></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
