@@ -17,17 +17,24 @@
     .content { flex: 1; padding: 20px; box-sizing: border-box; }
     h2 { margin-top: 0; }
 
-    /* Layout do time */
-    .team-container { display: flex; gap: 15px; margin-top: 20px; justify-content: space-between; }
+    /* Layout do time responsivo */
+    .team-container { 
+      display: flex; 
+      flex-wrap: wrap;
+      gap: 15px; 
+      justify-content: center;
+      margin-top: 20px; 
+    }
 
+    /* Cards */
     .member-card {
-      background: rgba(85, 85, 85, 0.400);
+      background: rgba(33, 35, 38, 0.8);
       padding: 15px;
-      width: 32%;
+      width: 500px;
+      flex-shrink: 0;
       box-sizing: border-box;
     }
 
-    /* Nome do personagem */
     .member-name {
       background: #666;
       border: 1px solid #fff;
@@ -37,78 +44,122 @@
       margin-bottom: 10px;
     }
 
-    /* Classe, Icon e Rank */
     .member-top {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      gap: 60px;
       margin-bottom: 10px;
     }
 
-    .member-top img {
-      width: 50px;
-      height: 50px;
-      border: 1px solid #fff;
-      background: #888;
+    .class-container,
+    .rank-container {
+      width: 60px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
     }
 
-    /* Memórias em 3x3 */
-    .memories-container {
-      background: rgba(120, 120, 120, 0.6);
-      border: 1px solid #fff;
-      padding: 10px;
+    .character-container {
+      width: 100px;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .character-icon { width: 150px; height: auto; border: 1px solid #fff; object-fit: contain; }
+    .class-icon, .rank-icon { width: 100px; height: auto; object-fit: contain; border: none; }
+
+    /* Container para memórias e equipment */
+    .gear-container {
+      display: flex;
+      gap: 10px;
       margin-bottom: 10px;
+      width: 80%;
+
     }
 
-    .memories{
+    /* Tabela 3x2 de memórias - corrigida para não sair do layout */
+    .memories {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6x;
+      grid-template-rows: repeat(2, 1fr);
+      gap: 10px;
+      border: 1px solid #686a6d;
+      background: linear-gradient(to bottom) #26292d;
+      padding: 10px;
+      flex: 1;
+      box-sizing: border-box;
     }
 
     .memories img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
+      max-width: 100%;
+      max-height: auto;
+      width: auto;
+      height: auto;
       object-fit: contain;
-      border: 1px solid #fff;
-      background: #888;
+      border: none;
+      background: none;
+      display: block;
+      margin: 0 auto;
     }
 
-    /* Arma e Harmony */
-    .equipment {
+    /* Container para arma, harmonia e ressonâncias */
+    .equipment-resonance-container {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      margin-bottom: 10px;
+      width: 200px;
     }
 
-    .equipment img {
-      width: 60px;
-      height: 60px;
-      border: 1px solid #fff;
-      background: #888;
-    }
-
-    /* Ressonâncias */
-    .resonances {
+    /* Linha de arma + ressonâncias */
+    .weapon-row {
       display: flex;
       gap: 5px;
-      justify-content: center;
+      margin-bottom: 5px;
+      height: 50%;
     }
 
-    .resonances div {
+    /* Linha de harmonia + ressonâncias */
+    .harmony-row {
+      display: flex;
+      gap: 5px;
+      height: 50%;
+    }
+
+    /* Células de arma e harmonia */
+    .equipment-cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 70px;
+      border: 1px solid #fff;
+      background: #888;
+      box-sizing: border-box;
+    }
+
+    .equipment-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Células de ressonância */
+    .resonance-cell {
       width: 35px;
-      height: 35px;
+      height: 100%;
       background: #888;
       border: 1px solid #fff;
+      box-sizing: border-box;
     }
-
   </style>
 </head>
 <body>
 
-  <!-- MENU LATERAL -->
   <div class="sidebar">
     <div class="sidebar-header">
       <img src="../img/hexinnormal01.png" alt="Ícone">
@@ -121,34 +172,48 @@
     <a href="../guides.html">Guias</a>
   </div>
 
-  <!-- CONTEÚDO -->
   <div class="content">
     <h2>Comp: Ice</h2>
-
     <div class="team-container">
 
       <!-- MEMBRO 1 -->
       <div class="member-card">
         <div class="member-name">Wanshi: Lucid Dreamer</div>
         <div class="member-top">
-          <img src="../img/classes/knight.png" alt="Classe">
-          <img src="../img/personagens/wanshi.png" alt="Personagem">
-          <img src="../img/ranks/s.png" alt="Rank">
+          <div class="class-container"><img src="../img/classes/Tanque.png" alt="Classe" class="class-icon"></div>
+          <div class="character-container"><img src="../img/characters/roleicon/wanshi_awk.png" alt="Personagem" class="character-icon"></div>
+          <div class="rank-container"><img src="../img/rank/SS.png" alt="Rank" class="rank-icon"></div>
         </div>
-        <div class="memories">
-          <img src="../img/memories/sign/liston_1.png" alt="Mem 1">
-          <img src="../img/memories/sign/liston_2.png" alt="Mem 2">
-          <img src="../img/memories/sign/liston_3.png" alt="Mem 3">
-          <img src="../img/memories/element/ChenJiyuan-Icon-1.png" alt="Mem 4">
-          <img src="../img/memories/sign/liston_2.png" alt="Mem 5">
-          <img src="../img/memories/element/ChenJiyuan-Icon-3.png" alt="Mem 6">
-        </div>
-        <div class="equipment">
-          <img src="../img/weapons/weapon.png" alt="Arma">
-          <img src="../img/memories/harmony.png" alt="Harmony">
-        </div>
-        <div class="resonances">
-          <div></div><div></div><div></div>
+
+        <div class="gear-container">
+          <div class="memories">
+            <img src="../img/memories/sign/liston_1.png" alt="Mem 1">
+            <img src="../img/memories/sign/liston_2.png" alt="Mem 2">
+            <img src="../img/memories/sign/liston_3.png" alt="Mem 3">
+            <img src="../img/memories/element/ChenJiyuan-Icon-1.png" alt="Mem 4">
+            <img src="../img/memories/sign/liston_2.png" alt="Mem 5">
+            <img src="../img/memories/element/ChenJiyuan-Icon-3.png" alt="Mem 6">
+          </div>
+          <div class="equipment-resonance-container">
+            <!-- Linha 1: Arma + 3 ressonâncias -->
+            <div class="weapon-row">
+              <div class="equipment-cell">
+                <img src="../img/weapons/weapon.png" alt="Arma">
+              </div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+            </div>
+            <!-- Linha 2: Harmonia + 3 ressonâncias -->
+            <div class="harmony-row">
+              <div class="equipment-cell">
+                <img src="../img/memories/harmony.png" alt="Harmony">
+              </div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -156,24 +221,40 @@
       <div class="member-card">
         <div class="member-name">Qu: Shukra</div>
         <div class="member-top">
-          <img src="../img/classes/mage.png" alt="Classe">
-          <img src="../img/personagens/qu.png" alt="Personagem">
-          <img src="../img/ranks/a.png" alt="Rank">
+          <div class="class-container"><img src="../img/classes/mage.png" alt="Classe" class="class-icon"></div>
+          <div class="character-container"><img src="../img/characters/qu.png" alt="Personagem" class="character-icon"></div>
+          <div class="rank-container"><img src="../img/rank/A.png" alt="Rank" class="rank-icon"></div>
         </div>
-        <div class="memories">
-          <img src="../img/memories/1.png" alt="Mem 1">
-          <img src="../img/memories/2.png" alt="Mem 2">
-          <img src="../img/memories/3.png" alt="Mem 3">
-          <img src="../img/memories/4.png" alt="Mem 4">
-          <img src="../img/memories/5.png" alt="Mem 5">
-          <img src="../img/memories/6.png" alt="Mem 6">
-        </div>
-        <div class="equipment">
-          <img src="../img/weapons/weapon.png" alt="Arma">
-          <img src="../img/memories/harmony.png" alt="Harmony">
-        </div>
-        <div class="resonances">
-          <div></div><div></div><div></div>
+
+        <div class="gear-container">
+          <div class="memories">
+            <img src="../img/memories/1.png" alt="Mem 1">
+            <img src="../img/memories/2.png" alt="Mem 2">
+            <img src="../img/memories/3.png" alt="Mem 3">
+            <img src="../img/memories/4.png" alt="Mem 4">
+            <img src="../img/memories/5.png" alt="Mem 5">
+            <img src="../img/memories/6.png" alt="Mem 6">
+          </div>
+          <div class="equipment-resonance-container">
+            <!-- Linha 1: Arma + 3 ressonâncias -->
+            <div class="weapon-row">
+              <div class="equipment-cell">
+                <img src="../img/weapons/weapon.png" alt="Arma">
+              </div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+            </div>
+            <!-- Linha 2: Harmonia + 3 ressonâncias -->
+            <div class="harmony-row">
+              <div class="equipment-cell">
+                <img src="../img/memories/harmony.png" alt="Harmony">
+              </div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -181,29 +262,44 @@
       <div class="member-card">
         <div class="member-name">Teddy: Spectre</div>
         <div class="member-top">
-          <img src="../img/classes/assassin.png" alt="Classe">
-          <img src="../img/personagens/teddy.png" alt="Personagem">
-          <img src="../img/ranks/s.png" alt="Rank">
+          <div class="class-container"><img src="../img/classes/assassin.png" alt="Classe" class="class-icon"></div>
+          <div class="character-container"><img src="../img/characters/teddy.png" alt="Personagem" class="character-icon"></div>
+          <div class="rank-container"><img src="../img/rank/S.png" alt="Rank" class="rank-icon"></div>
         </div>
-        <div class="memories">
-          <img src="../img/memories/1.png" alt="Mem 1">
-          <img src="../img/memories/2.png" alt="Mem 2">
-          <img src="../img/memories/3.png" alt="Mem 3">
-          <img src="../img/memories/4.png" alt="Mem 4">
-          <img src="../img/memories/5.png" alt="Mem 5">
-          <img src="../img/memories/6.png" alt="Mem 6">
-        </div>
-        <div class="equipment">
-          <img src="../img/weapons/weapon.png" alt="Arma">
-          <img src="../img/memories/harmony.png" alt="Harmony">
-        </div>
-        <div class="resonances">
-          <div></div><div></div><div></div>
+
+        <div class="gear-container">
+          <div class="memories">
+            <img src="../img/memories/1.png" alt="Mem 1">
+            <img src="../img/memories/2.png" alt="Mem 2">
+            <img src="../img/memories/3.png" alt="Mem 3">
+            <img src="../img/memories/4.png" alt="Mem 4">
+            <img src="../img/memories/5.png" alt="Mem 5">
+            <img src="../img/memories/6.png" alt="Mem 6">
+          </div>
+          <div class="equipment-resonance-container">
+            <!-- Linha 1: Arma + 3 ressonâncias -->
+            <div class="weapon-row">
+              <div class="equipment-cell">
+                <img src="../img/weapons/weapon.png" alt="Arma">
+              </div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+            </div>
+            <!-- Linha 2: Harmonia + 3 ressonâncias -->
+            <div class="harmony-row">
+              <div class="equipment-cell">
+                <img src="../img/memories/harmony.png" alt="Harmony">
+              </div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+              <div class="resonance-cell"></div>
+            </div>
+          </div>
         </div>
       </div>
 
     </div>
-
   </div>
 
 </body>
