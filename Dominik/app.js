@@ -851,7 +851,8 @@ function team(path) {
 /* ---------- assets pages ---------- */
 const thumb = src => `<div class="slot">${src ? pic(src) : ""}</div>`;
 const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(thumb).join("");
-const memoryCard = ([name, boost, ext]) => `<a class="acard" href="${memoryHref(name)}"><div class="mem">${memoryArt(name, ext)}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p></a>`;
+const memoryStats = name => { const [ATK, DEF, CRIT, HP] = MEMORY_STATS[name]; return { ATK, DEF, CRIT, HP }; };
+const memoryCard = ([name, boost, ext]) => `<a class="acard" href="${memoryHref(name)}"><div class="mem">${memoryArt(name, ext)}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p>${statRow(memoryStats(name))}</a>`;
 const weaponThumb = file => thumb(file && `${CHARS}/${file}`);
 const weaponCard = ([owner, name, type, file]) => {
   const [atk, crit] = WEAPON_STATS[name];
@@ -863,11 +864,11 @@ const statRow = stats => `<dl class="stats">${Object.entries(stats).map(([label,
 let buildReturn = "";
 const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ Back to build</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
 function memoryPage([name, boost, ext]) {
-  const { tab } = MEM_INDEX.get(name), [ATK, DEF, CRIT, HP] = MEMORY_STATS[name];
+  const { tab } = MEM_INDEX.get(name);
   const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2><p>${esc(text)}</p>`).join("");
   return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
-      <div class="fx">${statRow({ ATK, DEF, CRIT, HP })}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>`;
+      <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>`;
 }
 function weaponPage([owner, name, type, file, effect]) {
   const [ATK, CRIT] = WEAPON_STATS[name];
