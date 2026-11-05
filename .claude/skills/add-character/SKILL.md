@@ -56,8 +56,12 @@ A esteira da home se monta sozinha a partir dos times. Só edite `HERO_FIRST` se
 
 ## 4. Editar `assets-data.js`
 
-- **Arma nova:** adicione em `WEAPONS`, em ordem alfabética: `["Nome: Frame", "Nome da Arma", "Tipo", "pasta/Arma - X.ext", "Efeito"]`.
-- **Memória nova:** adicione em `MEMORY_TABS` (`app.js`) e em `MEMORY_EFFECTS` (`assets-data.js`). Sem o texto em `MEMORY_EFFECTS`, a página Memories quebra.
+- **Arma nova:** adicione em `WEAPONS`, em ordem alfabética: `["Nome: Frame", "Nome da Arma", "Tipo", "pasta/Arma - X.ext", "Efeito"]`, e em `WEAPON_STATS`: `"Nome da Arma": [ATK, CRIT]`. Sem os stats, a página Weapons quebra.
+- **Memória nova:** adicione em `MEMORY_TABS` (`app.js`), em `MEMORY_EFFECTS` e em `MEMORY_STATS` (`assets-data.js`, como `[ATK, DEF, CRIT, HP]`). Sem esses dados, as páginas de memória quebram.
+- **Skills do personagem:** ficam em `skills-data.js`, vindas da seção "Skills & Passives" da página dele na wiki. Sem elas, a página de skills dele avisa que ainda não há texto.
+- **CUB novo:** o texto das skills fica em `CUB_SKILLS`, pela pasta do personagem.
+
+A página do personagem (`/character/<id>`) e as listas de CUBs e Skills se montam sozinhas a partir dos times.
 
 ## 5. Verificar
 

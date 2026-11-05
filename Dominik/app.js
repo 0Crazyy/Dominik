@@ -525,7 +525,7 @@ function iconName(src = "") {
   return skill ? cubSkill(src, skill[1])?.[0] || `CUB ${name}` : name;
 }
 const cubSkill = (src, n) => CUB_SKILLS[src.split("/").at(-2)]?.[n - 1];
-const memoryInfo = name => `2 pcs: ${MEMORY_EFFECTS[name][0]}\n\n4 pcs: ${MEMORY_EFFECTS[name][1]}`;
+const memoryInfo = name => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2} pcs: ${text}`).join("\n\n");
 // What an icon does, when known: shown under its name
 function iconInfo(src = "") {
   const memory = src.match(/Memória - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
@@ -534,17 +534,22 @@ function iconInfo(src = "") {
   return RESONANCE_EFFECTS[iconName(src)] || "";
 }
 const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(info)}"` : "");
-// Assets detail pages: /assets/memory/<id> and /assets/weapon/<id>
+// Detail pages: /assets/<memory|weapon|resonance|cub|skill>/<id> and /character/<id>
 const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
 const memoryHref = name => `/assets/memory/${linkId(name)}`;
 const weaponHref = name => `/assets/weapon/${linkId(name)}`;
+const resonanceHref = name => `/assets/resonance/${linkId(name)}`;
+const cubHref = name => `/assets/cub/${linkId(name)}`;
+const charId = name => linkId(name.replace(":", ""));
+const skillHref = name => `/assets/skill/${charId(name)}`;
+const characterHref = name => `/character/${charId(name)}`;
 // With href, the slot is a link. With a tip but no image, it shows that name in place of the art
 const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", info = iconInfo(src)) => {
   const tag = href ? "a" : "div", named = !src && tip;
   return `<${tag} class="slot${named ? " named" : ""}"${href ? ` href="${esc(href)}"` : ""}${tipAttr(tip, info)}>${src ? pic(src) : esc(label)}${src || named ? overlay : ""}</${tag}>`;
 };
 const STARS = pic("assets/overlay/256px-UI-Supply-6Star.png", 'class="stars" alt="6 stars"');
-const numbered = (src, i) => `<div class="cell">${slot(src)}<span>${i}</span></div>`;
+const numbered = (src, i, href = "") => `<div class="cell">${slot(src, "", "", undefined, href)}<span>${i}</span></div>`;
 const n = (k, f) => Array.from({ length: k }, (_, i) => f(i));
 
 /* ---------- sidebar ---------- */
@@ -601,21 +606,25 @@ function card(c) {
     return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name));
   };
   const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}">${t.toUpperCase()}</span>`).join("");
-  return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}">
-    <h3>${esc(c.name)}</h3>
+  const cub = c.construct ? cubHref(iconName(c.construct)) : "";
+  // A skill icon leads to the character's skills; "Any ATK" is not a skill of theirs
+  const skillSlot = src => slot(src, "", "", undefined, src?.includes("/Skill - ") ? skillHref(c.name) : "");
+  const resonance = src => src ? resonanceHref(iconName(src)) : "";
+  return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}"><div class="cin">
+    <h3><a href="${characterHref(c.name)}">${esc(c.name)}</a></h3>
     <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "icon"}</div>
       <div class="pwrap"><div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "portrait"}</div>${c.rank ? pic(c.rank, `class="rank" alt="rank"${tipAttr(iconName(c.rank))}`) : ""}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
       <div class="wp">${slot(c.weapon, weapon || "weapon", STARS, weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
       <div class="mxw">
-        <div class="mx">${n(3, i => numbered((c.matrix || [])[i], i + 1)).join("")}</div>
-        <div class="res"><span>6×</span>${slot(c.resonance, "")}<span>6×</span>${slot(c.core, "")}</div>
+        <div class="mx">${n(3, i => numbered((c.matrix || [])[i], i + 1, resonance((c.matrix || [])[i]))).join("")}</div>
+        <div class="res"><span>6×</span>${skillSlot(c.resonance)}<span>6×</span>${skillSlot(c.core)}</div>
       </div>
     </div>
-    <div class="box kit">${slot(c.construct, "construct", STARS)}${n(6, i => numbered((c.skills || [])[i], i + 1)).join("")}</div>
+    <div class="box kit">${slot(c.construct, "construct", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub)).join("")}</div>
     <p class="desc">${esc(c.desc)}</p>
-    <div class="tags">${tags}</div>
+    </div><div class="tags">${tags}</div>
   </article>`;
 }
 function comp(id, cards = COMPS[id].cards) {
@@ -626,19 +635,21 @@ function comp(id, cards = COMPS[id].cards) {
 
 /* ---------- focus view: enlarged card in the center, the others behind it ---------- */
 const FOCUS_MS = 500; // keep in sync with the .fcard transition in style.css
+// The enlarged card is laid out at this width, whatever the size of the card it came from, then scaled to fill the screen
+const FOCUS_W = 640;
 let view = null;
 const place = (el, x, y, s) => { el.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px) scale(${s})`; };
 function toOrigin(v) {
   const { clientWidth: w, clientHeight: h } = v.stage;
   v.clones.forEach((el, i) => {
     const r = v.sources[i].getBoundingClientRect();
-    place(el, r.left + r.width / 2 - w / 2, r.top + r.height / 2 - h / 2, 1);
+    place(el, r.left + r.width / 2 - w / 2, r.top + r.height / 2 - h / 2, r.width / el.offsetWidth);
   });
 }
 function layout() {
   const { stage, clones, active } = view, count = clones.length;
   const w = stage.clientWidth, h = stage.clientHeight, cw = clones[0].offsetWidth, ch = clones[0].offsetHeight;
-  const big = Math.min(1.35, (h - 70) / ch, (w - 32) / cw), small = big * .68;
+  const big = Math.min(1.6, (h - 40) / ch, (w - 32) / cw), small = big * .68;
   const spread = Math.min((cw * big + cw * small) / 2 - cw * small * .25, w / 2 - cw * small * .2);
   clones.forEach((el, i) => {
     const d = (i - active + count) % count, pos = d <= count / 2 ? d : d - count, side = pos !== 0;
@@ -671,22 +682,29 @@ function openFocus(src) {
   stage.setAttribute("aria-label", "Character card");
   stage.innerHTML = `<button class="ctl close" aria-label="Close">×</button>
     <button class="ctl prev" aria-label="Previous character">‹</button>
-    <button class="ctl next" aria-label="Next character">›</button>`;
+    <button class="ctl next" aria-label="Next character">›</button>
+    <button class="ctl export" data-export-active>Export image</button>`;
   const clones = sources.map(s => {
-    const r = s.getBoundingClientRect(), c = s.cloneNode(true);
+    const c = s.cloneNode(true);
     c.classList.add("fcard");
     c.dataset.name = $("h3", c).textContent;
-    const w = Math.round(r.width / 2) * 2, h = Math.round(r.height / 2) * 2; // even sizes keep the center on a whole pixel
-    c.style.cssText = `width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px`;
+    c.style.width = `${FOCUS_W}px`;
     return c;
   });
   stage.append(...clones);
   document.body.append(stage);
+  clones.forEach(c => {
+    const h = Math.round(c.offsetHeight / 2) * 2; // even sizes keep the center on a whole pixel
+    c.style.height = `${h}px`;
+    c.style.margin = `${-h / 2}px 0 0 ${-FOCUS_W / 2}px`;
+  });
   view = { stage, clones, sources, comp, src, active: sources.indexOf(src) };
   stage.onclick = e => {
     if (e.target.closest(".close")) return closeFocus();
     if (e.target.closest(".prev")) return go(-1);
     if (e.target.closest(".next")) return go(1);
+    const save = e.target.closest("[data-export-active]");
+    if (save) return exportBuild(save, [shownTeam.cards[view.active]]);
     const c = e.target.closest(".fcard");
     if (!c) return closeFocus();
     if (c.classList.contains("side")) { e.preventDefault(); view.active = clones.indexOf(c); layout(); }
@@ -714,6 +732,8 @@ function closeFocus(instant) {
 }
 $("#main").addEventListener("click", e => {
   setNav(false);
+  const save = e.target.closest("[data-export]");
+  if (save) return exportBuild(save, shownTeam.cards);
   const c = e.target.closest(".comp .card");
   if (c && !e.target.closest("a")) openFocus(c);
 });
@@ -732,19 +752,37 @@ addEventListener("keydown", e => {
 addEventListener("resize", () => { if (view) layout(); });
 
 /* ---------- pages ---------- */
-// Every character with a build, read from PAGES and COMPS, so a new team joins the conveyor by itself.
-// Each one links to its first team on an Energy page (or a Derivative Effect page if it has no other).
-function heroChars() {
+// Every character with a build and all their builds, read from PAGES and COMPS, so a new team shows up by itself
+// on the conveyor and on the character pages. Energy pages come first, then Derivative Effect pages.
+let characterList = null;
+function characters() {
+  if (characterList) return characterList;
   const found = new Map();
   const pages = Object.entries(PAGES).sort(([a], [b]) => b.startsWith("energy") - a.startsWith("energy"));
   for (const [path, ids] of pages) for (const id of ids) {
-    const { cards, variants } = COMPS[id];
+    const { name: team, cards, variants } = COMPS[id], [kind, key] = path.split("/");
+    const page = TEAM_LISTS[kind].items.find(e => slug(e) === key);
     for (const t of variants || [{ id, cards }]) for (const c of t.cards) {
-      if (c.portrait && !found.has(c.name)) found.set(c.name, { name: c.name, portrait: c.portrait, href: `/${path}/${t.id}` });
+      if (!found.has(c.name)) found.set(c.name, { name: c.name, portrait: c.portrait, symbol: c.symbol, builds: [] });
+      found.get(c.name).builds.push({ href: `/${path}/${t.id}`, page, team, variant: t.name, card: c, mates: t.cards.filter(x => x !== c) });
     }
   }
+  return characterList = [...found.values()];
+}
+// Each CUB shown in a build, under the character it belongs to. A card can borrow another character's CUB as a
+// placeholder (Leia), so the owner is the character named after the folder of the art
+function cubList() {
+  const found = new Map();
+  for (const ch of characters()) for (const { card } of ch.builds) {
+    if (!card.construct || card.construct.split("/").at(-2) !== charId(ch.name)) continue;
+    const name = iconName(card.construct);
+    if (!found.has(name)) found.set(name, { name, owner: ch.name, art: card.construct, skills: card.skills || [] });
+  }
+  return [...found.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+function heroChars() {
   const rank = c => { const i = HERO_FIRST.indexOf(c.name); return i < 0 ? HERO_FIRST.length : i; };
-  return [...found.values()].sort((a, b) => rank(a) - rank(b));
+  return characters().map(c => ({ ...c, href: c.builds[0].href })).sort((a, b) => rank(a) - rank(b));
 }
 function heroBelt() {
   const chars = heroChars();
@@ -791,11 +829,14 @@ function pickerHtml(path, sel) {
 }
 const noticeTimeLeft = () => Date.parse(NEW_CHARACTER_NOTICE.until) - Date.now();
 const notice = cards => noticeTimeLeft() > 0 && cards.some(c => c.name === NEW_CHARACTER_NOTICE.name) ? `<p class="notice" role="note">${esc(NEW_CHARACTER_NOTICE.text)}</p>` : "";
+let shownTeam = null; // the build on screen, for the export button
 function compBody(sel) {
   if (!sel) return "";
-  const { variants, cards } = COMPS[sel];
-  const shownCards = variants ? variants.find(x => x.id === chosen)?.cards : cards;
-  return shownCards ? notice(shownCards) + comp(sel, shownCards) : "";
+  const { name, variants, cards } = COMPS[sel], variant = variants?.find(x => x.id === chosen);
+  const shownCards = variants ? variant?.cards : cards;
+  if (!shownCards) return "";
+  shownTeam = { id: sel, title: [name, variant?.name].filter(Boolean).join(" · "), cards: shownCards };
+  return notice(shownCards) + `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + comp(sel, shownCards);
 }
 function team(path) {
   const [kind, key] = path.split("/");
@@ -812,20 +853,64 @@ const thumb = src => `<div class="slot">${src ? pic(src) : ""}</div>`;
 const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(thumb).join("");
 const memoryCard = ([name, boost, ext]) => `<a class="acard" href="${memoryHref(name)}"><div class="mem">${memoryArt(name, ext)}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p></a>`;
 const weaponThumb = file => thumb(file && `${CHARS}/${file}`);
-const weaponCard = ([owner, name, type, file]) => `<a class="acard wpn" href="${weaponHref(name)}">${weaponThumb(file)}
-  <div><h3>${esc(name)}</h3><p>${esc(owner)}</p><p>${esc(type)}</p></div></a>`;
+const weaponCard = ([owner, name, type, file]) => {
+  const [atk, crit] = WEAPON_STATS[name];
+  return `<a class="acard wpn" href="${weaponHref(name)}">${weaponThumb(file)}
+  <div><h3>${esc(name)}</h3><p>${esc(owner)}</p><p>${esc(type)}</p><p>ATK ${atk} · CRIT ${crit}</p></div></a>`;
+};
+const statRow = stats => `<dl class="stats">${Object.entries(stats).map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>`;
 // Top of a detail page. Coming from a team, it also leads back to that exact build
 let buildReturn = "";
 const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ Back to build</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
 function memoryPage([name, boost, ext]) {
-  const [two, four] = MEMORY_EFFECTS[name], { tab } = MEM_INDEX.get(name);
+  const { tab } = MEM_INDEX.get(name), [ATK, DEF, CRIT, HP] = MEMORY_STATS[name];
+  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2><p>${esc(text)}</p>`).join("");
   return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
-      <div class="fx"><h2>2 pcs</h2><p>${esc(two)}</p><h2>4 pcs</h2><p>${esc(four)}</p></div></div>`;
+      <div class="fx">${statRow({ ATK, DEF, CRIT, HP })}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>`;
 }
 function weaponPage([owner, name, type, file, effect]) {
+  const [ATK, CRIT] = WEAPON_STATS[name];
   return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc([type, owner].filter(Boolean).join(" · "))}</p>
-    <div class="detail wpn-detail">${weaponThumb(file)}<div class="fx"><h2>Effect</h2><p>${esc(effect)}</p></div></div>`;
+    <div class="detail wpn-detail">${weaponThumb(file)}<div class="fx">${statRow({ ATK, CRIT })}<h2>Effect</h2><p>${esc(effect)}</p></div></div>`;
+}
+const resonanceCard = ([name, effect]) => `<a class="acard wpn" href="${resonanceHref(name)}">${thumb(WEAPON_RES(name))}<div><h3>${esc(name)}</h3><p>${esc(effect)}</p></div></a>`;
+function resonancePage([name, effect]) {
+  return `${backLink("/assets/resonances", "Weapon Resonance")}<h1>${esc(name)}</h1><p class="sub">Weapon Resonance</p>
+    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>Effect</h2><p>${esc(effect)}</p></div></div>`;
+}
+const cubCard = cub => `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>${esc(cub.owner)}</p></div></a>`;
+function cubPage(cub) {
+  const folder = cub.art.split("/").at(-2), skills = CUB_SKILLS[folder] || [];
+  // Some builds show their CUB skills in another order, so each icon is found by its file number
+  const icon = i => cub.skills.find(src => src.includes(`${folder}/CUB - Skill ${i + 1}.`));
+  return `${backLink("/assets/cubs", "CUBs")}<h1>${esc(cub.name)}</h1><p class="sub"><a href="${characterHref(cub.owner)}">${esc(cub.owner)}</a></p>
+    <div class="detail wpn-detail">${thumb(cub.art)}<div class="fx">${skills.map(([name, effect], i) =>
+      `<div class="cub-skill">${thumb(icon(i))}<div><h2>${esc(name)}</h2><p>${esc(effect)}</p></div></div>`).join("") || "<p>No skill text yet.</p>"}</div></div>`;
+}
+// Character art in a grid, for /characters and /assets/skills
+const charCard = (c, href, line) => `<a class="acard wpn" href="${href}">${thumb(c.portrait)}<div><h3>${esc(c.name)}</h3><p>${esc(line)}</p></div></a>`;
+// skills-data.js is long, so it only loads when a skill page opens
+let skillsState = "";
+function loadSkills() {
+  if (skillsState) return;
+  skillsState = "loading";
+  const script = document.createElement("script");
+  script.src = "skills-data.js";
+  script.onload = () => { skillsState = "ready"; route(); };
+  script.onerror = () => { skillsState = "failed"; route(); };
+  document.head.append(script);
+}
+function skillPage(ch) {
+  const head = `${backLink("/assets/skills", "Skills")}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">Character page</a></p>`;
+  if (skillsState !== "ready") {
+    loadSkills();
+    return head + `<p class="empty">${skillsState === "failed" ? "Could not load the skills. Reload the page to try again." : "Loading skills..."}</p>`;
+  }
+  const skills = CHARACTER_SKILLS[ch.name];
+  if (!skills) return head + `<p class="empty">No skill text for this character yet.</p>`;
+  return head + `<div class="skills">${skills.map(([type, name, effect]) =>
+    `<section class="fx"><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(effect)}</p></section>`).join("")}</div>`;
 }
 function assetsPage(key, pick = "all") {
   const notFound = `<p class="empty">Page not found.</p>`;
@@ -837,6 +922,22 @@ function assetsPage(key, pick = "all") {
     const weapon = WEAPONS.find(w => linkId(w[1]) === pick);
     return weapon ? weaponPage(weapon) : notFound;
   }
+  if (key === "resonance") {
+    const resonance = Object.entries(RESONANCE_EFFECTS).find(([name]) => linkId(name) === pick);
+    return resonance ? resonancePage(resonance) : notFound;
+  }
+  if (key === "cub") {
+    const cub = cubList().find(c => linkId(c.name) === pick);
+    return cub ? cubPage(cub) : notFound;
+  }
+  if (key === "skill") {
+    const ch = characters().find(c => charId(c.name) === pick);
+    return ch ? skillPage(ch) : notFound;
+  }
+  const grid = (title, cards) => `<h1>${title}</h1><p class="sub">Assets</p><div class="agrid">${cards}</div>`;
+  if (key === "resonances") return grid("Weapon Resonance", Object.entries(RESONANCE_EFFECTS).map(resonanceCard).join(""));
+  if (key === "cubs") return grid("CUBs", cubList().map(cubCard).join(""));
+  if (key === "skills") return grid("Skills", characters().map(c => charCard(c, skillHref(c.name), iconName(c.symbol))).join(""));
   if (key === "weapons") return `<h1>Weapons</h1><p class="sub">Assets</p><div class="agrid">${WEAPONS.map(weaponCard).join("")}</div>`;
   if (key !== "memories") return notFound;
   const tabs = ["All", ...Object.keys(MEMORY_TABS)], tab = tabs.find(t => slug(t) === pick);
@@ -845,6 +946,209 @@ function assetsPage(key, pick = "all") {
   const links = tabs.map(t => `<a href="/assets/memories/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${t}</a>`).join("");
   return `<h1>Memories</h1><p class="sub">Assets</p>
     <div class="assets"><div class="atabs" role="navigation" aria-label="Memory type">${links}</div><div class="agrid">${sets.map(memoryCard).join("")}</div></div>`;
+}
+
+/* ---------- character pages ---------- */
+const charactersPage = () => `<h1>Characters</h1><p class="sub">Every character with a build</p><div class="agrid">${characters().map(c => {
+  const count = c.builds.length;
+  return charCard(c, characterHref(c.name), `${iconName(c.symbol)} · ${count} build${count > 1 ? "s" : ""}`);
+}).join("")}</div>`;
+// "4× Keats · 2× Da Vinci", from the six memory slots
+function memorySummary(memories = []) {
+  const count = new Map();
+  for (const piece of memories) {
+    const name = piece.startsWith("assets/") ? iconName(piece) : piece;
+    count.set(name, (count.get(name) || 0) + 1);
+  }
+  return [...count].map(([name, pieces]) => `${pieces}× ${name}`).join(" · ");
+}
+const buildRow = ({ href, page, team, variant, card, mates }) => `<a class="acard build" href="${esc(href)}">
+    <div class="b-tx"><p>${esc(page)}</p><h3>${esc(team)}</h3>${variant ? `<p>${esc(variant)}</p>` : ""}
+      <p class="b-mem">${esc(memorySummary(card.memories))}</p></div>
+    <div class="b-mates">${mates.map(m => `<div class="slot" title="${esc(m.name)}">${pic(m.portrait, `alt="${esc(m.name)}"`)}</div>`).join("")}</div>
+  </a>`;
+function characterPage(ch) {
+  const count = ch.builds.length, card = ch.builds.find(b => b.card.construct)?.card;
+  const weapon = WEAPONS.find(w => w[0] === ch.name), cub = cubList().find(c => c.owner === ch.name);
+  const links = [
+    weapon && `<a class="acard wpn" href="${weaponHref(weapon[1])}">${weaponThumb(weapon[3])}<div><h3>${esc(weapon[1])}</h3><p>Weapon</p></div></a>`,
+    cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`,
+    `<a class="acard wpn" href="${skillHref(ch.name)}">${thumb(card?.core)}<div><h3>Skills</h3><p>All skills and passives</p></div></a>`
+  ].filter(Boolean).join("");
+  return `${backLink("/characters", "Characters")}<h1>${esc(ch.name)}</h1><p class="sub">${esc(iconName(ch.symbol))} · ${count} build${count > 1 ? "s" : ""}</p>
+    <div class="detail char-detail"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div><div class="char-links">${links}</div></div>
+    <h2 class="grp">Builds</h2><div class="builds">${ch.builds.map(buildRow).join("")}</div>`;
+}
+
+/* ---------- export a build as an image ---------- */
+// Drawn on a canvas from the same art as the card, so it needs no library and passes the CSP in _headers.
+// The long description stays out: the image is the build itself, to post in a chat
+const EXPORT_W = 460, EXPORT_H = 552, EXPORT_GAP = 56, EXPORT_PAD = 36, EXPORT_HEAD = 76, EXPORT_FOOT = 34, EXPORT_SCALE = 1.5;
+const BAR_COLORS = { blue: ["#0a3fc8", "#19c4ff"], red: ["#8d1111", "#ff4d4d"], gold: ["#a85f00", "#ffc400"] };
+const exportFont = (size, weight = 700) => `${weight} ${size}px Quantico, sans-serif`;
+const loadImage = src => new Promise(done => {
+  const img = new Image();
+  img.onload = () => done(img);
+  img.onerror = () => {
+    if (img.src.endsWith(encodeURI(src))) return done(null);
+    img.src = src;
+  };
+  img.src = web(src);
+});
+const cardArt = c => [c.symbol, c.portrait, c.rank, c.weapon, c.resonance, c.core, c.construct, c.wh && memFile(c.wh, "WH", "png"),
+  ...(c.memories || []), ...(c.matrix || []), ...(c.skills || [])].filter(src => src?.startsWith("assets/"));
+function drawArt(g, img, x, y, w, h, { fit = "cover", zoom = 1, ox = 50, oy = 50 } = {}) {
+  if (!img) return;
+  const r = (fit === "cover" ? Math.max : Math.min)(w / img.width, h / img.height), dw = img.width * r, dh = img.height * r;
+  const px = x + w * ox / 100, py = y + h * oy / 100;
+  g.save();
+  g.beginPath();
+  g.rect(x, y, w, h);
+  g.clip();
+  g.translate(px, py);
+  g.scale(zoom, zoom);
+  g.translate(-px, -py);
+  g.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  g.restore();
+}
+function drawSlot(g, x, y, w, h) {
+  g.fillStyle = "#0000004b";
+  g.fillRect(x, y, w, h);
+  g.strokeStyle = "#ffffff30";
+  g.strokeRect(x + .5, y + .5, w - 1, h - 1);
+}
+function drawText(g, text, x, y, font, color = "#ececee", align = "center") {
+  g.font = font;
+  g.fillStyle = color;
+  g.textAlign = align;
+  g.fillText(text, x, y);
+}
+function drawCard(g, c, art, cardColor, stars, x, y) {
+  const w = EXPORT_W, h = EXPORT_H, inner = w - 32, left = x + 16;
+  g.fillStyle = cardColor;
+  g.fillRect(x, y, w, h);
+  const [dark, bright] = BAR_COLORS[c.bar], bar = g.createLinearGradient(x, 0, x + w, 0);
+  bar.addColorStop(0, dark); bar.addColorStop(.5, bright); bar.addColorStop(1, dark);
+  g.fillStyle = bar;
+  g.fillRect(x - 10, y - 8, w + 20, 8);
+  g.fillRect(x - 10, y + h, w + 20, 8);
+  drawText(g, c.name, x + w / 2, y + 38, exportFont(22));
+  // Class, portrait and rank
+  const top = y + 54, size = 130, px = x + (w - size) / 2;
+  drawArt(g, art.get(c.symbol), x + 40, top + 20, 90, 90, { fit: "contain" });
+  drawSlot(g, px, top, size, size);
+  drawArt(g, art.get(c.portrait), px, top, size, size);
+  if (c.rank) drawArt(g, art.get(c.rank), px + size - 44, top + size - 44, 70, 54, { fit: "contain" });
+  // Memories, weapon, Weapon Harmony, resonances
+  const boxY = top + size + 14, boxH = 212, pad = 8;
+  g.fillStyle = "#ffffff0d";
+  g.fillRect(left, boxY, inner, boxH);
+  const memW = 196, gap = 4, cellW = (memW - gap * 2) / 3, cellH = (boxH - pad * 2 - gap) / 2;
+  (c.memories || []).forEach((piece, i) => {
+    const mx = left + pad + (i % 3) * (cellW + gap), my = boxY + pad + Math.floor(i / 3) * (cellH + gap), isArt = piece.startsWith("assets/");
+    drawSlot(g, mx, my, cellW, cellH);
+    if (isArt) drawArt(g, art.get(piece), mx, my, cellW, cellH, { zoom: piece.endsWith(".webp") ? 1.34 : 1.07 });
+    else drawText(g, piece, mx + cellW / 2, my + cellH / 2, exportFont(10, 400), "#dcdaf0");
+    g.fillStyle = "#000000b3";
+    g.fillRect(mx + cellW - 15, my + cellH - 15, 15, 15);
+    drawText(g, i + 1, mx + cellW - 7.5, my + cellH - 3.5, exportFont(11));
+  });
+  const wpX = left + pad + memW + 8, wpW = 92, weaponH = 96;
+  drawSlot(g, wpX, boxY + pad, wpW, weaponH);
+  drawArt(g, art.get(c.weapon), wpX, boxY + pad, wpW, weaponH, { fit: "contain" });
+  if (stars) drawArt(g, stars, wpX, boxY + pad + weaponH - 16, 62, 16, { fit: "contain" });
+  const whY = boxY + pad + weaponH + gap, whH = boxH - pad * 2 - weaponH - gap;
+  drawSlot(g, wpX, whY, wpW, whH);
+  if (c.wh) {
+    const [ox, oy, zoom] = WH_FRAME[c.wh] || [50, 50, 1];
+    drawArt(g, art.get(memFile(c.wh, "WH", "png")), wpX, whY, wpW, whH, { fit: "contain", ox, oy, zoom });
+  }
+  const mxX = wpX + wpW + 8, mxW = left + inner - pad - mxX, mxCell = (mxW - gap * 2) / 3;
+  for (let i = 0; i < 3; i++) {
+    const cx = mxX + i * (mxCell + gap);
+    drawSlot(g, cx, boxY + pad, mxCell, mxCell);
+    drawArt(g, art.get((c.matrix || [])[i]), cx, boxY + pad, mxCell, mxCell);
+    drawText(g, i + 1, cx + mxCell / 2, boxY + pad + mxCell + 13, exportFont(11));
+  }
+  const resY = boxY + pad + mxCell + 22, resH = boxH - pad * 2 - mxCell - 22, resW = (mxW - gap) / 2, icon = Math.min(resW, resH - 18);
+  g.fillStyle = "#0000002b";
+  g.fillRect(mxX, resY, mxW, resH);
+  [c.resonance, c.core].forEach((src, i) => {
+    const cx = mxX + i * (resW + gap);
+    const textY = resY + (resH - icon - 18) / 2 + 12;
+    drawText(g, "6×", cx + resW / 2, textY, exportFont(12));
+    drawArt(g, art.get(src), cx + (resW - icon) / 2, textY + 6, icon, icon, { fit: "contain" });
+  });
+  // CUB and its skills
+  const kitY = boxY + boxH + 10, kitH = 92;
+  g.fillStyle = "#ffffff0d";
+  g.fillRect(left, kitY, inner, kitH);
+  const unit = (inner - pad * 2 - gap * 6) / 7.2, cubW = unit * 1.2;
+  drawSlot(g, left + pad, kitY + pad, cubW, kitH - pad * 2);
+  drawArt(g, art.get(c.construct), left + pad, kitY + pad, cubW, kitH - pad * 2);
+  for (let i = 0; i < 6; i++) {
+    const cx = left + pad + cubW + gap + i * (unit + gap);
+    drawSlot(g, cx, kitY + pad, unit, unit);
+    drawArt(g, art.get((c.skills || [])[i]), cx, kitY + pad, unit, unit);
+    drawText(g, i + 1, cx + unit / 2, kitY + pad + unit + 14, exportFont(11));
+  }
+  // Role tags
+  const tags = c.role.split(" ").filter(Boolean), tagW = 110, tagX = x + (w - tags.length * (tagW + 4) + 4) / 2;
+  tags.forEach((tag, i) => {
+    g.fillStyle = tag === "captain" ? "#12a145" : "#6b6b73";
+    g.fillRect(tagX + i * (tagW + 4), y + h - 24, tagW, 22);
+    drawText(g, tag.toUpperCase(), tagX + i * (tagW + 4) + tagW / 2, y + h - 8, exportFont(13, 800), "#fff");
+  });
+}
+async function renderBuild(cards, { id, title }) {
+  const theme = COMPS[id], starSrc = "assets/overlay/256px-UI-Supply-6Star.png";
+  await Promise.all([document.fonts.load(exportFont(16)), document.fonts.load(exportFont(13, 400))]);
+  const sources = [...new Set([...cards.flatMap(cardArt), starSrc, ...(theme.icon ? [theme.icon] : [])])];
+  const art = new Map(await Promise.all(sources.map(async src => [src, await loadImage(src)])));
+  const width = EXPORT_PAD * 2 + cards.length * EXPORT_W + (cards.length - 1) * EXPORT_GAP;
+  const height = EXPORT_HEAD + EXPORT_H + EXPORT_FOOT + 16;
+  const canvas = document.createElement("canvas");
+  canvas.width = width * EXPORT_SCALE;
+  canvas.height = height * EXPORT_SCALE;
+  const g = canvas.getContext("2d");
+  g.scale(EXPORT_SCALE, EXPORT_SCALE);
+  const background = g.createLinearGradient(0, 0, 0, height);
+  background.addColorStop(0, `${theme.c1}38`);
+  background.addColorStop(1, `${theme.c2}`);
+  g.fillStyle = "#0b0b0c";
+  g.fillRect(0, 0, width, height);
+  g.fillStyle = background;
+  g.fillRect(0, 0, width, height);
+  drawText(g, cards.length > 1 ? title : `${cards[0].name} · ${title}`, EXPORT_PAD, 44, exportFont(cards.length > 1 ? 26 : 16), "#fff", "left");
+  cards.forEach((c, i) => {
+    const x = EXPORT_PAD + i * (EXPORT_W + EXPORT_GAP);
+    drawCard(g, c, art, theme.cp, art.get(starSrc), x, EXPORT_HEAD);
+    if (i === cards.length - 1) return;
+    const mid = x + EXPORT_W + EXPORT_GAP / 2, cy = EXPORT_HEAD + EXPORT_H / 2;
+    if (theme.icon) drawArt(g, art.get(theme.icon), mid - 20, cy - 20, 40, 40, { fit: "contain" });
+    else drawText(g, theme.emblem, mid, cy + 14, exportFont(36), theme.ar);
+  });
+  drawText(g, "dominiko.netlify.app", width - EXPORT_PAD, height - 14, exportFont(13, 400), "#c4c4ca", "right");
+  return canvas;
+}
+async function exportBuild(button, cards) {
+  const label = button.textContent, team = shownTeam;
+  button.disabled = true;
+  button.textContent = "Exporting...";
+  try {
+    const canvas = await renderBuild(cards, team);
+    const blob = await new Promise(done => canvas.toBlob(done, "image/png"));
+    const link = document.createElement("a"), name = cards.length > 1 ? team.title : `${cards[0].name} ${team.title}`;
+    link.href = URL.createObjectURL(blob);
+    link.download = `${linkId(name.replace(/ · /g, " ").replace(":", ""))}.png`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+    button.textContent = label;
+  } catch {
+    button.textContent = "Export failed";
+    setTimeout(() => { button.textContent = label; }, 3000);
+  }
+  button.disabled = false;
 }
 
 function theme(id) {
@@ -868,11 +1172,14 @@ function route() {
   expanded = variants ? shown : "";
   chosen = owner ? pick : variants ? variants[0].id : "";
   const main = $("#main");
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : path ? team(path) : home();
+  const character = kind === "character" && characters().find(c => charId(c.name) === key);
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "characters" ? charactersPage()
+    : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path) : home();
   theme(null);
-  document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + ({ "assets/memory": "assets/memories", "assets/weapon": "assets/weapons" }[path] || path)));
+  const navPath = kind === "character" ? "characters" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "assets/skills" }[path] || path;
+  document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + navPath));
   if (kind === "assets") toggle(true, assetsBtn, assetsMenu);
-  else if (path) { toggle(true); openGroup(kind, true); }
+  else if (TEAM_LISTS[kind]) { toggle(true); openGroup(kind, true); }
   const sel0 = $(".picker button[data-id][aria-pressed=true]");
   if (sel0) theme(sel0.dataset.id);
   const picker = $(".picker");
@@ -977,8 +1284,8 @@ addEventListener("error", e => {
   if (full && img.getAttribute("src") !== full) img.src = full;
 }, true);
 // Every page opens at the top, except when coming back from a detail page to where you were.
-// "skill" is here for the skill pages planned for later: they only need to use backLink
-const DETAIL_PAGE = /\/assets\/(memory|weapon|skill)\//;
+// A new detail page only needs to be listed here and to use backLink
+const DETAIL_PAGE = /\/(assets\/(memory|weapon|skill|resonance|cub)|character)\//;
 const scrollSaved = new Map();
 history.scrollRestoration = "manual";
 // The address of the page on screen: when the browser goes back, location already shows the next one

@@ -2,7 +2,7 @@
    Memory bonuses: https://huaxu.app/na/wiki/memories
    Weapons: https://grayravens.com/wiki/Weapons/6%E2%98%85_Weapons and https://huaxu.app/na/wiki/weapons */
 
-// Memory set name: [2-piece bonus, 4-piece bonus]
+// Memory set name: [2-piece bonus, 4-piece bonus, 6-piece bonus if it has one]
 const MEMORY_EFFECTS = {
   "Aline": ["Extra DMG Bonus increases by 5% and Ice DMG increases by 5%.", "Base DMG of Pure Color: Theme Emphasis and Color Mix: Clash of Concepts increases by 50%. Base DMG of Vibrant Brushstroke increases by 80%."],
   "Alphonse": ["Fire DMG increases by 10%.", "The Base DMG of Flame Eruption and Thermal Erosion increases by 100%. Firepower Bulwark will inflict Scorching Invasion on the target hit, which will reduce their Fire Resistance for 8s. Duration resets every time it is triggered."],
@@ -21,7 +21,7 @@ const MEMORY_EFFECTS = {
   "Cogito": ["ATK increases by 5% and Lightning DMG and Glaciation DMG increase by 5%.", "Extra DMG of Delve, Manifest, Deflect, Infuse, and Recede increases by 100%."],
   "Condelina": ["Basic Attack's Extra DMG Bonus increases by 15%.", "Basic Attacks have a 50% chance to go berserk, increasing the Extra Damage Bonus of Basic Attack by 20% for 5s. 8s cooldown."],
   "Cottie": ["Gains 20% more Energy when pinging an orb. Signature Move requires 20% less Signature Energy.", "Extra DMG Bonus increases by 15% for 10s when performing a Signature Move. Gains Super Armor that increases Extra DMG Reduction by 20% for 5s after the Signature Move. Triggering these effects again will renew their duration."],
-  "Da Vinci": ["When QTE is triggered, the controlling character gains 10% ATK and 20% DEF for 8s. Duration resets every time it is triggered.", "When QTE is triggered, increases another character's QTE charge count by 1 and activates it. CD: 8s. If there are 3 characters on the field, all characters' ATK is increased by 20% for 2s. Duration resets every time it is triggered."],
+  "Da Vinci": ["When QTE is triggered, the controlling character gains 10% ATK and 20% DEF for 8s. Duration resets every time it is triggered.", "When QTE is triggered, increases another character's QTE charge count by 1 and activates it. CD: 8s. If there are 3 characters on the field, all characters' ATK is increased by 20% for 2s. Duration resets every time it is triggered.", "Da Vinci 4-piece set effect removes cooldown restrictions. Cannot stack with effects of the same type."],
   "Darwin": ["For each orb pinged, Extra DMG Bonus increases by 3% for 4s. Can be stacked up to 5 times. Duration resets every time it is triggered.", "Records the color of Signal Orbs pinged. When all 3 colors are recorded, unleashes a 12m shockwave that deals 600% Physical DMG and resets the record."],
   "Derketo": ["Dark DMG increases by 10%.", "Base DMG of Torrent Orbs, Tidal Orbs, and Signature - Sunken Finale increases by 100%. After casting Signature - Sunken Finale, if Lamia is switched out of battle, she will still cast co-attacks when any teammate actively casts their Signature. Co-attacks deal 3000% Dark DMG each time, and can be triggered up to 3 times after every Signature - Sunken Finale."],
   "Diesel": ["Lightning DMG increases by 10%.", "The efficiency of acquiring Blade Aura increases by 50%. The Base DMG of Unquenchable Flare's Leaping Thrust increases by 50%, and the Base DMG of Signature - Weave: Karmic Inferno increases by 80%."],
@@ -107,6 +107,40 @@ const WEAPONS = [
   ["Wanshi: Lucid Dreamer", "Renewed Dawn", "Revolver", "wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png", "ATK increases by 10%. Doubles the Base DMG of Flurry Blitz, Frosty Barrage, and Snow Storm."],
   ["Watanabe: Epitaph", "Dark Falcon", "Trailblade", "watanabe-epitaph/Arma - Watanabe Epitaph.png", "ATK increases by 10%. Upon entering the Assault Mode, gains 3 Red Orbs, up to 6 orbs each time when entering the battlefield. Can quickly cast Scorching Torrent after pinging Red Orbs."]
 ];
+
+// Memory stats: [ATK, DEF, CRIT, HP]. Source: https://grayravens.com/wiki/Memories/Omniframe_Memories and .../Uniframe_Memories
+const MEMORY_STATS = {
+  "Frederick": [136, 223, 64, 1446], "Cottie": [135, 223, 66, 1453], "Hanna": [129, 223, 67, 1453], "Darwin": [129, 218, 67, 1491],
+  "Condelina": [132, 223, 67, 1461], "Guinevere": [132, 223, 64, 1528], "Philip II": [132, 223, 66, 1491], "Einsteina": [132, 219, 66, 1521],
+  "Catherine": [135, 228, 66, 1491], "Da Vinci": [135, 218, 66, 1491], "Clusius": [132, 223, 66, 1491], "Bunsen": [132, 223, 66, 1491],
+  "Poincare": [132, 223, 66, 1491], "Klenova": [132, 223, 66, 1491], "Wilde": [132, 223, 66, 1491], "Santiago": [132, 223, 66, 1491],
+  "Keats": [132, 223, 66, 1491], "Burana": [132, 223, 66, 1491], "Chang Wuzi": [132, 223, 66, 1491], "Signa": [132, 223, 66, 1491],
+  "Charlotte": [132, 223, 66, 1491], "Leeuwenhoek": [133, 223, 64, 1506], "Patton": [132, 223, 67, 1453], "Feynman": [132, 223, 66, 1491],
+  "Hervor": [132, 223, 66, 1491], "Heraclitus": [132, 223, 66, 1491], "Alphonse": [132, 223, 66, 1491], "Turing": [132, 223, 66, 1491],
+  "Unimate": [133, 226, 64, 1506], "Elizabeth": [132, 223, 66, 1491], "Shakespeare": [134, 223, 64, 1491], "Pavlichenko": [132, 223, 66, 1491],
+  "Joanna": [132, 223, 66, 1491], "Liston": [132, 223, 66, 1491], "Ji Bo'an": [132, 223, 66, 1491], "Aline": [132, 223, 66, 1491],
+  "Chen Jiyuan": [134, 223, 64, 1491], "Mousme": [132, 223, 66, 1491], "Cogito": [132, 223, 66, 1491], "Natasha": [132, 223, 66, 1491],
+  "Herschell": [132, 223, 66, 1491], "Fran": [132, 223, 66, 1491], "Diesel": [132, 223, 66, 1491], "Tifa": [137, 221, 65, 1506],
+  "Heisen": [134, 219, 66, 1491], "Pesanteur": [132, 223, 66, 1491], "Nimue": [132, 223, 66, 1491], "Jeanne": [132, 223, 66, 1491],
+  "Barcelo": [132, 223, 66, 1491], "Derketo": [132, 223, 66, 1491], "Boone": [134, 228, 62, 1506], "Seraphine": [133, 221, 66, 1521],
+  "Flamel": [132, 223, 66, 1536], "Bathlon": [134, 223, 64, 1453], "Bulgakov": [132, 223, 66, 1491], "Sothoth": [132, 223, 66, 1491],
+  "Cleopatra": [132, 223, 66, 1491], "Liliana": [132, 223, 66, 1491], "Shelley": [132, 223, 66, 1491], "Isabel": [136, 223, 62, 1521],
+  "Marco": [132, 223, 66, 1491], "Jack": [132, 223, 66, 1491], "Lucrezia": [134, 217, 66, 1506], "Wu'an": [134, 219, 66, 1476],
+  "Koya": [134, 223, 66, 1491]
+};
+
+// Weapon stats: [ATK, CRIT]. Source: https://grayravens.com/wiki/Weapons/6%E2%98%85_Weapons
+const WEAPON_STATS = {
+  "Unforsaken Beacon": [436, 249], "Astraea": [436, 249], "Purple Peony": [425, 249], "Aurora": [436, 249],
+  "Cestus": [436, 244], "Osseous Guillotine": [436, 249], "Dream Roamer": [436, 249], "Perpetuity": [415, 249],
+  "Hear the Bell": [436, 249], "Alpha-Omega": [436, 249], "Solar Flare": [436, 249], "Star of Niflheim": [436, 249],
+  "Hour & Minute": [436, 249], "Key of Tempus Gate - Stokes": [484, 241], "Wolf Fang": [458, 249], "Edges of the Twisted Ribbon": [436, 249],
+  "Sorrow of Fata Morgana": [436, 249], "Ripples of the Aloft Sea": [436, 249], "Lightless Dusk": [436, 249], "Flamewing of Dawn": [436, 249],
+  "Reconstruction of Law": [436, 249], "Starlight Glare": [436, 249], "Obituary for Yesterday": [436, 249], "Managarm": [458, 249],
+  "Akasha Keyblade": [467, 241], "Mirage Halberd: Amalga": [436, 249], "Orpheus' Lullaby": [436, 249], "Neon Wayfarer": [436, 249],
+  "Deathless Flame": [436, 249], "Yamato": [436, 249], "Empyrean Wrath": [436, 249], "Renewed Dawn": [436, 249],
+  "Dark Falcon": [436, 249]
+};
 
 // CUB skills by character folder, as [name, effect at level 5], in the order of the files "CUB - Skill 1" to "CUB - Skill 6".
 // Source: https://huaxu.app/na/wiki/cubs, matched by icon. Both active skills share one icon, so they share one entry.

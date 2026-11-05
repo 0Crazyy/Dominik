@@ -16,7 +16,7 @@ const DATA_END = "const $ = (s, r = document)";
 function loadData() {
   const app = read("app.js"), end = app.indexOf(DATA_END);
   if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/check-assets.mjs`);
-  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, WEAPONS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
+  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, WEAPONS, WEAPON_STATS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
   return vm.runInNewContext(`${read("assets-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 }
 
@@ -66,8 +66,10 @@ function check() {
   for (const [tab, sets] of Object.entries(d.MEMORY_TABS)) for (const [name, , ext] of sets) {
     if (ext) d.memSet(name).forEach(path => use(path, `memória ${name} (${tab})`));
     if (!d.MEMORY_EFFECTS[name]) errors.push(`memória "${name}" não tem texto em MEMORY_EFFECTS (a página Memories quebra)`);
+    if (!d.MEMORY_STATS[name]) errors.push(`memória "${name}" não tem stats em MEMORY_STATS (a página dela quebra)`);
   }
   for (const [owner, , , file] of d.WEAPONS) if (file) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
+  for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
   for (const e of d.ENERGY) use(`assets/energy type/${e}.png`, "ícones de Energy Type");
   for (const e of [...d.EFFECT, ...d.SPECIAL_EFFECT]) use(`assets/effects/${e}.png`, "ícones de Effect");
   for (const file of ["app.js", "index.html", "style.css"]) literalPaths(file).forEach(path => use(path, file));
