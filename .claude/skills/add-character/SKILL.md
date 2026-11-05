@@ -62,7 +62,8 @@ A esteira da home se monta sozinha a partir dos times. Só edite `HERO_FIRST` se
 ## 5. Verificar
 
 1. Na raiz do repositório, gere a miniatura da home: `powershell -File tools/make-thumbs.ps1`. O script só cria as que faltam.
-2. Rode `node tools/check-assets.mjs` e corrija todos os erros.
-3. Abra o site e confira o card e a home antes de dizer que terminou. Se não conseguir abrir, diga isso ao usuário.
+2. Gere as cópias leves que o site carrega: `node tools/optimize-images.mjs`. Os caminhos no `app.js` continuam apontando para `assets/`; as cópias em `assets-web/` são geradas, nunca editadas à mão.
+3. Rode `node tools/check-assets.mjs` e corrija todos os erros.
+4. Abra o site e confira o card e a home antes de dizer que terminou. Se não conseguir abrir, diga isso ao usuário.
 
 Não faça commit nem deploy sem o usuário pedir.

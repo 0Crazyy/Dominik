@@ -125,7 +125,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .mem{display:grid;grid-template-columns:repeat(3,1fr);align-content:center;gap:4px;flex:1;border:1px solid #ffffff22;padding:4px}
 .mem .slot{aspect-ratio:5/7;border:2px solid #000}
 .mem img{transform:scale(1.07)}
-.mem img[src$=".webp"]{transform:scale(1.34)}
+.mem img[data-full$=".webp"]{transform:scale(1.34)}
 .wp{display:grid;gap:4px;width:25%}
 .wp .slot{aspect-ratio:1}
 .wp .slot:last-child{aspect-ratio:3/2}

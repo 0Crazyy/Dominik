@@ -506,6 +506,10 @@ const PAGES = {
 const $ = (s, r = document) => r.querySelector(s);
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
+// data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
+const web = src => src.replace("assets/", "assets-web/") + ".webp";
+const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
 // Name shown when hovering an icon, read from its file name ("Memória - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {
   const file = src.split("/").pop().replace(/\.\w+$/, "");
@@ -537,9 +541,9 @@ const weaponHref = name => `/assets/weapon/${linkId(name)}`;
 // With href, the slot is a link. With a tip but no image, it shows that name in place of the art
 const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", info = iconInfo(src)) => {
   const tag = href ? "a" : "div", named = !src && tip;
-  return `<${tag} class="slot${named ? " named" : ""}"${href ? ` href="${esc(href)}"` : ""}${tipAttr(tip, info)}>${src ? `<img src="${esc(src)}" alt="">` : esc(label)}${src || named ? overlay : ""}</${tag}>`;
+  return `<${tag} class="slot${named ? " named" : ""}"${href ? ` href="${esc(href)}"` : ""}${tipAttr(tip, info)}>${src ? pic(src) : esc(label)}${src || named ? overlay : ""}</${tag}>`;
 };
-const STARS = `<img class="stars" src="assets/overlay/256px-UI-Supply-6Star.png" alt="6 stars">`;
+const STARS = pic("assets/overlay/256px-UI-Supply-6Star.png", 'class="stars" alt="6 stars"');
 const numbered = (src, i) => `<div class="cell">${slot(src)}<span>${i}</span></div>`;
 const n = (k, f) => Array.from({ length: k }, (_, i) => f(i));
 
@@ -553,7 +557,7 @@ const ICON_FIT = {
   "Ultima Slash": "scale(1.13) translate(-4.7%,-1.7%)",
   "Darkflow": "scale(1.19) translate(3%,2.5%)"
 };
-const menuIcon = (dir, e) => `<img src="assets/${dir}/${e}.png" alt=""${ICON_FIT[e] ? ` style="transform:${ICON_FIT[e]}"` : ""}>`;
+const menuIcon = (dir, e) => pic(`assets/${dir}/${e}.png`, `alt=""${ICON_FIT[e] ? ` style="transform:${ICON_FIT[e]}"` : ""}`);
 const group = (label, key, arr, iconDir) =>
   `<button class="sub" data-grp="${key}" aria-expanded="false">${label} <i>▾</i></button>` +
   `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">Nothing here yet</p>`}</div>`;
@@ -587,7 +591,7 @@ menu.onclick = e => {
 function weaponArt(c) {
   if (!c.wh) return slot("", "");
   const [x, y, zoom] = WH_FRAME[c.wh] || [50, 50, 1];
-  return `<a class="slot" href="${esc(memoryHref(c.wh))}"${tipAttr(c.wh)}><img src="${esc(memFile(c.wh, "WH", "png"))}" alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"></a>`;
+  return `<a class="slot" href="${esc(memoryHref(c.wh))}"${tipAttr(c.wh)}>${pic(memFile(c.wh, "WH", "png"), `alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"`)}</a>`;
 }
 function card(c) {
   const [, weapon = "", , , weaponEffect = ""] = WEAPONS.find(w => w[0] === c.name) || [];
@@ -599,8 +603,8 @@ function card(c) {
   const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}">${t.toUpperCase()}</span>`).join("");
   return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}">
     <h3>${esc(c.name)}</h3>
-    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? `<img src="${esc(c.symbol)}" alt="">` : "icon"}</div>
-      <div class="pwrap"><div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? `<img src="${esc(c.portrait)}" alt="${esc(c.name)}">` : "portrait"}</div>${c.rank ? `<img class="rank" src="${esc(c.rank)}" alt="rank"${tipAttr(iconName(c.rank))}>` : ""}</div></div>
+    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "icon"}</div>
+      <div class="pwrap"><div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "portrait"}</div>${c.rank ? pic(c.rank, `class="rank" alt="rank"${tipAttr(iconName(c.rank))}`) : ""}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
       <div class="wp">${slot(c.weapon, weapon || "weapon", STARS, weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
@@ -617,7 +621,7 @@ function card(c) {
 function comp(id, cards = COMPS[id].cards) {
   const c = COMPS[id];
   return `<section class="comp" style="--c1:${c.c1};--c2:${c.c2};--cp:${c.cp};--ar:${c.ar}">` +
-    cards.map(card).join(`<div class="arrow" aria-hidden="true"${tipAttr(c.iconName || (c.icon && iconName(c.icon)))}>${c.icon ? `<img src="${esc(c.icon)}" alt="">` : c.emblem}</div>`) + `</section>`;
+    cards.map(card).join(`<div class="arrow" aria-hidden="true"${tipAttr(c.iconName || (c.icon && iconName(c.icon)))}>${c.icon ? pic(c.icon) : c.emblem}</div>`) + `</section>`;
 }
 
 /* ---------- focus view: enlarged card in the center, the others behind it ---------- */
@@ -757,7 +761,7 @@ function home() {
     if (!e) return `<span class="tile-gap">N/A</span>`;
     const count = (PAGES[`${p}/${slug(e)}`] || []).reduce((sum, id) => sum + (COMPS[id].variants || [0]).length, 0);
     return `<a class="tile${count ? "" : " none"}" style="--c:${color}" href="/${p}/${slug(e)}">
-      <img class="t-bg" src="assets/${iconDir}/${e}.png" alt="">
+      ${pic(`assets/${iconDir}/${e}.png`, 'class="t-bg" alt=""')}
       <span class="t-ic">${menuIcon(iconDir, e)}</span>
       <span class="t-tx"><b>${e}</b><small>${count ? `${count} team${count > 1 ? "s" : ""}` : "No teams yet"}</small></span>
     </a>`;
@@ -804,7 +808,7 @@ function team(path) {
 }
 
 /* ---------- assets pages ---------- */
-const thumb = src => `<div class="slot">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ""}</div>`;
+const thumb = src => `<div class="slot">${src ? pic(src) : ""}</div>`;
 const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(thumb).join("");
 const memoryCard = ([name, boost, ext]) => `<a class="acard" href="${memoryHref(name)}"><div class="mem">${memoryArt(name, ext)}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p></a>`;
 const weaponThumb = file => thumb(file && `${CHARS}/${file}`);
@@ -967,10 +971,10 @@ function updateScrollHint() {
 new MutationObserver(() => { hintDone = false; updateScrollHint(); }).observe($("#main"), { childList: true, subtree: true });
 addEventListener("scroll", updateScrollHint, { passive: true });
 addEventListener("resize", updateScrollHint);
-// A missing thumbnail falls back to the full art. Handled here because the CSP in _headers blocks inline onerror
+// A missing thumbnail or light copy falls back to the full art. Handled here because the CSP in _headers blocks inline onerror
 addEventListener("error", e => {
   const img = e.target, full = img.dataset?.full;
-  if (full) { delete img.dataset.full; img.src = full; }
+  if (full && img.getAttribute("src") !== full) img.src = full;
 }, true);
 // Every page opens at the top, except when coming back from a detail page to where you were.
 // "skill" is here for the skill pages planned for later: they only need to use backLink

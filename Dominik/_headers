@@ -3,3 +3,9 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Images never change name, so browsers can keep them. Not /assets/*: that also matches pages like /assets/memories
+/assets-web/*
+  Cache-Control: public, max-age=604800
+/assets/home/*
+  Cache-Control: public, max-age=604800
