@@ -14,8 +14,37 @@
 const CHARS = "assets/characters", MEM = "assets/memories", RES = "assets/resonances";
 const WEAPON_RES = n => `${RES}/Ressonância de Arma - ${n} HD.png`;
 const ALL_ATK = `${RES}/Ressonância - ALL ATK.png`;
+// Memory sets, in the tabs and order of the game's Select Memory Set screen, plus Nihil and Uniframe.
+// Each tab is a folder in assets/memories, and files are named "Memória - <name> <1-4|2-5|3-6|WH>.<ext>".
+// Entry: [name, boost, art extension]. No extension = no art yet, so its card shows empty slots.
+const MEMORY_TABS = {
+  Common: [["Frederick", "Dodge Boost"], ["Cottie", "Signature Move Boost", "png"], ["Hanna", "3-Ping Boost", "png"],
+    ["Darwin", "Orb Skill Boost", "png"], ["Condelina", "Basic Attack Boost"]],
+  Support: [["Guinevere", "Support Boost II", "png"], ["Philip II", "Support Boost I", "png"], ["Einsteina", "Survival Boost II", "png"],
+    ["Catherine", "Survival Boost I", "png"], ["Da Vinci", "QTE Boost", "png"]],
+  Effect: [["Clusius", "Ignition Boost"], ["Bunsen", "Ultima Slash Boost"], ["Poincare", "Darkflow Boost"],
+    ["Klenova", "Glaciation Boost", "png"], ["Wilde", "Plasma Beam Boost", "png"]],
+  Physical: [["Santiago", "Physical Boost", "webp"], ["Keats", "Physical Boost", "png"], ["Burana", "Physical Boost", "png"],
+    ["Chang Wuzi", "Physical Boost", "png"], ["Signa", "Physical Boost"], ["Charlotte", "Physical Boost"],
+    ["Leeuwenhoek", "Physical Support Boost"], ["Patton", "Physical Boost", "png"]],
+  Fire: [["Feynman", "Fire Boost", "webp"], ["Hervor", "Fire Boost", "png"], ["Heraclitus", "Fire Boost", "png"],
+    ["Alphonse", "Fire Boost", "png"], ["Turing", "Fire Boost", "png"], ["Unimate", "Fire Boost"],
+    ["Elizabeth", "Fire Boost"], ["Shakespeare", "Fire Boost", "png"]],
+  Ice: [["Pavlichenko", "Ice Boost", "webp"], ["Joanna", "Ice Boost", "png"], ["Liston", "Ice Boost", "png"],
+    ["Ji Bo'an", "Ice Boost", "png"], ["Aline", "Ice Boost"], ["Chen Jiyuan", "Ice Boost", "png"]],
+  Lightning: [["Cogito", "Lightning Boost", "webp"], ["Natasha", "Lightning Boost", "png"], ["Herschell", "Lightning Boost", "png"],
+    ["Fran", "Lightning Boost", "png"], ["Diesel", "Lightning Boost"], ["Tifa", "Lightning Boost"], ["Heisen", "Lightning Boost", "png"]],
+  Dark: [["Pesanteur", "Dark Boost", "webp"], ["Nimue", "Dark Boost", "png"], ["Jeanne", "Dark Boost", "png"],
+    ["Barcelo", "Dark Boost", "png"], ["Derketo", "Dark Boost", "webp"], ["Boone", "Dark Boost", "png"],
+    ["Seraphine", "Dark Boost"], ["Flamel", "ATK Boost"], ["Bathlon", "Dark Boost", "png"]],
+  Nihil: [["Bulgakov", "Nihil Boost", "webp"], ["Sothoth", "Nihil Boost", "png"], ["Cleopatra", "Nihil Boost", "png"]],
+  Uniframe: [["Liliana", "ATK Boost"], ["Shelley", "Lightning Boost"], ["Isabel", "Ice Boost"], ["Marco", "Physical Boost"],
+    ["Jack", "Fire Boost"], ["Lucrezia", "Lightning Boost"], ["Wu'an", "ATK Boost"], ["Koya", "ATK Boost"]]
+};
+const MEM_INDEX = new Map(Object.entries(MEMORY_TABS).flatMap(([tab, sets]) => sets.map(([name, , ext]) => [name, { tab, ext }])));
+const memFile = (name, piece, ext = MEM_INDEX.get(name).ext) => `${MEM}/${MEM_INDEX.get(name).tab}/Memória - ${name} ${piece}.${ext}`;
 // The three arts of a memory set, in slot order: 1-4, 2-5, 3-6
-const memSet = (prefix, ext = "png") => ["1-4", "2-5", "3-6"].map(p => `${prefix} ${p}.${ext}`);
+const memSet = name => ["1-4", "2-5", "3-6"].map(p => memFile(name, p));
 // 4 pieces of "main" (slots 1, 2, 3, 5) + 2 pieces of "sub" (slots 4, 6)
 const memBuild = (main, sub) => [main[0], main[1], main[2], sub[0], main[1], sub[2]];
 const cubSkills = (dir, ext = "png") => [1, 2, 3, 4, 5, 6].map(i => `${dir}/CUB - Skill ${i}.${ext}`);
@@ -23,16 +52,16 @@ const cubSkills = (dir, ext = "png") => [1, 2, 3, 4, 5, 6].map(i => `${dir}/CUB 
 const SELENA = `${CHARS}/selena-pianissimo`;
 const WANSHI = `${CHARS}/wanshi-lucid-dreamer`;
 const HELENTINE = `${CHARS}/helentine-lacrimosa`;
-const BURANA = memSet(`${SELENA}/Memória - Burana`);
-const LISTON = memSet(`${WANSHI}/Memória - Liston`);
-const CHEN_JIYUAN = memSet(`${MEM}/Memória - Chen Jiyuan`);
-const COTTIE = memSet(`${MEM}/Memória - Cottie`);
-const GUINEVERE = memSet(`${MEM}/Memória - Guinevere`);
-const DA_VINCI = memSet(`${MEM}/Memória - Da Vinci`);
+const BURANA = memSet("Burana");
+const LISTON = memSet("Liston");
+const CHEN_JIYUAN = memSet("Chen Jiyuan");
+const COTTIE = memSet("Cottie");
+const GUINEVERE = memSet("Guinevere");
+const DA_VINCI = memSet("Da Vinci");
 const LUCIA_IC = `${CHARS}/lucia-inverse-crown`;
 const TEDDY = `${CHARS}/teddy-spectre`;
-const PAVLICHENKO = memSet(`${LUCIA_IC}/Memória - Pavlichenko`, "webp");
-const JOANNA = memSet(`${TEDDY}/Memória - Joanna`);
+const PAVLICHENKO = memSet("Pavlichenko");
+const JOANNA = memSet("Joanna");
 
 const LUCIA_P = `${CHARS}/lucia-pyroath`;
 const VERA = `${CHARS}/vera-geiravor`;
@@ -48,25 +77,24 @@ const HANYING = `${CHARS}/hanying-solacetune`;
 const WATANABE = `${CHARS}/watanabe-epitaph`;
 const VERONICA = `${CHARS}/veronica-aegis`;
 const KARENINA = `${CHARS}/karenina-effulgence`;
-const KEATS = memSet(`${VERONICA}/Memória - Keats`);
-const SANTIAGO = ["1-4", "2-5", "3-6"].map(p => `${KARENINA}/Memória ${p} - Santiago.webp`);
-const HERACLITUS = memSet(`${LUCIA_P}/Memória - Heraclitus`);
-const HERVOR = memSet(`${VERA}/Memória - Hervor`);
-const FEYNMAN = ["1-4", "2-5", "3-6"].map(p => `${KAMUI}/Memória ${p} - Feynman.webp`);
-const NATASHA = memSet(`${LIV}/Memória - Natasha`);
-const HERSCHELL = memSet(`${NANAMI}/Memória - Herschell`);
-const JEANNE = memSet(`${BIANCA}/Memória - Jeanne`);
-const PESANTEUR = memSet(`${ADELYDE}/Memória - Pesanteur`, "webp");
-// Nimue's files are named out of slot order: the art in slot 1 is "2-5", slot 2 is "3-6", slot 3 is "1-4"
-const NIMUE = ["2-5", "3-6", "1-4"].map(p => `${ROSETTA}/Memória - Nimue ${p}.png`);
-const BARCELO = memSet(`${LILITH}/Memória - Barcelo`);
-const DERKETO = memSet(`${CHARS}/lamia-lost-lullaby/Memória - Derketo`, "webp");
-const CHANG_WUZI = memSet(`${HANYING}/Memória - Chang Wuzi`);
-const ALPHONSE = memSet(`${WATANABE}/Memória - Alphonse`);
-const SHAKESPEARE = memSet(`${MEM}/Memória - Shakespeare`);
-const HEISEN = memSet(`${MEM}/Memória - Heisen`);
-const BATHLON = memSet(`${MEM}/Memória - Bathlon`);
-const PATTON = memSet(`${MEM}/Memória - Patton`);
+const KEATS = memSet("Keats");
+const SANTIAGO = memSet("Santiago");
+const HERACLITUS = memSet("Heraclitus");
+const HERVOR = memSet("Hervor");
+const FEYNMAN = memSet("Feynman");
+const NATASHA = memSet("Natasha");
+const HERSCHELL = memSet("Herschell");
+const JEANNE = memSet("Jeanne");
+const PESANTEUR = memSet("Pesanteur");
+const NIMUE = memSet("Nimue");
+const BARCELO = memSet("Barcelo");
+const DERKETO = memSet("Derketo");
+const CHANG_WUZI = memSet("Chang Wuzi");
+const ALPHONSE = memSet("Alphonse");
+const SHAKESPEARE = memSet("Shakespeare");
+const HEISEN = memSet("Heisen");
+const BATHLON = memSet("Bathlon");
+const PATTON = memSet("Patton");
 
 // Weapon Harmony: each memory is framed once here, as [x%, y%, zoom]. A card only says wh: "Da Vinci".
 // A memory missing from this list still works: it just shows the whole art until a frame is added.
@@ -406,7 +434,7 @@ const numbered = (src, i) => `<div class="cell">${slot(src)}<span>${i}</span></d
 const n = (k, f) => Array.from({ length: k }, (_, i) => f(i));
 
 /* ---------- sidebar ---------- */
-const menu = $("#teamsMenu"), btn = $("#teamsBtn");
+const menu = $("#teamsMenu"), btn = $("#teamsBtn"), assetsMenu = $("#assetsMenu"), assetsBtn = $("#assetsBtn");
 // Effect icons have transparent padding (Energy Type icons fill their file): enlarge and center each art to match
 const ICON_FIT = {
   "Ignition": "scale(1.26) translate(-1.4%,1.8%)",
@@ -420,9 +448,9 @@ const group = (label, key, arr, iconDir) =>
   `<button class="sub" data-grp="${key}" aria-expanded="false">${label} <i>▾</i></button>` +
   `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="#/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("")}</div>`;
 menu.innerHTML = group("Energy Type", "energy", ENERGY, "energy type") + group("Effect", "effect", EFFECT, "effects");
-function toggle(open) {
-  btn.setAttribute("aria-expanded", open);
-  menu.hidden = !open;
+function toggle(open, b = btn, m = menu) {
+  b.setAttribute("aria-expanded", open);
+  m.hidden = !open;
 }
 function openGroup(key, open) {
   const b = $(`[data-grp="${key}"]`);
@@ -430,6 +458,7 @@ function openGroup(key, open) {
   $(`[data-list="${key}"]`).hidden = !open;
 }
 btn.onclick = () => toggle(menu.hidden);
+assetsBtn.onclick = () => toggle(assetsMenu.hidden, assetsBtn, assetsMenu);
 menu.onclick = e => {
   const b = e.target.closest(".sub");
   if (b) openGroup(b.dataset.grp, b.getAttribute("aria-expanded") !== "true");
@@ -439,7 +468,7 @@ menu.onclick = e => {
 function weaponArt(c) {
   if (!c.wh) return slot("", "");
   const [x, y, zoom] = WH_FRAME[c.wh] || [50, 50, 1];
-  return `<div class="slot"><img src="${esc(`${MEM}/Memória - ${c.wh} WH.png`)}" alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"></div>`;
+  return `<div class="slot"><img src="${esc(memFile(c.wh, "WH", "png"))}" alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"></div>`;
 }
 function card(c) {
   const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}">${t.toUpperCase()}</span>`).join("");
@@ -640,6 +669,27 @@ function team(path) {
   return head + `<div class="picker" role="group" aria-label="Composition">${pickerHtml(path, shown)}</div><div id="compBox">${compBody(shown)}</div>`;
 }
 
+/* ---------- assets pages ---------- */
+const thumb = src => `<div class="slot">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ""}</div>`;
+function memoryCard([name, boost, ext]) {
+  const art = ext ? memSet(name) : ["", "", ""], [two, four] = MEMORY_EFFECTS[name];
+  return `<article class="acard"><div class="mem">${art.map(thumb).join("")}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p>
+    <div class="fx"><p><b>2 pcs</b> ${esc(two)}</p><p><b>4 pcs</b> ${esc(four)}</p></div></article>`;
+}
+const weaponCard = ([owner, name, type, file, effect]) => `<article class="acard wpn">${thumb(`${CHARS}/${file}`)}
+  <div><h3>${esc(name)}</h3><p>${esc(owner)}</p><p>${esc(type)}</p></div><div class="fx"><p>${esc(effect)}</p></div></article>`;
+function assetsPage(key, pick = "all") {
+  const notFound = `<p class="empty">Page not found.</p>`;
+  if (key === "weapons") return `<h1>Weapons</h1><p class="sub">Assets</p><div class="agrid">${WEAPONS.map(weaponCard).join("")}</div>`;
+  if (key !== "memories") return notFound;
+  const tabs = ["All", ...Object.keys(MEMORY_TABS)], tab = tabs.find(t => slug(t) === pick);
+  if (!tab) return notFound;
+  const sets = tab === "All" ? Object.values(MEMORY_TABS).flat() : MEMORY_TABS[tab];
+  const links = tabs.map(t => `<a href="#/assets/memories/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${t}</a>`).join("");
+  return `<h1>Memories</h1><p class="sub">Assets</p>
+    <div class="assets"><div class="atabs" role="navigation" aria-label="Memory type">${links}</div><div class="agrid">${sets.map(memoryCard).join("")}</div></div>`;
+}
+
 function theme(id) {
   const m = $("#main"), c = id && COMPS[id];
   m.style.background = c ? `linear-gradient(180deg, ${c.c1}38 0%, ${c.c2}1f 100%), var(--bg)` : "";
@@ -661,10 +711,11 @@ function route() {
   expanded = variants ? shown : "";
   chosen = owner ? pick : variants ? variants[0].id : "";
   const main = $("#main");
-  main.innerHTML = path ? team(path) : home();
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : path ? team(path) : home();
   theme(null);
   document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#/" + path));
-  if (path) { toggle(true); openGroup(path.split("/")[0], true); }
+  if (kind === "assets") toggle(true, assetsBtn, assetsMenu);
+  else if (path) { toggle(true); openGroup(kind, true); }
   const sel0 = $(".picker button[data-id][aria-pressed=true]");
   if (sel0) theme(sel0.dataset.id);
   const picker = $(".picker");

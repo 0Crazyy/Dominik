@@ -1,0 +1,11 @@
+#!/bin/sh
+# Blocks a commit when the site points to an image that does not exist.
+# To commit anyway: git commit --no-verify
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-commit: Node.js não encontrado, verificação de imagens ignorada." >&2
+  exit 0
+fi
+node "$(git rev-parse --show-toplevel)/tools/check-assets.mjs" || {
+  echo "Commit bloqueado. Corrija os erros acima, ou use: git commit --no-verify" >&2
+  exit 1
+}

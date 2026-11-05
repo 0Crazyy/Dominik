@@ -128,8 +128,26 @@ html.locked{overflow:hidden}
 .close{top:16px;right:16px}
 .prev,.next{top:50%;margin-top:-22px}
 .prev{left:16px}.next{right:16px}
+.assets{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:start}
+.atabs{display:grid;gap:6px;position:sticky;top:20px}
+.atabs a{padding:9px 14px;background:var(--panel);border:1px solid var(--line);border-radius:4px;font-size:14px;font-weight:600}
+.atabs a:hover{background:#4a4a4f}
+.atabs a.on{background:#d8d8dc;border-color:#d8d8dc;color:#0b0b0c}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.acard{padding:12px;background:var(--panel);border:1px solid var(--line)}
+.acard h3{margin-top:10px;font-size:16px;font-weight:700}
+.acard p{margin-top:2px;font-size:12px;color:var(--mute)}
+.acard .fx{margin-top:10px;padding:10px;max-height:170px;overflow-y:auto;background:#ffffff0d}
+.acard .fx p{margin:0;font-size:12px;line-height:1.5;color:#dcdaf0}
+.acard .fx p+p{margin-top:8px}
+.fx b{color:#fff}
+.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-items:center;align-content:start}
+.wpn .slot{aspect-ratio:1}
+.wpn h3{margin-top:0}
+.wpn .fx{grid-column:1/-1}
+.wpn img{object-fit:contain}
 .empty{color:var(--mute);padding:40px;border:1px dashed var(--line);text-align:center}
-@media(max-width:760px){body{flex-direction:column}#side{width:100%;height:auto;position:static}#main{padding:18px}.card{flex-basis:320px}
+@media(max-width:760px){.assets{grid-template-columns:minmax(0,1fr)}.atabs{display:flex;flex-wrap:wrap;position:static}body{flex-direction:column}#side{width:100%;height:auto;position:static}#main{padding:18px}.card{flex-basis:320px}
 .hero{min-height:190px;padding:24px 20px}.hero-art{width:100%}.hero-track a{width:130px}.hero::after{background:linear-gradient(90deg,#101012e6 30%,#10101299 100%)}h1{font-size:28px}}
 @media(max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}.tile,.tiles>:nth-last-child(2):nth-child(3n+1),.tiles>:last-child:nth-child(3n+2),.tiles>:last-child:nth-child(3n+1){grid-column:span 1}.tiles>:last-child:nth-child(odd){grid-column:span 2}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.hero-track{animation:none}.hero-art{overflow-x:auto}}
