@@ -737,6 +737,13 @@ $("#main").addEventListener("click", e => {
   const c = e.target.closest(".comp .card");
   if (c && !e.target.closest("a")) openFocus(c);
 });
+$("#main").addEventListener("click", e => {
+  const column = e.target.closest("[data-sort]")?.dataset.sort;
+  if (!column) return;
+  memorySort = nextMemorySort(column);
+  $("#memoryList").innerHTML = memoryTable();
+  $(`[data-sort="${column}"]`).focus();
+});
 addEventListener("keydown", e => {
   const activate = e.key === "Enter" || e.key === " ";
   if (e.key === "Escape") setNav(false);
@@ -851,8 +858,38 @@ function team(path) {
 /* ---------- assets pages ---------- */
 const thumb = src => `<div class="slot">${src ? pic(src) : ""}</div>`;
 const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(thumb).join("");
+// Order of the Memories table. It stays while browsing tabs and memory pages, until the page reloads
+const STAT_NAMES = ["ATK", "DEF", "CRIT", "HP"];
+let memorySort = "", shownMemories = [];
+// The two orders of a column: Name goes A to Z first, the stats start from the highest value
+const columnSorts = column => column === "Name" ? ["az", "za"] : [`${column}-high`, `${column}-low`];
+// Clicking a column header goes through its orders, then back to the default one
+function nextMemorySort(column) {
+  const [first, second] = columnSorts(column);
+  return memorySort === first ? second : memorySort === second ? "" : first;
+}
+function sortedMemories(sets) {
+  if (!memorySort) return sets;
+  const byName = (a, b) => a[0].localeCompare(b[0]);
+  if (memorySort === "az") return [...sets].sort(byName);
+  if (memorySort === "za") return [...sets].sort((a, b) => byName(b, a));
+  const [stat, order] = memorySort.split("-"), i = STAT_NAMES.indexOf(stat), sign = order === "high" ? -1 : 1;
+  return [...sets].sort((a, b) => sign * (MEMORY_STATS[a[0]][i] - MEMORY_STATS[b[0]][i]) || byName(a, b));
+}
 const memoryStats = name => { const [ATK, DEF, CRIT, HP] = MEMORY_STATS[name]; return { ATK, DEF, CRIT, HP }; };
-const memoryCard = ([name, boost, ext]) => `<a class="acard" href="${memoryHref(name)}"><div class="mem">${memoryArt(name, ext)}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p>${statRow(memoryStats(name))}</a>`;
+const memoryRow = ([name, boost, ext]) => `<tr>
+    <td><div class="mt-name"><div class="mt-art">${thumb(ext && memFile(name, "1-4"))}</div>
+      <div><a href="${memoryHref(name)}">${esc(name)}</a><small>${esc(boost)}</small></div></div></td>
+    ${MEMORY_STATS[name].map(value => `<td>${value}</td>`).join("")}</tr>`;
+function memoryTable() {
+  const head = ["Name", ...STAT_NAMES].map(column => {
+    const [first, second] = columnSorts(column), on = memorySort === first ? 1 : memorySort === second ? 2 : 0;
+    const arrow = ["", "▼", "▲"][on];
+    const aria = !on ? "none" : (on === 1) === (column === "Name") ? "ascending" : "descending";
+    return `<th scope="col" aria-sort="${aria}"><button data-sort="${column}">${column}<i>${arrow}</i></button></th>`;
+  }).join("");
+  return `<table class="mtable"><thead><tr>${head}</tr></thead><tbody>${sortedMemories(shownMemories).map(memoryRow).join("")}</tbody></table>`;
+}
 const weaponThumb = file => thumb(file && `${CHARS}/${file}`);
 const weaponCard = ([owner, name, type, file]) => {
   const [atk, crit] = WEAPON_STATS[name];
@@ -945,8 +982,10 @@ function assetsPage(key, pick = "all") {
   if (!tab) return notFound;
   const sets = tab === "All" ? Object.values(MEMORY_TABS).flat() : MEMORY_TABS[tab];
   const links = tabs.map(t => `<a href="/assets/memories/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${t}</a>`).join("");
+  shownMemories = sets;
   return `<h1>Memories</h1><p class="sub">Assets</p>
-    <div class="assets"><div class="atabs" role="navigation" aria-label="Memory type">${links}</div><div class="agrid">${sets.map(memoryCard).join("")}</div></div>`;
+    <div class="assets"><div class="atabs" role="navigation" aria-label="Memory type">${links}</div>
+      <div id="memoryList">${memoryTable()}</div></div>`;
 }
 
 /* ---------- character pages ---------- */
