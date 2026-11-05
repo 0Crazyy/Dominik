@@ -62,6 +62,8 @@ const DA_VINCI = memSet("Da Vinci");
 const LUCIA_IC = `${CHARS}/lucia-inverse-crown`;
 const TEDDY = `${CHARS}/teddy-spectre`;
 const LEIA = `${CHARS}/leia-fortunaster`;
+const LUNA = `${CHARS}/luna-oblivion`;
+const NIRVATIA = `${CHARS}/nirvatia-dirge`;
 const PAVLICHENKO = memSet("Pavlichenko");
 const JOANNA = memSet("Joanna");
 const MOUSME = memSet("Mousme");
@@ -98,6 +100,10 @@ const SHAKESPEARE = memSet("Shakespeare");
 const HEISEN = memSet("Heisen");
 const BATHLON = memSet("Bathlon");
 const PATTON = memSet("Patton");
+const CLEOPATRA = memSet("Cleopatra");
+const BULGAKOV = memSet("Bulgakov");
+// As in the reference image: Nimue and Bulgakov show their 3-6 art first, so the pieces are rotated
+const rotated = ([a, b, c]) => [c, a, b];
 
 // Weapon Harmony: each memory is framed once here, as [x%, y%, zoom]. A card only says wh: "Da Vinci".
 // A memory missing from this list still works: it just shows the whole art until a frame is added.
@@ -229,6 +235,7 @@ const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326", ar: "#fff", ic
 const LIGHTNING_THEME = { c1: "#c3a14e", c2: "#13110b", cp: "#332c19", ar: "#fff", icon: "assets/energy type/Lightning.png" };
 const DARK_THEME = { c1: "#b38aff", c2: "#120f17", cp: "#2a2347", ar: "#fff", icon: "assets/energy type/Dark.png" };
 const ICE_THEME = { c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#fff", emblem: "❄︎", iconName: "Ice" };
+const NIHIL_THEME = { c1: "#ee77b2", c2: "#160f12", cp: "#361d2a", ar: "#fff", icon: "assets/energy type/Nihil.png" };
 const PHYSICAL_THEME = { c1: "#7ff0bc", c2: "#0f1515", cp: "#1e332c", ar: "#fff", icon: "assets/energy type/Physical.png" };
 
 // Shown above any build with this character until the date below (Brasília time)
@@ -266,6 +273,38 @@ const COMPS = {
       { id: "leia-sub-dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam({ wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN) }) },
       { id: "leia-cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam({ wh: "Einsteina", memories: memBuild(MOUSME, COTTIE) }) }
     ]
+  },
+  "better-tomorrow-nihil": {
+    name: "A Better Tomorrow", ...NIHIL_THEME,
+    variants: [{ id: "luna-rosetta-nirvatia", name: "Luna · Rosetta · Nirvatia", cards: [
+      { bar: "blue", name: "Luna: Oblivion", role: "captain",
+        symbol: classIcon("Annihilator"),
+        portrait: `${LUNA}/Awaken - Luna Oblivion.png`,
+        weapon: `${LUNA}/Arma - Luna Oblivion.png`,
+        wh: "Cottie",
+        memories: memBuild(CLEOPATRA, COTTIE),
+        matrix: matrix(GA, INC, ML),
+        resonance: ALL_ATK,
+        core: `${LUNA}/Skill - Signature HD.png`,
+        construct: `${LUNA}/CUB - Guardrake.png`,
+        skills: cubSkills(LUNA),
+        desc: "Luna unfortunally needs Cotties to smoothly all the time, but after her leap, DLT isn't required anymore for the basics. \"The\" set for all Nihil occassions, nothing much to change." },
+      { bar: "red", role: "starter", ...ROSETTA_KIT, wh: "Bathlon", memories: memBuild(rotated(NIMUE), BATHLON), matrix: matrix(DD, ML, GA),
+        resonance: `${ROSETTA}/Skill - Ataque Básico.webp`,
+        desc: "Designed specifically for Nihil team, doing a single signature per entrance. If SS3≥, you'll have to play with her as you were with SS0 instead. Awkward? Yeah, but every help is welcome. Rosetta will deal some damage, and in extra of having Bathlon, will debuff the enemies along with Luna's class skill effect, instead of using Cottie that will benefit only herself. A great harmony considering the lack of Israe- I mean, Ishmael." },
+      { bar: "gold", name: "Nirvatia: Dirge", role: "",
+        symbol: classIcon("Amplifier"),
+        portrait: `${NIRVATIA}/Awaken - Nirvatia Dirge.png`,
+        weapon: `${NIRVATIA}/Arma - Obituary for Yesterday..webp`,
+        wh: "Guinevere",
+        memories: memBuild(rotated(BULGAKOV), GUINEVERE),
+        matrix: matrix(SAR, GS, INC),
+        resonance: ALL_ATK,
+        core: `${NIRVATIA}/Skill - Signature HD.png`,
+        construct: `${NIRVATIA}/CUB - Morigan.webp`,
+        skills: cubSkills(NIRVATIA, "webp"),
+        desc: "Uhh... Odd character. In certain cases, we would have put the elemental memory in here since another character is using Cottie, but Nihil doesn't have a single elemental memory, like Shakespeare, Bathlon, etc. So... If you want to buff the other teammates, use Guinevere or Da Vinci, based on your team's composition. If you're lacking Luna and/or Israe- I mean, Ishmael, Cottie can be considered on her too. She can only do 2 Signatures normally if she's at SSS. I personally don't know if DLT is also needed for that on SSS, but on SS3, DLT wasn't enough." }
+    ] }]
   },
   "homecoming-voyage": {
     name: "Homecoming Voyage", ...ICE_THEME,
@@ -429,11 +468,22 @@ const COMPS = {
   }
 };
 
-const ENERGY =["Fire", "Lightning", "Ice", "Physical", "Dark", "Nihil"];
-const EFFECT = ["Ignition", "Plasma Beam", "Glaciation", "Ultima Slash", "Darkflow"];
+// Left to right on the home grid and top to bottom in the menu
+const ENERGY = ["Fire", "Lightning", "Ice", "Dark", "Physical", "Nihil"];
+const EFFECT = ["Ignition", "Plasma Beam", "Glaciation", "Darkflow", "Ultima Slash", "Disruption"];
+// Add a name here to list it in the menu (icon in assets/effects/<name>.png, teams in PAGES as "special/<slug>")
+const SPECIAL_EFFECT = ["Raydiance"];
+const TEAM_LISTS = {
+  energy: { label: "Energy", items: ENERGY },
+  effect: { label: "Derivative Effect", items: EFFECT },
+  special: { label: "Special Derivative Effect", items: SPECIAL_EFFECT }
+};
+// Home grid: what sits under each energy, as in the game's Energy and Effect screen
+const ENERGY_EFFECT = { "Physical": "Ultima Slash", "Fire": "Ignition", "Ice": "Glaciation", "Lightning": "Plasma Beam", "Dark": "Darkflow", "Nihil": "Disruption" };
+const ENERGY_SPECIAL = { "Lightning": "Raydiance" };
 // Home tile colors: each effect shares the color of its energy type
 const TILE_COLOR = {
-  "Fire": "#ff6a5e", "Lightning": "#e6bd52", "Ice": "#3fc1ff", "Physical": "#5fdca6", "Dark": "#b38aff", "Nihil": "#a9bccf",
+  "Fire": "#ff6a5e", "Lightning": "#e6bd52", "Ice": "#3fc1ff", "Physical": "#5fdca6", "Dark": "#b38aff", "Nihil": "#ac2c75",
   "Ignition": "#ff6a5e", "Plasma Beam": "#e6bd52", "Glaciation": "#3fc1ff", "Ultima Slash": "#5fdca6", "Darkflow": "#b38aff"
 };
 // Home conveyor: these characters come first, then everyone else who has a build
@@ -445,6 +495,7 @@ const PAGES = {
   "energy/ice": ["comets-afterglow", "homecoming-voyage"],
   "energy/physical": ["steering-physical"],
   "energy/dark": ["anchored-dark"],
+  "energy/nihil": ["better-tomorrow-nihil"],
   "effect/ignition": ["homecoming-ignition"],
   "effect/plasma-beam": ["kamui-lilith-nanami"],
   "effect/glaciation": ["glaciation"],
@@ -460,6 +511,7 @@ function iconName(src = "") {
   const file = src.split("/").pop().replace(/\.\w+$/, "");
   if (file === "Tanque") return "Tank";
   if (file === "Skill - Orb Vermelho") return "Red Orb";
+  if (file === "Skill - Ataque Básico") return "Basic Attack";
   if (file === "Ressonância - ALL ATK") return "Any ATK";
   if (file === "Classe - Adelyde Anabasis") return "Overlinker";
   if (file.startsWith("Skill - Signature")) return "Signature";
@@ -478,10 +530,10 @@ function iconInfo(src = "") {
   return RESONANCE_EFFECTS[iconName(src)] || "";
 }
 const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(info)}"` : "");
-// Assets detail pages: #/assets/memory/<id> and #/assets/weapon/<id>
+// Assets detail pages: /assets/memory/<id> and /assets/weapon/<id>
 const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
-const memoryHref = name => `#/assets/memory/${linkId(name)}`;
-const weaponHref = name => `#/assets/weapon/${linkId(name)}`;
+const memoryHref = name => `/assets/memory/${linkId(name)}`;
+const weaponHref = name => `/assets/weapon/${linkId(name)}`;
 // With href, the slot is a link. With a tip but no image, it shows that name in place of the art
 const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", info = iconInfo(src)) => {
   const tag = href ? "a" : "div", named = !src && tip;
@@ -504,8 +556,9 @@ const ICON_FIT = {
 const menuIcon = (dir, e) => `<img src="assets/${dir}/${e}.png" alt=""${ICON_FIT[e] ? ` style="transform:${ICON_FIT[e]}"` : ""}>`;
 const group = (label, key, arr, iconDir) =>
   `<button class="sub" data-grp="${key}" aria-expanded="false">${label} <i>▾</i></button>` +
-  `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="#/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("")}</div>`;
-menu.innerHTML = group("Energy Type", "energy", ENERGY, "energy type") + group("Effect", "effect", EFFECT, "effects");
+  `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">Nothing here yet</p>`}</div>`;
+menu.innerHTML = group(TEAM_LISTS.energy.label, "energy", ENERGY, "energy type") + group(TEAM_LISTS.effect.label, "effect", EFFECT, "effects") +
+  group(TEAM_LISTS.special.label, "special", SPECIAL_EFFECT, "effects");
 function toggle(open, b = btn, m = menu) {
   b.setAttribute("aria-expanded", open);
   m.hidden = !open;
@@ -676,14 +729,14 @@ addEventListener("resize", () => { if (view) layout(); });
 
 /* ---------- pages ---------- */
 // Every character with a build, read from PAGES and COMPS, so a new team joins the conveyor by itself.
-// Each one links to its first team on an Energy Type page (or an Effect page if it has no other).
+// Each one links to its first team on an Energy page (or a Derivative Effect page if it has no other).
 function heroChars() {
   const found = new Map();
   const pages = Object.entries(PAGES).sort(([a], [b]) => b.startsWith("energy") - a.startsWith("energy"));
   for (const [path, ids] of pages) for (const id of ids) {
     const { cards, variants } = COMPS[id];
     for (const t of variants || [{ id, cards }]) for (const c of t.cards) {
-      if (c.portrait && !found.has(c.name)) found.set(c.name, { name: c.name, portrait: c.portrait, href: `#/${path}/${t.id}` });
+      if (c.portrait && !found.has(c.name)) found.set(c.name, { name: c.name, portrait: c.portrait, href: `/${path}/${t.id}` });
     }
   }
   const rank = c => { const i = HERO_FIRST.indexOf(c.name); return i < 0 ? HERO_FIRST.length : i; };
@@ -700,20 +753,23 @@ function heroBelt() {
   return `<div class="hero-art" role="navigation" aria-label="Characters"><div class="hero-track" style="--n:${chars.length};animation-delay:-${start}s">${chars.map(c => link(c)).join("")}${chars.map(c => link(c, true)).join("")}</div></div>`;
 }
 function home() {
-  const tile = (e, p, iconDir) => {
+  const tile = (e, p, iconDir, color = TILE_COLOR[e]) => {
+    if (!e) return `<span class="tile-gap">N/A</span>`;
     const count = (PAGES[`${p}/${slug(e)}`] || []).reduce((sum, id) => sum + (COMPS[id].variants || [0]).length, 0);
-    return `<a class="tile${count ? "" : " none"}" style="--c:${TILE_COLOR[e]}" href="#/${p}/${slug(e)}">
+    return `<a class="tile${count ? "" : " none"}" style="--c:${color}" href="/${p}/${slug(e)}">
       <img class="t-bg" src="assets/${iconDir}/${e}.png" alt="">
       <span class="t-ic">${menuIcon(iconDir, e)}</span>
       <span class="t-tx"><b>${e}</b><small>${count ? `${count} team${count > 1 ? "s" : ""}` : "No teams yet"}</small></span>
     </a>`;
   };
-  const tiles = (arr, p, iconDir) => `<div class="tiles">${arr.map(e => tile(e, p, iconDir)).join("")}</div>`;
+  // Cells go column by column: the row names, then each energy with its effects
+  const labels = Object.values(TEAM_LISTS).map(l => `<h2 class="home-label">${l.label}</h2>`).join("");
+  const columns = ENERGY.map(e => tile(e, "energy", "energy type") + tile(ENERGY_EFFECT[e], "effect", "effects", TILE_COLOR[e]) + tile(ENERGY_SPECIAL[e], "special", "effects", TILE_COLOR[e])).join("");
   return `<section class="hero">
       ${heroBelt()}
-      <div class="hero-tx"><h1>Punishing: Gray Raven Builds</h1><p class="sub">Pick a team by energy type or effect.</p></div>
+      <div class="hero-tx"><h1>Punishing: Gray Raven Builds</h1><p class="sub">Pick a team by energy or derivative effect.</p></div>
     </section>
-    <h2 class="grp">Energy Type</h2>${tiles(ENERGY, "energy", "energy type")}<h2 class="grp">Effect</h2>${tiles(EFFECT, "effect", "effects")}`;
+    <div class="home-grid">${labels}${columns}</div>`;
 }
 // Every page visit opens the newest team (first composition in PAGES, on its first variant) unless
 // the link names another. A composition with variants shows its build only while one of its
@@ -739,11 +795,11 @@ function compBody(sel) {
 }
 function team(path) {
   const [kind, key] = path.split("/");
-  const list = (kind === "energy" ? ENERGY : EFFECT).find(e => slug(e) === key);
+  const list = TEAM_LISTS[kind]?.items.find(e => slug(e) === key);
   if (!list) return `<p class="empty">Page not found.</p>`;
   const ids = PAGES[path] || [];
-  const head = `<h1>${list}</h1><p class="sub">${kind === "energy" ? "Energy Type" : "Effect"}</p>`;
-  if (!ids.length) return head + `<p class="empty">No compositions yet. Add one in app.js (PAGES).</p>`;
+  const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
+  if (!ids.length) return head + `<p class="empty">No teams yet.</p>`;
   return head + `<div class="picker" role="group" aria-label="Composition">${pickerHtml(path, shown)}</div><div id="compBox">${compBody(shown)}</div>`;
 }
 
@@ -759,12 +815,12 @@ let buildReturn = "";
 const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ Back to build</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
 function memoryPage([name, boost, ext]) {
   const [two, four] = MEMORY_EFFECTS[name], { tab } = MEM_INDEX.get(name);
-  return `${backLink(`#/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
+  return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
       <div class="fx"><h2>2 pcs</h2><p>${esc(two)}</p><h2>4 pcs</h2><p>${esc(four)}</p></div></div>`;
 }
 function weaponPage([owner, name, type, file, effect]) {
-  return `${backLink("#/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc([type, owner].filter(Boolean).join(" · "))}</p>
+  return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc([type, owner].filter(Boolean).join(" · "))}</p>
     <div class="detail wpn-detail">${weaponThumb(file)}<div class="fx"><h2>Effect</h2><p>${esc(effect)}</p></div></div>`;
 }
 function assetsPage(key, pick = "all") {
@@ -782,7 +838,7 @@ function assetsPage(key, pick = "all") {
   const tabs = ["All", ...Object.keys(MEMORY_TABS)], tab = tabs.find(t => slug(t) === pick);
   if (!tab) return notFound;
   const sets = tab === "All" ? Object.values(MEMORY_TABS).flat() : MEMORY_TABS[tab];
-  const links = tabs.map(t => `<a href="#/assets/memories/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${t}</a>`).join("");
+  const links = tabs.map(t => `<a href="/assets/memories/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${t}</a>`).join("");
   return `<h1>Memories</h1><p class="sub">Assets</p>
     <div class="assets"><div class="atabs" role="navigation" aria-label="Memory type">${links}</div><div class="agrid">${sets.map(memoryCard).join("")}</div></div>`;
 }
@@ -798,8 +854,8 @@ function swap(update) {
   else update();
 }
 function route() {
-  // A link can name a team as a third part: #/energy/dark/kurumi-adelyde-rosetta
-  const [kind, key, pick] = location.hash.replace(/^#\/?/, "").split("/");
+  // A link can name a team as a third part: /energy/dark/kurumi-adelyde-rosetta
+  const [kind, key, pick] = location.pathname.split("/").filter(Boolean).map(decodeURIComponent);
   const path = key ? `${kind}/${key}` : kind;
   const ids = (key && PAGES[path]) || [];
   const owner = ids.find(id => (COMPS[id].variants || []).some(v => v.id === pick));
@@ -810,7 +866,7 @@ function route() {
   const main = $("#main");
   main.innerHTML = kind === "assets" ? assetsPage(key, pick) : path ? team(path) : home();
   theme(null);
-  document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#/" + ({ "assets/memory": "assets/memories", "assets/weapon": "assets/weapons" }[path] || path)));
+  document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + ({ "assets/memory": "assets/memories", "assets/weapon": "assets/weapons" }[path] || path)));
   if (kind === "assets") toggle(true, assetsBtn, assetsMenu);
   else if (path) { toggle(true); openGroup(kind, true); }
   const sel0 = $(".picker button[data-id][aria-pressed=true]");
@@ -828,7 +884,8 @@ function route() {
     const sel = expanded || (variant || COMPS[id].variants ? "" : id);
     // The address follows the pick, so going back from another page returns to this same build
     const pick = variant || (COMPS[id].variants ? "" : sel);
-    history.replaceState(null, "", `#/${path}${pick ? `/${pick}` : ""}`);
+    history.replaceState(null, "", `/${path}${pick ? `/${pick}` : ""}`);
+    pageUrl = location.href;
     swap(() => {
       picker.innerHTML = pickerHtml(path, sel);
       $("#compBox").innerHTML = compBody(sel);
@@ -856,7 +913,7 @@ if (matchMedia("(hover:hover)").matches) {
     tip.style.left = `${Math.max(6, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 6))}px`;
     tip.style.top = `${Math.max(6, Math.min(r.top - h - 6 < 6 ? r.bottom + 6 : r.top - h - 6, innerHeight - h - 6))}px`;
   });
-  for (const type of ["pointerdown", "scroll", "hashchange"]) addEventListener(type, () => { tip.hidden = true; }, true);
+  for (const type of ["pointerdown", "scroll", "pagechange"]) addEventListener(type, () => { tip.hidden = true; }, true);
 } else {
   // Touch screens have no hover: tapping an icon opens a sheet with the same text, and a link when it has a page
   const sheet = document.createElement("div");
@@ -893,7 +950,7 @@ if (matchMedia("(hover:hover)").matches) {
   }, true);
   sheet.onclick = e => { if (e.target === sheet || e.target.closest(".sheet-close, .sheet-link")) closeSheet(); };
   addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
-  addEventListener("hashchange", closeSheet);
+  addEventListener("pagechange", closeSheet);
 }
 // Stacked cards: says there are more characters below, until the second card comes into view
 const scrollHint = document.createElement("div");
@@ -917,18 +974,41 @@ addEventListener("error", e => {
 }, true);
 // Every page opens at the top, except when coming back from a detail page to where you were.
 // "skill" is here for the skill pages planned for later: they only need to use backLink
-const DETAIL_PAGE = /#\/assets\/(memory|weapon|skill)\//;
+const DETAIL_PAGE = /\/assets\/(memory|weapon|skill)\//;
 const scrollSaved = new Map();
 history.scrollRestoration = "manual";
-addEventListener("hashchange", e => {
+// The address of the page on screen: when the browser goes back, location already shows the next one
+let pageUrl = "";
+// Links shared before the addresses lost the # (dominiko.netlify.app/#/energy/dark) still open the right page
+function dropOldHash() {
+  if (location.hash.startsWith("#/")) history.replaceState(null, "", location.hash.slice(1));
+}
+function pageChanged() {
+  dropOldHash();
+  const oldUrl = pageUrl;
+  pageUrl = location.href;
+  if (oldUrl === pageUrl) return;
+  dispatchEvent(new Event("pagechange"));
   closeFocus(true);
   setNav(false);
-  scrollSaved.set(e.oldURL, scrollY);
-  const fromDetail = DETAIL_PAGE.test(e.oldURL), fromTeam = /#\/(energy|effect)\//.test(e.oldURL);
-  if (fromTeam && DETAIL_PAGE.test(location.href)) buildReturn = new URL(e.oldURL).hash;
-  else if (!fromDetail || !DETAIL_PAGE.test(location.href)) buildReturn = "";
-  swap(() => { route(); scrollTo(0, fromDetail ? scrollSaved.get(location.href) || 0 : 0); });
+  scrollSaved.set(oldUrl, scrollY);
+  const fromDetail = DETAIL_PAGE.test(oldUrl), fromTeam = /\/(energy|effect|special)\//.test(oldUrl);
+  if (fromTeam && DETAIL_PAGE.test(pageUrl)) buildReturn = new URL(oldUrl).pathname;
+  else if (!fromDetail || !DETAIL_PAGE.test(pageUrl)) buildReturn = "";
+  swap(() => { route(); scrollTo(0, fromDetail ? scrollSaved.get(pageUrl) || 0 : 0); });
+}
+// Links inside the site change the page without reloading it. Ctrl+click and the like stay with the browser
+addEventListener("click", e => {
+  const link = e.target.closest?.('a[href^="/"]');
+  if (!link || e.defaultPrevented || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  if (link.pathname === location.pathname) return;
+  history.pushState(null, "", link.href);
+  pageChanged();
 });
+addEventListener("popstate", pageChanged);
 // Removes the notice from a page left open past the date
 if (noticeTimeLeft() > 0) setTimeout(() => document.querySelectorAll(".notice").forEach(el => el.remove()), noticeTimeLeft());
+dropOldHash();
+pageUrl = location.href;
 route();

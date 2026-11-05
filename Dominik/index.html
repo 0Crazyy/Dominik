@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Pages have addresses like /energy/dark: this keeps file paths starting at the site root on all of them -->
+<base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dominik - Punishing Gray Raven Builds</title>
 <meta name="description" content="Punishing: Gray Raven team builds, organized by energy type and effect.">
@@ -24,16 +26,16 @@
 </head>
 <body>
 <aside id="side">
-  <a class="logo" href="#/"><img src="assets/logo.webp" alt=""><span>DOMINIK</span></a>
+  <a class="logo" href="/"><img src="assets/logo.webp" alt=""><span>DOMINIK</span></a>
   <button id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="sideNav">☰</button>
   <nav id="sideNav">
-    <a href="#/" data-nav="home">Home</a>
+    <a href="/" data-nav="home">Home</a>
     <button id="teamsBtn" aria-expanded="false" aria-controls="teamsMenu">Teams <i>▾</i></button>
     <div id="teamsMenu" hidden></div>
     <button id="assetsBtn" aria-expanded="false" aria-controls="assetsMenu">Assets <i>▾</i></button>
     <div id="assetsMenu" class="subList" hidden>
-      <a href="#/assets/memories">Memories</a>
-      <a href="#/assets/weapons">Weapons</a>
+      <a href="/assets/memories">Memories</a>
+      <a href="/assets/weapons">Weapons</a>
     </div>
   </nav>
 </aside>

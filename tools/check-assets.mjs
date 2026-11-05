@@ -16,7 +16,7 @@ const DATA_END = "const $ = (s, r = document)";
 function loadData() {
   const app = read("app.js"), end = app.indexOf(DATA_END);
   if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/check-assets.mjs`);
-  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, WEAPONS, ENERGY, EFFECT, CHARS, memFile, memSet";
+  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, WEAPONS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
   return vm.runInNewContext(`${read("assets-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 }
 
@@ -69,7 +69,7 @@ function check() {
   }
   for (const [owner, , , file] of d.WEAPONS) if (file) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
   for (const e of d.ENERGY) use(`assets/energy type/${e}.png`, "ícones de Energy Type");
-  for (const e of d.EFFECT) use(`assets/effects/${e}.png`, "ícones de Effect");
+  for (const e of [...d.EFFECT, ...d.SPECIAL_EFFECT]) use(`assets/effects/${e}.png`, "ícones de Effect");
   for (const file of ["app.js", "index.html", "style.css"]) literalPaths(file).forEach(path => use(path, file));
 
   const files = listFiles(join(SITE, "assets"));

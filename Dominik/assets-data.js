@@ -254,6 +254,22 @@ const CUB_SKILLS = {
     ["Chained Charge", "Each time Patrick casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
     ["Convergent Field", "Increases the carrier's ATK by 100."],
     ["Polar Calibration", "Patrick's Active Skills deal 70% more damage."]
+  ],
+  "luna-oblivion": [
+    ["Abyssal Breath: Nihil / Furious Annihilation: Nihil", "Abyssal Breath: Nihil: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Guardrake will unleash Dragon Breath from above the target, dealing 750% Nihil DMG and slowing the enemy unit for 3s. During this, the target hit will take 250% Nihil DMG every second.\n\nFurious Annihilation: Nihil: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Guardrake will take off and dive toward the target, dealing 1800% Nihil DMG."],
+    ["Retribution of Eclipse", "When Luna: Oblivion casts Incipient Retribution or Final Retribution with Guardrake equipped, she will summon Guardrake to launch a joint attack, dealing 2500% Nihil DMG. The overall amplification effect of Eclipse Points increases by 25%."],
+    ["Dark Nihility", "Increases the carrier's Nihil DMG by 10%."],
+    ["Crimson Ember", "Each time Guardrake casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Triggering this effect again will renew its duration."],
+    ["Dominating Calamity", "Increases the carrier's ATK by 100."],
+    ["Menacing Form", "Guardrake's Active Skills deal 70% more damage."]
+  ],
+  "nirvatia-dirge": [
+    ["Raven Mandate: Nihil / Winged Fragrance: Nihil", "Raven Mandate: Nihil: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Morigan will unleash feathers to attack, dealing 250% Nihil DMG 8 times.\n\nWinged Fragrance: Nihil: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Morigan will unleash a wind strike that pulls in enemies, dealing 250% Nihil DMG 8 times."],
+    ["Untrod Path", "When Nirvatia casts Hanging Phantom with Morigan equipped, she will summon Morigan to launch a joint attack, dealing 5 hits of 625% Nihil DMG each. When casting Fatal Kiss, increases ATK by 40% for 8s. Duration resets every time it is triggered."],
+    ["Soultether", "Increases the carrier's Nihil DMG by 10%."],
+    ["Bill Echo", "Each time Morigan casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Shadow Roost", "Increases the carrier's ATK by 100."],
+    ["Harbinger", "Morigan's Active Skills deal 70% more damage."]
   ]
 };
 
