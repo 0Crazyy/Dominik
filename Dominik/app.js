@@ -16,7 +16,8 @@ const WEAPON_RES = n => `${RES}/Ressonância de Arma - ${n} HD.png`;
 const ALL_ATK = `${RES}/Ressonância - ALL ATK.png`;
 // Memory sets, in the tabs and order of the game's Select Memory Set screen, plus Nihil and Uniframe.
 // Each tab is a folder in assets/memories, and files are named "Memória - <name> <1-4|2-5|3-6|WH>.<ext>".
-// Entry: [name, boost, art extension]. No extension = no art yet, so its card shows empty slots.
+// Entry: [name, boost, art extension]. No extension = no art yet: its Assets card shows empty slots
+// and a build shows its name instead. When the art arrives, just add the extension here.
 const MEMORY_TABS = {
   Common: [["Frederick", "Dodge Boost"], ["Cottie", "Signature Move Boost", "png"], ["Hanna", "3-Ping Boost", "png"],
     ["Darwin", "Orb Skill Boost", "png"], ["Condelina", "Basic Attack Boost"]],
@@ -31,7 +32,7 @@ const MEMORY_TABS = {
     ["Alphonse", "Fire Boost", "png"], ["Turing", "Fire Boost", "png"], ["Unimate", "Fire Boost"],
     ["Elizabeth", "Fire Boost"], ["Shakespeare", "Fire Boost", "png"]],
   Ice: [["Pavlichenko", "Ice Boost", "webp"], ["Joanna", "Ice Boost", "png"], ["Liston", "Ice Boost", "png"],
-    ["Ji Bo'an", "Ice Boost", "png"], ["Aline", "Ice Boost"], ["Chen Jiyuan", "Ice Boost", "png"]],
+    ["Ji Bo'an", "Ice Boost", "png"], ["Aline", "Ice Boost"], ["Chen Jiyuan", "Ice Boost", "png"], ["Mousme", "Ice Boost"]],
   Lightning: [["Cogito", "Lightning Boost", "webp"], ["Natasha", "Lightning Boost", "png"], ["Herschell", "Lightning Boost", "png"],
     ["Fran", "Lightning Boost", "png"], ["Diesel", "Lightning Boost"], ["Tifa", "Lightning Boost"], ["Heisen", "Lightning Boost", "png"]],
   Dark: [["Pesanteur", "Dark Boost", "webp"], ["Nimue", "Dark Boost", "png"], ["Jeanne", "Dark Boost", "png"],
@@ -44,7 +45,7 @@ const MEMORY_TABS = {
 const MEM_INDEX = new Map(Object.entries(MEMORY_TABS).flatMap(([tab, sets]) => sets.map(([name, , ext]) => [name, { tab, ext }])));
 const memFile = (name, piece, ext = MEM_INDEX.get(name).ext) => `${MEM}/${MEM_INDEX.get(name).tab}/Memória - ${name} ${piece}.${ext}`;
 // The three arts of a memory set, in slot order: 1-4, 2-5, 3-6
-const memSet = name => ["1-4", "2-5", "3-6"].map(p => memFile(name, p));
+const memSet = name => ["1-4", "2-5", "3-6"].map(p => MEM_INDEX.get(name).ext ? memFile(name, p) : name);
 // 4 pieces of "main" (slots 1, 2, 3, 5) + 2 pieces of "sub" (slots 4, 6)
 const memBuild = (main, sub) => [main[0], main[1], main[2], sub[0], main[1], sub[2]];
 const cubSkills = (dir, ext = "png") => [1, 2, 3, 4, 5, 6].map(i => `${dir}/CUB - Skill ${i}.${ext}`);
@@ -60,8 +61,10 @@ const GUINEVERE = memSet("Guinevere");
 const DA_VINCI = memSet("Da Vinci");
 const LUCIA_IC = `${CHARS}/lucia-inverse-crown`;
 const TEDDY = `${CHARS}/teddy-spectre`;
+const LEIA = `${CHARS}/leia-fortunaster`;
 const PAVLICHENKO = memSet("Pavlichenko");
 const JOANNA = memSet("Joanna");
+const MOUSME = memSet("Mousme");
 
 const LUCIA_P = `${CHARS}/lucia-pyroath`;
 const VERA = `${CHARS}/vera-geiravor`;
@@ -104,6 +107,7 @@ const WH_FRAME = {
   "Cottie": [49, 6, 3.2],
   "Da Vinci": [50, 31, 4.6],
   "Darwin": [48, 21, 4.07],
+  "Einsteina": [48, 33, 5.5],
   "Guinevere": [50, 48, 6],
   "Heisen": [44, 9, 3.7],
   "Klenova": [56, 41, 3.5],
@@ -178,6 +182,18 @@ const KAMUI_KIT = {
   weapon: `${KAMUI}/Arma - Kamui Aeternion.png`, wh: "Darwin", memories: memBuild(FEYNMAN, COTTIE),
   resonance: ALL_ATK, core: `${KAMUI}/Skill - Signature 2.png`, construct: `${KAMUI}/CUB - Ignis.png`, skills: cubSkills(KAMUI, "webp")
 };
+const TEDDY_KIT = {
+  name: "Teddy: Spectre", symbol: classIcon("Amplifier"), portrait: `${TEDDY}/Awaken - Teddy Spectre.png`,
+  weapon: `${TEDDY}/Arma - Teddy Spectre.png`, matrix: matrix(SAR, GS, INC),
+  resonance: ALL_ATK, core: `${TEDDY}/Skill - Signature HD.png`, construct: `${TEDDY}/CUB - Beep-Boop.png`,
+  // Order as in the reference image: slot 5 is Teddy's Skill 6, slot 6 is Bianca's Skill 6
+  skills: [...cubSkills(TEDDY).slice(0, 4), `${TEDDY}/CUB - Skill 6.png`, `${CHARS}/bianca-crepuscule/CUB - Skill 6.png`]
+};
+// No weapon or Signature art yet; Wanshi's CUB is a placeholder until Leia's is added
+const LEIA_KIT = {
+  name: "Leia: Fortunaster", symbol: classIcon("Breaker"), portrait: `${LEIA}/Awaken - Leia Fortunaster.png`,
+  matrix: matrix(DD, GA, ML), resonance: ALL_ATK, construct: `${WANSHI}/CUB - Snowveil.png`, skills: cubSkills(WANSHI)
+};
 const NANAMI_KIT = {
   name: "Nanami: Startrail", symbol: classIcon("Tanque"), portrait: `${NANAMI}/Awaken - Nanami Startrail.png`,
   weapon: `${NANAMI}/Arma - Nanami Startrail.png`, matrix: matrix(DD, ML, INC),
@@ -212,13 +228,28 @@ const ADELYDE_QTE_DESC = `${ADELYDE_DESC} Her SSS skill increases any QTE damage
 const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326", ar: "#fff", icon: "assets/energy type/Fire.png" };
 const LIGHTNING_THEME = { c1: "#c3a14e", c2: "#13110b", cp: "#332c19", ar: "#fff", icon: "assets/energy type/Lightning.png" };
 const DARK_THEME = { c1: "#b38aff", c2: "#120f17", cp: "#2a2347", ar: "#fff", icon: "assets/energy type/Dark.png" };
+const ICE_THEME = { c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#fff", emblem: "❄︎", iconName: "Ice" };
 const PHYSICAL_THEME = { c1: "#7ff0bc", c2: "#0f1515", cp: "#1e332c", ar: "#fff", icon: "assets/energy type/Physical.png" };
+
+// Shown above any build with this character until the date below (Brasília time)
+const NEW_CHARACTER_NOTICE = {
+  name: "Leia: Fortunaster", until: "2026-11-12T02:00:00-03:00",
+  text: "Leia: Fortunaster is a recent character, so there is little feedback on these builds so far. It's recommended to wait at least 1 week for more information. Take it with a grain of salt."
+};
+
+// Both A Comet's Afterglow builds differ only in Leia's memories and Weapon Harmony
+const cometTeam = leia => [
+  { bar: "blue", role: "captain", ...LEIA_KIT, ...leia, desc: "" },
+  { bar: "red", role: "", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
+  // As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
+  { bar: "gold", role: "starter", ...TEDDY_KIT, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]], desc: "" }
+];
 
 // A team is named after the patch (Global) of its newest character. Teams of one page that share
 // a patch go together as "variants" of that patch; newest patch first in PAGES.
 const COMPS = {
   "glaciation": {
-    name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#8fe8ff", emblem: "✦",
+    name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#8fe8ff", emblem: "✦", iconName: "Glaciation",
     cards: [
       { bar: "blue", role: "captain starter", ...SELENA_KIT, wh: "Klenova", matrix: matrix(DLT, GA, INC),
         desc: "Standard Glaciation build for Selena. If everything is done right, you can land her final Signature during the effect's period with a little time remaining." },
@@ -229,30 +260,41 @@ const COMPS = {
         desc: "Standard metan (phentamine) build. She needs Wanshi's stacks to start dealing damage, and the effect lasts as long as you have pings and energy." }
     ]
   },
+  "comets-afterglow": {
+    name: "A Comet's Afterglow", ...ICE_THEME,
+    variants: [
+      { id: "leia-sub-dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam({ wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN) }) },
+      { id: "leia-cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam({ wh: "Einsteina", memories: memBuild(MOUSME, COTTIE) }) }
+    ]
+  },
   "homecoming-voyage": {
-    name: "Homecoming Voyage", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#fff", emblem: "❄︎",
+    name: "Homecoming Voyage", ...ICE_THEME,
     variants: [{ id: "ic-ss3", name: "IC SS3", cards: [
       { bar: "blue", name: "Wanshi: Lucid Dreamer", role: "starter", ...WANSHI_BUILD,
         desc: "Support DPS build for Wanshi. Signature energy boost of 2x Cottie is totally useless on him, and 4x Cottie's Extra DMG Bonus doesn't work on him because it requires a Signature Move to activate, and 50% of his damage is outside the Signature. His damage loops steps won't change no matter what memory you use on him, so you can try various memory sets alongside his signature memory for various combos." },
       { bar: "red", role: "captain", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
-      { bar: "gold", name: "Teddy: Spectre", role: "",
-        symbol: "assets/classes/Amplifier.png",
-        portrait: `${TEDDY}/Awaken - Teddy Spectre.png`,
-        weapon: `${TEDDY}/Arma - Teddy Spectre.png`,
-        wh: "Chen Jiyuan",
-        memories: memBuild(JOANNA, CHEN_JIYUAN),
-        matrix: ["Superconducting Axial Ray", "Glorious Spear", "Incandescence"].map(WEAPON_RES),
-        resonance: ALL_ATK,
-        core: `${TEDDY}/Skill - Signature HD.png`,
-        construct: `${TEDDY}/CUB - Beep-Boop.png`,
-        // Order as in the reference image: slot 5 is Teddy's Skill 6, slot 6 is Bianca's Skill 6
-        skills: [...cubSkills(TEDDY).slice(0, 4), `${TEDDY}/CUB - Skill 6.png`, `${CHARS}/bianca-crepuscule/CUB - Skill 6.png`],
+      { bar: "gold", role: "", ...TEDDY_KIT, wh: "Chen Jiyuan", memories: memBuild(JOANNA, CHEN_JIYUAN),
         desc: "Standard DPS build for Teddy. She works well with any memory alongside her signature memory, and she can do everything of her damage loop without any signature energy boost of 2x Cottie as well, so you can try various memories along with it and her damage loop steps won't change at all. By considering the other teammates's memories, Guinevere on here is a good choice too." }
     ] }]
   },
   "dying-sun-fire": {
     name: "The Dying Sun", ...FIRE_THEME,
-    variants: [{ id: "lucia-vera-kamui", name: "Lucia · Vera · Kamui", cards: [
+    variants: [{ id: "watanabe-vera-kamui", name: "Watanabe · Vera · Kamui", cards: [
+      { bar: "blue", name: "Watanabe: Epitaph", role: "starter",
+        symbol: classIcon("Tanque"),
+        portrait: `${WATANABE}/Awaken - Watanabe Epitaph.png`,
+        weapon: `${WATANABE}/Arma - Watanabe Epitaph.png`,
+        wh: "Da Vinci",
+        memories: memBuild(ALPHONSE, DA_VINCI),
+        matrix: matrix(DD, ML, INC),
+        resonance: `${WATANABE}/Skill - Orb Vermelho.png`,
+        core: `${WATANABE}/Skill - Signature.png`,
+        construct: `${WATANABE}/CUB - Shadow Wing.png`,
+        skills: cubSkills(WATANABE),
+        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. This is the build recommended for the sinergy with Vera-chan and Kamui-kun. He will be doing a single signature per entrance, since the other two will take all the time for their damage loops, but whenever the one's damage's steps are over and the other is cooldown, Watanabe-kun will perfectly fill that hole within with a nice damage and a very-very fast damage steps, of less than 4 seconds." },
+      { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
+      { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
+    ] }, { id: "lucia-vera-kamui", name: "Lucia · Vera · Kamui", cards: [
       { bar: "blue", name: "Lucia: Pyroath", role: "starter",
         symbol: classIcon("Attacker"),
         portrait: `${LUCIA_P}/Awaken - Lucia Pyroath.png`,
@@ -266,21 +308,6 @@ const COMPS = {
         construct: `${LUCIA_P}/CUB - Corvus.webp`,
         skills: cubSkills(LUCIA_P, "webp"),
         desc: "She... has to do something... Well, she aged badly, and we seen this coming ever since she released, and here we are. Da Vinci here will be to improve the other teammates while Lucia will be doing a single signature per entrance; she will not be using the shortened signature: Not just because she would need Cottie to do 2 signatures, but also you would just be wasting time that could be used on another character instead of dealing lower damage. Lucia will only use her long signature procedure every time she enters the field, and because of so, DLT is no longer required on her. She will only be handy indeed if at SS3 or above, either for damage in the field or bizarre QTEs of thousands of percentage. If at SS0.... Be patient with her." },
-      { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
-      { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
-    ] }, { id: "watanabe-vera-kamui", name: "Watanabe · Vera · Kamui", cards: [
-      { bar: "blue", name: "Watanabe: Epitaph", role: "starter",
-        symbol: classIcon("Tanque"),
-        portrait: `${WATANABE}/Awaken - Watanabe Epitaph.png`,
-        weapon: `${WATANABE}/Arma - Watanabe Epitaph.png`,
-        wh: "Da Vinci",
-        memories: memBuild(ALPHONSE, DA_VINCI),
-        matrix: matrix(DD, ML, INC),
-        resonance: `${WATANABE}/Skill - Orb Vermelho.png`,
-        core: `${WATANABE}/Skill - Signature.png`,
-        construct: `${WATANABE}/CUB - Shadow Wing.png`,
-        skills: cubSkills(WATANABE),
-        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. This is the build recommended for the sinergy with Vera-chan and Kamui-kun. He will be doing a single signature per entrance, since the other two will take all the time for their damage loops, but whenever the one's damage's steps are over and the other is cooldown, Watanabe-kun will perfectly fill that hole within with a nice damage and a very-very fast damage steps, of less than 4 seconds." },
       { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
       { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
     ] }]
@@ -415,7 +442,7 @@ const HERO_FIRST = ["Wanshi: Lucid Dreamer", "Vera: Geiravor", "Nanami: Startrai
 const PAGES = {
   "energy/fire": ["dying-sun-fire"],
   "energy/lightning": ["helentine-liv-nanami"],
-  "energy/ice": ["homecoming-voyage"],
+  "energy/ice": ["comets-afterglow", "homecoming-voyage"],
   "energy/physical": ["steering-physical"],
   "energy/dark": ["anchored-dark"],
   "effect/ignition": ["homecoming-ignition"],
@@ -428,7 +455,38 @@ const PAGES = {
 const $ = (s, r = document) => r.querySelector(s);
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const slot = (src, label = "", overlay = "") => `<div class="slot">${src ? `<img src="${esc(src)}" alt="">${overlay}` : esc(label)}</div>`;
+// Name shown when hovering an icon, read from its file name ("Memória - Cottie 1-4.png" is "Cottie")
+function iconName(src = "") {
+  const file = src.split("/").pop().replace(/\.\w+$/, "");
+  if (file === "Tanque") return "Tank";
+  if (file === "Skill - Orb Vermelho") return "Red Orb";
+  if (file === "Ressonância - ALL ATK") return "Any ATK";
+  if (file === "Classe - Adelyde Anabasis") return "Overlinker";
+  if (file.startsWith("Skill - Signature")) return "Signature";
+  if (file.startsWith("Skill - Core")) return "Core Passive";
+  const name = file.replace(/^(Memória|Ressonância de Arma|Ressonância|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
+  const skill = name.match(/^Skill (\d)$/);
+  return skill ? cubSkill(src, skill[1])?.[0] || `CUB ${name}` : name;
+}
+const cubSkill = (src, n) => CUB_SKILLS[src.split("/").at(-2)]?.[n - 1];
+const memoryInfo = name => `2 pcs: ${MEMORY_EFFECTS[name][0]}\n\n4 pcs: ${MEMORY_EFFECTS[name][1]}`;
+// What an icon does, when known: shown under its name
+function iconInfo(src = "") {
+  const memory = src.match(/Memória - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
+  if (memory) return memoryInfo(memory);
+  if (skill) return cubSkill(src, skill)?.[1] || "";
+  return RESONANCE_EFFECTS[iconName(src)] || "";
+}
+const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(info)}"` : "");
+// Assets detail pages: #/assets/memory/<id> and #/assets/weapon/<id>
+const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
+const memoryHref = name => `#/assets/memory/${linkId(name)}`;
+const weaponHref = name => `#/assets/weapon/${linkId(name)}`;
+// With href, the slot is a link. With a tip but no image, it shows that name in place of the art
+const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", info = iconInfo(src)) => {
+  const tag = href ? "a" : "div", named = !src && tip;
+  return `<${tag} class="slot${named ? " named" : ""}"${href ? ` href="${esc(href)}"` : ""}${tipAttr(tip, info)}>${src ? `<img src="${esc(src)}" alt="">` : esc(label)}${src || named ? overlay : ""}</${tag}>`;
+};
 const STARS = `<img class="stars" src="assets/overlay/256px-UI-Supply-6Star.png" alt="6 stars">`;
 const numbered = (src, i) => `<div class="cell">${slot(src)}<span>${i}</span></div>`;
 const n = (k, f) => Array.from({ length: k }, (_, i) => f(i));
@@ -457,6 +515,14 @@ function openGroup(key, open) {
   b.setAttribute("aria-expanded", open);
   $(`[data-list="${key}"]`).hidden = !open;
 }
+// Phones: the side panel is a top bar and its menu opens with the ☰ button
+const menuBtn = $("#menuBtn");
+function setNav(open) {
+  $("#side").classList.toggle("open", open);
+  menuBtn.setAttribute("aria-expanded", open);
+}
+menuBtn.onclick = () => setNav(!$("#side").classList.contains("open"));
+$("#sideNav").addEventListener("click", e => { if (e.target.closest("a")) setNav(false); });
 btn.onclick = () => toggle(menu.hidden);
 assetsBtn.onclick = () => toggle(assetsMenu.hidden, assetsBtn, assetsMenu);
 menu.onclick = e => {
@@ -468,17 +534,23 @@ menu.onclick = e => {
 function weaponArt(c) {
   if (!c.wh) return slot("", "");
   const [x, y, zoom] = WH_FRAME[c.wh] || [50, 50, 1];
-  return `<div class="slot"><img src="${esc(memFile(c.wh, "WH", "png"))}" alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"></div>`;
+  return `<a class="slot" href="${esc(memoryHref(c.wh))}"${tipAttr(c.wh)}><img src="${esc(memFile(c.wh, "WH", "png"))}" alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"></a>`;
 }
 function card(c) {
+  const [, weapon = "", , , weaponEffect = ""] = WEAPONS.find(w => w[0] === c.name) || [];
+  const memory = (piece, i) => {
+    if (!piece) return slot("", i + 1);
+    const art = piece.startsWith("assets/") ? piece : "", name = art ? iconName(art) : piece;
+    return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name));
+  };
   const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}">${t.toUpperCase()}</span>`).join("");
   return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}">
     <h3>${esc(c.name)}</h3>
-    <div class="top"><div class="sym slot">${c.symbol ? `<img src="${esc(c.symbol)}" alt="">` : "icon"}</div>
-      <div class="pwrap"><div class="portrait slot">${c.portrait ? `<img src="${esc(c.portrait)}" alt="${esc(c.name)}">` : "portrait"}</div>${c.rank ? `<img class="rank" src="${esc(c.rank)}" alt="rank">` : ""}</div></div>
+    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? `<img src="${esc(c.symbol)}" alt="">` : "icon"}</div>
+      <div class="pwrap"><div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? `<img src="${esc(c.portrait)}" alt="${esc(c.name)}">` : "portrait"}</div>${c.rank ? `<img class="rank" src="${esc(c.rank)}" alt="rank"${tipAttr(iconName(c.rank))}>` : ""}</div></div>
     <div class="box">
-      <div class="mem">${n(6, i => slot((c.memories || [])[i], i + 1, `<span class="n">${i + 1}</span>`)).join("")}</div>
-      <div class="wp">${slot(c.weapon, "weapon", STARS)}${weaponArt(c)}</div>
+      <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
+      <div class="wp">${slot(c.weapon, weapon || "weapon", STARS, weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
       <div class="mxw">
         <div class="mx">${n(3, i => numbered((c.matrix || [])[i], i + 1)).join("")}</div>
         <div class="res"><span>6×</span>${slot(c.resonance, "")}<span>6×</span>${slot(c.core, "")}</div>
@@ -492,7 +564,7 @@ function card(c) {
 function comp(id, cards = COMPS[id].cards) {
   const c = COMPS[id];
   return `<section class="comp" style="--c1:${c.c1};--c2:${c.c2};--cp:${c.cp};--ar:${c.ar}">` +
-    cards.map(card).join(`<div class="arrow" aria-hidden="true">${c.icon ? `<img src="${esc(c.icon)}" alt="">` : c.emblem}</div>`) + `</section>`;
+    cards.map(card).join(`<div class="arrow" aria-hidden="true"${tipAttr(c.iconName || (c.icon && iconName(c.icon)))}>${c.icon ? `<img src="${esc(c.icon)}" alt="">` : c.emblem}</div>`) + `</section>`;
 }
 
 /* ---------- focus view: enlarged card in the center, the others behind it ---------- */
@@ -528,7 +600,10 @@ function setBackground(locked) {
   document.documentElement.classList.toggle("locked", locked);
   $("#main").inert = $("#side").inert = locked;
 }
+// Phones stack the cards at full width, so there is nothing to enlarge
+const stacked = matchMedia("(max-width:760px),(hover:none) and (max-height:500px)");
 function openFocus(src) {
+  if (stacked.matches) return;
   const comp = src.closest(".comp"), sources = [...comp.querySelectorAll(".card")];
   setBackground(true);
   const stage = document.createElement("div");
@@ -557,7 +632,7 @@ function openFocus(src) {
     if (e.target.closest(".next")) return go(1);
     const c = e.target.closest(".fcard");
     if (!c) return closeFocus();
-    if (c.classList.contains("side")) { view.active = clones.indexOf(c); layout(); }
+    if (c.classList.contains("side")) { e.preventDefault(); view.active = clones.indexOf(c); layout(); }
   };
   toOrigin(view);
   comp.classList.add("focused");
@@ -581,11 +656,13 @@ function closeFocus(instant) {
   setTimeout(finish, matchMedia("(prefers-reduced-motion:reduce)").matches ? 0 : FOCUS_MS);
 }
 $("#main").addEventListener("click", e => {
+  setNav(false);
   const c = e.target.closest(".comp .card");
-  if (c) openFocus(c);
+  if (c && !e.target.closest("a")) openFocus(c);
 });
 addEventListener("keydown", e => {
   const activate = e.key === "Enter" || e.key === " ";
+  if (e.key === "Escape") setNav(false);
   if (!view) {
     if (activate && e.target.matches(".comp .card")) { e.preventDefault(); openFocus(e.target); }
     return;
@@ -652,12 +729,13 @@ function pickerHtml(path, sel) {
     return `<div class="pgroup">${head}${sub}</div>`;
   }).join("");
 }
+const noticeTimeLeft = () => Date.parse(NEW_CHARACTER_NOTICE.until) - Date.now();
+const notice = cards => noticeTimeLeft() > 0 && cards.some(c => c.name === NEW_CHARACTER_NOTICE.name) ? `<p class="notice" role="note">${esc(NEW_CHARACTER_NOTICE.text)}</p>` : "";
 function compBody(sel) {
   if (!sel) return "";
-  const { variants } = COMPS[sel];
-  if (!variants) return comp(sel);
-  const v = variants.find(x => x.id === chosen);
-  return v ? comp(sel, v.cards) : "";
+  const { variants, cards } = COMPS[sel];
+  const shownCards = variants ? variants.find(x => x.id === chosen)?.cards : cards;
+  return shownCards ? notice(shownCards) + comp(sel, shownCards) : "";
 }
 function team(path) {
   const [kind, key] = path.split("/");
@@ -671,15 +749,34 @@ function team(path) {
 
 /* ---------- assets pages ---------- */
 const thumb = src => `<div class="slot">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async">` : ""}</div>`;
-function memoryCard([name, boost, ext]) {
-  const art = ext ? memSet(name) : ["", "", ""], [two, four] = MEMORY_EFFECTS[name];
-  return `<article class="acard"><div class="mem">${art.map(thumb).join("")}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p>
-    <div class="fx"><p><b>2 pcs</b> ${esc(two)}</p><p><b>4 pcs</b> ${esc(four)}</p></div></article>`;
+const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(thumb).join("");
+const memoryCard = ([name, boost, ext]) => `<a class="acard" href="${memoryHref(name)}"><div class="mem">${memoryArt(name, ext)}</div><h3>${esc(name)}</h3><p>${esc(boost)}</p></a>`;
+const weaponThumb = file => thumb(file && `${CHARS}/${file}`);
+const weaponCard = ([owner, name, type, file]) => `<a class="acard wpn" href="${weaponHref(name)}">${weaponThumb(file)}
+  <div><h3>${esc(name)}</h3><p>${esc(owner)}</p><p>${esc(type)}</p></div></a>`;
+// Top of a detail page. Coming from a team, it also leads back to that exact build
+let buildReturn = "";
+const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ Back to build</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
+function memoryPage([name, boost, ext]) {
+  const [two, four] = MEMORY_EFFECTS[name], { tab } = MEM_INDEX.get(name);
+  return `${backLink(`#/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
+    <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
+      <div class="fx"><h2>2 pcs</h2><p>${esc(two)}</p><h2>4 pcs</h2><p>${esc(four)}</p></div></div>`;
 }
-const weaponCard = ([owner, name, type, file, effect]) => `<article class="acard wpn">${thumb(`${CHARS}/${file}`)}
-  <div><h3>${esc(name)}</h3><p>${esc(owner)}</p><p>${esc(type)}</p></div><div class="fx"><p>${esc(effect)}</p></div></article>`;
+function weaponPage([owner, name, type, file, effect]) {
+  return `${backLink("#/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc([type, owner].filter(Boolean).join(" · "))}</p>
+    <div class="detail wpn-detail">${weaponThumb(file)}<div class="fx"><h2>Effect</h2><p>${esc(effect)}</p></div></div>`;
+}
 function assetsPage(key, pick = "all") {
   const notFound = `<p class="empty">Page not found.</p>`;
+  if (key === "memory") {
+    const set = Object.values(MEMORY_TABS).flat().find(([name]) => linkId(name) === pick);
+    return set ? memoryPage(set) : notFound;
+  }
+  if (key === "weapon") {
+    const weapon = WEAPONS.find(w => linkId(w[1]) === pick);
+    return weapon ? weaponPage(weapon) : notFound;
+  }
   if (key === "weapons") return `<h1>Weapons</h1><p class="sub">Assets</p><div class="agrid">${WEAPONS.map(weaponCard).join("")}</div>`;
   if (key !== "memories") return notFound;
   const tabs = ["All", ...Object.keys(MEMORY_TABS)], tab = tabs.find(t => slug(t) === pick);
@@ -713,7 +810,7 @@ function route() {
   const main = $("#main");
   main.innerHTML = kind === "assets" ? assetsPage(key, pick) : path ? team(path) : home();
   theme(null);
-  document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#/" + path));
+  document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#/" + ({ "assets/memory": "assets/memories", "assets/weapon": "assets/weapons" }[path] || path)));
   if (kind === "assets") toggle(true, assetsBtn, assetsMenu);
   else if (path) { toggle(true); openGroup(kind, true); }
   const sel0 = $(".picker button[data-id][aria-pressed=true]");
@@ -729,6 +826,9 @@ function route() {
       chosen = "";
     }
     const sel = expanded || (variant || COMPS[id].variants ? "" : id);
+    // The address follows the pick, so going back from another page returns to this same build
+    const pick = variant || (COMPS[id].variants ? "" : sel);
+    history.replaceState(null, "", `#/${path}${pick ? `/${pick}` : ""}`);
     swap(() => {
       picker.innerHTML = pickerHtml(path, sel);
       $("#compBox").innerHTML = compBody(sel);
@@ -737,10 +837,98 @@ function route() {
     });
   };
 }
+// Icon names on hover: one shared box on <body>, because .slot and .comp clip anything inside them
+if (matchMedia("(hover:hover)").matches) {
+  const tip = document.createElement("div");
+  tip.id = "tip";
+  tip.hidden = true;
+  const title = document.createElement("b"), info = document.createElement("p");
+  tip.append(title, info);
+  document.body.append(tip);
+  addEventListener("mouseover", e => {
+    const el = e.target.closest?.("[data-tip]");
+    tip.hidden = !el;
+    if (!el) return;
+    title.textContent = el.dataset.tip;
+    info.textContent = el.dataset.info || "";
+    info.hidden = !el.dataset.info;
+    const r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = `${Math.max(6, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 6))}px`;
+    tip.style.top = `${Math.max(6, Math.min(r.top - h - 6 < 6 ? r.bottom + 6 : r.top - h - 6, innerHeight - h - 6))}px`;
+  });
+  for (const type of ["pointerdown", "scroll", "hashchange"]) addEventListener(type, () => { tip.hidden = true; }, true);
+} else {
+  // Touch screens have no hover: tapping an icon opens a sheet with the same text, and a link when it has a page
+  const sheet = document.createElement("div");
+  sheet.id = "sheet";
+  sheet.hidden = true;
+  sheet.setAttribute("role", "dialog");
+  sheet.setAttribute("aria-modal", "true");
+  sheet.setAttribute("aria-label", "Details");
+  sheet.innerHTML = `<div class="sheet-panel"><button class="sheet-close" aria-label="Close">×</button><h2></h2><p></p><a class="sheet-link">View page</a></div>`;
+  document.body.append(sheet);
+  const title = $("h2", sheet), info = $("p", sheet), link = $(".sheet-link", sheet), close = $(".sheet-close", sheet);
+  let opener = null;
+  const closeSheet = () => {
+    if (sheet.hidden) return;
+    sheet.hidden = true;
+    setBackground(!!view);
+    opener?.focus({ preventScroll: true });
+  };
+  addEventListener("click", e => {
+    const el = e.target.closest("[data-tip]");
+    if (!el || el.matches(".portrait") || el.closest(".fcard.side")) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const href = el.getAttribute("href");
+    title.textContent = el.dataset.tip;
+    info.textContent = el.dataset.info || "";
+    info.hidden = !el.dataset.info;
+    link.hidden = !href;
+    if (href) link.href = href;
+    opener = el;
+    sheet.hidden = false;
+    setBackground(true);
+    close.focus({ preventScroll: true });
+  }, true);
+  sheet.onclick = e => { if (e.target === sheet || e.target.closest(".sheet-close, .sheet-link")) closeSheet(); };
+  addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+  addEventListener("hashchange", closeSheet);
+}
+// Stacked cards: says there are more characters below, until the second card comes into view
+const scrollHint = document.createElement("div");
+scrollHint.id = "scrollHint";
+scrollHint.hidden = true;
+scrollHint.textContent = "↓ Scroll down to see the other team members";
+document.body.append(scrollHint);
+let hintDone = false;
+function updateScrollHint() {
+  const second = document.querySelectorAll(".comp .card")[1];
+  if (second && second.getBoundingClientRect().top < innerHeight - 60) hintDone = true;
+  scrollHint.hidden = hintDone || !second || !stacked.matches;
+}
+new MutationObserver(() => { hintDone = false; updateScrollHint(); }).observe($("#main"), { childList: true, subtree: true });
+addEventListener("scroll", updateScrollHint, { passive: true });
+addEventListener("resize", updateScrollHint);
 // A missing thumbnail falls back to the full art. Handled here because the CSP in _headers blocks inline onerror
 addEventListener("error", e => {
   const img = e.target, full = img.dataset?.full;
   if (full) { delete img.dataset.full; img.src = full; }
 }, true);
-addEventListener("hashchange", () => { closeFocus(true); swap(route); });
+// Every page opens at the top, except when coming back from a detail page to where you were.
+// "skill" is here for the skill pages planned for later: they only need to use backLink
+const DETAIL_PAGE = /#\/assets\/(memory|weapon|skill)\//;
+const scrollSaved = new Map();
+history.scrollRestoration = "manual";
+addEventListener("hashchange", e => {
+  closeFocus(true);
+  setNav(false);
+  scrollSaved.set(e.oldURL, scrollY);
+  const fromDetail = DETAIL_PAGE.test(e.oldURL), fromTeam = /#\/(energy|effect)\//.test(e.oldURL);
+  if (fromTeam && DETAIL_PAGE.test(location.href)) buildReturn = new URL(e.oldURL).hash;
+  else if (!fromDetail || !DETAIL_PAGE.test(location.href)) buildReturn = "";
+  swap(() => { route(); scrollTo(0, fromDetail ? scrollSaved.get(location.href) || 0 : 0); });
+});
+// Removes the notice from a page left open past the date
+if (noticeTimeLeft() > 0) setTimeout(() => document.querySelectorAll(".notice").forEach(el => el.remove()), noticeTimeLeft());
 route();

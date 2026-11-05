@@ -67,7 +67,7 @@ function check() {
     if (ext) d.memSet(name).forEach(path => use(path, `memória ${name} (${tab})`));
     if (!d.MEMORY_EFFECTS[name]) errors.push(`memória "${name}" não tem texto em MEMORY_EFFECTS (a página Memories quebra)`);
   }
-  for (const [owner, , , file] of d.WEAPONS) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
+  for (const [owner, , , file] of d.WEAPONS) if (file) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
   for (const e of d.ENERGY) use(`assets/energy type/${e}.png`, "ícones de Energy Type");
   for (const e of d.EFFECT) use(`assets/effects/${e}.png`, "ícones de Effect");
   for (const file of ["app.js", "index.html", "style.css"]) literalPaths(file).forEach(path => use(path, file));

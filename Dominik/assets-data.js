@@ -50,6 +50,7 @@ const MEMORY_EFFECTS = {
   "Liston": ["Ice DMG increases by 10%. Casting [QTE - Point Blank] triggers [Frozen Zone] for 8s. Duration resets every time it is triggered.", "When [QTE - Frozen Zone]/[Signature - Frozen Zone] deals DMG, triggers Frost Corrosion and reduces the target's Ice Resistance for 2s/8s. Duration resets every time it is triggered. In Repeater Mode, each shot adds an extra stack of Maim, with a stacking limit of 24. When casting Destructive Wave, the Base DMG increase effect of each Correction Projectile increases to 10%."],
   "Lucrezia": ["Lightning DMG increases by 10%.", "Upon triggering Chord, gain bonus 15 energy and 10% Extra DMG Bonus for 5s."],
   "Marco": ["Deals 7% more Physical DMG and 5% more Basic Attack DMG.", "When Pulao: Dragontoll catches Dragon Axe while being hit, removes her own Hit status and throws it again. Meanwhile, removes the red penalty on the Dodge Gauge and restores 250 Dodge Gauge value."],
+  "Mousme": ["Ice DMG increases by 10%.", "Doubles the DMG dealt by Red Dwarf's Gaze, Brown Dwarf's Monologue, Blue Dwarf's Tears, and Ribbon Circuit. Light-Catching Energy gained from Dust Convergence and Astral Oath is doubled."],
   "Natasha": ["ATK increases by 5%. Lightning DMG and Darkflow DMG increase by 5%.", "Enhanced Base DMG effect of Delicate Heart doubles."],
   "Nimue": ["ATK increases by 5%. Dark DMG and Ultima Slash DMG increase by 5%.", "In Nessos Mimic, Signature Energy gained is doubled; the Signature Base DMG boost from consuming Overridden Blessing is doubled (up to 90% increase)."],
   "Patton": ["ATK increases by 3% and Physical DMG increases by 7%.", "Extra DMG Bonus increases by 10%. Attacking a target will inflict them with Impale, reducing their Physical Resistance by 7% for 8s (10s cooldown on the same target). Attacking targets affected by Impale will trigger an Explosion that deals 600% Physical DMG (6s cooldown on the same target)."],
@@ -87,6 +88,7 @@ const WEAPONS = [
   ["Kurumi Tokisaki", "Hour & Minute", "Zafkiel - Dual Guns", "kurumi-tokisaki/Arma - Kurumi Tokisaki.webp", "ATK increases by 10%. Phantom and Signature - Angel of Time: Zafkiel deal 50% more DMG. When Bullet Brand is active, Aleph, Dalet, and Het deal 50% more DMG. Gains 1 stack of Imprint upon first deployment. After casting Phantom, gains 2 Signal Orbs, up to 4 per deployment."],
   ["Lee: Hyperreal", "Key of Tempus Gate - Stokes", "Composite Armaments", "lee-hyperreal/Arma - Lee Hyperreal.png", "ATK increases by 10%. Casting Realm Travel will trigger Matrix if it is not on cooldown. The first Hypermatrix Strike launched upon entering battle will generate 1 extra Sight Point."],
   ["Lee: Palefire", "Wolf Fang", "Dual Guns", "lee-palefire/Arma - Lee Palefire (5).png", "Extra DMG Bonus increases by 20% when attacking enemies in a burning area."],
+  ["Leia: Fortunaster", "Edges of the Twisted Ribbon", "", "", "ATK increases by 10%, and the damage dealt by Ring Theorem is doubled. While holding a Photonic Mark, the damage dealt by Signature - Stardust of the Luminous Waltz is doubled."],
   ["Lilith: Daemonissa", "Sorrow of Fata Morgana", "Moon Umbrella", "lilith-daemonissa/Arma - Lilith Daemonissa.png", "Gains 10% ATK. When casting Dreamfall Showdown at Card Rank B, gains 12 Signature Energy."],
   ["Liv: Limpidity", "Ripples of the Aloft Sea", "Lotus Wheel", "liv-limpidity/Arma - Liv Limpidity.png", "ATK increases by 10%. Thousand Rays and Dawn Dream deal 50% more damage. When casting Signature - Mirrored Renewal, gains 2 Signal Orbs; if having 12 stacks of Delicate Heart when casting, gains 1 additional Signal Orb."],
   ["Lucia: Inverse Crown", "Lightless Dusk", "Cylinder Katana", "lucia-inverse-crown/Arma - Lucia Inverse Crown.webp", "ATK increases by 10%. Gain 360 Blade Intent upon deployment. Gains Blade Mark upon deployment or after casting Relinquish. Gains a set of Signal Orbs when casting fully charged Sonance or Outro while Blade Mark is active. (Can obtain up to 6 Signal Orbs this way per deployment.) In each battle, the finishing hit of the first Myriad Calamity cast deals 100% more Base DMG."],
@@ -105,3 +107,163 @@ const WEAPONS = [
   ["Wanshi: Lucid Dreamer", "Renewed Dawn", "Revolver", "wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png", "ATK increases by 10%. Doubles the Base DMG of Flurry Blitz, Frosty Barrage, and Snow Storm."],
   ["Watanabe: Epitaph", "Dark Falcon", "Trailblade", "watanabe-epitaph/Arma - Watanabe Epitaph.png", "ATK increases by 10%. Upon entering the Assault Mode, gains 3 Red Orbs, up to 6 orbs each time when entering the battlefield. Can quickly cast Scorching Torrent after pinging Red Orbs."]
 ];
+
+// CUB skills by character folder, as [name, effect at level 5], in the order of the files "CUB - Skill 1" to "CUB - Skill 6".
+// Source: https://huaxu.app/na/wiki/cubs, matched by icon. Both active skills share one icon, so they share one entry.
+const CUB_SKILLS = {
+  "wanshi-lucid-dreamer": [
+    ["Frost Walker: Ice / Scattered Snow: Ice", "Frost Walker: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Snowveil will fly toward the target then crash into the ground, dealing 1800% Ice DMG 1 time.\n\nScattered Snow: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Snowveil will flick its tail to fire crystal shards forward, inflicting nearby enemy units with Rigidity while dealing 200% Ice DMG 7 times. Rigidity: Immobilizes the enemy for 2s."],
+    ["Dream Ward", "When Wanshi: Lucid Dreamer enters Calibration Mode with Snowveil equipped, Snowveil will be summoned to assist in attacks, dealing 250% Ice DMG 10 times. Base DMG of Superlink Flight increases by 65%; if Maim has maximum stacks when Superlink Flight is cast, its Base DMG increases by a further 100%. Base DMG of Destructive Wave increases by 75%; if 30 Correction Projectiles are consumed when Destructive Wave is cast, its Base DMG increases by a further 100%."],
+    ["Lucent Heart", "Increases the carrier's Ice DMG by 10%."],
+    ["Frosty Favor", "Each time Snowveil casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Triggering this effect again will renew its duration."],
+    ["Snowdust Blessing", "Increases the carrier's ATK by 100."],
+    ["Bright Destiny", "Snowveil's Active Skills deal 70% more DMG."]
+  ],
+  "selena-pianissimo": [
+    ["Valiant March: Physical / Glorious Rondo: Physical", "Valiant March: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Snow Waltz will slash the target, dealing 2050% Physical DMG once.\n\nGlorious Rondo: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Snow Waltz will shoot blades to the surroundings and retrieve them, pulling in nearby enemy units and dealing 1000% Physical DMG twice."],
+    ["Resounding Toll", "After Selena: Pianissimo casts Melodic Outburst with Snow Waltz equipped, she will summon Snow Waltz to launch a joint attack, dealing 1000% Physical DMG 3 times. When casting Basic Attack - Echoing Melody, increases ATK by 40% for 8s. Duration resets every time it is triggered."],
+    ["Light and Shade", "The carrier deals 10% more Physical DMG. When there are Ice Spikes, the carrier deals 10% more Glaciation DMG."],
+    ["Resonant Cheersong", "Each time Snow Waltz casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Victory Anthem", "Increases the carrier's ATK by 100."],
+    ["Pre-Battle Bugle", "Snow Waltz's Active Skills deal 70% more DMG."]
+  ],
+  "helentine-lacrimosa": [
+    ["Hermann Grid / Scintillating Grid", "Hermann Grid: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Grand Duke will turn its base toward the target, concentrate energy from the three lamps, and fire a beam at the target, dealing 650% Lightning DMG 3 times.\n\nScintillating Grid: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Grand Duke will fly into the air and extend itself, then spin and fire lasers from each of its three small lamps, strafing targets below and dealing 400% Lightning DMG 5 times."],
+    ["Fresnel Lens", "When Lacrimosa casts Deflection, Cathexis, or Regression with Grand Duke equipped, she will summon Grand Duke to launch a joint attack and pull in enemies. Grand Duke flies into the air and launches three sonic attacks in a pendular motion, dealing 1000% Lightning DMG 3 times. Base DMG of Cathexis, Regression, and Metaphor Surge increases by 50%."],
+    ["Fluorite Dispersion", "Increases the carrier's Lightning DMG by 10%. If the carrier has the Glaciation effect, Ice DMG increases by 10%."],
+    ["Coma Aberration", "Each time Grand Duke casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Iridescence", "Increases the carrier's ATK by 100."],
+    ["False Color", "Grand Duke's Active Skills deal 70% more damage."]
+  ],
+  "lucia-inverse-crown": [
+    ["Mistbreak: Ice / Abyssal Dive: Ice", "Mistbreak: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Allos will whip its tail and dash forward to attack enemies while pulling them in, dealing 1000% Ice DMG twice.\n\nAbyssal Dive: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Allos will spin and dive down from the air to attack enemies, dealing 1000% Ice DMG twice."],
+    ["Dusky Voyage", "When Inverse Crown casts a fully-charged Sonance or Outro with Allos equipped, she will summon Allos for a joint attack, dealing 1500% Ice DMG 2 times while wielding Odachi, or 1000% Ice DMG 3 times while wielding Kodachi. When performing the final hit of Raze, she summons Allos for a joint attack, dealing 1000% Ice DMG 3 times. While in Abyssborn Form, Base DMG Bonus increases by 20%, or by 30% when carrying Ignition Effect."],
+    ["Glacial Embers", "Increases the carrier's Ice DMG by 10%. Ignition DMG increases by 10%."],
+    ["Ultimate Will", "Each time Allos casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Hoarfrost", "Increases the carrier's ATK by 100."],
+    ["Unified Intent", "Allos's Active Skills deal 70% more damage."]
+  ],
+  "teddy-spectre": [
+    ["Drive Impact Corner Push: Ice / Headbutt Meaty Attack: Ice", "Drive Impact Corner Push: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Beep-Boop will dash a short distance toward the target and unleash continuous claw strikes, pushing and repelling the target while dealing 175% Ice DMG 6 times along the path. Then performs a slight jump and slams down with both palms, dealing AOE DMG and knocking enemies away, dealing 1000% Ice DMG once.\n\nHeadbutt Meaty Attack: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Beep-Boop will curl up and spin toward the target to perform a headbutt charge, dealing 150% Ice DMG 9 times. After hitting the first target, Beep-Boop will bounce up, sit down, and fall to the ground, creating a wide-area ground slam that knocks down enemies and deals 650% Ice DMG once."],
+    ["Visual Horizon No-Fly Zone", "When Teddy: Spectre casts Data Domain: Barrier Rift with Beep-Boop equipped, she will summon Beep-Boop to launch a joint attack. Beep-Boop charges upward and pierces through the ground, dealing 3000% Ice DMG once. Base DMG of Data Domain: Barrier Rift increases by 100%. Base DMG of Pulse Shockwave increases by 75%."],
+    ["Photon-Cooling Cycle", "Increases the carrier's Ice DMG by 10%. Raydiance DMG increases by 10%."],
+    ["Negative-Frame Overclocking", "Each time Beep-Boop casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Composite Calculation", "Increases the carrier's ATK by 100."],
+    ["Differential Correction", "Beep-Boop's Active Skills deal 70% more damage."]
+  ],
+  "lucia-pyroath": [
+    ["Falling Meteorite: Fire / Soaring Flame: Fire", "Falling Meteorite: Fire: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Corvus will circle around the target, dive, and pull in nearby enemies, dealing 1800% Fire DMG once.\n\nSoaring Flame: Fire: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Corvus will spit fire at the target from above, dealing 500% Fire DMG 4 times."],
+    ["Bright Star", "When Lucia: Pyroath casts Basic Attack - Aura Blast with Corvus equipped, she will summon Corvus to launch a joint attack, dealing 2500% Fire DMG once. Aura Marks will further amplify the Base DMG Boost of Signature - Crowd Slash and Signature - Eclipse Daybreak by 20%."],
+    ["Burning Torchlight", "Increases the carrier's Fire DMG by 10%; Lightning DMG during Electric Storm Flash status increases by 10%."],
+    ["Wing Blaze", "Each time Corvus casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time the effect is triggered."],
+    ["Brilliant Light", "Increases the carrier's ATK by 100."],
+    ["Platinum Spark", "Corvus's Active Skills deal 70% more damage."]
+  ],
+  "vera-geiravor": [
+    ["Phantom Pursuit: Fire / Eclipse Bite: Fire", "Phantom Pursuit: Fire: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Wrathfang will fire a laser beam, dealing 550% Fire DMG 4 times.\n\nEclipse Bite: Fire: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Wrathfang will attack the target with a light blade in its mouth and pull in nearby enemies, dealing 1000% Fire DMG twice."],
+    ["Frenzied Hunt", "After Vera: Geiravor casts Hellfire Crucible with Wrathfang equipped, she will summon Wrathfang to launch a joint attack, pulling in nearby enemies and dealing 1500% Fire DMG twice. When she casts Tempered in Midnight, increases Base DMG of Tempered in Midnight by 10%/20%/30%/40%/50%/60% based on the 1/2/3/4/5/6 Yellow Orbs cleared."],
+    ["Jagged Assault", "The carrier deals 10% more Fire DMG. If there is at least 1 Darkflow stack, the carrier deals 10% more Dark DMG."],
+    ["Nightfall Predation", "Each time Wrathfang casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Blazing Fangs", "Increases the carrier's ATK by 100."],
+    ["Blink Mark", "Wrathfang's Active Skills deal 70% more damage."]
+  ],
+  "watanabe-epitaph": [
+    ["Wide-Area Sound Waves: Fire / Proximity Interference: Fire", "Wide-Area Sound Waves: Fire: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Shadow Wing will release sound waves to deal damage and pull in nearby enemies, dealing 1650% Fire DMG.\n\nProximity Interference: Fire: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Shadow Wing will start to circle, granting the equipped character Shield equal to 200% of its ATK. At the end of the flight, Shadow Wing will spread its wings and deal 750% Fire DMG twice to the area around the target."],
+    ["Blazing Chain", "When Watanabe: Epitaph casts Flame Eruption, he will use his grappling hook to link with Shadow Wing and launch a joint attack together in mid-air, during which time Shadow Wing will attack and deal 2500% Fire DMG in total. Thermal Erosion's Base DMG increases by 75%."],
+    ["Propelled Incineration", "Increases the carrier's Fire DMG by 10%."],
+    ["Output Synchronization", "Each time Shadow Wing casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Triggering this effect again will renew its duration."],
+    ["Phantom Guard", "Increases the carrier's ATK by 100."],
+    ["Overwatcher", "Shadow Wing's Active Skills deal 70% more damage."]
+  ],
+  "liv-limpidity": [
+    ["Lightning Breath: Lightning / Thunder Pounce: Lightning", "Lightning Breath: Lightning: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Levvi will release a lightning orb that opens up into an electric sphere when it hits the target, dealing 425% Lightning DMG 5 times.\n\nThunder Pounce: Lightning: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Levvi will dive toward the target location and explode on impact, dealing 650% Lightning DMG 3 times."],
+    ["Radiant Alliance", "When Liv: Limpidity casts Thousand Rays and the 4th hit of Mirror Blade Orb with Levvi equipped, she will summon Levvi to launch a joint attack, dealing 1000% Lightning DMG 3 times. Base DMG of Signature - Cosmic Rebirth increases by 75%; when casting at max Delicate Heart stacks, it increases by a further 75%."],
+    ["Azure Blessing", "The carrier deals 10% more Lightning DMG. If with Darkflow stacks, the carrier deals 10% more Dark DMG."],
+    ["Feather Harmony", "Each time Levvi casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Dawn Halo", "Increases the carrier's ATK by 100."],
+    ["Prismatic Charge", "Levvi's Active Skills deal 70% more damage."]
+  ],
+  "nanami-startrail": [
+    ["Glowbait Hunt: Lightning / Fin Barrage: Lightning", "Glowbait Hunt: Lightning: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Bramble Angler will charge toward the target and pull in nearby enemies, dealing 1800% Lightning DMG once.\n\nFin Barrage: Lightning: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Bramble Angler will leap in the air, unleash laser, deal 500% Lightning DMG once, and fire missiles, dealing 250% Lightning DMG for 6 times."],
+    ["Luminous Tornado", "When Startrail casts Meteoric Doom or an enhanced version of Blazing Rift with Bramble Angler equipped, she will summon Bramble Angler to launch a joint attack, dealing 1250% Lightning DMG twice. Base DMG of Flowing Light, Cosmic Starstrike, and Starshard Slash increases by 60%."],
+    ["Cosmic Flame Rift", "Increases the carrier's Lightning DMG by 10%. If the carrier has the Blazing Mark or the Ember Mark, their Fire DMG increases by 10%."],
+    ["Fangpierce", "Each time Bramble Angler casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time the effect is triggered."],
+    ["Luminase Unravel", "Increases the carrier's ATK by 100."],
+    ["Shield Bash Ambush", "Bramble Angler's Active Skills deal 70% more damage."]
+  ],
+  "bianca-crepuscule": [
+    ["Piercing Stings: Dark / Bell's Bane: Dark", "Piercing Stings: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Noctiluca will fling needles at the enemy, dealing 190% Dark DMG 11 times.\n\nBell's Bane: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Noctiluca will perform a ramming attack, hitting enemies along the path and dealing 1950% Dark DMG."],
+    ["Crystal Aria", "When Bianca: Crepuscule casts Devouring Sky or Shattering Sky with Noctiluca equipped, she will summon Noctiluca to launch a joint attack. When casting Devouring Sky, Noctiluca deals 1500% Dark DMG twice. When casting Shattering Sky, Noctiluca deals 3000% Raydiance DMG. Base DMG of Shadow Strangle/Ember Extinction increases by 50%/50%. If Prayer stacks are full when cast, increases to 130%/150% instead."],
+    ["Luminous Stinger", "Increases the carrier's Dark DMG by 10%. Raydiance DMG increases by 10%."],
+    ["Permafrost Hymn", "Each time Noctiluca casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time the effect is triggered."],
+    ["Edict's Inscription", "Increases the carrier's ATK by 100."],
+    ["Tidal Grace", "Noctiluca's Active Skills deal 70% more damage."]
+  ],
+  "adelyde-anabasis": [
+    ["Crimson Barrage: Dark / Scarlet Pursuit: Dark", "Crimson Barrage: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Kelpie will open fire in rapid succession, dealing 500% Dark DMG 4 times.\n\nScarlet Pursuit: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Kelpie will circle around and gather enemies before leaping out of the water to attack, dealing 175% Dark DMG 12 times."],
+    ["Abyssal Hunt Summons", "When Anabasis casts Abyssal Tactics or Abyssal Tactics: Combo with Kelpie equipped, she will summon Kelpie to launch a joint attack, dealing 3000% Dark DMG once. Each time Anabasis enters the battlefield, the first time she switches forms using the Guardian Orb or casts Burst Mode, Suppression Mode, Lightpierce Form, or Pressure Form, increases ATK by 25% for 8s."],
+    ["Abyssal Corrosion", "Increases the carrier's Dark DMG by 10%. If the carrier has the Ultima Slash effect, Physical DMG increases by 10%."],
+    ["Tidal Aftermath", "Each time Kelpie casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Bloodfin Echo", "Increases the carrier's ATK by 100."],
+    ["Core of the Hunt", "Kelpie's Active Skills deal 70% more DMG."]
+  ],
+  "rosetta-arete": [
+    ["Phantom Storm: Dark / Spirit Blast: Dark", "Phantom Storm: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Buzzling will leap above the target and unleash electrical currents, dealing 500% Dark DMG 4 times.\n\nSpirit Blast: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Buzzling will fire a laser forward and pull in enemies, dealing 500% Dark DMG 4 times."],
+    ["Overcharged Sync", "When Rosetta: Arete, with Buzzling equipped, casts Decisive Rend, Horizontal Slash or Crescent Cut that consume Light Link, or casts Roaming Hunt, Dominion Sight or Core Vibration that consume Overridden Blessing, she will summon Buzzling to launch a joint attack, dealing 750% Dark DMG 4 times. When casting Twin Rotation, ATK increases by 20% for 5s. Duration resets every time it is triggered."],
+    ["Wave Drift", "The carrier deals 10% more Dark DMG. If there is at least 1 Truewill, the carrier deals 10% more Physical DMG."],
+    ["Echo Aftershock", "Each time Buzzling casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time the effect is triggered."],
+    ["Magnetic Resonance", "Increases the carrier's ATK by 100."],
+    ["Signal Amplifier", "Buzzling's Active Skills deal 70% more damage."]
+  ],
+  "lilith-daemonissa": [
+    ["Old Dance: Dark / Joker's Wheel: Dark", "Old Dance: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Billie will leap up and fire at the target, dealing 225% Dark DMG 9 times.\n\nJoker's Wheel: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Billie will dive from midair and summon a wheel to pull in nearby enemies, dealing 150% Dark DMG 9 times. The wheel will then get overloaded and explode, dealing 650% Dark DMG once."],
+    ["Good Night, Las Prados", "After starting a Crazy Gamble carrying Billie, Lilith: Daemonissa will summon Billie to launch a joint attack upon casting Night Embrace or Shadow's Guile for the first time, dealing 3000% Dark DMG once. Base DMG of Dreamfall Showdown increases by 75%. When the Card Rank is at C/B/A/S/SS, the Base DMG further increases by 10%/20%/30%/40%/50%."],
+    ["Jackpot Winner", "The carrier deals 10% more Dark DMG. If with the Tricker's Mark, the carrier deals 10% more Lightning DMG."],
+    ["Generous Gift", "Each time Billie casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Intoxicating Blues", "Increases the carrier's ATK by 100."],
+    ["Dazzling Spotlight", "Billie's Active Skills deal 70% more damage."]
+  ],
+  "kurumi-tokisaki": [
+    ["Resplendent Chime: Dark / Bullet Barrage: Dark", "Resplendent Chime: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Zafkiel will gather energy and release a shockwave, dealing 325% Dark DMG 6 times.\n\nBullet Barrage: Dark: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Zafkiel will summon a gun array and open fire, dealing 325% Dark DMG 6 times."],
+    ["Declaration of Ruin", "When Kurumi Tokisaki casts Aleph, Dalet, or Het with Zafkiel equipped, she will summon Zafkiel to launch a joint attack, dealing 3000% Dark DMG once. When casting Phantom, increases ATK by 25% for 8s. Duration resets every time it is triggered."],
+    ["Twin Paradox", "Increases the carrier's Dark DMG by 10%."],
+    ["Ember Scorch", "Each time Zafkiel casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Shadow Dance", "Increases the carrier's ATK by 100."],
+    ["Reversed Funeral", "Zafkiel's Active Skills deal 70% more DMG."]
+  ],
+  "hanying-solacetune": [
+    ["Moon Stroll: Physical / Solitary Crane: Physical", "Moon Stroll: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Dreamwing will attack with an energy wave, applying Rigidity to nearby enemies, dealing 250% Physical DMG 6 times. Rigidity: Immobilizes the enemy for 2s.\n\nSolitary Crane: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Dreamwing will fly toward the target then crash into the ground, dealing 450% Physical DMG 4 times."],
+    ["Moonlight Follows", "When Hanying: Solacetune deploys Lunartone Field or triggers Ethereal Symphony with Dreamwing equipped, summons Dreamwing to launch a joint attack, dealing 1250% Physical DMG 2 times. The CRIT DMG of Jade Bloom and Ringing increases by 75%."],
+    ["River Immortal", "The carrier's Physical DMG increases by 10%."],
+    ["Tipsy Flowers", "Each time Dreamwing casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Triggering this effect again will renew its duration."],
+    ["Grass Crossing", "Increases the carrier's ATK by 100."],
+    ["Spring Excursion", "Dreamwing's Active Skill deals 70% more DMG."]
+  ],
+  "veronica-aegis": [
+    ["Searing Ember", "Increases the carrier's Physical DMG by 10%. If the carrier has Searing Sight or Ember Mark, their Fire DMG increases by 10%."],
+    ["Synergetic Enhancement", "When Veronica: Aegis, with Scaled Rampart equipped, casts Piercing Judgment with Sin Mark or casts Torrential Blast for the first time after entering Execution, she will summon Scaled Rampart to launch a joint two-hit attack, dealing 1000% and 2000% Physical DMG respectively. Base DMG of Blazing Desolation and Ruinous Ember increases by 20%."],
+    ["Bone Resonance: Physical / Scale Shock: Physical", "Bone Resonance: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Scaled Rampart will split into two pieces and perform consecutive slashes, dealing 550% Physical DMG 4 times.\n\nScale Shock: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Scaled Rampart will immediately transform into a shield, dealing 2000% Physical DMG and pulling in enemies. This can block one attack within a short period of time. A successful block triggers a fan-shaped counterattack, dealing equivalent Physical DMG."],
+    ["Inferno Overlock", "Each time Scaled Rampart casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Paradox Shackles", "Increases the carrier's ATK by 100."],
+    ["Forged Edge", "Scaled Rampart's Active Skills deal 70% more damage."]
+  ],
+  "karenina-effulgence": [
+    ["Stellar Pulse: Physical / Sunder Dash: Physical", "Stellar Pulse: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Patrick will fire a barrage of beams and pull in enemies, dealing 650% Physical DMG 3 times.\n\nSunder Dash: Physical: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Patrick will charge at enemies, dealing 1000% Physical DMG twice."],
+    ["Radiant Voyage", "When Karenina: Effulgence casts Surge Breach with Patrick equipped, she will summon Patrick to launch a joint attack, dealing 937.5% Physical DMG 8 times. While Karenina: Effulgence is in Ride the Rapids state, her ATK increases by 20% for 8s. Duration resets every time it is triggered."],
+    ["Hunter's Halo", "Increases the carrier's Physical DMG by 10%. Darkflow DMG increases by 10%."],
+    ["Chained Charge", "Each time Patrick casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time it is triggered."],
+    ["Convergent Field", "Increases the carrier's ATK by 100."],
+    ["Polar Calibration", "Patrick's Active Skills deal 70% more damage."]
+  ]
+};
+
+// Weapon resonance effects. Source: https://grayravens.com/wiki/Weapons/Weapon_Resonance
+const RESONANCE_EFFECTS = {
+  "Dead Line Timing": "Gains 2 extra random Signal Orbs when deployed, and 3 Signal Orbs of the same color every 45s (also gains Signal Orbs on standby).",
+  "Domain Deconstruction": "Inflicts Corrosion effect upon dealing damage. Corrosion: reduces the target's All Resistances by 8% for 8s. Triggering this effect again will renew its duration.",
+  "Glorious Afterglow": "Final ATK of the weapon increases by 30% for 8s upon a 3-ping. Duration resets upon a repeated trigger.",
+  "Glorious Spear": "When using a healing skill or effect, increases Full ATK of the healed target by 10% for 8s, CD for 10s.",
+  "Incandescence": "Weapon's final ATK increases by 15% at the start of battle. No duration limit.",
+  "Matrix Lightning": "Movement Speed greatly increases and all enemies' Extra DMG Reduction decreases by 10% in Matrix.",
+  "Superconducting Axial Ray": "Increases Full ATK of all characters of the team by 8%. This effect does not stack."
+};
