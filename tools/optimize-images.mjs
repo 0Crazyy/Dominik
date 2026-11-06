@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Creates the light WebP copies the site really loads: Dominik/assets/<file> -> Dominik/assets-web/<file>.webp
+// Creates the light WebP copies the site really loads: assets/<file> -> assets-web/<file>.webp
 // The full name stays in the copy (X.png.webp) because X.png and X.webp can sit side by side.
 // The originals in assets/ are never changed, and app.js keeps pointing at them: web() in app.js swaps the path on render.
 // Run it after adding or replacing images: node tools/optimize-images.mjs     (--force redoes every file)
@@ -11,17 +11,18 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 const run = promisify(execFile);
-const SITE = join(dirname(fileURLToPath(import.meta.url)), "..", "Dominik");
+const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const FROM = join(SITE, "assets"), TO = join(SITE, "assets-web");
 const FORCE = process.argv.includes("--force");
 const QUALITY = "85", JOBS = 6;
 
-// Not loaded through web(): home thumbnails and the link preview are used as they are, the rest is unused source art
-const SKIP = [/^home\//, /^embed-icon\./, / 3D\.\w+$/, /\/PGR_[^/]+$/];
+// Not loaded through web(): home thumbnails and the link preview are used as they are
+const SKIP = [/^home\//, /^embed-icon\./];
 // Largest size of each kind of image, about twice what the biggest view shows (the focus view enlarges cards 1.35x)
 const DEFAULT_SIZE = "512x512";
 const SIZES = [
   [/^logo\./, "192x192"],
+  [/^calculator\//, "128x128"],
   [/^classes\//, "256x256"],
   [/^resonances\//, "320x320"],
   [/\/Awaken - /, "384x384"],

@@ -1,5 +1,6 @@
-# Local Netlify folder
+# Local Netlify folder, and the copy tools/deploy.mjs publishes
 .netlify
+.deploy
 
 # Source art (PSD) and local backups: not part of the site
 Dominik - arquivos fonte/

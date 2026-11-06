@@ -1,0 +1,5 @@
+# Every page address is served by index.html, and app.js shows the right page.
+# Files that exist (images, style.css...) are served as they are, this rule does not touch them.
+/characters /constructs 301
+/assets/skills /constructs 301
+/* /index.html 200

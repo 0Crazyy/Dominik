@@ -8,7 +8,7 @@ import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 
-const SITE = join(dirname(fileURLToPath(import.meta.url)), "..", "Dominik");
+const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = file => readFileSync(join(SITE, file), "utf8");
 // app.js touches the page right after its data, so only the part before this line can run outside a browser
 const DATA_END = "const $ = (s, r = document)";
@@ -16,7 +16,7 @@ const DATA_END = "const $ = (s, r = document)";
 function loadData() {
   const app = read("app.js"), end = app.indexOf(DATA_END);
   if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/check-assets.mjs`);
-  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, LEADER_SKILLS, WEAPONS, WEAPON_STATS, CHARACTER_SKILLS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
+  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, MEMORY_RELEASE, CONSTRUCTS, LEADER_SKILLS, WEAPONS, WEAPON_STATS, CHARACTER_SKILLS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
   return vm.runInNewContext(`${read("assets-data.js")}\n${read("skills-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 }
 
@@ -56,6 +56,7 @@ function check() {
       if (d.MEM_INDEX.has(card.wh)) use(d.memFile(card.wh, "WH", "png"), where);
       else errors.push(`memória "${card.wh}" não existe em MEMORY_TABS: ${where}`);
     }
+    if (!d.CONSTRUCTS[card.name]) errors.push(`personagem sem dados em CONSTRUCTS (a página Constructs quebra): ${where}`);
     if (card.role.includes("captain") && !d.LEADER_SKILLS[card.name]) errors.push(`capitão sem texto em LEADER_SKILLS: ${where}`);
     if (card.portrait) thumbs.set(`assets/home/${slug(card.name.replace(":", ""))}.jpg`, card.name);
   }
@@ -67,8 +68,10 @@ function check() {
     if (ext) d.memSet(name).forEach(path => use(path, `memória ${name} (${tab})`));
     if (!d.MEMORY_EFFECTS[name]) errors.push(`memória "${name}" não tem texto em MEMORY_EFFECTS (a página Memories quebra)`);
     if (!d.MEMORY_STATS[name]) errors.push(`memória "${name}" não tem stats em MEMORY_STATS (a página dela quebra)`);
+    if (!d.MEMORY_RELEASE[name]) errors.push(`memória "${name}" não tem ordem em MEMORY_RELEASE (o Sort quebra)`);
   }
   for (const [owner, , , file] of d.WEAPONS) if (file) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
+  for (const [owner, name] of d.WEAPONS) if (!d.CONSTRUCTS[owner]) errors.push(`dono da arma "${name}" sem dados em CONSTRUCTS (a página Weapons quebra): ${owner}`);
   for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
   for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type] of skills) {
     use(`${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${type}.png`, `skill de ${name}`);

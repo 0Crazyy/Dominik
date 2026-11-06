@@ -1,7 +1,7 @@
 # Creates the light portraits used by the home conveyor: assets/home/<character-folder>.jpg
 # Run it after adding a new character folder. Without a thumbnail the conveyor still works,
 # it just loads the full-size Awaken art for that character.
-$root = Join-Path (Split-Path $PSScriptRoot -Parent) 'Dominik'
+$root = Split-Path $PSScriptRoot -Parent
 $out = Join-Path $root 'assets\home'
 Add-Type -AssemblyName System.Drawing
 New-Item -ItemType Directory -Force $out | Out-Null
