@@ -31,6 +31,7 @@ const MEMORY_EFFECTS = {
   "Flamel": ["Dark DMG increases by 5% and ATK increases by 5%", "After entering annihilation state, the aphotic DMG increases by 30%. DMG of End is Nigh increases by 30%. Gain extra 10 Energy after the annihilation orb is eliminated."],
   "Fran": ["Lightning DMG increases by 5% and Extra DMG Bonus increases by 5%.", "Dusk Fluorescence and Forest Predator's Base DMG increases by 100%. Wolfspirit Release's Base DMG increases by 70%."],
   "Frederick": ["Each dodge increases Movement Speed by 15% and Extra DMG Bonus by 5% for 5s. Can be stacked up to 3 times. Duration resets every time it is triggered.", "Triggering Matrix reduces all enemies' Speed by 20% and Extra DMG Reduction during Matrix/Hypermatrix Deduction/Overlink Ascension by 15% for 4s. 8s cooldown."],
+  "Gloria": ["Attacks reduce the target's all Elemental Resistance by 6% for 5s. 12s cooldown.", "When taking damage, reduces all Elemental Resistance of enemies within 5m by 6% for 7s. Duration resets every time it is triggered."],
   "Guinevere": ["Healing effect increases by 10%. Next healing effect increases the target's all Elemental DMG and Resistance by 10% for 5s. 8s cooldown.", "Each healing cast will charge up the drone. When the drone is fully charged, the next healing effect will consume all charged energy to summon an elemental drone. The drone automatically follows the ally with the lowest HP percentage, healing allies in a 5m radius for 2% maximum HP per second and increasing their all Elemental DMG by 15% for 5s. 12s cooldown."],
   "Hanna": ["Extra DMG Bonus of 3-Ping skills increases by 25%.", "For every 30s, enters Matrix upon a 3-Ping and gains a random Signal Orb."],
   "Heisen": ["All ATK increases by 3% and Lightning DMG increases by 7%.", "Extra DMG Bonus increases by 10%. Attacking a target will inflict them with Electrocute, reducing their Lightning Resistance by 15% for 8s (10s cooldown on the same target). Attacking targets affected by Electrocute will trigger a Thunderstorm that deals 600% Lightning DMG (6s cooldown on the same target)."],
@@ -88,7 +89,7 @@ const WEAPONS = [
   ["Kurumi Tokisaki", "Hour & Minute", "Zafkiel - Dual Guns", "kurumi-tokisaki/Arma - Kurumi Tokisaki.webp", "ATK increases by 10%. Phantom and Signature - Angel of Time: Zafkiel deal 50% more DMG. When Bullet Brand is active, Aleph, Dalet, and Het deal 50% more DMG. Gains 1 stack of Imprint upon first deployment. After casting Phantom, gains 2 Signal Orbs, up to 4 per deployment."],
   ["Lee: Hyperreal", "Key of Tempus Gate - Stokes", "Composite Armaments", "lee-hyperreal/Arma - Lee Hyperreal.png", "ATK increases by 10%. Casting Realm Travel will trigger Matrix if it is not on cooldown. The first Hypermatrix Strike launched upon entering battle will generate 1 extra Sight Point."],
   ["Lee: Palefire", "Wolf Fang", "Dual Guns", "lee-palefire/Arma - Lee Palefire (5).png", "Extra DMG Bonus increases by 20% when attacking enemies in a burning area."],
-  ["Leia: Fortunaster", "Edges of the Twisted Ribbon", "", "", "ATK increases by 10%, and the damage dealt by Ring Theorem is doubled. While holding a Photonic Mark, the damage dealt by Signature - Stardust of the Luminous Waltz is doubled."],
+  ["Leia: Fortunaster", "Edges of the Twisted Ribbon", "Rhythmic Ray", "leia-fortunaster/Arma - Leia Fortunaster.png", "ATK increases by 10%, and the damage dealt by Ring Theorem is doubled. While holding a Photonic Mark, the damage dealt by Signature - Stardust of the Luminous Waltz is doubled."],
   ["Lilith: Daemonissa", "Sorrow of Fata Morgana", "Moon Umbrella", "lilith-daemonissa/Arma - Lilith Daemonissa.png", "Gains 10% ATK. When casting Dreamfall Showdown at Card Rank B, gains 12 Signature Energy."],
   ["Liv: Limpidity", "Ripples of the Aloft Sea", "Lotus Wheel", "liv-limpidity/Arma - Liv Limpidity.png", "ATK increases by 10%. Thousand Rays and Dawn Dream deal 50% more damage. When casting Signature - Mirrored Renewal, gains 2 Signal Orbs; if having 12 stacks of Delicate Heart when casting, gains 1 additional Signal Orb."],
   ["Lucia: Inverse Crown", "Lightless Dusk", "Cylinder Katana", "lucia-inverse-crown/Arma - Lucia Inverse Crown.webp", "ATK increases by 10%. Gain 360 Blade Intent upon deployment. Gains Blade Mark upon deployment or after casting Relinquish. Gains a set of Signal Orbs when casting fully charged Sonance or Outro while Blade Mark is active. (Can obtain up to 6 Signal Orbs this way per deployment.) In each battle, the finishing hit of the first Myriad Calamity cast deals 100% more Base DMG."],
@@ -112,7 +113,7 @@ const WEAPONS = [
 const MEMORY_STATS = {
   "Frederick": [136, 223, 64, 1446], "Cottie": [135, 223, 66, 1453], "Hanna": [129, 223, 67, 1453], "Darwin": [129, 218, 67, 1491],
   "Condelina": [132, 223, 67, 1461], "Guinevere": [132, 223, 64, 1528], "Philip II": [132, 223, 66, 1491], "Einsteina": [132, 219, 66, 1521],
-  "Catherine": [135, 228, 66, 1491], "Da Vinci": [135, 218, 66, 1491], "Clusius": [132, 223, 66, 1491], "Bunsen": [132, 223, 66, 1491],
+  "Catherine": [135, 228, 66, 1491], "Gloria": [107, 177, 53, 1232], "Da Vinci": [135, 218, 66, 1491], "Clusius": [132, 223, 66, 1491], "Bunsen": [132, 223, 66, 1491],
   "Poincare": [132, 223, 66, 1491], "Klenova": [132, 223, 66, 1491], "Wilde": [132, 223, 66, 1491], "Santiago": [132, 223, 66, 1491],
   "Keats": [132, 223, 66, 1491], "Burana": [132, 223, 66, 1491], "Chang Wuzi": [132, 223, 66, 1491], "Signa": [132, 223, 66, 1491],
   "Charlotte": [132, 223, 66, 1491], "Leeuwenhoek": [133, 223, 64, 1506], "Patton": [132, 223, 67, 1453], "Feynman": [132, 223, 66, 1491],
@@ -145,6 +146,14 @@ const WEAPON_STATS = {
 // CUB skills by character folder, as [name, effect at level 5], in the order of the files "CUB - Skill 1" to "CUB - Skill 6".
 // Source: https://huaxu.app/na/wiki/cubs, matched by icon. Both active skills share one icon, so they share one entry.
 const CUB_SKILLS = {
+  "leia-fortunaster": [
+    ["Ice-Adorned Heart: Ice / Snowbound Pursuit: Ice", "Ice-Adorned Heart: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Vulpecula will appear to the right of the target and fire magic missiles, dealing 2000% Ice DMG once.\n\nSnowbound Pursuit: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Vulpecula will appear to the left of the target, charge forward, leap up, and continuously lash the target with its tail while pulling in enemies, dealing 325% Ice DMG 6 times."],
+    ["Astral Duet", "When Fortunaster casts the 4th hit of Ribbon Circuit with Vulpecula equipped, she will summon Vulpecula to launch a joint attack, dealing 3000% Ice DMG once. When casting Ring Theorem, increases ATK by 25% for 8s. Duration resets every time it is triggered."],
+    ["Riverfrost", "Increases the carrier's Ice DMG by 10%."],
+    ["Frostbound Edge", "Each time Vulpecula casts an Active Skill, the carrier's Extra DMG Bonus increases by 5% for 8s. Duration resets every time the effect is triggered."],
+    ["Ceaseless Snowfall", "Increases the carrier's ATK by 100."],
+    ["Vulpecula Pact", "Vulpecula's Active Skills deal 70% more damage."]
+  ],
   "wanshi-lucid-dreamer": [
     ["Frost Walker: Ice / Scattered Snow: Ice", "Frost Walker: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Snowveil will fly toward the target then crash into the ground, dealing 1800% Ice DMG 1 time.\n\nScattered Snow: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Snowveil will flick its tail to fire crystal shards forward, inflicting nearby enemy units with Rigidity while dealing 200% Ice DMG 7 times. Rigidity: Immobilizes the enemy for 2s."],
     ["Dream Ward", "When Wanshi: Lucid Dreamer enters Calibration Mode with Snowveil equipped, Snowveil will be summoned to assist in attacks, dealing 250% Ice DMG 10 times. Base DMG of Superlink Flight increases by 65%; if Maim has maximum stacks when Superlink Flight is cast, its Base DMG increases by a further 100%. Base DMG of Destructive Wave increases by 75%; if 30 Correction Projectiles are consumed when Destructive Wave is cast, its Base DMG increases by a further 100%."],
@@ -316,4 +325,31 @@ const RESONANCE_EFFECTS = {
   "Incandescence": "Weapon's final ATK increases by 15% at the start of battle. No duration limit.",
   "Matrix Lightning": "Movement Speed greatly increases and all enemies' Extra DMG Reduction decreases by 10% in Matrix.",
   "Superconducting Axial Ray": "Increases Full ATK of all characters of the team by 8%. This effect does not stack."
+};
+
+// Leader skills shown on the CAPTAIN tag. skills-data.js only loads on the Skills pages, so they are copied here;
+// tools/check-assets.mjs fails if a copy stops matching it
+const LEADER_SKILLS = {
+  "Adelyde: Anabasis": ["Leader - Torch Guardian", "Increases all team members' ATK by 10% and Overlinkers' Drk DMG and Ultima Slash DMG by 5%."],
+  "Bianca: Crepuscule": ["Leader - Twilight's Decree", "Increases Dark DMG and Raydiance DMG of all members by 10%. Increases ATK of all Attackers in the team by 10%."],
+  "Hanying: Solacetune": ["Leader - Awakened Strings", "Increases Physical DMG of all members by 10%. Increases DMG of all Tank Omniframes in the team by 5%."],
+  "Helentine: Lacrimosa": ["Leader - Fading Fern", "All members' ATK increases by 10%. All Amplifiers' Lightning DMG and Glaciation DMG increase by 5%."],
+  "Kamui: Aeternion": ["Leader - Solar Wind", "Increases Fire DMG and Plasma Beam DMG of all members by 10%. Increases DMG of all Breaker Omniframes in the team by 5%."],
+  "Karenina: Effulgence": ["Eye of the Storm", "Increases Physical DMG and Darkflow DMG of all members by 10%. Increases DMG of all Breaker Omniframes in the team by 5%."],
+  "Kurumi Tokisaki": ["Leader - Spirit of Time: Zafkiel", "Increases Dark DMG of all members by 10%. Increases ATK of all Attackers in the team by 10%."],
+  "Leia: Fortunaster": ["Leader - Supercooled Freezing", "Increases Ice DMG of all members by 10%. Increases DMG of all Breaker Omniframes in the team by 5%."],
+  "Lilith: Daemonissa": ["Leader - House of Cards", "All members gain 10% ATK. Amplifiers deal 5% more Dark DMG and Plasma Beam DMG."],
+  "Liv: Limpidity": ["Leader - Radiant as I", "Increases Lightning DMG and Darkflow DMG of all members by 10%. Increases ATK of all Attackers in the team by 10%."],
+  "Lucia: Inverse Crown": ["Leader - Crowned Grace", "Increases Ice DMG and Ignition DMG of all members by 10%. Increases ATK of all Attackers in the team by 10%."],
+  "Lucia: Pyroath": ["Leader - Fire of Oath", "Increases Fire DMG and Plasma Beam DMG of all members by 10%. Increases ATK of all Attacker Omniframes in the team by 10%."],
+  "Luna: Oblivion": ["Leader - Blood Moon", "Increases Nihil DMG of all members by 10%. Increases ATK of all Annihilators by 20%."],
+  "Nanami: Startrail": ["Leader - Astral Beacon", "Increases Lightning DMG and Ignition DMG of all members by 10%. Increases DMG of all Tank Omniframes in the team by 5%."],
+  "Nirvatia: Dirge": ["Leader - Enchanting Strike", "Increases Nihil DMG of all members by 10%. Increases Nihil DMG of all Amplifiers in the team by 5%."],
+  "Rosetta: Arete": ["Leader - Amalgamation Burst", "Increases Dark and Ultima Slash damage of all members by 10%. Increases DMG of all Breaker Omniframes in the team by 5%."],
+  "Selena: Pianissimo": ["Leader - Freezing Intro", "Increases Physical DMG and Glaciation DMG of all members by 10%. Increases ATK of all Attackers in the team by 10%."],
+  "Teddy: Spectre": ["Leader - \"Classified Domain\"", "Increases ATK of all members by 10%.Increases Ice DMG and Raydiance DMG of all Amplifiers in the team by 5%."],
+  "Vera: Geiravor": ["Leader - Abyssal Condemnation", "Increases ATK of all members by 10%. Increases Fire DMG and Darkflow DMG of all Amplifiers in the team by 5%."],
+  "Veronica: Aegis": ["Leader - Cleansing Eunoe", "Increases ATK of all members by 10%. Increases Physical DMG and Ignition DMG of all Amplifiers in the team by 5%."],
+  "Wanshi: Lucid Dreamer": ["Leader - Lucidity of Mind", "Increases Ice DMG of all members by 10%. Increases DMG of all Tank Omniframes in the team by 5%."],
+  "Watanabe: Epitaph": ["Leader - Guardian's Aegis", "Increases Fire DMG of all members by 10%. Increases DMG of all Tank Omniframes in the team by 5%."]
 };

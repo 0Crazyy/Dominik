@@ -19,28 +19,28 @@ const ALL_ATK = `${RES}/Ressonância - ALL ATK.png`;
 // Entry: [name, boost, art extension]. No extension = no art yet: its Assets card shows empty slots
 // and a build shows its name instead. When the art arrives, just add the extension here.
 const MEMORY_TABS = {
-  Common: [["Frederick", "Dodge Boost"], ["Cottie", "Signature Move Boost", "png"], ["Hanna", "3-Ping Boost", "png"],
-    ["Darwin", "Orb Skill Boost", "png"], ["Condelina", "Basic Attack Boost"]],
+  Common: [["Frederick", "Dodge Boost", "png"], ["Cottie", "Signature Move Boost", "png"], ["Hanna", "3-Ping Boost", "png"],
+    ["Darwin", "Orb Skill Boost", "png"], ["Condelina", "Basic Attack Boost", "png"]],
   Support: [["Guinevere", "Support Boost II", "png"], ["Philip II", "Support Boost I", "png"], ["Einsteina", "Survival Boost II", "png"],
-    ["Catherine", "Survival Boost I", "png"], ["Da Vinci", "QTE Boost", "png"]],
-  Effect: [["Clusius", "Ignition Boost"], ["Bunsen", "Ultima Slash Boost"], ["Poincare", "Darkflow Boost"],
+    ["Catherine", "Survival Boost I", "png"], ["Da Vinci", "QTE Boost", "png"], ["Gloria", "Weaken Enemy II", "png"]],
+  Effect: [["Clusius", "Ignition Boost", "png"], ["Bunsen", "Ultima Slash Boost", "png"], ["Poincare", "Darkflow Boost", "png"],
     ["Klenova", "Glaciation Boost", "png"], ["Wilde", "Plasma Beam Boost", "png"]],
   Physical: [["Santiago", "Physical Boost", "webp"], ["Keats", "Physical Boost", "png"], ["Burana", "Physical Boost", "png"],
-    ["Chang Wuzi", "Physical Boost", "png"], ["Signa", "Physical Boost"], ["Charlotte", "Physical Boost"],
-    ["Leeuwenhoek", "Physical Support Boost"], ["Patton", "Physical Boost", "png"]],
+    ["Chang Wuzi", "Physical Boost", "png"], ["Signa", "Physical Boost", "png"], ["Charlotte", "Physical Boost", "png"],
+    ["Leeuwenhoek", "Physical Support Boost", "png"], ["Patton", "Physical Boost", "png"]],
   Fire: [["Feynman", "Fire Boost", "webp"], ["Hervor", "Fire Boost", "png"], ["Heraclitus", "Fire Boost", "png"],
-    ["Alphonse", "Fire Boost", "png"], ["Turing", "Fire Boost", "png"], ["Unimate", "Fire Boost"],
-    ["Elizabeth", "Fire Boost"], ["Shakespeare", "Fire Boost", "png"]],
+    ["Alphonse", "Fire Boost", "png"], ["Turing", "Fire Boost", "png"], ["Unimate", "Fire Boost", "png"],
+    ["Elizabeth", "Fire Boost", "png"], ["Shakespeare", "Fire Boost", "png"]],
   Ice: [["Pavlichenko", "Ice Boost", "webp"], ["Joanna", "Ice Boost", "png"], ["Liston", "Ice Boost", "png"],
-    ["Ji Bo'an", "Ice Boost", "png"], ["Aline", "Ice Boost"], ["Chen Jiyuan", "Ice Boost", "png"], ["Mousme", "Ice Boost"]],
+    ["Ji Bo'an", "Ice Boost", "png"], ["Aline", "Ice Boost", "png"], ["Chen Jiyuan", "Ice Boost", "png"], ["Mousme", "Ice Boost", "png"]],
   Lightning: [["Cogito", "Lightning Boost", "webp"], ["Natasha", "Lightning Boost", "png"], ["Herschell", "Lightning Boost", "png"],
-    ["Fran", "Lightning Boost", "png"], ["Diesel", "Lightning Boost"], ["Tifa", "Lightning Boost"], ["Heisen", "Lightning Boost", "png"]],
+    ["Fran", "Lightning Boost", "png"], ["Diesel", "Lightning Boost", "png"], ["Tifa", "Lightning Boost", "png"], ["Heisen", "Lightning Boost", "png"]],
   Dark: [["Pesanteur", "Dark Boost", "webp"], ["Nimue", "Dark Boost", "png"], ["Jeanne", "Dark Boost", "png"],
     ["Barcelo", "Dark Boost", "png"], ["Derketo", "Dark Boost", "webp"], ["Boone", "Dark Boost", "png"],
-    ["Seraphine", "Dark Boost"], ["Flamel", "ATK Boost"], ["Bathlon", "Dark Boost", "png"]],
+    ["Seraphine", "Dark Boost", "png"], ["Flamel", "ATK Boost", "png"], ["Bathlon", "Dark Boost", "png"]],
   Nihil: [["Bulgakov", "Nihil Boost", "webp"], ["Sothoth", "Nihil Boost", "png"], ["Cleopatra", "Nihil Boost", "png"]],
-  Uniframe: [["Liliana", "ATK Boost"], ["Shelley", "Lightning Boost"], ["Isabel", "Ice Boost"], ["Marco", "Physical Boost"],
-    ["Jack", "Fire Boost"], ["Lucrezia", "Lightning Boost"], ["Wu'an", "ATK Boost"], ["Koya", "ATK Boost"]]
+  Uniframe: [["Liliana", "ATK Boost", "png"], ["Shelley", "Lightning Boost", "png"], ["Isabel", "Ice Boost", "png"], ["Marco", "Physical Boost", "png"],
+    ["Jack", "Fire Boost", "png"], ["Lucrezia", "Lightning Boost", "png"], ["Wu'an", "ATK Boost", "png"], ["Koya", "ATK Boost", "png"]]
 };
 const MEM_INDEX = new Map(Object.entries(MEMORY_TABS).flatMap(([tab, sets]) => sets.map(([name, , ext]) => [name, { tab, ext }])));
 const memFile = (name, piece, ext = MEM_INDEX.get(name).ext) => `${MEM}/${MEM_INDEX.get(name).tab}/Memória - ${name} ${piece}.${ext}`;
@@ -67,6 +67,7 @@ const NIRVATIA = `${CHARS}/nirvatia-dirge`;
 const PAVLICHENKO = memSet("Pavlichenko");
 const JOANNA = memSet("Joanna");
 const MOUSME = memSet("Mousme");
+const GLORIA = memSet("Gloria");
 
 const LUCIA_P = `${CHARS}/lucia-pyroath`;
 const VERA = `${CHARS}/vera-geiravor`;
@@ -195,10 +196,10 @@ const TEDDY_KIT = {
   // Order as in the reference image: slot 5 is Teddy's Skill 6, slot 6 is Bianca's Skill 6
   skills: [...cubSkills(TEDDY).slice(0, 4), `${TEDDY}/CUB - Skill 6.png`, `${CHARS}/bianca-crepuscule/CUB - Skill 6.png`]
 };
-// No weapon or Signature art yet; Wanshi's CUB is a placeholder until Leia's is added
 const LEIA_KIT = {
   name: "Leia: Fortunaster", symbol: classIcon("Breaker"), portrait: `${LEIA}/Awaken - Leia Fortunaster.png`,
-  matrix: matrix(DD, GA, ML), resonance: ALL_ATK, construct: `${WANSHI}/CUB - Snowveil.png`, skills: cubSkills(WANSHI)
+  weapon: `${LEIA}/Arma - Leia Fortunaster.png`,
+  matrix: matrix(DD, GA, ML), resonance: ALL_ATK, core: `${LEIA}/Skill - Core Passiva.png`, construct: `${LEIA}/CUB - Vulpecula.png`, skills: cubSkills(LEIA)
 };
 const NANAMI_KIT = {
   name: "Nanami: Startrail", symbol: classIcon("Tanque"), portrait: `${NANAMI}/Awaken - Nanami Startrail.png`,
@@ -230,13 +231,13 @@ const ROSETTA_DESC ="Unfortunally, Cottie is needed for smooth damage loops at l
 const ADELYDE_DESC = "Basically the same as Alpha Inverse Crown on one aspect: Cottie doesn't work on her, and not because she grants too much energy, and yes because her skills grants \"Anabasis points\" that are used as signature energy instead of the common signature energy, making the buffs of Cottie useless, and you can only increase her speed by evolving her rank to SS3 and SSS0. She's free, but still an annoying aspect, specially for players with low vouchers and the future players who won't get the \"Journey of Promise\" copy. On other aspects, she can work with anything alongside her signature memory, without DLT too.";
 const ADELYDE_QTE_DESC = `${ADELYDE_DESC} Her SSS skill increases any QTE damage by 50%, so if you want to abuse the Attacker''s SS3 QTE damage, you can opt for Da Vinci instead of Bathlon on Adelyde.`;
 
-// Colors sampled from the reference images; "icon" is the emblem shown between the cards
-const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326", ar: "#fff", icon: "assets/energy type/Fire.png" };
-const LIGHTNING_THEME = { c1: "#c3a14e", c2: "#13110b", cp: "#332c19", ar: "#fff", icon: "assets/energy type/Lightning.png" };
-const DARK_THEME = { c1: "#b38aff", c2: "#120f17", cp: "#2a2347", ar: "#fff", icon: "assets/energy type/Dark.png" };
-const ICE_THEME = { c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#fff", emblem: "❄︎", iconName: "Ice" };
-const NIHIL_THEME = { c1: "#ee77b2", c2: "#160f12", cp: "#361d2a", ar: "#fff", icon: "assets/energy type/Nihil.png" };
-const PHYSICAL_THEME = { c1: "#7ff0bc", c2: "#0f1515", cp: "#1e332c", ar: "#fff", icon: "assets/energy type/Physical.png" };
+// Colors sampled from the reference images
+const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326" };
+const LIGHTNING_THEME = { c1: "#c3a14e", c2: "#13110b", cp: "#332c19" };
+const DARK_THEME = { c1: "#b38aff", c2: "#120f17", cp: "#2a2347" };
+const ICE_THEME = { c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a" };
+const NIHIL_THEME = { c1: "#ee77b2", c2: "#160f12", cp: "#361d2a" };
+const PHYSICAL_THEME = { c1: "#7ff0bc", c2: "#0f1515", cp: "#1e332c" };
 
 // Shown above any build with this character until the date below (Brasília time)
 const NEW_CHARACTER_NOTICE = {
@@ -244,19 +245,39 @@ const NEW_CHARACTER_NOTICE = {
   text: "Leia: Fortunaster is a recent character, so there is little feedback on these builds so far. It's recommended to wait at least 1 week for more information. Take it with a grain of salt."
 };
 
-// Both A Comet's Afterglow builds differ only in Leia's memories and Weapon Harmony
+// A Comet's Afterglow teams follow Spider 2B's Leia guide. Leia's build only changes with her rank
+const LEIA_SS = { wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
+  desc: "Without Weapon Harmony, use 2 Einsteina instead of 2 Chen Jiyuan. Breaker class skill also works on the bottom resonance." };
+const LEIA_SS3 = { wh: "Einsteina", memories: memBuild(MOUSME, COTTIE),
+  desc: "Breaker class skill also works on the bottom resonance." };
+const TEDDY_CLASS = { ...TEDDY_KIT, core: `${TEDDY}/Skill - Class Skill.png` };
+// As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
+const TEDDY_SUPPORT = { ...TEDDY_CLASS, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]] };
+const WANSHI_COMET = { name: "Wanshi: Lucid Dreamer", ...WANSHI_BUILD, core: `${WANSHI}/Skill - Class Skill.png` };
 const cometTeam = leia => [
-  { bar: "blue", role: "captain", ...LEIA_KIT, ...leia, desc: "" },
-  { bar: "red", role: "", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
-  // As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
-  { bar: "gold", role: "starter", ...TEDDY_KIT, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]], desc: "" }
+  { bar: "blue", role: "", ...LEIA_KIT, ...leia },
+  { bar: "red", role: "captain", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
+  { bar: "gold", role: "starter", ...TEDDY_SUPPORT, desc: "" }
+];
+const altIceTeam = leia => [
+  { bar: "blue", role: "starter", ...WANSHI_COMET, wh: "Liston", memories: memBuild(DA_VINCI, LISTON),
+    desc: "Without Weapon Harmony, he still runs 2 Liston." },
+  { bar: "red", role: "captain", ...LEIA_KIT, ...leia },
+  { bar: "gold", role: "", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(JOANNA, GUINEVERE),
+    desc: "Sub DPS build. Signature on the bottom resonance also works, or half of each." }
+];
+const cometGlaciation = (helentine, leia) => [
+  { bar: "blue", role: "captain", ...HELENTINE_KIT, memories: memBuild(CHEN_JIYUAN, COTTIE), ...helentine },
+  { bar: "red", role: "", ...LEIA_KIT, ...leia },
+  { bar: "gold", role: "starter", ...TEDDY_SUPPORT,
+    desc: "Alisa: Echo can take this spot with the same build. Wanshi on 4 Liston + 4 Da Vinci also works, but a little worse. Selena on 4 Burana + 4 Da Vinci works too." }
 ];
 
 // A team is named after the patch (Global) of its newest character. Teams of one page that share
 // a patch go together as "variants" of that patch; newest patch first in PAGES.
 const COMPS = {
   "glaciation": {
-    name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a", ar: "#8fe8ff", emblem: "✦", iconName: "Glaciation",
+    name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a",
     cards: [
       { bar: "blue", role: "captain starter", ...SELENA_KIT, wh: "Klenova", matrix: matrix(DLT, GA, INC),
         desc: "Standard Glaciation build for Selena. If everything is done right, you can land her final Signature during the effect's period with a little time remaining." },
@@ -270,8 +291,25 @@ const COMPS = {
   "comets-afterglow": {
     name: "A Comet's Afterglow", ...ICE_THEME,
     variants: [
-      { id: "leia-sub-dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam({ wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN) }) },
-      { id: "leia-cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam({ wh: "Einsteina", memories: memBuild(MOUSME, COTTIE) }) }
+      { id: "leia-sub-dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam(LEIA_SS) },
+      { id: "leia-cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam(LEIA_SS3) },
+      { id: "leia-alt-ice", name: "Spider 2B SS Leia Alt Ice", cards: altIceTeam(LEIA_SS) },
+      { id: "leia-alt-ice-ss3", name: "Spider 2B SS3 Leia Alt Ice", cards: altIceTeam(LEIA_SS3) },
+      { id: "leia-pain-cage", name: "Spider 2B Leia Pain Cage", cards: [
+        { bar: "blue", role: "", ...WANSHI_COMET, wh: "Einsteina", memories: memBuild(DA_VINCI, GLORIA), desc: "" },
+        { bar: "red", role: "captain", ...LEIA_KIT, wh: "Cottie", memories: memBuild(MOUSME, COTTIE),
+          desc: "Main DPS for Pain Cage. Without Weapon Harmony, she still runs 2 Cottie." },
+        { bar: "gold", role: "starter", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(CHEN_JIYUAN, GUINEVERE), desc: "" }
+      ] }
+    ]
+  },
+  "comets-afterglow-glaciation": {
+    name: "A Comet's Afterglow", ...ICE_THEME,
+    variants: [
+      { id: "leia-glaciation", name: "Spider 2B SS Leia Glaciation", cards: cometGlaciation(
+        { wh: "Einsteina", desc: "If Leia runs Einsteina instead, use 4 Cottie here." }, LEIA_SS) },
+      { id: "leia-glaciation-ss3", name: "Spider 2B SS3 Leia Glaciation", cards: cometGlaciation(
+        { wh: "Cottie", desc: "If Leia doesn't run Einsteina, use 2 Cottie and 2 Einsteina here." }, LEIA_SS3) }
     ]
   },
   "better-tomorrow-nihil": {
@@ -398,7 +436,7 @@ const COMPS = {
         matrix: matrix(GA, ML, INC),
         resonance: ALL_ATK,
         core: `${KURUMI}/Skill - Signature 2X.webp`,
-        construct: `${KURUMI}/CUB - Zakfiel.webp`,
+        construct: `${KURUMI}/CUB - Zafkiel.webp`,
         skills: cubSkills(KURUMI, "webp"),
         desc: "Kurumi already generates a lot of energy only from few skills, even at low rank, so Cottie isn't needed and so is DLT; 2 signatures are doable any rank, but not worthy if Kurumi is below SSS, or if Adelyde is SSS, or if Rosetta is SS3. Anything works on Kurumi. Technically, \"Boone\" memory would be better than Derketo, since it has 2 points of ATK higher than it per memory, but... Derketo will make Kurumi have a round number on BP (7100 BPs, if SS, fully hypertuned and 6-star weapon), and 4 points of ATK isn't much, so... Yeah. Choose your priority." },
       { bar: "red", role: "", ...ADELYDE_KIT,
@@ -407,7 +445,7 @@ const COMPS = {
     ] }]
   },
   "hanying-adelyde-rosetta": {
-    name: "Anchored in Faith", ...PHYSICAL_THEME, ar: "#7ff0bc", icon: "assets/emblems/Ultima Slash.png",
+    name: "Anchored in Faith", ...PHYSICAL_THEME,
     cards: [
       { bar: "blue", role: "", ...HANYING_KIT, wh: "Da Vinci", memories: memBuild(CHANG_WUZI, DA_VINCI), matrix: matrix(DD, ML, INC),
         desc: "Support Sub-DPS build for Hanying. Alongside Adelyde, will create the Ultima Slash stacks. 2 signatures for stacking is overkill for Rosetta's effect, only one is enough alongside Adelyde's effect. If both your Hanying and your Rosetta have weapon resonances, focus the Domain Deconstruction on Hanying instead." },
@@ -418,7 +456,7 @@ const COMPS = {
     ]
   },
   "kamui-lilith-nanami": {
-    name: "The Dying Sun", ...LIGHTNING_THEME, ar: "#ffe98a", icon: "assets/emblems/Plasma Beam.png",
+    name: "The Dying Sun", ...LIGHTNING_THEME,
     cards: [
       { bar: "blue", role: "captain", ...KAMUI_KIT, matrix: matrix(GA, ML, INC),
         desc: "DPS build that speeds up his damage steps, previously mentioned in the observations of the Fire team. In here, will be needed because of the speedrun against the short time given by the Plasma Beam status. With this, will be enough to do 2 full signatures and also using his strong basic attacks. The rotation you'll use will be with 3-pings and tapped yellow orb for the first signature and holding yellow orb for the second one. By doing this, he will be able do all the damage he can do within the time, and still leave around a second or so remaining until the effect runs out. If your Nanami doesn't have a weapon resonance to hold Domain Deconstruction but you do for Kamui-kun, then his first weapon resonance should be DD instead, later Glorious Afterglow and then Matrix Lightning." },
@@ -446,7 +484,7 @@ const COMPS = {
     ] }]
   },
   "liv-vera-karenina": {
-    name: "Steering by Light", ...DARK_THEME, ar: "#e6e0ff", icon: "assets/emblems/Darkflow.png",
+    name: "Steering by Light", ...DARK_THEME,
     cards: [
       { bar: "blue", role: "starter", ...LIV_KIT, wh: "Bathlon", memories: memBuild(COTTIE, BATHLON),
         desc: "Darkflow set for Liv. Starter, because she's the only of the trio that consumes stacks, while the other ones only either increase or don't use any stacks. Core Passive as memory skill if below SSS" },
@@ -457,7 +495,7 @@ const COMPS = {
     ]
   },
   "homecoming-ignition": {
-    name: "Homecoming Voyage", ...FIRE_THEME, ar: "#ffcdcd", icon: "assets/emblems/Ignition.png",
+    name: "Homecoming Voyage", ...FIRE_THEME,
     cards: [
       { bar: "blue", role: "captain", ...LUCIA_IC_KIT, wh: "Shakespeare", memories: memBuild(PAVLICHENKO, SHAKESPEARE), desc: LUCIA_IC_DESC },
       { bar: "red", role: "starter", ...VERONICA_KIT, wh: "Shakespeare", memories: memBuild(KEATS, SHAKESPEARE),
@@ -498,7 +536,7 @@ const PAGES = {
   "energy/nihil": ["better-tomorrow-nihil"],
   "effect/ignition": ["homecoming-ignition"],
   "effect/plasma-beam": ["kamui-lilith-nanami"],
-  "effect/glaciation": ["glaciation"],
+  "effect/glaciation": ["comets-afterglow-glaciation", "glaciation"],
   "effect/ultima-slash": ["hanying-adelyde-rosetta"],
   "effect/darkflow": ["liv-vera-karenina"]
 };
@@ -520,6 +558,7 @@ function iconName(src = "") {
   if (file === "Classe - Adelyde Anabasis") return "Overlinker";
   if (file.startsWith("Skill - Signature")) return "Signature";
   if (file.startsWith("Skill - Core")) return "Core Passive";
+  if (file.startsWith("Skill - Class")) return "Class Skill";
   const name = file.replace(/^(Memória|Ressonância de Arma|Ressonância|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
   const skill = name.match(/^Skill (\d)$/);
   return skill ? cubSkill(src, skill[1])?.[0] || `CUB ${name}` : name;
@@ -605,7 +644,7 @@ function card(c) {
     const art = piece.startsWith("assets/") ? piece : "", name = art ? iconName(art) : piece;
     return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name));
   };
-  const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}">${t.toUpperCase()}</span>`).join("");
+  const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}"${t === "captain" ? tipAttr(...(LEADER_SKILLS[c.name] || [])) : ""}>${t.toUpperCase()}</span>`).join("");
   const cub = c.construct ? cubHref(iconName(c.construct)) : "";
   // A skill icon leads to the character's skills; "Any ATK" is not a skill of theirs
   const skillSlot = src => slot(src, "", "", undefined, src?.includes("/Skill - ") ? skillHref(c.name) : "");
@@ -624,13 +663,12 @@ function card(c) {
     </div>
     <div class="box kit">${slot(c.construct, "construct", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub)).join("")}</div>
     <p class="desc">${esc(c.desc)}</p>
-    </div><div class="tags">${tags}</div>
+    </div><i class="bar bar-top"></i><i class="bar bar-bot"></i><div class="tags">${tags}</div>
   </article>`;
 }
 function comp(id, cards = COMPS[id].cards) {
   const c = COMPS[id];
-  return `<section class="comp" style="--c1:${c.c1};--c2:${c.c2};--cp:${c.cp};--ar:${c.ar}">` +
-    cards.map(card).join(`<div class="arrow" aria-hidden="true"${tipAttr(c.iconName || (c.icon && iconName(c.icon)))}>${c.icon ? pic(c.icon) : c.emblem}</div>`) + `</section>`;
+  return `<section class="comp" style="--c1:${c.c1};--c2:${c.c2};--cp:${c.cp}">${cards.map(card).join("")}</section>`;
 }
 
 /* ---------- focus view: enlarged card in the center, the others behind it ---------- */
@@ -777,7 +815,7 @@ function characters() {
   return characterList = [...found.values()];
 }
 // Each CUB shown in a build, under the character it belongs to. A card can borrow another character's CUB as a
-// placeholder (Leia), so the owner is the character named after the folder of the art
+// placeholder, so the owner is the character named after the folder of the art
 function cubList() {
   const found = new Map();
   for (const ch of characters()) for (const { card } of ch.builds) {
@@ -837,13 +875,15 @@ function pickerHtml(path, sel) {
 const noticeTimeLeft = () => Date.parse(NEW_CHARACTER_NOTICE.until) - Date.now();
 const notice = cards => noticeTimeLeft() > 0 && cards.some(c => c.name === NEW_CHARACTER_NOTICE.name) ? `<p class="notice" role="note">${esc(NEW_CHARACTER_NOTICE.text)}</p>` : "";
 let shownTeam = null; // the build on screen, for the export button
+const pickedVariant = sel => COMPS[sel].variants?.find(x => x.id === chosen);
+const pickedCards = sel => sel && (COMPS[sel].variants ? pickedVariant(sel)?.cards : COMPS[sel].cards);
+// Sits above the page title, so it has its own box and changes along with the build on screen
+const teamNotice = sel => { const cards = pickedCards(sel); return cards ? notice(cards) : ""; };
 function compBody(sel) {
-  if (!sel) return "";
-  const { name, variants, cards } = COMPS[sel], variant = variants?.find(x => x.id === chosen);
-  const shownCards = variants ? variant?.cards : cards;
+  const shownCards = pickedCards(sel);
   if (!shownCards) return "";
-  shownTeam = { id: sel, title: [name, variant?.name].filter(Boolean).join(" · "), cards: shownCards };
-  return notice(shownCards) + `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + comp(sel, shownCards);
+  shownTeam = { id: sel, title: [COMPS[sel].name, pickedVariant(sel)?.name].filter(Boolean).join(" · "), cards: shownCards };
+  return `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + comp(sel, shownCards);
 }
 function team(path) {
   const [kind, key] = path.split("/");
@@ -852,7 +892,7 @@ function team(path) {
   const ids = PAGES[path] || [];
   const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
   if (!ids.length) return head + `<p class="empty">No teams yet.</p>`;
-  return head + `<div class="picker" role="group" aria-label="Composition">${pickerHtml(path, shown)}</div><div id="compBox">${compBody(shown)}</div>`;
+  return `<div id="noticeBox">${teamNotice(shown)}</div>${head}<div class="picker" role="group" aria-label="Composition">${pickerHtml(path, shown)}</div><div id="compBox">${compBody(shown)}</div>`;
 }
 
 /* ---------- assets pages ---------- */
@@ -939,6 +979,8 @@ function loadSkills() {
   script.onerror = () => { skillsState = "failed"; route(); };
   document.head.append(script);
 }
+// Each skill's icon is named after its type, in the character's skills folder
+const skillIcon = (name, type) => `${CHARS}/${charId(name)}/skills/${type}.png`;
 function skillPage(ch) {
   const head = `${backLink("/assets/skills", "Skills")}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">Character page</a></p>`;
   if (skillsState !== "ready") {
@@ -948,7 +990,7 @@ function skillPage(ch) {
   const skills = CHARACTER_SKILLS[ch.name];
   if (!skills) return head + `<p class="empty">No skill text for this character yet.</p>`;
   return head + `<div class="skills">${skills.map(([type, name, effect]) =>
-    `<section class="fx"><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(effect)}</p></section>`).join("")}</div>`;
+    `<section class="fx">${thumb(skillIcon(ch.name, type))}<div><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(effect)}</p></div></section>`).join("")}</div>`;
 }
 function assetsPage(key, pick = "all") {
   const notFound = `<p class="empty">Page not found.</p>`;
@@ -1023,8 +1065,10 @@ function characterPage(ch) {
 /* ---------- export a build as an image ---------- */
 // Drawn on a canvas from the same art as the card, so it needs no library and passes the CSP in _headers.
 // The long description stays out: the image is the build itself, to post in a chat
-const EXPORT_W = 460, EXPORT_H = 552, EXPORT_GAP = 56, EXPORT_PAD = 36, EXPORT_HEAD = 76, EXPORT_FOOT = 34, EXPORT_SCALE = 1.5;
-const BAR_COLORS = { blue: ["#0a3fc8", "#19c4ff"], red: ["#8d1111", "#ff4d4d"], gold: ["#a85f00", "#ffc400"] };
+const EXPORT_W = 460, EXPORT_H = 552, EXPORT_PAD = 36, EXPORT_HEAD = 76, EXPORT_FOOT = 34, EXPORT_SCALE = 1.5;
+// Fill and edge of each bar, from its ends to its center
+const BAR_COLORS = { blue: ["#08367a", "#19c4ff", "#1368ff", "#45e6ff"], red: ["#7d0e0e", "#ff5a5a", "#ff2020", "#ffb0a8"], gold: ["#7a4a08", "#ffc400", "#ff9d00", "#fff06a"] };
+const TAG_COLORS = { captain: ["#0d7433", "#24dc64", "#dcffe7"], starter: ["#3a3a3f", "#b4b4b9", "#fff"] };
 const exportFont = (size, weight = 700) => `${weight} ${size}px Quantico, sans-serif`;
 const loadImage = src => new Promise(done => {
   const img = new Image();
@@ -1063,15 +1107,38 @@ function drawText(g, text, x, y, font, color = "#ececee", align = "center") {
   g.textAlign = align;
   g.fillText(text, x, y);
 }
-function drawCard(g, c, art, cardColor, stars, x, y) {
+// A shape with an inner edge: the stroke is twice as wide and the clip keeps only its inner half
+function drawFramed(g, points, fill, edge) {
+  g.beginPath();
+  points.forEach(([px, py], i) => i ? g.lineTo(px, py) : g.moveTo(px, py));
+  g.closePath();
+  g.fillStyle = fill;
+  g.fill();
+  g.save();
+  g.clip();
+  g.strokeStyle = edge;
+  g.lineWidth = 4;
+  g.stroke();
+  g.restore();
+}
+function drawCard(g, c, art, cardColor, stars, x, y, flare) {
   const w = EXPORT_W, h = EXPORT_H, inner = w - 32, left = x + 16;
   g.fillStyle = cardColor;
   g.fillRect(x, y, w, h);
-  const [dark, bright] = BAR_COLORS[c.bar], bar = g.createLinearGradient(x, 0, x + w, 0);
-  bar.addColorStop(0, dark); bar.addColorStop(.5, bright); bar.addColorStop(1, dark);
-  g.fillStyle = bar;
-  g.fillRect(x - 10, y - 8, w + 20, 8);
-  g.fillRect(x - 10, y + h, w + 20, 8);
+  if (!flare || c.bar !== "red") {
+    g.strokeStyle = "#ffffff14";
+    g.strokeRect(x + .5, y + .5, w - 1, h - 1);
+  }
+  const [dark, bright, edgeDark, edgeBright] = BAR_COLORS[c.bar];
+  const gradient = (ends, center) => {
+    const bar = g.createLinearGradient(x, 0, x + w, 0);
+    bar.addColorStop(0, ends); bar.addColorStop(.5, center); bar.addColorStop(1, ends);
+    return bar;
+  };
+  // Like the page, only the outer ends of a team's bars flare out
+  const outL = flare && c.bar === "blue" ? 10 : 0, outR = flare && c.bar === "gold" ? 10 : 0;
+  [[y - 10, y], [y + h + 10, y + h]].forEach(([outer, inner]) =>
+    drawFramed(g, [[x - outL, outer], [x + w + outR, outer], [x + w, inner], [x, inner]], gradient(dark, bright), gradient(edgeDark, edgeBright)));
   drawText(g, c.name, x + w / 2, y + 38, exportFont(22));
   // Class, portrait and rank
   const top = y + 54, size = 130, px = x + (w - size) / 2;
@@ -1135,17 +1202,17 @@ function drawCard(g, c, art, cardColor, stars, x, y) {
   // Role tags
   const tags = c.role.split(" ").filter(Boolean), tagW = 110, tagX = x + (w - tags.length * (tagW + 4) + 4) / 2;
   tags.forEach((tag, i) => {
-    g.fillStyle = tag === "captain" ? "#12a145" : "#6b6b73";
-    g.fillRect(tagX + i * (tagW + 4), y + h - 24, tagW, 22);
-    drawText(g, tag.toUpperCase(), tagX + i * (tagW + 4) + tagW / 2, y + h - 8, exportFont(13, 800), "#fff");
+    const [fill, edge, text] = TAG_COLORS[tag], left = tagX + i * (tagW + 4), slope = 11;
+    drawFramed(g, [[left + slope, y + h - 24], [left + tagW - slope, y + h - 24], [left + tagW, y + h], [left, y + h]], fill, edge);
+    drawText(g, tag.toUpperCase(), left + tagW / 2, y + h - 8, exportFont(12, 800), text);
   });
 }
 async function renderBuild(cards, { id, title }) {
   const theme = COMPS[id], starSrc = "assets/overlay/256px-UI-Supply-6Star.png";
   await Promise.all([document.fonts.load(exportFont(16)), document.fonts.load(exportFont(13, 400))]);
-  const sources = [...new Set([...cards.flatMap(cardArt), starSrc, ...(theme.icon ? [theme.icon] : [])])];
+  const sources = [...new Set([...cards.flatMap(cardArt), starSrc])];
   const art = new Map(await Promise.all(sources.map(async src => [src, await loadImage(src)])));
-  const width = EXPORT_PAD * 2 + cards.length * EXPORT_W + (cards.length - 1) * EXPORT_GAP;
+  const width = EXPORT_PAD * 2 + cards.length * EXPORT_W;
   const height = EXPORT_HEAD + EXPORT_H + EXPORT_FOOT + 16;
   const canvas = document.createElement("canvas");
   canvas.width = width * EXPORT_SCALE;
@@ -1160,14 +1227,7 @@ async function renderBuild(cards, { id, title }) {
   g.fillStyle = background;
   g.fillRect(0, 0, width, height);
   drawText(g, cards.length > 1 ? title : `${cards[0].name} · ${title}`, EXPORT_PAD, 44, exportFont(cards.length > 1 ? 26 : 16), "#fff", "left");
-  cards.forEach((c, i) => {
-    const x = EXPORT_PAD + i * (EXPORT_W + EXPORT_GAP);
-    drawCard(g, c, art, theme.cp, art.get(starSrc), x, EXPORT_HEAD);
-    if (i === cards.length - 1) return;
-    const mid = x + EXPORT_W + EXPORT_GAP / 2, cy = EXPORT_HEAD + EXPORT_H / 2;
-    if (theme.icon) drawArt(g, art.get(theme.icon), mid - 20, cy - 20, 40, 40, { fit: "contain" });
-    else drawText(g, theme.emblem, mid, cy + 14, exportFont(36), theme.ar);
-  });
+  cards.forEach((c, i) => drawCard(g, c, art, theme.cp, art.get(starSrc), EXPORT_PAD + i * EXPORT_W, EXPORT_HEAD, cards.length > 1));
   drawText(g, "dominiko.netlify.app", width - EXPORT_PAD, height - 14, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
@@ -1239,6 +1299,7 @@ function route() {
     pageUrl = location.href;
     swap(() => {
       picker.innerHTML = pickerHtml(path, sel);
+      $("#noticeBox").innerHTML = teamNotice(sel);
       $("#compBox").innerHTML = compBody(sel);
       theme(sel);
       $(variant ? `[data-variant="${variant}"]` : `[data-id="${id}"]`, picker).focus();

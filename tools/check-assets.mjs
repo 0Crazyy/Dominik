@@ -16,8 +16,8 @@ const DATA_END = "const $ = (s, r = document)";
 function loadData() {
   const app = read("app.js"), end = app.indexOf(DATA_END);
   if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/check-assets.mjs`);
-  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, WEAPONS, WEAPON_STATS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
-  return vm.runInNewContext(`${read("assets-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
+  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, LEADER_SKILLS, WEAPONS, WEAPON_STATS, CHARACTER_SKILLS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
+  return vm.runInNewContext(`${read("assets-data.js")}\n${read("skills-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 }
 
 function listFiles(dir, out = []) {
@@ -44,7 +44,6 @@ function check() {
   const d = loadData();
 
   const teams = Object.entries(d.COMPS).flatMap(([id, c]) => {
-    if (c.icon) use(c.icon, `time ${id}`);
     return (c.variants || [{ id, cards: c.cards }]).map(t => ({ label: t.id === id ? id : `${id} / ${t.id}`, cards: t.cards }));
   });
   const thumbs = new Map();
@@ -57,6 +56,7 @@ function check() {
       if (d.MEM_INDEX.has(card.wh)) use(d.memFile(card.wh, "WH", "png"), where);
       else errors.push(`memória "${card.wh}" não existe em MEMORY_TABS: ${where}`);
     }
+    if (card.role.includes("captain") && !d.LEADER_SKILLS[card.name]) errors.push(`capitão sem texto em LEADER_SKILLS: ${where}`);
     if (card.portrait) thumbs.set(`assets/home/${slug(card.name.replace(":", ""))}.jpg`, card.name);
   }
 
@@ -70,6 +70,13 @@ function check() {
   }
   for (const [owner, , , file] of d.WEAPONS) if (file) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
   for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
+  for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type] of skills) {
+    use(`${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${type}.png`, `skill de ${name}`);
+  }
+  for (const [name, [title, text]] of Object.entries(d.LEADER_SKILLS)) {
+    const skill = d.CHARACTER_SKILLS[name]?.find(([type]) => type === "Leader");
+    if (skill?.[1] !== title || skill?.[2] !== text) errors.push(`LEADER_SKILLS["${name}"] difere de skills-data.js`);
+  }
   for (const e of d.ENERGY) use(`assets/energy type/${e}.png`, "ícones de Energy Type");
   for (const e of [...d.EFFECT, ...d.SPECIAL_EFFECT]) use(`assets/effects/${e}.png`, "ícones de Effect");
   for (const file of ["app.js", "index.html", "style.css"]) literalPaths(file).forEach(path => use(path, file));
