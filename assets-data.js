@@ -467,3 +467,52 @@ const MEMORY_RELEASE = {
   "Poincare": 1655, "Joanna": 1656, "Nimue": 1657, "Bunsen": 1658, "Bulgakov": 1659, "Feynman": 1660,
   "Pavlichenko": 1661, "Clusius": 1662, "Cogito": 1663, "Santiago": 1664, "Pesanteur": 1665, "Mousme": 1666
 };
+
+// Rotations of the Leia teams, from the steps on screen in Spider 2B's guide. "Ult" there is "Signature" here, and "Alpha" is Lucia.
+// "1st Orb" is the first orb of the bar, whatever its color. A character's turns follow the order the team plays them.
+// A step with a list shows each option under the same number, so "Repeat steps 1-5" keeps matching the guide.
+const LEIA_GUIDE = "https://www.youtube.com/watch?v=h_L6-d0c5Wk";
+const ROTATION_LEIA_SS = ["Swap in", "Tap 1st Orb 6x, or until Signature is up", "Tap Signature", "Hold 1st Orb until Signature is up", "Tap Signature"];
+const ROTATION_LEIA_SS3_START = ["Swap in", "Tap 1st Orb 3x", "Tap Signature", "Hold 1st Orb until Signature is up", "Tap Signature", "Tap 1st Orb 3x"];
+const ROTATION_LEIA_SS3_ULT = ["Swap in", "Tap 1st Orb", "Tap Signature", "Hold 1st Orb until Signature is up", "Tap Signature", "Tap 1st Orb 3x", "Tap Signature", "Tap 1st Orb 3x and repeat the team rotation"];
+const ROTATION_LUCIA = [
+  ["SS: Hold 1st Orb until 3/4 of the top Signature gauge is full", "SS3+: Hold 1st Orb until the center gauge is full"],
+  "Hold Basic Attack", "3-Ping", "Tap Signature", "Hold Basic Attack to use orbs, or tap Signature again to nuke",
+  "SS3+: Repeat steps 1-5 (skip if lower)",
+  ["SS: 3-Ping and hold 1st Orb until 3/4 of the top Signature gauge is full", "SS3+: Hold 1st Orb and quickly release"],
+  "Hold Basic Attack to prep Signature, then swap out"
+];
+const ROTATION_LUCIA_NOTE = "With SS Lucia, use Leia first. With SS3 or higher, use Lucia first, for her QTE buff.";
+const ROTATION_TEDDY_STALL = ["Tap Yellow Orb ASAP", "Tap Signature", "Tap White Orbs 4x", "Tap Basic Attack, then Yellow Orb", "Tap Signature"];
+const ROTATION_START = (who, next) => [`Start on ${who}, then swap to ${next}`];
+// One team: its order goes on the rotation of each member
+const teamRotation = (order, members) => Object.fromEntries(Object.entries(members).map(([name, turns]) => [name, { order, turns }]));
+const alphaRotation = (order, lucia, leia) => teamRotation(order, {
+  teddy: [{ turn: "Turn 1: Start", steps: ROTATION_START("Teddy", "Lucia") }, { turn: "Turn 4: Stall", steps: ROTATION_TEDDY_STALL }],
+  lucia: [{ turn: "Turn 2", steps: ROTATION_LUCIA, note: ROTATION_LUCIA_NOTE }, { turn: "Turn 5", steps: lucia }],
+  leia
+});
+const LUCIA_AMP_WINDOW = "Swap back to use 2-3 Signatures in the Amplifier window, now that Signature is prepped";
+const altIceRotation = leia => teamRotation("Wanshi → Leia → Teddy → Wanshi", {
+  wanshi: [{ turn: "Turn 1: Start", steps: ROTATION_START("Wanshi", "Leia") },
+    { turn: "Turn 4: Single Signature", steps: ["3-Ping or Matrix Ping", "Hold Red Orb, then release", "Spam Red Orb until Signature is available", "Use Signature and swap to Leia", "Repeat the team rotation"] }],
+  leia,
+  teddy: [{ turn: "Turn 3: Double Signature", steps: ["Tap Yellow Orb ASAP", "Tap Signature", "Tap White Orbs 4x", "Tap Basic Attack + Yellow Orb", "Hold Basic Attack + Blue Orb", "Auto Signature", "Tap White Orbs 3x + tap Red Orb", "Repeat steps 1-6 again"] }]
+});
+const glaciationRotation = leia => teamRotation("Teddy or Alisa → Leia → Helentine → Teddy or Alisa", {
+  teddy: [{ turn: "Turn 1: Start", steps: ROTATION_START("Teddy or Alisa", "Leia") },
+    { turn: "Turn 4: Alisa: Echo", steps: ["Hold Dodge", "Tap Dodge 3x", "Hold Basic Attack", "Signature", "Can repeat if needed to stall, then swap back to Leia"], note: "The guide only shows this turn on Alisa: Echo." }],
+  leia,
+  helentine: [{ turn: "Turn 3", steps: ["Hold Dodge", "Matrix Blue/Yellow Ping", "Green Orb", "Red Orb", "Green Orb", "Signature 2x", "3-Ping Blue/Yellow", "Green Orb", "Red Orb 2x", "Signature 2x",
+    ["Without DLT: Red Orb 2x and swap", "With DLT: Ping all Red Orbs, Signature 2x and swap"]] }]
+});
+const LEIA_ROTATIONS = {
+  alphaSS: alphaRotation("Teddy → Lucia → Leia → Teddy → Lucia", [LUCIA_AMP_WINDOW, "Repeat the steps of Turn 2", "Repeat the team rotation"],
+    [{ turn: "Turn 3", steps: ROTATION_LEIA_SS }]),
+  alphaSS3: alphaRotation("Teddy → Lucia → Leia → Teddy → Lucia → Leia", [LUCIA_AMP_WINDOW, "Repeat the steps of Turn 2"],
+    [{ turn: "Turn 3: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 6: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }]),
+  altIceSS: altIceRotation([{ turn: "Turn 2", steps: ROTATION_LEIA_SS }]),
+  altIceSS3: altIceRotation([{ turn: "Turn 2: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 2 after that: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }]),
+  glaciationSS: glaciationRotation([{ turn: "Turn 2", steps: ROTATION_LEIA_SS }]),
+  glaciationSS3: glaciationRotation([{ turn: "Turn 2: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 2 after that: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }])
+};

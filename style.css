@@ -68,6 +68,18 @@ h1{font-size:34px;font-weight:800}
 /* 6-column grid: rows of 3, and a short last row stretches to fill the width */
 .home-grid{display:grid;grid-template-columns:150px repeat(6,minmax(0,1fr));grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:12px;margin-top:24px}
 .home-label{display:flex;align-items:center;font-size:13px;font-weight:700;line-height:1.3;letter-spacing:.1em;text-transform:uppercase;color:#c4c4ca}
+/* Links under the team grid: neutral on purpose, so the colored energy and effect tiles stay the first thing on the page */
+.home-links{display:grid;gap:10px}
+.home-links.tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+.home-links.data{grid-template-columns:repeat(5,minmax(0,1fr))}
+.home-link{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;transition:border-color .15s,background-color .15s}
+.home-link:hover,.home-link:focus-visible{border-color:var(--red);background:#1c1516}
+.home-links.data .home-link{flex-direction:column;gap:8px;text-align:center}
+.hl-art{flex:none;width:44px;height:44px;overflow:hidden;border-radius:3px}
+.hl-art img{display:block;width:100%;height:100%;object-fit:cover}
+.hl-tx{display:grid;gap:2px;min-width:0}
+.hl-tx b{font-size:14px;font-weight:700}
+.hl-tx small{font-size:12px;line-height:1.35;color:var(--mute)}
 .tile-gap{display:grid;place-items:center;min-height:88px;border:1px dashed #ffffff0f;color:#ffffff40;font-size:12px;font-weight:600}
 .tile{--cut:14px;position:relative;display:flex;align-items:center;gap:14px;min-height:88px;padding:16px 18px;overflow:hidden;background:linear-gradient(100deg,color-mix(in srgb,var(--c) 20%,transparent),transparent 72%),var(--panel);border-left:3px solid var(--c);clip-path:polygon(0 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%);transition:filter .2s,transform .2s}
 .tile:hover,.tile:focus-visible{filter:brightness(1.25);transform:translateY(-2px)}
@@ -101,7 +113,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 #tip{position:fixed;z-index:30;max-width:340px;padding:6px 10px;background:#000000f0;border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 12px "Quantico";pointer-events:none}
 #tip b{display:block}
 #tip p{margin-top:4px;font-weight:400;line-height:1.45;color:#dcdaf0;white-space:pre-line}
-.notice{display:flex;align-items:center;margin:calc(-1*var(--pad)) calc(-1*var(--pad)) 20px;padding:8px 14px;background:#e6bd52;color:#1c1602;font-size:13px;line-height:1.4}
+.notice{display:flex;align-items:center;margin:calc(-1*var(--pad)) calc(-1*var(--pad)) 20px;padding:8px 14px;background:#eecf22;border-bottom:2px solid #a8901a;color:#1c1602;font-size:13px;line-height:1.4}
 .slot.named{padding:3px;color:#dcdaf0;font-size:10px;line-height:1.2;text-align:center}
 .mem .slot.named{padding:2px 0 0 3px;font-size:8px;writing-mode:vertical-rl;place-items:end start}
 .mem .slot.named .n{padding-left:3px;background:none;clip-path:none;writing-mode:horizontal-tb}
@@ -138,31 +150,32 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 /* Card widths have fractions of a pixel: the red bar covers the seam, so the blue one can never round into it */
 .comp .c-red .bar{left:-2px}
 .comp .c-red{border-color:#0000}
-.card h3{text-align:center;font-size:calc(20*var(--u));font-weight:600;margin-bottom:calc(12*var(--u))}
+.card h3{text-align:center;font-size:calc(20*var(--u));font-weight:600;margin-bottom:calc(14*var(--u))}
 .card h3 a:hover{text-decoration:underline}
-.top{display:grid;grid-template-columns:1fr auto 1fr;gap:calc(10*var(--u));align-items:center;margin-bottom:calc(14*var(--u))}
-.sym{width:100%;max-width:calc(90*var(--u));aspect-ratio:1;justify-self:center}
-.portrait{width:calc(130*var(--u));height:calc(130*var(--u));border:1px solid #ffffff55}
-.pwrap{position:relative}
-.rank{position:absolute;right:calc(-26*var(--u));bottom:calc(-10*var(--u));width:calc(78*var(--u));height:auto;filter:drop-shadow(0 2px 4px #000)}
+.top{display:grid;grid-template-columns:1fr auto 1fr;gap:calc(14*var(--u));align-items:center;margin-bottom:calc(20*var(--u))}
+.sym{width:100%;max-width:calc(60*var(--u));aspect-ratio:1;justify-self:center}
+.portrait{width:calc(112*var(--u));height:calc(112*var(--u));border:1px solid #ffffff55}
+.rank{position:relative;width:100%;max-width:calc(62*var(--u));justify-self:center}
+.rank img{display:block;width:100%;height:auto;filter:drop-shadow(0 1px 2px #0009)}
+.rank b{position:absolute;right:calc(-5*var(--u));bottom:calc(-5*var(--u));font-size:calc(17*var(--u));line-height:1;text-shadow:0 0 4px #000,0 1px 3px #000}
 .sym:has(img){background:none;border:0}
 .sym img,.wp img{object-fit:contain}
-.box{background:#ffffff0d;padding:calc(8*var(--u));margin-bottom:calc(10*var(--u));display:flex;gap:calc(8*var(--u))}
-.mem{display:grid;grid-template-columns:repeat(3,1fr);align-content:center;gap:4px;flex:1;border:1px solid #ffffff22;padding:4px}
+.box{background:#ffffff0d;padding:calc(12*var(--u));margin-bottom:calc(14*var(--u));display:flex;gap:calc(12*var(--u))}
+.mem{display:grid;grid-template-columns:repeat(3,1fr);align-content:center;gap:calc(6*var(--u));flex:1;border:1px solid #ffffff22;padding:calc(6*var(--u))}
 .mem .slot{aspect-ratio:5/7;border:2px solid #000}
 .mem img,.mt-art img{transform:scale(1.07)}
 :is(.mem,.mt-art) img[data-full$=".webp"]{transform:scale(1.34)}
-.wp{display:grid;gap:4px;width:25%}
+.wp{display:grid;gap:calc(6*var(--u));width:25%}
 .wp .slot{aspect-ratio:1}
 .wp .slot:last-child{aspect-ratio:3/2;container-type:inline-size}
-.mxw{flex:1;min-width:0;display:grid;grid-template-rows:auto 1fr;gap:8px}
-.mx{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.mxw{flex:1;min-width:0;display:grid;grid-template-rows:auto 1fr;gap:calc(10*var(--u))}
+.mx{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(8*var(--u))}
 .mx .slot,.kit .cell .slot{aspect-ratio:1}
 .cell{display:grid;gap:2px;min-width:0;text-align:center;font-size:calc(11*var(--u));font-weight:700}
 .res{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-template-columns:1fr 1fr;align-content:center;justify-items:center;gap:2px 4px;padding:calc(4*var(--u));background:#0000002b;font-size:calc(12*var(--u));font-weight:700}
 .res .slot{width:100%;max-width:72px;aspect-ratio:1;background:#00000033;border:0}
 .res img{object-fit:contain}
-.kit{display:grid;grid-template-columns:1.2fr repeat(6,1fr);gap:4px}
+.kit{display:grid;grid-template-columns:1.2fr repeat(6,1fr);gap:calc(9*var(--u))}
 .slot{position:relative;display:grid;place-items:center;background:#0000004b;border:1px solid #ffffff30;color:#ffffff66;font-size:11px;overflow:hidden}
 .slot img{width:100%;height:100%;object-fit:cover;display:block}
 .wp .slot,.mx .slot,.kit .slot{background-image:linear-gradient(135deg,transparent 71%,#ffffff1f 71%,#ffffff0f 100%);background-clip:padding-box}
@@ -174,13 +187,31 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .wh-bar b{position:absolute;inset:0 0 0 20.5%;display:grid;place-items:center;color:#fff;font:700 8cqw/1 "Quantico";white-space:nowrap}
 .slot .n{position:absolute;right:0;bottom:0;padding:1px 3px 0 8px;background:#000000b3;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);color:#fff;font-size:max(8px,calc(10*var(--u)));font-weight:700}
 .desc{text-align:justify;font-size:calc(13*var(--u));line-height:1.5;color:#dcdaf0;background:#ffffff0d;padding:calc(12*var(--u));height:calc(240*var(--u));overflow-y:auto}
+/* Notes and Rotation tabs of a card: together they take the height of the text box, so all the cards stay level */
+.note-tabs{display:flex;gap:calc(4*var(--u));height:calc(30*var(--u))}
+.note-tabs button{flex:1;padding:0;background:#ffffff0d;border:0;border-bottom:2px solid #0000;color:#dcdaf0;font:600 calc(12*var(--u)) "Quantico";cursor:pointer}
+.note-tabs button:hover{background:#ffffff1f}
+.note-tabs button.on{border-color:var(--c1);color:#fff}
+.notes .desc{height:calc(210*var(--u))}
+.rotation{text-align:left}
+.rotation h4{margin:calc(10*var(--u)) 0 calc(4*var(--u));color:var(--c1);font-size:calc(13*var(--u))}
+.rotation ol{margin:0;padding:0;list-style:none;counter-reset:step}
+.rotation li{display:grid;grid-template-columns:calc(18*var(--u)) 1fr;column-gap:calc(4*var(--u));margin-bottom:calc(3*var(--u));counter-increment:step}
+.rotation li::before{content:counter(step) ".";grid-row:1/span 2}
+/* The icon has its own column, so the text of every step starts at the same place */
+.rot-line{grid-column:2;display:grid;grid-template-columns:calc(20*var(--u)) 1fr;column-gap:calc(6*var(--u));align-items:start}
+.rot-line img{width:calc(20*var(--u));height:calc(20*var(--u));object-fit:contain}
+.rot-line span{grid-column:2}
+.rot-order,.rot-note,.rot-source{font-size:calc(12*var(--u));color:#b9b7cc}
+.rot-note{margin-top:calc(4*var(--u))}
+.rot-source{display:block;margin-top:calc(10*var(--u));text-decoration:underline}
 .tags{position:absolute;left:0;right:0;bottom:-1px;display:flex;justify-content:center;gap:4px;z-index:2}
 .tag{position:relative;isolation:isolate;font:800 calc(12*var(--u))/1 "Quantico";letter-spacing:.16em;padding:calc(6*var(--u)) calc(28*var(--u));text-shadow:1px 1px 0 #0009,-1px 1px 0 #0009,1px -1px 0 #0009,-1px -1px 0 #0009;clip-path:polygon(calc(12*var(--u)) 0,calc(100% - 12*var(--u)) 0,100% 100%,0 100%)}
 .tag::before{content:"";position:absolute;inset:2px;z-index:-1;clip-path:polygon(calc(11*var(--u)) 0,calc(100% - 11*var(--u)) 0,calc(100% - 1px) 100%,1px 100%)}
 .tag.starter{background:#b4b4b9;color:#fff}.tag.starter::before{background:linear-gradient(#4b4b50,#2b2b2f)}
 .tag.captain{background:#24dc64;color:#dcffe7}.tag.captain::before{background:linear-gradient(#0f8a3c,#0a5a28)}
 .comp .card{cursor:pointer;transition:transform .2s,filter .2s}
-.comp .card:hover{transform:translateY(-4px);filter:brightness(1.12)}
+.comp .card:hover{transform:translateY(-4px);filter:brightness(1.06)}
 .comp.focused .card{visibility:hidden}
 html.locked{overflow:hidden}
 .stage{position:fixed;inset:0;z-index:20;overflow:hidden;background-color:#05060800;transition:background-color .5s,backdrop-filter .5s}
@@ -188,6 +219,16 @@ html.locked{overflow:hidden}
 .stage.closing{pointer-events:none}
 .fcard{--u:1.15px;position:absolute;left:50%;top:50%;flex:none;z-index:3;transition:transform .5s cubic-bezier(.22,.8,.24,1),filter .5s}
 .fcard .desc{height:150px}
+.fcard .notes .desc{height:190px}
+.fcard .desc:empty{display:none}
+/* The text box leaves the card and opens beside it, only on the card in the center */
+.fcard.extended :is(.notes,.cin>.desc){--u:1px;position:absolute;left:100%;top:-1px;bottom:-1px;width:var(--panel);height:auto;padding:calc(16*var(--u));background:var(--cp);border:1px solid #ffffff14;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.fcard.extended .notes{display:flex;flex-direction:column;gap:calc(8*var(--u))}
+.fcard.extended .notes .desc{flex:1;height:auto;min-height:0}
+.stage.open .fcard.extended:not(.side) :is(.notes,.cin>.desc){opacity:1;visibility:visible}
+.stage.open .fcard.extended:not(.side) .bar{right:calc(-1px - var(--panel))}
+/* Under the close button, to stay off the panel on smaller screens */
+.stage:has(.extended) .export{top:68px;right:16px}
 .stage:not(.open):not(.closing) .fcard{transition:none}
 .fcard:not(.side){box-shadow:0 24px 80px #000c}
 .stage.closing .fcard{box-shadow:none}
@@ -478,10 +519,10 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .card .mem .slot.named{padding:0;font-size:9px;writing-mode:horizontal-tb;place-items:center}
 .card .wp{width:32%}
 .card .mxw{flex:0 0 100%;grid-template-rows:none;grid-template-columns:1.4fr 1fr}
-.desc{height:auto}
+.desc,.notes .desc{height:auto}
 .desc:empty{display:none}
 .hero{min-height:190px;padding:24px 20px}.hero-art{width:100%}.hero-track a{width:130px}.hero::after{background:linear-gradient(90deg,#101012e6 30%,#10101299 100%)}h1{font-size:28px}}
-@media(max-width:1000px){.home-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;grid-auto-flow:row;gap:8px}.home-label{justify-content:center;font-size:11px;letter-spacing:.04em;text-align:center}.tile-gap{min-height:0}}
+@media(max-width:1000px){.home-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;grid-auto-flow:row;gap:8px}.home-label{justify-content:center;font-size:11px;letter-spacing:.04em;text-align:center}.tile-gap{min-height:0}.home-links.tools{grid-template-columns:minmax(0,1fr)}.home-links.data{grid-template-columns:repeat(2,minmax(0,1fr))}.home-links.data a:first-child{grid-column:1/-1}.home-links.data .home-link{flex-direction:row;gap:12px;text-align:left}}
 @media(max-width:560px){.mtable th{width:50px}.mtable th button{justify-content:center;gap:1px;padding:0 2px;font-size:12px}.mtable th i{width:8px;font-size:8px}.mtable td{padding:5px 2px;font-size:13px;text-align:center}.mtable td:first-child{padding-left:6px}.mt-name{gap:8px}.mt-art{width:38px}.mt-name small{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.hero-track{animation:none}.hero-art{overflow-x:auto}}
 /* From this width the notice fits on one line, inside the empty space at the top of #main, so it moves nothing below it */

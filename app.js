@@ -10,7 +10,7 @@
    Extra fields: symbol (class icon), weapon, wh (Weapon Harmony memory name, framed in
    WH_FRAME), memories (6), matrix (3 weapon resonances),
    resonance + core (the two "6x" icons), construct (CUB), skills (6 CUB skills),
-   rank (badge on the portrait).
+   rank (badge beside the portrait), rankLevel (the number after it: SS3 is SS with rankLevel 3).
    ===================================================== */
 const CHARS = "assets/characters", MEM = "assets/memories", RES = "assets/resonances";
 const WEAPON_RES = n => `${RES}/Ressonância de Arma - ${n} HD.png`;
@@ -130,6 +130,7 @@ const classIcon = name => `assets/classes/${name}.png`;
 
 // Wanshi runs the same build in every team he appears in
 const WANSHI_BUILD = {
+  rank: "assets/rank/SSS.png",
   symbol: "assets/classes/Tanque.png",
   portrait: "assets/characters/roleicon/wanshi_awk.png",
   weapon: "assets/weapons/e3revolvermd010011.png",
@@ -191,6 +192,7 @@ const KAMUI_KIT = {
   resonance: ALL_ATK, core: `${KAMUI}/Skill - Signature 2.png`, construct: `${KAMUI}/CUB - Ignis.png`, skills: cubSkills(KAMUI, "webp")
 };
 const TEDDY_KIT = {
+  rank: "assets/rank/SSS.png",
   name: "Teddy: Spectre", symbol: classIcon("Amplifier"), portrait: `${TEDDY}/Awaken - Teddy Spectre.png`,
   weapon: `${TEDDY}/Arma - Teddy Spectre.png`, matrix: matrix(SAR, GS, INC),
   resonance: ALL_ATK, core: `${TEDDY}/Skill - Signature HD.png`, construct: `${TEDDY}/CUB - Beep-Boop.png`,
@@ -246,31 +248,33 @@ const NEW_CHARACTER_NOTICE = {
   text: "Leia: Fortunaster is a recent character, so there is little feedback on these builds so far. It's recommended to wait at least 1 week for more information. Take it with a grain of salt."
 };
 
+// Ranks a build is made for
+const RANK_SS = { rank: "assets/rank/SS.png" }, RANK_SS3 = { ...RANK_SS, rankLevel: 3 };
 // A Comet's Afterglow teams follow Spider 2B's Leia guide. Leia's build only changes with her rank
-const LEIA_SS = { wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
+const LEIA_SS = { ...RANK_SS, wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
   desc: "Without Weapon Harmony, use 2 Einsteina instead of 2 Chen Jiyuan. Breaker class skill also works on the bottom resonance." };
-const LEIA_SS3 = { wh: "Einsteina", memories: memBuild(MOUSME, COTTIE),
+const LEIA_SS3 = { ...RANK_SS3, wh: "Einsteina", memories: memBuild(MOUSME, COTTIE),
   desc: "Breaker class skill also works on the bottom resonance." };
 const TEDDY_CLASS = { ...TEDDY_KIT, core: `${TEDDY}/Skill - Class Skill.png` };
 // As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
 const TEDDY_SUPPORT = { ...TEDDY_CLASS, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]] };
 const WANSHI_COMET = { name: "Wanshi: Lucid Dreamer", ...WANSHI_BUILD, core: `${WANSHI}/Skill - Class Skill.png` };
-const cometTeam = leia => [
-  { bar: "blue", role: "", ...LEIA_KIT, ...leia },
-  { bar: "red", role: "captain", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
-  { bar: "gold", role: "starter", ...TEDDY_SUPPORT, desc: "" }
+const cometTeam = (leia, rotation) => [
+  { bar: "blue", role: "", ...LEIA_KIT, ...leia, rotation: rotation.leia },
+  { bar: "red", role: "captain", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC, rotation: rotation.lucia },
+  { bar: "gold", role: "starter", ...TEDDY_SUPPORT, desc: "", rotation: rotation.teddy }
 ];
-const altIceTeam = leia => [
+const altIceTeam = (leia, rotation) => [
   { bar: "blue", role: "starter", ...WANSHI_COMET, wh: "Liston", memories: memBuild(DA_VINCI, LISTON),
-    desc: "Without Weapon Harmony, he still runs 2 Liston." },
-  { bar: "red", role: "captain", ...LEIA_KIT, ...leia },
+    desc: "Without Weapon Harmony, he still runs 2 Liston.", rotation: rotation.wanshi },
+  { bar: "red", role: "captain", ...LEIA_KIT, ...leia, rotation: rotation.leia },
   { bar: "gold", role: "", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(JOANNA, GUINEVERE),
-    desc: "Sub DPS build. Signature on the bottom resonance also works, or half of each." }
+    desc: "Sub DPS build. Signature on the bottom resonance also works, or half of each.", rotation: rotation.teddy }
 ];
-const cometGlaciation = (helentine, leia) => [
-  { bar: "blue", role: "captain", ...HELENTINE_KIT, memories: memBuild(CHEN_JIYUAN, COTTIE), ...helentine },
-  { bar: "red", role: "", ...LEIA_KIT, ...leia },
-  { bar: "gold", role: "starter", ...TEDDY_SUPPORT,
+const cometGlaciation = (helentine, leia, rotation) => [
+  { bar: "blue", role: "captain", ...HELENTINE_KIT, memories: memBuild(CHEN_JIYUAN, COTTIE), ...helentine, rotation: rotation.helentine },
+  { bar: "red", role: "", ...LEIA_KIT, ...leia, rotation: rotation.leia },
+  { bar: "gold", role: "starter", ...TEDDY_SUPPORT, rotation: rotation.teddy,
     desc: "Alisa: Echo can take this spot with the same build. Wanshi on 4 Liston + 4 Da Vinci also works, but a little worse. Selena on 4 Burana + 4 Da Vinci works too." }
 ];
 
@@ -283,7 +287,6 @@ const COMPS = {
       { bar: "blue", role: "captain starter", ...SELENA_KIT, wh: "Klenova", matrix: matrix(DLT, GA, INC),
         desc: "Standard Glaciation build for Selena. If everything is done right, you can land her final Signature during the effect's period with a little time remaining." },
       { bar: "red", name: "Wanshi: Lucid Dreamer", role: "", ...WANSHI_BUILD,
-        rank: "assets/rank/SSS.png",
         desc: "Support build. He stacks the effect for everyone; at SSS you can do fast Signatures with him and switch to Helentine with maximum stacks." },
       { bar: "gold", role: "", ...HELENTINE_KIT, wh: "Cottie", memories: memBuild(CHEN_JIYUAN, GUINEVERE),
         desc: "Standard metan (phentamine) build. She needs Wanshi's stacks to start dealing damage, and the effect lasts as long as you have pings and energy." }
@@ -292,10 +295,10 @@ const COMPS = {
   "comets-afterglow": {
     name: "A Comet's Afterglow", ...ICE_THEME,
     variants: [
-      { id: "leia-sub-dps", group: "Spider 2B · Alpha Ice", label: "SS Sub-Dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam(LEIA_SS) },
-      { id: "leia-cottie", group: "Spider 2B · Alpha Ice", label: "SS3 Cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam(LEIA_SS3) },
-      { id: "leia-alt-ice", group: "Spider 2B · Alt Ice", label: "SS", name: "Spider 2B SS Leia Alt Ice", cards: altIceTeam(LEIA_SS) },
-      { id: "leia-alt-ice-ss3", group: "Spider 2B · Alt Ice", label: "SS3", name: "Spider 2B SS3 Leia Alt Ice", cards: altIceTeam(LEIA_SS3) },
+      { id: "leia-sub-dps", group: "Spider 2B · Alpha Ice", label: "SS Sub-Dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam(LEIA_SS, LEIA_ROTATIONS.alphaSS) },
+      { id: "leia-cottie", group: "Spider 2B · Alpha Ice", label: "SS3 Cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam(LEIA_SS3, LEIA_ROTATIONS.alphaSS3) },
+      { id: "leia-alt-ice", group: "Spider 2B · Alt Ice", label: "SS", name: "Spider 2B SS Leia Alt Ice", cards: altIceTeam(LEIA_SS, LEIA_ROTATIONS.altIceSS) },
+      { id: "leia-alt-ice-ss3", group: "Spider 2B · Alt Ice", label: "SS3", name: "Spider 2B SS3 Leia Alt Ice", cards: altIceTeam(LEIA_SS3, LEIA_ROTATIONS.altIceSS3) },
       { id: "leia-pain-cage", group: "Spider 2B · Pain Cage", label: "Leia", name: "Spider 2B Leia Pain Cage", cards: [
         { bar: "blue", role: "", ...WANSHI_COMET, wh: "Einsteina", memories: memBuild(DA_VINCI, GLORIA), desc: "" },
         { bar: "red", role: "captain", ...LEIA_KIT, wh: "Cottie", memories: memBuild(MOUSME, COTTIE),
@@ -308,9 +311,9 @@ const COMPS = {
     name: "A Comet's Afterglow", ...ICE_THEME,
     variants: [
       { id: "leia-glaciation", group: "Spider 2B · Glaciation", label: "SS", name: "Spider 2B SS Leia Glaciation", cards: cometGlaciation(
-        { wh: "Einsteina", desc: "If Leia runs Einsteina instead, use 4 Cottie here." }, LEIA_SS) },
+        { wh: "Einsteina", desc: "If Leia runs Einsteina instead, use 4 Cottie here." }, LEIA_SS, LEIA_ROTATIONS.glaciationSS) },
       { id: "leia-glaciation-ss3", group: "Spider 2B · Glaciation", label: "SS3", name: "Spider 2B SS3 Leia Glaciation", cards: cometGlaciation(
-        { wh: "Cottie", desc: "If Leia doesn't run Einsteina, use 2 Cottie and 2 Einsteina here." }, LEIA_SS3) }
+        { wh: "Cottie", desc: "If Leia doesn't run Einsteina, use 2 Cottie and 2 Einsteina here." }, LEIA_SS3, LEIA_ROTATIONS.glaciationSS3) }
     ]
   },
   "better-tomorrow-nihil": {
@@ -350,7 +353,7 @@ const COMPS = {
     variants: [{ id: "ic-ss3", name: "IC SS3", cards: [
       { bar: "blue", name: "Wanshi: Lucid Dreamer", role: "starter", ...WANSHI_BUILD,
         desc: "Support DPS build for Wanshi. Signature energy boost of 2x Cottie is totally useless on him, and 4x Cottie's Extra DMG Bonus doesn't work on him because it requires a Signature Move to activate, and 50% of his damage is outside the Signature. His damage loops steps won't change no matter what memory you use on him, so you can try various memory sets alongside his signature memory for various combos." },
-      { bar: "red", role: "captain", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
+      { bar: "red", role: "captain", ...LUCIA_IC_KIT, ...RANK_SS3, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
       { bar: "gold", role: "", ...TEDDY_KIT, wh: "Chen Jiyuan", memories: memBuild(JOANNA, CHEN_JIYUAN),
         desc: "Standard DPS build for Teddy. She works well with any memory alongside her signature memory, and she can do everything of her damage loop without any signature energy boost of 2x Cottie as well, so you can try various memories along with it and her damage loop steps won't change at all. By considering the other teammates's memories, Guinevere on here is a good choice too." }
     ] }]
@@ -664,6 +667,33 @@ function weaponArt(c) {
   const [x, y, zoom] = WH_FRAME[c.wh] || [50, 50, 1];
   return `<a class="slot" href="${esc(memoryHref(c.wh))}"${tipAttr(c.wh)}>${pic(memFile(c.wh, "WH", "png"), `alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"`)}<span class="wh-bar">${pic(WH_BAR, 'alt=""')}<b>WEAPON HARMONY</b></span></a>`;
 }
+// A rotation step shows the icon of the first button it names, from the character's skills. The 1st Orb has no fixed color, so no icon
+const ROTATION_ART = { Signature: "Signature", Basic: "Basic Attack", Red: "Red Orb", Yellow: "Yellow Orb", Blue: "Blue Orb" };
+const ROTATION_WORD = /1st Orb|White|Green|Ping|Dodge|Signature|Basic|Red|Yellow|Blue/;
+function rotationLine(name, text) {
+  const art = ROTATION_ART[text.match(ROTATION_WORD)?.[0]];
+  return `<span class="rot-line">${art ? pic(skillIcon(name, art)) : ""}<span>${esc(text)}</span></span>`;
+}
+function rotationBox(c) {
+  const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(turn)}</h4>
+    <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(note)}</p>` : ""}`).join("");
+  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}<a class="rot-source" href="${LEIA_GUIDE}" target="_blank" rel="noopener">Source: Spider 2B's Leia guide</a>`;
+}
+// With a rotation, the text box of the card gets a tab for each. A card with no notes opens on the rotation
+function cardNotes(c) {
+  if (!c.rotation) return `<p class="desc">${esc(c.desc)}</p>`;
+  const tab = (key, label, on) => `<button type="button" class="${on ? "on" : ""}" data-note="${key}" aria-pressed="${on}">${label}</button>`;
+  return `<div class="notes"><div class="note-tabs">${c.desc ? tab("desc", "Notes", true) : ""}${tab("rotation", "Rotation", !c.desc)}</div>
+    ${c.desc ? `<p class="desc" data-pane="desc">${esc(c.desc)}</p>` : ""}<div class="desc rotation" data-pane="rotation"${c.desc ? " hidden" : ""}>${rotationBox(c)}</div></div>`;
+}
+function showNote(tab) {
+  const box = tab.closest(".notes");
+  box.querySelectorAll("[data-note]").forEach(button => {
+    button.classList.toggle("on", button === tab);
+    button.setAttribute("aria-pressed", button === tab);
+  });
+  box.querySelectorAll("[data-pane]").forEach(pane => { pane.hidden = pane.dataset.pane !== tab.dataset.note; });
+}
 function card(c) {
   const [, weapon = "", , , weaponEffect = ""] = WEAPONS.find(w => w[0] === c.name) || [];
   const memory = (piece, i) => {
@@ -679,7 +709,8 @@ function card(c) {
   return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}"><div class="cin">
     <h3><a href="${characterHref(c.name)}">${esc(c.name)}</a></h3>
     <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "icon"}</div>
-      <div class="pwrap"><div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "portrait"}</div>${c.rank ? pic(c.rank, `class="rank" alt="rank"${tipAttr(iconName(c.rank))}`) : ""}</div></div>
+      <div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "portrait"}</div>
+      ${c.rank ? `<div class="rank"${tipAttr(iconName(c.rank) + (c.rankLevel || ""))}>${pic(c.rank, 'alt="rank"')}${c.rankLevel ? `<b>${c.rankLevel}</b>` : ""}</div>` : ""}</div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
       <div class="wp">${slot(c.weapon, weapon || "weapon", STARS, weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
@@ -689,7 +720,7 @@ function card(c) {
       </div>
     </div>
     <div class="box kit">${slot(c.construct, "construct", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub)).join("")}</div>
-    <p class="desc">${esc(c.desc)}</p>
+    ${cardNotes(c)}
     </div><i class="bar bar-top"></i><i class="bar bar-bot"></i><div class="tags">${tags}</div>
   </article>`;
 }
@@ -702,23 +733,29 @@ function comp(id, cards = COMPS[id].cards) {
 const FOCUS_MS = 500; // keep in sync with the .fcard transition in style.css
 // The enlarged card is laid out at this width, whatever the size of the card it came from, then scaled to fill the screen
 const FOCUS_W = 640;
+// On a wide screen the text box of the enlarged card opens beside it, at the card's full height
+const FOCUS_PANEL = 420, FOCUS_PANEL_MIN_SCREEN = 1100;
 let view = null;
 const place = (el, x, y, s) => { el.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px) scale(${s})`; };
 function toOrigin(v) {
   const { clientWidth: w, clientHeight: h } = v.stage;
   v.clones.forEach((el, i) => {
     const r = v.sources[i].getBoundingClientRect();
-    place(el, r.left + r.width / 2 - w / 2, r.top + r.height / 2 - h / 2, r.width / el.offsetWidth);
+    const s = r.width / el.offsetWidth;
+    // Lined up by the top: without its text box, the enlarged card is shorter than the one it came from
+    place(el, r.left + r.width / 2 - w / 2, r.top + el.offsetHeight * s / 2 - h / 2, s);
   });
 }
 function layout() {
   const { stage, clones, active } = view, count = clones.length;
-  const w = stage.clientWidth, h = stage.clientHeight, cw = clones[0].offsetWidth, ch = clones[0].offsetHeight;
-  const big = Math.min(1.6, (h - 40) / ch, (w - 32) / cw), small = big * .68;
-  const spread = Math.min((cw * big + cw * small) / 2 - cw * small * .25, w / 2 - cw * small * .2);
+  const w = stage.clientWidth, h = stage.clientHeight, cw = clones[0].offsetWidth, ch = clones[active].offsetHeight;
+  const panel = clones[active].classList.contains("extended") ? FOCUS_PANEL : 0;
+  // With the panel, the margins stay wide enough for the Export button, so it never covers the tabs
+  const big = Math.min(1.6, (h - 110) / ch, (w - (panel ? 290 : 32)) / (cw + panel)), small = big * .68;
+  const spread = Math.min(((cw + panel) * big + cw * small) / 2 - cw * small * .25, w / 2 - cw * small * .2);
   clones.forEach((el, i) => {
     const d = (i - active + count) % count, pos = d <= count / 2 ? d : d - count, side = pos !== 0;
-    place(el, pos * spread, 0, side ? small : big);
+    place(el, side ? pos * spread : -panel * big / 2, 0, side ? small : big);
     el.classList.toggle("side", side);
     el.tabIndex = side ? 0 : -1;
     el.setAttribute("aria-label", el.dataset.name);
@@ -742,6 +779,7 @@ function openFocus(src) {
   const stage = document.createElement("div");
   stage.className = "stage";
   stage.style.cssText = comp.style.cssText;
+  stage.style.setProperty("--panel", `${FOCUS_PANEL}px`);
   stage.setAttribute("role", "dialog");
   stage.setAttribute("aria-modal", "true");
   stage.setAttribute("aria-label", "Character card");
@@ -754,6 +792,7 @@ function openFocus(src) {
     c.classList.add("fcard");
     c.dataset.name = $("h3", c).textContent;
     c.style.width = `${FOCUS_W}px`;
+    c.classList.toggle("extended", innerWidth >= FOCUS_PANEL_MIN_SCREEN && !!$(".notes,.desc:not(:empty)", c));
     return c;
   });
   stage.append(...clones);
@@ -773,6 +812,7 @@ function openFocus(src) {
     const c = e.target.closest(".fcard");
     if (!c) return closeFocus();
     if (c.classList.contains("side")) { e.preventDefault(); view.active = clones.indexOf(c); layout(); }
+    else if (e.target.closest("[data-note]")) showNote(e.target.closest("[data-note]"));
   };
   toOrigin(view);
   comp.classList.add("focused");
@@ -799,6 +839,8 @@ $("#main").addEventListener("click", e => {
   setNav(false);
   const save = e.target.closest("[data-export]");
   if (save) return exportBuild(save, shownTeam.cards);
+  const note = e.target.closest("[data-note]");
+  if (note) return showNote(note);
   const c = e.target.closest(".comp .card");
   if (c && !e.target.closest("a")) openFocus(c);
 });
@@ -893,6 +935,25 @@ function heroBelt() {
   const start = (Math.random() * chars.length * 5).toFixed(1);
   return `<div class="hero-art" role="navigation" aria-label="Constructs"><div class="hero-track" style="--n:${chars.length};animation-delay:-${start}s">${chars.map(c => link(c)).join("")}${chars.map(c => link(c, true)).join("")}</div></div>`;
 }
+// Below the team grid, and quieter than it: the tools, then the game data with live counts
+function homeLinks() {
+  const link = ([name, href, art, text]) => `<a class="home-link" href="${href}"><span class="hl-art">${pic(art)}</span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
+  const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
+  const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
+  const tools = [
+    ["BC Calculator", "/calculator", `${CALC_ART}/black-card.png`, "Plan your Black Cards across patches and check your pull odds."],
+    ["Meta Timeline", "/timeline", TIMELINE.at(-1).head, "See how long each frame held its place and who may be replaced next."]
+  ];
+  const data = [
+    ["Constructs", "/constructs", chars[0].portrait, count(chars, "construct")],
+    ["Memories", "/assets/memories", memFile(memories.find(m => m[2])[0], "1-4"), count(memories, "set")],
+    ["Weapons", "/assets/weapons", `${CHARS}/${WEAPONS.find(w => w[3])[3]}`, count(WEAPONS, "weapon")],
+    ["Weapon Resonance", "/assets/resonances", WEAPON_RES(resonances[0]), count(resonances, "resonance")],
+    ["C.U.B.s", "/assets/cubs", cubs[0].art, count(cubs, "C.U.B.")]
+  ];
+  return `<h2 class="grp">Tools</h2><div class="home-links tools">${tools.map(link).join("")}</div>
+    <h2 class="grp">Game data</h2><div class="home-links data">${data.map(link).join("")}</div>`;
+}
 function home() {
   const tile = (e, p, iconDir, color = TILE_COLOR[e]) => {
     if (!e) return `<span class="tile-gap">N/A</span>`;
@@ -910,7 +971,8 @@ function home() {
       ${heroBelt()}
       <div class="hero-tx"><h1>Punishing: Gray Raven Builds</h1><p class="sub">Pick a team by energy or derivative effect.</p></div>
     </section>
-    <div class="home-grid">${labels}${columns}</div>`;
+    <div class="home-grid">${labels}${columns}</div>
+    ${homeLinks()}`;
 }
 // Every page visit opens the newest team (first composition in PAGES, on its first variant) unless
 // the link names another. A composition with variants shows its build only while one of its
@@ -1824,7 +1886,9 @@ function drawCard(g, c, art, cardColor, stars, x, y, flare) {
   drawArt(g, art.get(c.symbol), x + 40, top + 20, 90, 90, { fit: "contain" });
   drawSlot(g, px, top, size, size);
   drawArt(g, art.get(c.portrait), px, top, size, size);
-  if (c.rank) drawArt(g, art.get(c.rank), px + size - 44, top + size - 44, 70, 54, { fit: "contain" });
+  const rankX = x + w - 130;
+  if (c.rank) drawArt(g, art.get(c.rank), rankX, top + 30, 90, 70, { fit: "contain" });
+  if (c.rankLevel) drawText(g, c.rankLevel, rankX + 88, top + 98, exportFont(24));
   // Memories, weapon, Weapon Harmony, resonances
   const boxY = top + size + 14, boxH = 212, pad = 8;
   g.fillStyle = "#ffffff0d";
