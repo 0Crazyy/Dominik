@@ -23,6 +23,7 @@ const DEFAULT_SIZE = "512x512";
 const SIZES = [
   [/^logo\./, "192x192"],
   [/^calculator\//, "128x128"],
+  [/^timeline\//, "128x128"],
   [/^classes\//, "256x256"],
   [/^resonances\//, "320x320"],
   [/\/Awaken - /, "384x384"],

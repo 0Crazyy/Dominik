@@ -1222,7 +1222,8 @@ const contactPage = () => `<h1>Contact</h1><p class="sub">Found a wrong build, o
       <p class="contact-label">Credits</p>
       <ul>${CREDITS.map(creditRow).join("")}</ul>
     </section>
-  </div>`;
+  </div>
+  <p class="legal">Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.</p>`;
 
 /* ---------- BC calculator: the BC Planner tab of the spreadsheet, with patch income from calculator-data.js ---------- */
 const CALC_SHEET = "https://docs.google.com/spreadsheets/d/1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw/edit";
@@ -1576,6 +1577,143 @@ $("#main").addEventListener("toggle", e => {
   document.querySelectorAll(".calc-patch[open]").forEach(card => { card.open = card === e.target; });
   e.target.scrollIntoView();
 }, true);
+/* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */
+const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overlinker", "Annihilator", "Observer"];
+// Each class here is the next step of the one before it, so a newer frame of any of them replaces the older ones
+const TL_LINES = [["Tank", "Breaker"], ["Support", "Amplifier", "Overlinker"]];
+const roleLine = role => TL_LINES.find(line => line.includes(role)) || [role];
+const TL_VIEWS = {
+  element: { field: "element", name: "Class & Element", groups: () => ENERGY, dir: "energy type", rule: "class and element", plural: "elements" },
+  effect: { field: "effect", name: "Class & Effect", groups: () => [...EFFECT, ...SPECIAL_EFFECT], dir: "effects", rule: "class and Effect", plural: "Effects" }
+};
+// Effects with no color of their own on the home page
+const tlColor = group => TILE_COLOR[group] || { Disruption: TILE_COLOR.Nihil, Raydiance: "#e6bd52" }[group];
+const TL_SKIP = "Lee: Entropy", TL_SKIP_NOTE = "19 days between Lee: Entropy and Lucia: Crimson Abyss";
+// Frames Kuro lets anyone get without pulling, and how
+const TL_FREE = {
+  "Selena: Capriccio": "farmable from the Recitativo di Fantasia mode",
+  "Ayla: Kaleido": "farmable from dorm commissions",
+  "Alisa: Echo": "Dorm Dispatch shop",
+  "Wanshi: Lucid Dreamer": "Dorm Dispatch and Voucher shops",
+  "Lilith: Daemonissa": "Insatiable Research",
+  "Teddy: Spectre": "Service Shop",
+  "Nirvatia: Dirge": "Service Shop and Journal of Promise",
+  "Helentine: Lacrimosa": "Service Shop and Journal of Promise",
+  "Adelyde: Anabasis": "Service Shop and Journal of Promise"
+};
+const TL_CN_HISTORY = "https://wiki.biligame.com/zspms/%E6%88%98%E5%8F%8C%E5%A4%A7%E4%BA%8B%E8%AE%B0";
+// The first patch both servers got on the same day
+const TL_SYNC = "2025-11-13";
+let timelineView = "element", timelineGroup = "", timelineNow = false;
+const TL_ROW = 46, TL_RANKED = 6;
+const monthYear = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+const roleArt = role => CLASS_ART[role] || classIcon(role);
+// A reign lasts until the next frame of the same class line. With no newer one, it is still running
+function timelineLanes(field, group) {
+  const today = dayNumber(calcToday()), frames = TIMELINE.filter(c => c[field] === group);
+  return TL_ROLES.map(role => ({ role, reigns: frames.filter(c => c.role === role).map(c => {
+    const next = frames.find(other => other.date > c.date && roleLine(role).includes(other.role));
+    const start = dayNumber(c.date), end = next ? dayNumber(next.date) : today;
+    return { ...c, start, end, days: end - start, next };
+  }) })).filter(lane => lane.reigns.length);
+}
+const reignInfo = r => `Released in ${r.patch} · ${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"} · ${amount(r.days)} days${r.next ? ` · replaced by ${r.next.name}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : " · still in place"}${TL_FREE[r.name] ? ` · free from ${TL_FREE[r.name]}` : ""}`;
+const reignHref = name => characters().some(c => c.name === name) ? ` href="${characterHref(name)}"` : "";
+// What the page shows after the filters. The numbers at the top always use every character
+function timelineShown(view) {
+  return view.groups().filter(group => !timelineGroup || group === timelineGroup).map(group => ({
+    group,
+    lanes: timelineLanes(view.field, group).map(lane => ({ ...lane, reigns: lane.reigns.filter(r => !timelineNow || !r.next) })).filter(lane => lane.reigns.length)
+  })).filter(({ lanes }) => lanes.length);
+}
+// The day each class first appeared, and the day the Global server caught up with this one
+function timelineMarks() {
+  const debuts = TL_ROLES.map(role => ({ date: TIMELINE.find(c => c.role === role).date, text: `${role} debut` })).filter(mark => mark.date > TIMELINE[0].date);
+  return [...debuts, { date: TL_SYNC, text: "Global/CN sync" }].sort((x, y) => x.date.localeCompare(y.date));
+}
+function timelineChart(view) {
+  const first = dayNumber(TIMELINE[0].date), last = dayNumber(calcToday()), marks = timelineMarks();
+  const at = day => ((day - first) / (last - first) * 100).toFixed(2);
+  const years = Array.from({ length: Number(calcToday().slice(0, 4)) - Number(TIMELINE[0].date.slice(0, 4)) }, (_, i) => Number(TIMELINE[0].date.slice(0, 4)) + i + 1);
+  const lines = years.map(year => `<i style="left:${at(dayNumber(`${year}-01-01`))}%"></i>`).join("") + marks.map(mark => `<i class="mark" style="left:${at(dayNumber(mark.date))}%"></i>`).join("");
+  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
+  // A line from a character down to whoever replaced them from the next class of the line
+  const link = (r, row, lanes) => {
+    const rows = lanes.findIndex(lane => lane.role === r.next?.role) - row;
+    return r.next && r.next.role !== r.role && rows > 0 ? `<b class="tl-link" style="left:${at(dayNumber(r.next.date))}%;height:${rows * TL_ROW - 36}px"></b>` : "";
+  };
+  const lane = ({ role, reigns }, row, lanes) => `<div class="tl-row"><span class="tl-role">${row && roleLine(role).includes(lanes[row - 1].role) ? "<em>↳</em>" : ""}${pic(roleArt(role))}${esc(role)}</span><div class="tl-track">${lines}${reigns.map(r => link(r, row, lanes)).join("")}${reigns.map(reign).join("")}</div></div>`;
+  return `<div class="tl-chart">
+    <div class="tl-row tl-years"><span></span><div class="tl-track">${years.map(year => `<b style="left:${at(dayNumber(`${year}-01-01`))}%">${year}</b>`).join("")}</div></div>
+    <div class="tl-row tl-marks"><span></span><div class="tl-track">${marks.map((mark, i) => `<b class="${i % 2 ? "low" : ""}" style="left:${at(dayNumber(mark.date))}%"${tipAttr(mark.text, monthYear(mark.date))}>${esc(mark.text)}</b>`).join("")}</div></div>
+    ${timelineShown(view).map(({ group, lanes }) => `<section class="tl-group" style="--c:${tlColor(group)}"><h2>${menuIcon(view.dir, group)}${esc(group)}</h2>${lanes.map(lane).join("")}</section>`).join("")}
+  </div>`;
+}
+function timelineList(view) {
+  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}</b><small>${esc(r.patch)}</small><small>${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${amount(r.days)} days</em></a>`;
+  return `<div class="tl-list"><p class="tl-chips">${timelineMarks().map(mark => `<span>${monthYear(mark.date)} · ${esc(mark.text)}</span>`).join("")}</p>
+    ${timelineShown(view).map(({ group, lanes }, i) => `<details class="tl-fold" style="--c:${tlColor(group)}"${i ? "" : " open"}><summary>${menuIcon(view.dir, group)}${esc(group)}</summary>
+      ${lanes.map(({ role, reigns }) => `<p class="tl-lane">${pic(roleArt(role))}${esc(role)}</p>${[...reigns].reverse().map(item).join("")}`).join("")}</details>`).join("")}</div>`;
+}
+function timelineBody() {
+  const view = TL_VIEWS[timelineView];
+  const reigns = view.groups().flatMap(group => timelineLanes(view.field, group).flatMap(lane => lane.reigns.map(r => ({ ...r, group }))));
+  // Only replaced characters have a final number, and the launch-window gap between Lee and Alpha says nothing about the meta
+  const done = reigns.filter(r => r.next && r.name !== TL_SKIP);
+  const mean = list => list.reduce((total, r) => total + r.days, 0) / list.length;
+  const days = n => `${amount(Math.round(n))} days`;
+  const byLength = [...done].sort((x, y) => y.days - x.days);
+  const groups = view.groups().map(group => [group, done.filter(r => r.group === group)]).filter(([, list]) => list.length)
+    .map(([group, list]) => ({ group, days: mean(list) })).sort((x, y) => y.days - x.days);
+  const inPlace = reigns.filter(r => !r.next).sort((x, y) => y.days - x.days);
+  // One row per class, oldest class first, to show how the roster of classes changed over time
+  const averages = TL_ROLES.map(name => {
+    const own = reigns.filter(r => r.role === name), list = done.filter(r => r.role === name);
+    return { name, first: own.map(r => r.date).sort()[0], replaced: list.length, days: list.length ? mean(list) : 0 };
+  }).filter(row => row.first).sort((x, y) => x.first.localeCompare(y.first));
+  const top = Math.max(...averages.map(row => row.days), 1);
+  // Who is closest to the usual lifespan of their class line. Classes nobody has been replaced in have nothing to compare with
+  const watch = inPlace.map(r => {
+    const line = done.filter(other => roleLine(r.role).includes(other.role));
+    return { ...r, average: line.length ? mean(line) : 0 };
+  }).filter(r => r.average).sort((x, y) => y.days / y.average - x.days / x.average);
+  // Phones open only the first one, so the timeline itself is not far down the page
+  const ranking = (title, rows, kind = "") => `<details class="tl-rank ${kind}"${calcPhone.matches && kind !== "first" ? "" : " open"}><summary>${esc(title)}</summary><ol>${rows.slice(0, TL_RANKED).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol></details>`;
+  const people = list => list.map(r => [pic(r.head), r.name, days(r.days)]);
+  const filter = (group, name) => `<button class="tool${timelineGroup === group ? " on" : ""}" type="button" data-tl-group="${esc(group)}">${esc(name)}</button>`;
+  return `<div class="tl-summary">
+    <div class="tl-records">
+      ${ranking(`Longest-lasting ${view.plural}, on average`, groups.map(g => [menuIcon(view.dir, g.group), g.group, days(g.days)]), "first")}
+      ${ranking("Lasted the longest", people(byLength))}
+      ${ranking("Lasted the shortest", people([...byLength].reverse()))}
+      ${ranking("Longest in place, not replaced yet", people(inPlace))}
+      ${ranking("Replacement watch: days in place against the class average", watch.map(r => [pic(r.head), r.name, `${amount(r.days)} of ${amount(Math.round(r.average))} · ${Math.round(r.days / r.average * 100)}%`]), "tl-watch")}
+    </div>
+    <details class="tl-averages"${calcPhone.matches ? "" : " open"}><summary>Average time until replaced, by class</summary>
+      ${averages.map(row => `<div class="tl-average">${pic(roleArt(row.name))}<span>${esc(row.name)}<small>Since ${monthYear(row.first)} · ${row.replaced} replaced</small></span><b>${row.days ? days(row.days) : "None yet"}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
+    </details>
+  </div>
+  ${calcMore("How replacement works", `<p class="tl-rule">A character counts as replaced when a new S-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too. The numbers above leave out the ${TL_SKIP_NOTE}. The watch is a guide, not a release date.${timelineView === "effect" ? " Frames with no Effect are left out." : ""}</p>`)}
+  <div class="tl-tools">${filter("", "All")}${view.groups().map(group => filter(group, group)).join("")}<button class="tool${timelineNow ? " on" : ""}" type="button" data-tl-now>Only in place</button></div>
+  ${timelineChart(view)}${timelineList(view)}`;
+}
+function timelinePage() {
+  const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${TL_VIEWS[key].name}</button>`;
+  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener">Chinese wiki</a>, and Global release dates are not considered. Collabs and uniframes are not counted. "Free" marks frames you can get without pulling.</p>
+  <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
+}
+$("#main").addEventListener("click", e => {
+  const view = e.target.closest("[data-tl-view]"), group = e.target.closest("[data-tl-group]"), now = e.target.closest("[data-tl-now]");
+  if (!view && !group && !now) return;
+  if (view) {
+    timelineView = view.dataset.tlView;
+    timelineGroup = "";
+    document.querySelectorAll("[data-tl-view]").forEach(button => button.classList.toggle("on", button === view));
+  }
+  if (group) timelineGroup = group.dataset.tlGroup;
+  if (now) timelineNow = !timelineNow;
+  $("#timelineBody").innerHTML = timelineBody();
+});
 // "4× Keats · 2× Da Vinci", from the six memory slots
 function memorySummary(memories = []) {
   const count = new Map();
@@ -1805,6 +1943,7 @@ function swap(update) {
   if (document.startViewTransition && !matchMedia("(prefers-reduced-motion:reduce)").matches) document.startViewTransition(update);
   else update();
 }
+const SITE_TITLE = document.title;
 function route() {
   // Older addresses of the Constructs page
   if (/^\/(characters|assets\/skills)\/?$/.test(location.pathname)) {
@@ -1822,10 +1961,12 @@ function route() {
   chosen = owner ? pick : variants ? variants[0].id : "";
   const main = $("#main");
   const character = kind === "character" && characters().find(c => charId(c.name) === key);
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage()
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage()
     : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path) : home();
   theme(null);
   if (kind === "calculator") showCalc();
+  const heading = kind && $("h1", main)?.textContent;
+  document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
   const navPath = kind === "character" ? "constructs" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;
   document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + navPath));
   if (kind === "assets") toggle(true, assetsBtn, assetsMenu, false);
@@ -1981,7 +2122,14 @@ function searchData() {
     ...WEAPONS.map(([owner, name, , file]) => ({ label: name, kind: `Weapon · ${owner}`, href: weaponHref(name), art: file && `${CHARS}/${file}` })),
     ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner}`, href: cubHref(c.name), art: c.art })),
     ...Object.keys(RESONANCE_EFFECTS).map(name => ({ label: name, kind: "Weapon Resonance", href: resonanceHref(name), art: WEAPON_RES(name) })),
+    ...ENERGY.map(e => ({ label: e, kind: "Energy teams", href: `/energy/${slug(e)}`, art: `assets/energy type/${e}.png` })),
+    ...EFFECT.map(e => ({ label: e, kind: "Effect teams", href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
+    ...SPECIAL_EFFECT.map(e => ({ label: e, kind: "Special Effect teams", href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
+    ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),
+    ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Contact", "/contact"]]
+      .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
     { label: "BC Calculator", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
+    { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },
     ...Object.entries(PAGES).flatMap(([path, ids]) => ids.flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name }]).map(v =>
       ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: `/${path}/${v.id}`, art: "" }))))
   ];
@@ -1989,9 +2137,14 @@ function searchData() {
 }
 function searchFor(query) {
   const q = plain(query.trim());
-  // Teams come last: most have a character's name, and would push out that character's weapon and C.U.B.
-  const score = item => (item.text.startsWith(q) ? 0 : item.text.includes(q) ? 1 : item.more.includes(q) ? 2 : 9) + (item.more.startsWith("team") ? 3 : 0);
-  return searchData().map(item => [score(item), item]).filter(([s]) => s < 9).sort((a, b) => a[0] - b[0]).slice(0, 8).map(([, item]) => item);
+  // The closer the name is to what was typed, the higher it goes: the whole name, its start, the start of a word, any part of it, then the description
+  const closeness = item => item.text === q ? 0 : item.text.startsWith(q) ? 1 : item.text.split(/[^a-z0-9]+/).some(word => word.startsWith(q)) ? 2 : item.text.includes(q) ? 3 : item.more.includes(q) ? 4 : 9;
+  // Teams come after the rest: most have a character's name, and would push out that character's weapon and C.U.B.
+  const score = item => {
+    const close = closeness(item);
+    return close && close < 9 && item.more.startsWith("team") ? close + 3 : close;
+  };
+  return searchData().map(item => [score(item), item]).filter(([s]) => s < 9).sort((a, b) => a[0] - b[0] || a[1].text.length - b[1].text.length).slice(0, 8).map(([, item]) => item);
 }
 const searchBox = $("#searchBox"), searchResults = $("#searchResults");
 function showSearch() {

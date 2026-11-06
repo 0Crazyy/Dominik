@@ -80,6 +80,10 @@ function check() {
     const skill = d.CHARACTER_SKILLS[name]?.find(([type]) => type === "Leader");
     if (skill?.[1] !== title || skill?.[2] !== text) errors.push(`LEADER_SKILLS["${name}"] difere de skills-data.js`);
   }
+  for (const { head, role, name } of vm.runInNewContext(`${read("timeline-data.js")}\n;TIMELINE`)) {
+    use(head, `linha do tempo: ${name}`);
+    if (role !== "Overlinker") use(`assets/classes/${role === "Tank" ? "Tanque" : role}.png`, `linha do tempo: ${name}`);
+  }
   for (const e of d.ENERGY) use(`assets/energy type/${e}.png`, "ícones de Energy Type");
   for (const e of [...d.EFFECT, ...d.SPECIAL_EFFECT]) use(`assets/effects/${e}.png`, "ícones de Effect");
   for (const file of ["app.js", "index.html", "style.css"]) literalPaths(file).forEach(path => use(path, file));

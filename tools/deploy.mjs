@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STAGE = join(ROOT, ".deploy");
-const SITE_FILES = ["_headers", "_redirects", "index.html", "style.css", "app.js", "assets-data.js", "calculator-data.js", "skills-data.js", "assets", "assets-web"];
+const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "assets-data.js", "calculator-data.js", "timeline-data.js", "skills-data.js", "assets", "assets-web"];
 
 const run = (command, args) => {
   const { status } = spawnSync(command, args, { cwd: ROOT, stdio: "inherit", shell: true });
@@ -22,7 +22,7 @@ const refresh = script => {
   if (status) console.warn(`AVISO  ${script} falhou: seguindo com os dados atuais.`);
 };
 const stageOnly = process.argv.includes("--stage-only");
-if (!stageOnly) ["tools/update-prices.mjs", "tools/update-calculator.mjs"].forEach(refresh);
+if (!stageOnly) ["tools/update-prices.mjs", "tools/update-calculator.mjs", "tools/update-timeline.mjs", "tools/make-sitemap.mjs"].forEach(refresh);
 run("node", ["tools/check-assets.mjs"]);
 rmSync(STAGE, { recursive: true, force: true });
 for (const file of SITE_FILES) cpSync(join(ROOT, file), join(STAGE, file), { recursive: true });
