@@ -1249,7 +1249,7 @@ const CALC_SPENDING = [
   { key: "weapons", name: "Weapons" },
   { key: "resonance", name: "6★ Resonance", note: "150 Shards each" },
   { key: "cubs", name: "C.U.B.s" },
-  { key: "custom", name: "Other BC spend", note: "Skins, special banners..." }
+  { key: "custom", name: "Other BC spend", note: "Skins, special banners...", step: 1000 }
 ];
 // Monthly Pass A pays on the day it is bought and then once a day, so it can run into the next patch
 const MONTHLY_PASS = { upfront: 300, daily: 100, days: 30 };
@@ -1387,7 +1387,7 @@ const patchSummary = () => `<span class="calc-sum">
   </span>`;
 function patchCard(patch, today, startOpen) {
   const plan = calc.plans[calcId(patch)] || {};
-  const field = ({ key, name, note }) => `<label class="calc-field"><span>${esc(name)}</span>${numberBox(`data-plan="${key}"`, plan[key], name)}${note ? `<small>${esc(note)}</small>` : ""}</label>`;
+  const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(name)}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="Less: ${esc(name)}">−</button>${numberBox(`data-plan="${key}"`, plan[key], name)}<button type="button" data-step="${step}" aria-label="More: ${esc(name)}">+</button></span>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
   const passes = CALC_PASSES.map(({ key, name, art, rc, max }) => `<label class="calc-pass">${calcIcon(art)}<span>${esc(name)}<small>${rc} RC${max > 1 ? " each" : ""}</small></span>
     ${max > 1
       ? `<select data-plan="${key}" aria-label="${esc(name)}">${Array.from({ length: max + 1 }, (_, n) => `<option${n === (plan[key] || 0) ? " selected" : ""}>${n}</option>`).join("")}</select>`
@@ -1408,6 +1408,7 @@ function patchCard(patch, today, startOpen) {
     <p class="calc-label">Passes</p><div class="calc-passes">${passes}</div>
     <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
     <p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div>
+    ${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>Repeat this plan in later patches</button>`}
     <p class="calc-label">Final balance</p>${currencyGrid({}, c => `<output data-left="${c.key}"></output>`)}
     </div>
   </details>`;
@@ -1448,6 +1449,9 @@ function showCalc() {
     + calcStat("Average pulls", `${Math.round(average)}`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
     + calcStat(`${NEARLY_SURE * 100}% without pity`, `${noPity} pulls`, "What pity saves you");
 }
+// Phones keep the explanations closed, and only one patch open, so the page stays short
+const calcPhone = matchMedia("(max-width:760px)");
+const calcMore = (title, content) => `<details class="calc-more"${calcPhone.matches ? "" : " open"}><summary>${title}</summary>${content}</details>`;
 const calcNotes = notes => `<dl class="calc-info">${notes.map(([title, text]) => `<div><dt>${title}</dt><dd>${text}</dd></div>`).join("")}</dl>`;
 function calculatorPage() {
   const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(name)}<small>${esc(note)}</small></span></label>`;
@@ -1466,7 +1470,7 @@ function calculatorPage() {
         <div class="calc-main">
           <section class="calc-card">
             <div class="calc-head"><div><h3>Starting balance</h3><p>What you have right now</p></div><button class="tool" type="button" data-calc-clear>Clear all</button></div>
-            ${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, c.name))}
+            <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, c.name))}</div>
             <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
           </section>
           <h2 class="grp">Patches</h2>
@@ -1478,15 +1482,13 @@ function calculatorPage() {
           <h2 class="grp">Passes total</h2>
           <section class="calc-card calc-total">${calcIcon(RC_ART)}<output id="calcRc"></output><b id="calcRcPrice"></b><small id="calcRcList"></small>
             <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
-          <h2 class="grp">How it's calculated</h2>
-          <section class="calc-card">${calcNotes([
+          ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
             ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500)."],
             ["Current patch", "Dailies shrink with the days left, weeklies with the resets left, and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them."],
             ["Monthly Pass A", `${MONTHLY_PASS.upfront} BC when bought and ${MONTHLY_PASS.daily} BC a day for ${MONTHLY_PASS.days} days. A second one adds ${MONTHLY_PASS.days} more days, not more per day. Days that don't fit move to the next patch.`],
             ["Patch income", "Only the highest difficulty of each mode counts."]
-          ])}</section>
-          <h2 class="grp">Predicted patches</h2>
-          <section class="calc-card">
+          ])}</section>`)}
+          ${calcMore("Predicted patches", `<section class="calc-card">
             <p class="calc-text">The calculator always looks 9 patches past the last one in the spreadsheet. Each of them repeats the same period of the year before, with no collabs and no one-off compensation. Expect this much variation per patch:</p>
             <div class="calc-margins">
               ${margin("low", "±5%", "Black Cards (±510) and C.U.B. Tickets")}
@@ -1494,7 +1496,7 @@ function calculatorPage() {
               ${margin("high", "±50%+", "Limited and Weapon Tickets, which depend on each year's events")}
             </div>
             <p class="calc-text">Over a full year, Black Cards stay within about ±3.5% (±3,200). Based on how far 8 real patches landed from the same period a year before.</p>
-          </section>
+          </section>`)}
         </aside>
       </div>
     </div>
@@ -1506,13 +1508,13 @@ function calculatorPage() {
         </div>
         <div class="calc-stats" id="calcOdds"></div>
       </section>
-      <section class="calc-card">${calcNotes([
+      ${calcMore("What the numbers mean", `<section class="calc-card">${calcNotes([
         ["Chance before pity", "The odds of getting it from luck alone. It stops growing one pull before pity, because the next pull is guaranteed."],
         ["Pity hits", "How many times pity triggers in these pulls if luck never comes first. Getting it early restarts the count."],
         ["Average pulls", "What one copy takes on average once pity is counted, at 250 BC per pull."],
         [`${NEARLY_SURE * 100}% without pity`, "How many pulls a 99% chance would take if pity didn't exist."],
         ["Method", `The rate is treated as flat until pity. Average pulls and the ${NEARLY_SURE * 100}% figure adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener">FINNER's expected and nearly guaranteed numbers</a> from Warframe.`]
-      ])}</section>
+      ])}</section>`)}
     </div>
   </div>`;
 }
@@ -1531,8 +1533,28 @@ $("#main").addEventListener("input", e => {
   saveCalc();
   showCalc();
 });
+let calcClicked = null;
 $("#main").addEventListener("click", e => {
   const tab = e.target.closest("[data-calc-tab]"), fold = e.target.closest("[data-calc-fold]");
+  const step = e.target.closest("[data-step]"), copy = e.target.closest("[data-calc-copy]");
+  calcClicked = e.target.closest(".calc-patch summary")?.parentElement;
+  if (step) {
+    const box = step.parentElement.querySelector("input");
+    box.value = Math.max(0, whole(box.value) + Number(step.dataset.step)) || "";
+    box.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  // Rank stays with each patch: the frame of one patch says nothing about the next
+  if (copy) {
+    const id = copy.closest(".calc-patch").dataset.id, { rank, ...plan } = calc.plans[id] || {};
+    const patches = calcPlan().filter(p => !p.collab), top = scrollY;
+    for (const patch of patches.slice(patches.findIndex(p => calcId(p) === id) + 1)) {
+      const own = calc.plans[calcId(patch)]?.rank;
+      calc.plans[calcId(patch)] = { ...plan, ...(own && { rank: own }) };
+    }
+    saveCalc();
+    route();
+    scrollTo(0, top);
+  }
   if (tab) {
     calc.tab = tab.dataset.calcTab;
     saveCalc();
@@ -1550,6 +1572,9 @@ $("#main").addEventListener("toggle", e => {
   if (!e.target.matches(".calc-patch")) return;
   calc.open[e.target.dataset.id] = e.target.open;
   saveCalc();
+  if (!calcPhone.matches || !e.target.open || e.target !== calcClicked) return;
+  document.querySelectorAll(".calc-patch[open]").forEach(card => { card.open = card === e.target; });
+  e.target.scrollIntoView();
 }, true);
 // "4× Keats · 2× Da Vinci", from the six memory slots
 function memorySummary(memories = []) {

@@ -323,8 +323,18 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-bar-item small{display:block;font-size:11px;color:var(--mute)}
 .calc-fold{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-bottom:10px;font-size:13px;color:var(--mute)}
 .calc-fold span{display:flex;gap:8px}
+.calc-step{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:4px}
+.calc-step button{height:38px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 18px "Quantico";cursor:pointer}
+.calc-step button:hover{background:#4a4a4f}
+#calc .calc-step input{padding:0 2px;text-align:center;appearance:textfield;-moz-appearance:textfield}
+.calc-step input::-webkit-inner-spin-button,.calc-step input::-webkit-outer-spin-button{display:none}
+.calc-copy{margin-top:12px}
+.calc-more>summary{display:flex;align-items:center;gap:8px;margin:30px 0 14px;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c4c4ca;cursor:pointer;list-style:none}
+.calc-more>summary::-webkit-details-marker{display:none}
+.calc-more>summary::before{content:"▸";color:var(--mute)}
+.calc-more[open]>summary::before{content:"▾"}
 .calc-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-.calc-head+.calc-money{margin-top:14px}
+.calc-head+.calc-start{margin-top:14px}
 .calc-head h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:20px}
 .calc-head p{margin-top:4px;font-size:13px;color:var(--mute)}
 .calc-head a{color:var(--txt);text-decoration:underline}
@@ -390,7 +400,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 @media(min-width:900px) and (max-width:1679px){.calc-info{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Black Cards take two columns, so the seven currencies always fill their rows */
 @media(max-width:1100px){.calc-money{grid-template-columns:repeat(4,minmax(0,1fr))}.calc-coin:first-child{grid-column:span 2}.calc-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.calc-passes,.calc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-patch summary{padding-left:30px}.calc-sum{gap:4px;font-size:11px}.calc-sum>span{flex-direction:column;justify-content:flex-start;gap:2px;padding:5px 2px}.calc-rank{position:static;margin-bottom:12px}.calc-body{padding:0 14px 14px}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
+@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-patch{scroll-margin-top:68px}.calc-patch summary{padding:10px 10px 10px 28px}.calc-patch summary::before{left:12px;top:12px}.calc-sum{gap:4px;font-size:11px}.calc-sum>span{gap:3px;min-height:26px;padding:2px 3px}.calc-sum .calc-icon{width:16px;height:16px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-fold p,[data-calc-fold=open]{display:none}.calc-fold{justify-content:flex-end}.calc-rank{position:static;margin-bottom:12px}.calc-body{padding:0 14px 14px}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
 .mt-name a::after{content:"";position:absolute;inset:0}
 .mt-name small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--mute)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
