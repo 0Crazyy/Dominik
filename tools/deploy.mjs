@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Publishes the site. The repository root also holds tools/ and .claude/, so only the files below go up:
-// they are copied to .deploy/ and that folder is what Netlify receives.
+// they are copied to .deploy/ and that folder is what Cloudflare Pages receives.
 // Run it with: node tools/deploy.mjs     (--stage-only copies the files and stops before publishing)
+// Once per computer: npx wrangler@4 login. Once ever: npx wrangler@4 pages project create dominiko --production-branch main
 import { spawnSync } from "node:child_process";
 import { cpSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -26,5 +27,6 @@ if (!stageOnly) ["tools/update-prices.mjs", "tools/update-calculator.mjs", "tool
 run("node", ["tools/check-assets.mjs"]);
 rmSync(STAGE, { recursive: true, force: true });
 for (const file of SITE_FILES) cpSync(join(ROOT, file), join(STAGE, file), { recursive: true });
+run("node", ["tools/make-embeds.mjs"]);
 if (stageOnly) process.exit(0);
-run("netlify", ["deploy", "--prod", "--no-build", "--dir", ".deploy"]);
+run("npx", ["--yes", "wrangler@4", "pages", "deploy", ".deploy", "--project-name", "dominiko", "--branch", "main", "--commit-dirty=true"]);

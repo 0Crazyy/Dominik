@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://dominiko.netlify.app/">
+  <a href="https://dominiko.pages.dev/">
     <img src="assets/embed-icon.png" alt="Dominik logo" width="180">
   </a>
 </p>
@@ -11,13 +11,13 @@
 </p>
 
 <p align="center">
-  <a href="https://dominiko.netlify.app/"><b>Open the site</b></a>
+  <a href="https://dominiko.pages.dev/"><b>Open the site</b></a>
   ·
-  <a href="https://dominiko.netlify.app/calculator">BC Calculator</a>
+  <a href="https://dominiko.pages.dev/calculator">BC Calculator</a>
   ·
-  <a href="https://dominiko.netlify.app/timeline">Meta Timeline</a>
+  <a href="https://dominiko.pages.dev/timeline">Meta Timeline</a>
   ·
-  <a href="https://dominiko.netlify.app/contact">Contact</a>
+  <a href="https://dominiko.pages.dev/contact">Contact</a>
   ·
   <a href="https://ko-fi.com/ofcrazy">Support on Ko-fi</a>
 </p>
@@ -43,7 +43,7 @@ To jump straight to something, use the search box in the menu. It finds construc
 
 ### Find a team
 
-1. On the [home page](https://dominiko.netlify.app/), pick an energy type or a derivative effect.
+1. On the [home page](https://dominiko.pages.dev/), pick an energy type or a derivative effect.
 2. Choose a team from the list at the top of the page.
 3. Read each character's card, which shows their memories, weapon harmony and resonances.
 4. Hover over an icon to see its name, or tap it on a phone.
@@ -54,15 +54,15 @@ To share a build, copy the page address, which always points to the team on scre
 
 | Page | What you will find |
 | --- | --- |
-| [Constructs](https://dominiko.netlify.app/constructs) | Every construct with a build, with filters for element, class, rank and effect. Each one links to its builds and skills. |
-| [Memories](https://dominiko.netlify.app/assets/memories) | A table of memories you can sort by column. |
-| [Weapons](https://dominiko.netlify.app/assets/weapons) | A table of weapons you can sort by column. |
-| [Weapon Resonance](https://dominiko.netlify.app/assets/resonances) | A table of weapon resonances you can sort by column. |
-| [C.U.B.s](https://dominiko.netlify.app/assets/cubs) | A table of C.U.B.s you can sort by column. |
+| [Constructs](https://dominiko.pages.dev/constructs) | Every construct with a build, with filters for element, class, rank and effect. Each one links to its builds and skills. |
+| [Memories](https://dominiko.pages.dev/assets/memories) | A table of memories you can sort by column. |
+| [Weapons](https://dominiko.pages.dev/assets/weapons) | A table of weapons you can sort by column. |
+| [Weapon Resonance](https://dominiko.pages.dev/assets/resonances) | A table of weapon resonances you can sort by column. |
+| [C.U.B.s](https://dominiko.pages.dev/assets/cubs) | A table of C.U.B.s you can sort by column. |
 
 ### Plan your pulls
 
-The [BC Calculator](https://dominiko.netlify.app/calculator) has two tabs:
+The [BC Calculator](https://dominiko.pages.dev/calculator) has two tabs:
 
 - **Planner:** enter your starting balance and see your Black Cards across upcoming patches. It also adds up the cost of the passes you pick, with estimated real-money prices.
 - **Pull chance:** choose a banner and a number of pulls to see your odds, including how often pity triggers.
@@ -71,7 +71,7 @@ It uses the same math as the [Tickets Income spreadsheet](https://docs.google.co
 
 ### Follow the meta
 
-The [Meta Timeline](https://dominiko.netlify.app/timeline) shows how long each S-Rank frame held its place before a newer one replaced it.
+The [Meta Timeline](https://dominiko.pages.dev/timeline) shows how long each S-Rank frame held its place before a newer one replaced it.
 
 - **Views:** group the timeline by class and element, or by class and effect.
 - **Rankings:** see who lasted the longest and the shortest, who has gone longest without being replaced, and the average time until replacement for each class.
@@ -83,7 +83,7 @@ Dates follow the Chinese server, which gets each frame first, so Global release 
 
 ## Useful links
 
-- [Dominik](https://dominiko.netlify.app/): the live site
+- [Dominik](https://dominiko.pages.dev/): the live site
 - [Tickets Income spreadsheet](https://docs.google.com/spreadsheets/d/1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw/edit): patch income for the calculator and dates for the timeline
 - [Huaxu wiki](https://huaxu.app/na/wiki): game data and art
 - [GRAY RAVENS wiki](https://grayravens.com/wiki): skills and patch history
@@ -92,7 +92,7 @@ Dates follow the Chinese server, which gets each frame first, so Global release 
 
 ## Feedback
 
-Found a wrong build, or have a question or suggestion? Message **crazy117** on Discord. You can also find the details on the [Contact page](https://dominiko.netlify.app/contact).
+Found a wrong build, or have a question or suggestion? Message **crazy117** on Discord. You can also find the details on the [Contact page](https://dominiko.pages.dev/contact).
 
 If the site helps you, you can [support it on Ko-fi](https://ko-fi.com/ofcrazy).
 

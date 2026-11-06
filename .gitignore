@@ -1,5 +1,6 @@
-# Local Netlify folder, and the copy tools/deploy.mjs publishes
+# Local Netlify and Cloudflare folders, and the copy tools/deploy.mjs publishes
 .netlify
+.wrangler
 .deploy
 
 # Source art (PSD) and local backups: not part of the site

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Checks that every image the site uses exists, with the exact upper/lower case of the file name:
-// Windows ignores case, but Netlify does not, so a wrong case only breaks once published.
+// Windows ignores case, but the server does not, so a wrong case only breaks once published.
 // Run it with: node tools/check-assets.mjs     (the pre-commit hook in tools/githooks runs it too)
 // Exit code 1 = something is broken. A missing home thumbnail or light copy is only a warning: the site falls back to the full art.
 import { existsSync, readdirSync, readFileSync } from "node:fs";

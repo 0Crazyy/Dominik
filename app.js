@@ -1910,7 +1910,7 @@ async function renderBuild(cards, { id, title }) {
   g.fillRect(0, 0, width, height);
   drawText(g, cards.length > 1 ? title : `${cards[0].name} · ${title}`, EXPORT_PAD, 44, exportFont(cards.length > 1 ? 26 : 16), "#fff", "left");
   cards.forEach((c, i) => drawCard(g, c, art, theme.cp, art.get(STARS_BAR), EXPORT_PAD + i * EXPORT_W, EXPORT_HEAD, cards.length > 1));
-  drawText(g, "dominiko.netlify.app", width - EXPORT_PAD, height - 14, exportFont(13, 400), "#c4c4ca", "right");
+  drawText(g, "dominiko.pages.dev", width - EXPORT_PAD, height - 14, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
 async function exportBuild(button, cards) {
@@ -1943,7 +1943,8 @@ function swap(update) {
   if (document.startViewTransition && !matchMedia("(prefers-reduced-motion:reduce)").matches) document.startViewTransition(update);
   else update();
 }
-const SITE_TITLE = document.title;
+// Written here because each address has its own title in the HTML, from tools/make-embeds.mjs
+const SITE_TITLE = "Dominik - Punishing Gray Raven Builds";
 function route() {
   // Older addresses of the Constructs page
   if (/^\/(characters|assets\/skills)\/?$/.test(location.pathname)) {

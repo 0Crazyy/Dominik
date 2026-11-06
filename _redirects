@@ -1,14 +1,4 @@
-# Every page address is served by index.html, and app.js shows the right page. Anything else gets 404.html.
-# Files that exist (images, style.css...) are served as they are, these rules do not touch them.
+# Every page has its own file, written by tools/make-embeds.mjs, so serving them takes no rule. Anything else gets 404.html.
+# Cloudflare follows these rules even when a file exists: a general one like /assets/* would also catch the images.
 /characters /constructs 301
 /assets/skills /constructs 301
-/ /index.html 200
-/constructs /index.html 200
-/contact /index.html 200
-/calculator /index.html 200
-/timeline /index.html 200
-/energy/* /index.html 200
-/effect/* /index.html 200
-/special/* /index.html 200
-/character/* /index.html 200
-/assets/* /index.html 200
