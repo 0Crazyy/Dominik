@@ -10,7 +10,7 @@
    Extra fields: symbol (class icon), weapon, wh (Weapon Harmony memory name, framed in
    WH_FRAME), memories (6), matrix (3 weapon resonances),
    resonance + core (the two "6x" icons), construct (CUB), skills (6 CUB skills),
-   rank (badge beside the portrait), rankLevel (the number after it: SS3 is SS with rankLevel 3).
+   rank (badge beside the portrait; levels have their own file, like SS3.png. Left out, it is SSS on free frames and SS on the rest).
    ===================================================== */
 const CHARS = "assets/characters", MEM = "assets/memories", RES = "assets/resonances";
 const WEAPON_RES = n => `${RES}/Ressonância de Arma - ${n} HD.png`;
@@ -249,7 +249,8 @@ const NEW_CHARACTER_NOTICE = {
 };
 
 // Ranks a build is made for
-const RANK_SS = { rank: "assets/rank/SS.png" }, RANK_SS3 = { ...RANK_SS, rankLevel: 3 };
+const RANK_SS = { rank: "assets/rank/SS.png" }, RANK_SS3 = { rank: "assets/rank/SS3.png" };
+const rankArt = c => c.rank || (TL_FREE[c.name] ? "assets/rank/SSS.png" : RANK_SS.rank);
 // A Comet's Afterglow teams follow Spider 2B's Leia guide. Leia's build only changes with her rank
 const LEIA_SS = { ...RANK_SS, wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
   desc: "Without Weapon Harmony, use 2 Einsteina instead of 2 Chen Jiyuan. Breaker class skill also works on the bottom resonance." };
@@ -550,7 +551,8 @@ const slug = s => s.toLowerCase().replace(/\s+/g, "-");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 // Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
 // data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
-const web = src => src.replace("assets/", "assets-web/") + ".webp";
+// ?v=2: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
+const web = src => src.replace("assets/", "assets-web/") + ".webp" + (src.startsWith("assets/rank/") ? "?v=2" : "");
 const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
 // Name shown when hovering an icon, read from its file name ("Memória - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {
@@ -710,7 +712,7 @@ function card(c) {
     <h3><a href="${characterHref(c.name)}">${esc(c.name)}</a></h3>
     <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "icon"}</div>
       <div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "portrait"}</div>
-      ${c.rank ? `<div class="rank"${tipAttr(iconName(c.rank) + (c.rankLevel || ""))}>${pic(c.rank, 'alt="rank"')}${c.rankLevel ? `<b>${c.rankLevel}</b>` : ""}</div>` : ""}</div>
+      <div class="rank"${tipAttr(iconName(rankArt(c)))}>${pic(rankArt(c), 'alt="rank"')}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
       <div class="wp">${slot(c.weapon, weapon || "weapon", STARS, weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
@@ -1317,7 +1319,7 @@ const CALC_SPENDING = [
 // Monthly Pass A pays on the day it is bought and then once a day, so it can run into the next patch
 const MONTHLY_PASS = { upfront: 300, daily: 100, days: 30 };
 // Eneba prices before checkout fees: [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
-const RC_PRICES_DATE = "6 Nov 2026";
+const RC_PRICES_DATE = "7 Nov 2026";
 const RC_PACKS = [[5, 4.40, 1.07], [28, 22.57, 4.34], [34, 27.76, 5.29], [59, 45.93, 8.62], [71, 54.59, 10.20], [119, 90.92, 16.86], [299, 229.36, 42.20], [600, 458.64, 84.16]];
 const RC_STORE = "https://www.eneba.com/top-up-punishing-gray-raven-android-rainbow-cards-global";
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
@@ -1820,7 +1822,7 @@ const loadImage = src => new Promise(done => {
   };
   img.src = web(src);
 });
-const cardArt = c => [c.symbol, c.portrait, c.rank, c.weapon, c.resonance, c.core, c.construct, c.wh && memFile(c.wh, "WH", "png"),
+const cardArt = c => [c.symbol, c.portrait, rankArt(c), c.weapon, c.resonance, c.core, c.construct, c.wh && memFile(c.wh, "WH", "png"),
   ...(c.memories || []), ...(c.matrix || []), ...(c.skills || [])].filter(src => src?.startsWith("assets/"));
 function drawArt(g, img, x, y, w, h, { fit = "cover", zoom = 1, ox = 50, oy = 50 } = {}) {
   if (!img) return;
@@ -1887,8 +1889,7 @@ function drawCard(g, c, art, cardColor, stars, x, y, flare) {
   drawSlot(g, px, top, size, size);
   drawArt(g, art.get(c.portrait), px, top, size, size);
   const rankX = x + w - 130;
-  if (c.rank) drawArt(g, art.get(c.rank), rankX, top + 30, 90, 70, { fit: "contain" });
-  if (c.rankLevel) drawText(g, c.rankLevel, rankX + 88, top + 98, exportFont(24));
+  drawArt(g, art.get(rankArt(c)), rankX, top + 30, 90, 70, { fit: "contain" });
   // Memories, weapon, Weapon Harmony, resonances
   const boxY = top + size + 14, boxH = 212, pad = 8;
   g.fillStyle = "#ffffff0d";
