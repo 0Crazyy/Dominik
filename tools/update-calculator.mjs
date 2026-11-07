@@ -10,7 +10,7 @@ import vm from "node:vm";
 
 const SHEET = "1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw";
 const RANGE = "F19:S60";
-const FILE = join(dirname(fileURLToPath(import.meta.url)), "..", "calculator-data.js");
+const FILE = join(dirname(fileURLToPath(import.meta.url)), "..", "data", "calculator-data.js");
 const HEADER = `// Patch income for the BC calculator, from the RESUME tab of the spreadsheet.
 // Refresh it with: node tools/update-calculator.mjs     (frame and collab rows are kept, the rest is replaced)
 // Rows with forecast: true are not in the sheet: the tool works them out from the same period a year before.

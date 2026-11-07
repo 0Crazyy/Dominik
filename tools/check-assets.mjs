@@ -17,7 +17,7 @@ function loadData() {
   const app = read("app.js"), end = app.indexOf(DATA_END);
   if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/check-assets.mjs`);
   const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, MEMORY_RELEASE, CONSTRUCTS, LEADER_SKILLS, WEAPONS, WEAPON_STATS, CHARACTER_SKILLS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
-  return vm.runInNewContext(`${read("assets-data.js")}\n${read("skills-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
+  return vm.runInNewContext(`${read("data/assets-data.js")}\n${read("data/skills-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 }
 
 function listFiles(dir, out = []) {
@@ -80,7 +80,7 @@ function check() {
     const skill = d.CHARACTER_SKILLS[name]?.find(([type]) => type === "Leader");
     if (skill?.[1] !== title || skill?.[2] !== text) errors.push(`LEADER_SKILLS["${name}"] difere de skills-data.js`);
   }
-  for (const { head, role, name } of vm.runInNewContext(`${read("timeline-data.js")}\n;TIMELINE`)) {
+  for (const { head, role, name } of vm.runInNewContext(`${read("data/timeline-data.js")}\n;TIMELINE`)) {
     use(head, `linha do tempo: ${name}`);
     if (role !== "Overlinker") use(`assets/classes/${role === "Tank" ? "Tanque" : role}.png`, `linha do tempo: ${name}`);
   }

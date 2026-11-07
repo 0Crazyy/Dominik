@@ -15,7 +15,7 @@ const run = promisify(execFile);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SHEET = "1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw", TAB = "681191739";
 const WIKI = "https://huaxu.app/na/wiki/constructs", ART = "https://assets.huaxu.app/glb/image";
-const FOLDER = "assets/timeline", FILE = join(ROOT, "timeline-data.js");
+const FOLDER = "assets/timeline", FILE = join(ROOT, "data/timeline-data.js");
 // The column of each element and class in the tab. Its headers are pictures, so this list is written by hand
 const COLUMNS = {
   9: ["Fire", "Attacker"], 13: ["Fire", "Tank"], 17: ["Fire", "Amplifier"], 21: ["Fire", "Breaker"],
@@ -95,8 +95,8 @@ const slug = name => name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 const dates = await sheetDates();
 const frames = wikiData(await (await get(WIKI)).text()).filter(inTimeline).sort((a, b) => a.priority - b.priority);
-const site = vm.runInNewContext(`${readFileSync(join(ROOT, "assets-data.js"), "utf8")}\n;CONSTRUCTS`);
-const patches = vm.runInNewContext(`${readFileSync(join(ROOT, "calculator-data.js"), "utf8")}\n;CALC_PATCHES`).filter(p => p.patch);
+const site = vm.runInNewContext(`${readFileSync(join(ROOT, "data/assets-data.js"), "utf8")}\n;CONSTRUCTS`);
+const patches = vm.runInNewContext(`${readFileSync(join(ROOT, "data/calculator-data.js"), "utf8")}\n;CALC_PATCHES`).filter(p => p.patch);
 const patchOf = date => PATCH_NAMES[date] || patches.find(p => date >= p.start && date <= p.end)?.patch || "";
 const entries = [];
 for (const [column, [element, role]] of Object.entries(COLUMNS)) {

@@ -30,7 +30,7 @@ const SIZES = [
   // Weapon Harmony art is zoomed up to 6x by WH_FRAME, so it needs far more pixels than its slot suggests
   [/ WH\.\w+$/, "1200x1800"]
 ];
-const sizeFor = path => (SIZES.find(([rule]) => rule.test(path)) || [, DEFAULT_SIZE])[1];
+const sizeFor = path => SIZES.find(([rule]) => rule.test(path))?.[1] ?? DEFAULT_SIZE;
 
 async function listImages(dir, out = []) {
   for (const e of await readdir(dir, { withFileTypes: true })) {

@@ -4,8 +4,12 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
-# Images never change name, so browsers can keep them. Not /assets/*: that also matches pages like /assets/memories
+# Browsers keep images for 7 days, so art replaced under the same name stays old for them. Not /assets/*: that also matches pages like /assets/memories
 /assets-web/*
   Cache-Control: public, max-age=604800
 /assets/home/*
   Cache-Control: public, max-age=604800
+# Rank badges get redrawn under the same names, so browsers ask first. The ! drops the 7 days set above
+/assets-web/rank/*
+  ! Cache-Control
+  Cache-Control: public, max-age=0, must-revalidate
