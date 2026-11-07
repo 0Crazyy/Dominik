@@ -551,8 +551,8 @@ const slug = s => s.toLowerCase().replace(/\s+/g, "-");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 // Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
 // data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
-// ?v=2: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
-const web = src => src.replace("assets/", "assets-web/") + ".webp" + (src.startsWith("assets/rank/") ? "?v=2" : "");
+// ?v=4: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
+const web = src => src.replace("assets/", "assets-web/") + ".webp" + (src.startsWith("assets/rank/") ? "?v=4" : "");
 const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
 // Name shown when hovering an icon, read from its file name ("Memória - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {

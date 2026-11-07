@@ -15,6 +15,7 @@ Textos do site e comentários do código ficam em inglês. Mensagens das ferrame
 | `data/timeline-data.js` | Gerado por `tools/update-timeline.mjs`; não edite à mão |
 | `assets/` | Artes originais, e é para onde os caminhos do código apontam |
 | `assets-web/` | Cópias leves geradas por `tools/optimize-images.mjs`; `web()` no `app.js` troca o caminho ao renderizar. Nunca edite à mão |
+| `tools/style-ranks.py` | Aplica o relevo do SSS+ aos ícones de rank chapados e grava em `assets/rank/`. Instruções no topo do arquivo |
 | `.deploy/`, `.smoke/` | Saídas geradas, fora do git |
 
 ## Economizar contexto
