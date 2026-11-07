@@ -611,12 +611,12 @@ const ICON_FIT = {
 };
 const menuIcon = (dir, e) => pic(`assets/${dir}/${e}.png`, `alt=""${ICON_FIT[e] ? ` style="transform:${ICON_FIT[e]}"` : ""}`);
 const group = (label, key, arr, iconDir) =>
-  `<button class="sub" data-grp="${key}" aria-expanded="false">${label} <i>▾</i></button>` +
+  `<button class="sub" data-grp="${key}" aria-expanded="false"><svg class="ico" aria-hidden="true"><use href="#i-${key}"/></svg>${label} <i>▾</i></button>` +
   `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">Nothing here yet</p>`}</div>`;
 menu.innerHTML = group(TEAM_LISTS.energy.label, "energy", ENERGY, "energy type") + group(TEAM_LISTS.effect.label, "effect", EFFECT, "effects") +
   group(TEAM_LISTS.special.label, "special", SPECIAL_EFFECT, "effects");
-// A list of the side menu bursts open and squeezes shut. Only clicks animate: a page opening its own group doesn't
-const MENU_OPEN = { duration: 260, easing: "cubic-bezier(.34,1.45,.64,1)" }, MENU_CLOSE = { duration: 170, easing: "cubic-bezier(.5,0,.75,.4)" };
+// A list of the side menu glides open and shut at one pace, so the group closing and the one opening balance out. Only clicks animate: a page opening its own group doesn't
+const MENU_SLIDE = { duration: 280, easing: "cubic-bezier(.4,0,.2,1)" };
 function slideMenu(el, open, animate) {
   if (el.sliding ? el.slidingOpen === open : el.hidden === !open) return;
   const from = el.hidden ? 0 : el.getBoundingClientRect().height;
@@ -632,21 +632,27 @@ function slideMenu(el, open, animate) {
   const to = open ? el.scrollHeight : 0, margin = getComputedStyle(el).marginBottom;
   const frames = [{ height: `${from}px`, opacity: from ? 1 : 0, marginBottom: from ? margin : "0px" }, { height: `${to}px`, opacity: open ? 1 : 0, marginBottom: open ? margin : "0px" }];
   el.slidingOpen = open;
-  el.sliding = el.animate(frames, open ? MENU_OPEN : MENU_CLOSE);
+  el.sliding = el.animate(frames, MENU_SLIDE);
   el.sliding.onfinish = () => {
     el.sliding = null;
     el.style.overflow = "";
     el.hidden = !open;
   };
 }
+// One group open at a time on each level: open together, the groups outgrow the screen
 function toggle(open, b = btn, m = menu, animate = true) {
   b.setAttribute("aria-expanded", open);
   slideMenu(m, open, animate);
+  if (!open) return;
+  const [otherBtn, otherMenu] = b === btn ? [assetsBtn, assetsMenu] : [btn, menu];
+  otherBtn.setAttribute("aria-expanded", false);
+  slideMenu(otherMenu, false, animate);
 }
 function openGroup(key, open, animate = true) {
   const b = $(`[data-grp="${key}"]`);
   b.setAttribute("aria-expanded", open);
   slideMenu($(`[data-list="${key}"]`), open, animate);
+  if (open) Object.keys(TEAM_LISTS).filter(k => k !== key).forEach(k => openGroup(k, false, animate));
 }
 // Phones: the side panel is a top bar and its menu opens with the ☰ button
 const menuBtn = $("#menuBtn");
@@ -655,9 +661,53 @@ function setNav(open) {
   menuBtn.setAttribute("aria-expanded", open);
 }
 menuBtn.onclick = () => setNav(!$("#side").classList.contains("open"));
-$("#sideNav").addEventListener("click", e => { if (e.target.closest("a")) setNav(false); });
+$("#sideNav").addEventListener("click", e => {
+  if (e.target.closest("a")) setNav(false);
+  // Enter on a result leaves the focus in the box, which would hold the menu open over the new page
+  if (e.target.closest("a.sr")) searchBox.blur();
+});
 btn.onclick = () => toggle(btn.getAttribute("aria-expanded") !== "true");
 assetsBtn.onclick = () => toggle(assetsBtn.getAttribute("aria-expanded") !== "true", assetsBtn, assetsMenu);
+// Desktop: the side menu is a rail of icons that opens over the page while in use, so the page never moves.
+// Open groups stay open in the rail, showing their icons: every link keeps its height, so nothing moves under the mouse
+const side = $("#side"), pinBtn = $("#pinBtn"), railScreen = matchMedia("(min-width:761px) and (hover:hover)"), PIN_KEY = "dominik-menu-pinned";
+const isRail = () => railScreen.matches && !side.classList.contains("pinned");
+// Opens the groups of the page on screen
+function showGroups() {
+  const kind = location.pathname.split("/")[1];
+  if (kind === "assets") toggle(true, assetsBtn, assetsMenu, false);
+  else if (TEAM_LISTS[kind]) { toggle(true, btn, menu, false); openGroup(kind, true, false); }
+}
+let sideTimer;
+// The waits keep a mouse just passing by from opening it, and a slip off the edge from closing it
+function setWide(wide, wait) {
+  clearTimeout(sideTimer);
+  sideTimer = setTimeout(() => {
+    if (!isRail() || side.classList.contains("wide") === wide) return;
+    if (!wide && (side.matches(":hover") || $(":focus-visible", side))) return;
+    side.classList.toggle("wide", wide);
+    if (!wide) clearSearch();
+  }, wait);
+}
+side.addEventListener("mouseenter", () => setWide(true, 90));
+side.addEventListener("mouseleave", () => setWide(false, 260));
+side.addEventListener("focusin", e => { if (e.target.matches(":focus-visible")) setWide(true, 0); });
+side.addEventListener("focusout", () => setWide(false, 200));
+function setPinned(on) {
+  side.classList.toggle("pinned", on);
+  side.classList.toggle("wide", !on);
+  pinBtn.setAttribute("aria-pressed", on);
+}
+pinBtn.onclick = () => {
+  const on = !side.classList.contains("pinned");
+  setPinned(on);
+  try { localStorage.setItem(PIN_KEY, on ? "1" : ""); }
+  catch { /* the choice just lasts until the page closes */ }
+};
+railScreen.addEventListener("change", () => side.classList.remove("wide"));
+try {
+  if (localStorage.getItem(PIN_KEY)) { side.classList.add("pinned"); pinBtn.setAttribute("aria-pressed", true); }
+} catch { /* no saved choice: the rail stays */ }
 menu.onclick = e => {
   const b = e.target.closest(".sub");
   if (b) openGroup(b.dataset.grp, b.getAttribute("aria-expanded") !== "true");
@@ -737,8 +787,9 @@ const FOCUS_CLOSE_MS = 360; // keep in sync with .stage.closing in style.css
 const FOCUS_FADE_MS = 180;
 // The enlarged card is laid out at this width, then scaled to fill the screen
 const FOCUS_W = 640;
-// The text box of the enlarged card opens beside it, at the card's full height. Its width on screen, whatever the card's scale
-const FOCUS_PANEL = 460;
+// The text box of the enlarged card opens beside it, at the card's full height. Its width on screen, whatever the card's scale:
+// narrower on small windows, to leave room for the card
+const focusPanel = w => Math.min(460, w * .36);
 let view = null;
 const place = (el, x, y, s) => { el.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px) scale(${s})`; };
 function toOrigin(v) {
@@ -755,8 +806,8 @@ function layout() {
   const w = stage.clientWidth, h = stage.clientHeight, cw = clones[0].offsetWidth, ch = clones[active].offsetHeight;
   const extended = clones[active].classList.contains("extended");
   // With the panel, the margins stay wide enough for the Export button, so it never covers the tabs
-  const big = Math.min(1.6, (h - 110) / ch, (w - (extended ? 290 + FOCUS_PANEL : 32)) / cw), small = big * .68;
-  const panel = extended ? FOCUS_PANEL / big : 0;
+  const big = Math.min(1.6, (h - 110) / ch, (w - (extended ? 290 + focusPanel(w) : 32)) / cw), small = big * .68;
+  const panel = extended ? focusPanel(w) / big : 0;
   stage.style.setProperty("--panel", `${panel}px`);
   stage.style.setProperty("--panel-u", `${1.1 / big}px`);
   const spread = Math.min(((cw + panel) * big + cw * small) / 2 - cw * small * .25, w / 2 - cw * small * .2);
@@ -777,11 +828,11 @@ function setBackground(locked) {
   document.documentElement.classList.toggle("locked", locked);
   $("#main").inert = $("#side").inert = locked;
 }
-// Below this width three cards no longer fit at a readable size: they slide one at a time, each already at full size, so
-// there is nothing to enlarge. Keep in sync with the media query of .comp in style.css
-const sliding = matchMedia("(max-width:1240px),(hover:none) and (max-height:500px)");
+// With less room than this three cards no longer fit at a readable size: they slide one at a time, each already at full size,
+// so there is nothing to enlarge. Keep in sync with the @container of .comp in style.css
+const isSliding = () => ($("#compBox")?.clientWidth || 0) < 960;
 function openFocus(src) {
-  if (sliding.matches) return;
+  if (isSliding()) return;
   const comp = src.closest(".comp"), sources = [...comp.querySelectorAll(".card")];
   setBackground(true);
   const stage = document.createElement("div");
@@ -925,7 +976,8 @@ function slideTo(index) {
 function showSlide() {
   const box = $(".comp");
   if (!box) return;
-  const on = sliding.matches, active = on ? activeSlide() : -1, cards = [...box.children];
+  const on = isSliding(), active = on ? activeSlide() : -1, cards = [...box.children];
+  if (on) closeFocus(true);
   cards.forEach((c, i) => c.classList.toggle("peek", on && i !== active));
   document.querySelectorAll("[data-slide]").forEach((b, i) => b.setAttribute("aria-current", i === active));
   // The page ends with the card on screen, not with the tallest of the three. 30 is the padding of .comp
@@ -938,7 +990,6 @@ new MutationObserver(() => {
   showSlide();
 }).observe($("#main"), { childList: true, subtree: true });
 $("#main").addEventListener("scroll", e => { if (e.target.matches?.(".comp")) showSlide(); }, true);
-sliding.addEventListener("change", () => { closeFocus(true); showSlide(); });
 
 /* ---------- pages ---------- */
 // Every character with a build and all their builds, read from PAGES and COMPS, so a new team shows up by itself
@@ -1378,7 +1429,9 @@ const RC_STORE = "https://www.eneba.com/top-up-punishing-gray-raven-android-rain
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
 // A collab gives free pulls, so its first frame and weapon are cheaper. It pays in BC only, and tickets carry over untouched
 const COLLAB_COST = { S: 10500, A: 2500, firstFrame: 6300, firstWeapon: 4000 };
-const PULL_ODDS = { Frame: { rate: 0.005, pity: 60, cost: COST.S }, Weapon: { rate: 0.04, pity: 30, cost: COST.weapon }, "C.U.B.": { rate: 0.0582, pity: 20, cost: COST.cub } };
+// Base rates from each banner's in-game Drop Details. The first key is the banner the page opens on
+const FRAME_ODDS = { rate: 0.005, pity: 60, cost: COST.S };
+const PULL_ODDS = { "Themed Construct": FRAME_ODDS, "Arrival Construct": FRAME_ODDS, "Target Weapon": { rate: 0.04, pity: 30, cost: COST.weapon }, "C.U.B. Target": { rate: 0.0582, pity: 20, cost: COST.cub } };
 // What's left after one patch. "start" is the balance going in, "plan" what was typed in that patch's card
 function patchResult(patch, start, plan, { calibration, useVouchers }, monthlyDays = 0) {
   const count = key => plan[key] || 0;
@@ -1435,8 +1488,10 @@ function saveCalc() {
   try { localStorage.setItem(CALC_KEY, JSON.stringify(calc)); }
   catch { /* Private windows can refuse storage: the page still works, it just won't remember */ }
 }
-const newCalc = () => ({ balance: {}, plans: {}, open: {}, tab: "plan", calibration: false, useVouchers: true, pullKind: "Frame", pulls: 0 });
+const newCalc = () => ({ balance: {}, plans: {}, open: {}, tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0 });
 let calc = { ...newCalc(), ...readCalc() };
+// A plan saved before a banner was renamed still holds the old name
+if (!PULL_ODDS[calc.pullKind]) calc.pullKind = newCalc().pullKind;
 const calcId = patch => patch.patch || patch.frame;
 const calcToday = () => new Date().toLocaleDateString("en-CA");
 const dayNumber = iso => Date.parse(`${iso}T00:00Z`) / 864e5;
@@ -1564,8 +1619,8 @@ function showCalc() {
   const { rate, pity, average, averageCost, early, noPity } = pullStats(calc.pullKind, calc.pulls);
   $("#calcOdds").innerHTML = calcStat("Chance before pity", `${(early * 100).toFixed(2)}%`, calc.pulls >= pity ? `Pity reached: guaranteed by pull ${pity}` : `${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}% per pull`)
     + calcStat("Pity hits", `${Math.floor(calc.pulls / pity)}×`, `Every ${pity} pulls · ${pity - calc.pulls % pity} to the next`)
-    + calcStat("Average pulls", `${Math.round(average)}`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
-    + calcStat(`${NEARLY_SURE * 100}% without pity`, `${noPity} pulls`, "What pity saves you");
+    + calcStat("Expected", `${Math.round(average)} pulls`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
+    + calcStat("Nearly Guaranteed", `${noPity} pulls`, `${NEARLY_SURE * 100}% chance without pity`);
 }
 // Phones keep the explanations closed, and only one patch open, so the page stays short
 const calcPhone = matchMedia("(max-width:760px)");
@@ -1629,9 +1684,9 @@ function calculatorPage() {
       ${calcMore("What the numbers mean", `<section class="calc-card">${calcNotes([
         ["Chance before pity", "The odds of getting it from luck alone. It stops growing one pull before pity, because the next pull is guaranteed."],
         ["Pity hits", "How many times pity triggers in these pulls if luck never comes first. Getting it early restarts the count."],
-        ["Average pulls", "What one copy takes on average once pity is counted, at 250 BC per pull."],
-        [`${NEARLY_SURE * 100}% without pity`, "How many pulls a 99% chance would take if pity didn't exist."],
-        ["Method", `The rate is treated as flat until pity. Average pulls and the ${NEARLY_SURE * 100}% figure adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener">FINNER's expected and nearly guaranteed numbers</a> from Warframe.`]
+        ["Expected", "What one copy takes on average once pity is counted, at 250 BC per pull."],
+        ["Nearly Guaranteed", `How many pulls a ${NEARLY_SURE * 100}% chance would take if pity didn't exist.`],
+        ["Method", `The rate is treated as flat until pity. Expected and Nearly Guaranteed adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener">FINNER's numbers</a> from Warframe.`]
       ])}</section>`)}
     </div>
   </div>`;
@@ -2088,8 +2143,7 @@ function route() {
   document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
   const navPath = kind === "character" ? "constructs" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;
   document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + navPath));
-  if (kind === "assets") toggle(true, assetsBtn, assetsMenu, false);
-  else if (TEAM_LISTS[kind]) { toggle(true, btn, menu, false); openGroup(kind, true, false); }
+  showGroups();
   const sel0 = $(".picker button[data-id][aria-pressed=true]");
   if (sel0) theme(sel0.dataset.id);
   const picker = $(".picker");
