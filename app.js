@@ -732,11 +732,13 @@ function comp(id, cards = COMPS[id].cards) {
 }
 
 /* ---------- focus view: enlarged card in the center, the others behind it ---------- */
-const FOCUS_MS = 500; // keep in sync with the .fcard transition in style.css
-// The enlarged card is laid out at this width, whatever the size of the card it came from, then scaled to fill the screen
+const FOCUS_CLOSE_MS = 360; // keep in sync with .stage.closing in style.css
+// The source card fades back this long before the enlarged one lands on it (the opacity transition of .comp .card)
+const FOCUS_FADE_MS = 180;
+// The enlarged card is laid out at this width, then scaled to fill the screen
 const FOCUS_W = 640;
-// On a wide screen the text box of the enlarged card opens beside it, at the card's full height
-const FOCUS_PANEL = 420, FOCUS_PANEL_MIN_SCREEN = 1100;
+// The text box of the enlarged card opens beside it, at the card's full height. Its width on screen, whatever the card's scale
+const FOCUS_PANEL = 460;
 let view = null;
 const place = (el, x, y, s) => { el.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px) scale(${s})`; };
 function toOrigin(v) {
@@ -751,9 +753,12 @@ function toOrigin(v) {
 function layout() {
   const { stage, clones, active } = view, count = clones.length;
   const w = stage.clientWidth, h = stage.clientHeight, cw = clones[0].offsetWidth, ch = clones[active].offsetHeight;
-  const panel = clones[active].classList.contains("extended") ? FOCUS_PANEL : 0;
+  const extended = clones[active].classList.contains("extended");
   // With the panel, the margins stay wide enough for the Export button, so it never covers the tabs
-  const big = Math.min(1.6, (h - 110) / ch, (w - (panel ? 290 : 32)) / (cw + panel)), small = big * .68;
+  const big = Math.min(1.6, (h - 110) / ch, (w - (extended ? 290 + FOCUS_PANEL : 32)) / cw), small = big * .68;
+  const panel = extended ? FOCUS_PANEL / big : 0;
+  stage.style.setProperty("--panel", `${panel}px`);
+  stage.style.setProperty("--panel-u", `${1.1 / big}px`);
   const spread = Math.min(((cw + panel) * big + cw * small) / 2 - cw * small * .25, w / 2 - cw * small * .2);
   clones.forEach((el, i) => {
     const d = (i - active + count) % count, pos = d <= count / 2 ? d : d - count, side = pos !== 0;
@@ -772,16 +777,16 @@ function setBackground(locked) {
   document.documentElement.classList.toggle("locked", locked);
   $("#main").inert = $("#side").inert = locked;
 }
-// Phones stack the cards at full width, so there is nothing to enlarge
-const stacked = matchMedia("(max-width:760px),(hover:none) and (max-height:500px)");
+// Below this width three cards no longer fit at a readable size: they slide one at a time, each already at full size, so
+// there is nothing to enlarge. Keep in sync with the media query of .comp in style.css
+const sliding = matchMedia("(max-width:1240px),(hover:none) and (max-height:500px)");
 function openFocus(src) {
-  if (stacked.matches) return;
+  if (sliding.matches) return;
   const comp = src.closest(".comp"), sources = [...comp.querySelectorAll(".card")];
   setBackground(true);
   const stage = document.createElement("div");
   stage.className = "stage";
   stage.style.cssText = comp.style.cssText;
-  stage.style.setProperty("--panel", `${FOCUS_PANEL}px`);
   stage.setAttribute("role", "dialog");
   stage.setAttribute("aria-modal", "true");
   stage.setAttribute("aria-label", "Character card");
@@ -789,12 +794,15 @@ function openFocus(src) {
     <button class="ctl prev" aria-label="Previous character">‹</button>
     <button class="ctl next" aria-label="Next character">›</button>
     <button class="ctl export" data-export-active>Export image</button>`;
+  // Same proportions as the card on the page (--u in style.css), so nothing jumps on the first frame of the move
+  const unit = FOCUS_W * Math.min(1, src.offsetWidth / 360) / src.offsetWidth;
   const clones = sources.map(s => {
     const c = s.cloneNode(true);
     c.classList.add("fcard");
     c.dataset.name = $("h3", c).textContent;
     c.style.width = `${FOCUS_W}px`;
-    c.classList.toggle("extended", innerWidth >= FOCUS_PANEL_MIN_SCREEN && !!$(".notes,.desc:not(:empty)", c));
+    c.style.setProperty("--u", `${unit}px`);
+    c.classList.toggle("extended", !!$(".notes,.desc:not(:empty)", c));
     return c;
   });
   stage.append(...clones);
@@ -828,22 +836,29 @@ function closeFocus(instant) {
   const v = view;
   view = null;
   setBackground(false);
-  const finish = () => { v.stage.remove(); v.comp.classList.remove("focused"); };
+  const showSources = () => v.comp.classList.remove("focused");
+  const finish = () => { v.stage.remove(); showSources(); };
   if (instant) return finish();
   v.src.focus({ preventScroll: true });
   v.stage.classList.remove("open");
   v.stage.classList.add("closing");
   v.clones.forEach(c => c.classList.remove("side"));
   toOrigin(v);
-  setTimeout(finish, matchMedia("(prefers-reduced-motion:reduce)").matches ? 0 : FOCUS_MS);
+  const time = matchMedia("(prefers-reduced-motion:reduce)").matches ? 0 : FOCUS_CLOSE_MS;
+  setTimeout(showSources, Math.max(0, time - FOCUS_FADE_MS));
+  setTimeout(finish, time);
 }
 $("#main").addEventListener("click", e => {
   setNav(false);
+  const c = e.target.closest(".comp .card");
+  // A card at the side comes to the center first, even if the tap lands on one of its links
+  if (c?.classList.contains("peek")) { e.preventDefault(); return slideTo([...c.parentNode.children].indexOf(c)); }
+  const step = e.target.closest("[data-slide],[data-slide-step]");
+  if (step) return slideTo(step.dataset.slide ? Number(step.dataset.slide) : activeSlide() + Number(step.dataset.slideStep));
   const save = e.target.closest("[data-export]");
   if (save) return exportBuild(save, shownTeam.cards);
   const note = e.target.closest("[data-note]");
   if (note) return showNote(note);
-  const c = e.target.closest(".comp .card");
   if (c && !e.target.closest("a")) openFocus(c);
 });
 $("#main").addEventListener("click", e => {
@@ -894,6 +909,37 @@ addEventListener("keydown", e => {
 });
 addEventListener("resize", () => { if (view) layout(); });
 
+/* ---------- sliding cards: narrow windows and phones ---------- */
+// The swipe itself is the browser's scroll snap; this only follows it
+function activeSlide() {
+  const box = $(".comp");
+  if (!box) return 0;
+  const middle = box.scrollLeft + box.clientWidth / 2, cards = [...box.children];
+  const gap = c => Math.abs(c.offsetLeft + c.offsetWidth / 2 - middle);
+  return cards.indexOf(cards.reduce((best, c) => gap(c) < gap(best) ? c : best));
+}
+function slideTo(index) {
+  const box = $(".comp"), card = box.children[(index + box.children.length) % box.children.length];
+  box.scrollTo({ left: card.offsetLeft + card.offsetWidth / 2 - box.clientWidth / 2, behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth" });
+}
+function showSlide() {
+  const box = $(".comp");
+  if (!box) return;
+  const on = sliding.matches, active = on ? activeSlide() : -1, cards = [...box.children];
+  cards.forEach((c, i) => c.classList.toggle("peek", on && i !== active));
+  document.querySelectorAll("[data-slide]").forEach((b, i) => b.setAttribute("aria-current", i === active));
+  // The page ends with the card on screen, not with the tallest of the three. 30 is the padding of .comp
+  box.style.height = on ? `${cards[active].offsetHeight + 30}px` : "";
+}
+const slideSizes = new ResizeObserver(showSlide);
+new MutationObserver(() => {
+  slideSizes.disconnect();
+  document.querySelectorAll(".comp .card").forEach(c => slideSizes.observe(c));
+  showSlide();
+}).observe($("#main"), { childList: true, subtree: true });
+$("#main").addEventListener("scroll", e => { if (e.target.matches?.(".comp")) showSlide(); }, true);
+sliding.addEventListener("change", () => { closeFocus(true); showSlide(); });
+
 /* ---------- pages ---------- */
 // Every character with a build and all their builds, read from PAGES and COMPS, so a new team shows up by itself
 // on the conveyor and on the character pages. Energy pages come first, then Derivative Effect pages.
@@ -939,31 +985,34 @@ function heroBelt() {
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
-  const link = ([name, href, art, text]) => `<a class="home-link" href="${href}"><span class="hl-art">${pic(art)}</span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
+  const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art"><svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg></span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
   const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
   const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
-    ["BC Calculator", "/calculator", `${CALC_ART}/black-card.png`, "Plan your Black Cards across patches and check your pull odds."],
-    ["Meta Timeline", "/timeline", TIMELINE.at(-1).head, "See how long each frame held its place and who may be replaced next."]
+    ["BC Calculator", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
+    ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."]
   ];
   const data = [
-    ["Constructs", "/constructs", chars[0].portrait, count(chars, "construct")],
-    ["Memories", "/assets/memories", memFile(memories.find(m => m[2])[0], "1-4"), count(memories, "set")],
-    ["Weapons", "/assets/weapons", `${CHARS}/${WEAPONS.find(w => w[3])[3]}`, count(WEAPONS, "weapon")],
-    ["Weapon Resonance", "/assets/resonances", WEAPON_RES(resonances[0]), count(resonances, "resonance")],
-    ["C.U.B.s", "/assets/cubs", cubs[0].art, count(cubs, "C.U.B.")]
+    ["Constructs", "/constructs", "constructs", count(chars, "construct")],
+    ["Memories", "/assets/memories", "memories", count(memories, "set")],
+    ["Weapons", "/assets/weapons", "weapons", count(WEAPONS, "weapon")],
+    ["Weapon Resonance", "/assets/resonances", "resonance", count(resonances, "resonance")],
+    ["C.U.B.s", "/assets/cubs", "cubs", count(cubs, "C.U.B.")]
   ];
   return `<h2 class="grp">Tools</h2><div class="home-links tools">${tools.map(link).join("")}</div>
     <h2 class="grp">Game data</h2><div class="home-links data">${data.map(link).join("")}</div>`;
 }
+// Teams are named after the patch of their newest character, so a team named after the patch running today is new. The tag leaves by itself when that patch ends
+const isNewTeam = id => CALC_PATCHES.some(p => patchTime(p, calcToday()) && p.patch.toLowerCase() === COMPS[id].name.toLowerCase());
 function home() {
   const tile = (e, p, iconDir, color = TILE_COLOR[e]) => {
     if (!e) return `<span class="tile-gap">N/A</span>`;
-    const count = (PAGES[`${p}/${slug(e)}`] || []).reduce((sum, id) => sum + (COMPS[id].variants || [0]).length, 0);
+    const ids = PAGES[`${p}/${slug(e)}`] || [], count = ids.reduce((sum, id) => sum + (COMPS[id].variants || [0]).length, 0);
     return `<a class="tile${count ? "" : " none"}" style="--c:${color}" href="/${p}/${slug(e)}">
       ${pic(`assets/${iconDir}/${e}.png`, 'class="t-bg" alt=""')}
       <span class="t-ic">${menuIcon(iconDir, e)}</span>
       <span class="t-tx"><b>${e}</b><small>${count ? `${count} team${count > 1 ? "s" : ""}` : "No teams yet"}</small></span>
+      ${ids.some(isNewTeam) ? `<span class="t-new">New</span>` : ""}
     </a>`;
   };
   // Cells go column by column: the row names, then each energy with its effects
@@ -1002,11 +1051,16 @@ const pickedVariant = sel => COMPS[sel].variants?.find(x => x.id === chosen);
 const pickedCards = sel => sel && (COMPS[sel].variants ? pickedVariant(sel)?.cards : COMPS[sel].cards);
 // Sits above the page title, so it has its own box and changes along with the build on screen
 const teamNotice = sel => { const cards = pickedCards(sel); return cards ? notice(cards) : ""; };
+// Only shows while the cards slide: who is in the team, and a way to change card without swiping
+function pager(cards) {
+  const member = (c, i) => `<button class="pg-${c.bar}" data-slide="${i}" aria-label="Show ${esc(c.name)}">${c.portrait ? pic(c.portrait) : ""}<span>${esc(c.name.split(":")[0])}</span></button>`;
+  return `<div class="pager" role="group" aria-label="Team members"><button class="pg-step" data-slide-step="-1" aria-label="Previous character">‹</button>${cards.map(member).join("")}<button class="pg-step" data-slide-step="1" aria-label="Next character">›</button></div>`;
+}
 function compBody(sel) {
   const shownCards = pickedCards(sel);
   if (!shownCards) return "";
   shownTeam = { id: sel, title: [COMPS[sel].name, pickedVariant(sel)?.name].filter(Boolean).join(" · "), cards: shownCards };
-  return `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + comp(sel, shownCards);
+  return `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + pager(shownCards) + comp(sel, shownCards);
 }
 function team(path) {
   const [kind, key] = path.split("/");
@@ -2121,21 +2175,6 @@ if (matchMedia("(hover:hover)").matches) {
   addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
   addEventListener("pagechange", closeSheet);
 }
-// Stacked cards: says there are more characters below, until the second card comes into view
-const scrollHint = document.createElement("div");
-scrollHint.id = "scrollHint";
-scrollHint.hidden = true;
-scrollHint.textContent = "↓ Scroll down to see the other team members";
-document.body.append(scrollHint);
-let hintDone = false;
-function updateScrollHint() {
-  const second = document.querySelectorAll(".comp .card")[1];
-  if (second && second.getBoundingClientRect().top < innerHeight - 60) hintDone = true;
-  scrollHint.hidden = hintDone || !second || !stacked.matches;
-}
-new MutationObserver(() => { hintDone = false; updateScrollHint(); }).observe($("#main"), { childList: true, subtree: true });
-addEventListener("scroll", updateScrollHint, { passive: true });
-addEventListener("resize", updateScrollHint);
 // A missing thumbnail or light copy falls back to the full art. Handled here because the CSP in _headers blocks inline onerror
 addEventListener("error", e => {
   const img = e.target, full = img.dataset?.full;
