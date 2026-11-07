@@ -1,0 +1,16 @@
+{
+  "name": "dominik-tools",
+  "private": true,
+  "description": "Development tools only: the site itself has no build step and no dependencies.",
+  "type": "module",
+  "scripts": {
+    "smoke": "node tools/smoke.mjs",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.14.0",
+    "globals": "17.14.0",
+    "playwright-core": "1.65.0"
+  }
+}

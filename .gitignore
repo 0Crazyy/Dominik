@@ -5,3 +5,7 @@
 
 # Source art (PSD) and local backups: not part of the site
 Dominik - arquivos fonte/
+
+# Development tools: dependencies and the screenshots of tools/smoke.mjs
+node_modules
+.smoke
