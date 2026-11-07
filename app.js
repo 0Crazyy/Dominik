@@ -1286,7 +1286,6 @@ function assetsPage(key, pick = "all") {
     const ch = characters().find(c => charId(c.name) === pick);
     return ch ? skillPage(ch) : notFound;
   }
-  const grid = (title, cards) => `<h1>${title}</h1><p class="sub">Assets</p><div class="agrid">${cards}</div>`;
   if (key === "resonances") return `<h1>Weapon Resonance</h1><p class="sub">Assets</p>${openTable("resonances", Object.entries(RESONANCE_EFFECTS))}`;
   if (key === "cubs") {
     const tabs = ["All", ...ENERGY], tab = tabs.find(t => slug(t) === pick);
