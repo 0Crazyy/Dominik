@@ -1246,7 +1246,7 @@ function loadSkills() {
   if (skillsState) return;
   skillsState = "loading";
   const script = document.createElement("script");
-  script.src = "skills-data.js";
+  script.src = "data/skills-data.js";
   script.onload = () => { skillsState = "ready"; route(); };
   script.onerror = () => { skillsState = "failed"; route(); };
   document.head.append(script);

@@ -117,6 +117,11 @@ const FLOWS = {
     await page.waitForURL(/\/assets\/weapon\//);
     await page.waitForSelector("#main h1");
   },
+  // Skill pages are not in sitemap.xml, and they are the only ones that load skills-data.js
+  "página de skills": async page => {
+    await page.goto("/assets/skill/leia-fortunaster");
+    await page.waitForFunction(() => /Skills|Passive/i.test(document.querySelector("#main")?.textContent) && !/Loading|Could not load/.test(document.querySelector("#main").textContent));
+  },
   "menu do celular": async (page, size) => {
     if (size !== "mobile") return;
     await page.goto("/");

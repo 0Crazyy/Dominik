@@ -5,7 +5,7 @@ description: Adiciona um personagem novo ao site Dominik de builds de Punishing 
 
 # Adicionar personagem ao Dominik
 
-O site fica na raiz do repositório. Os dados dos times estão em `app.js`, antes da linha `const $ =`. Os textos longos das páginas Assets estão em `assets-data.js`.
+O site fica na raiz do repositório. Os dados dos times estão em `app.js`, antes da linha `const $ =`. Os textos longos das páginas Assets estão em `data/assets-data.js`.
 
 ## 1. Reunir o que falta
 
@@ -54,18 +54,18 @@ Liste a pasta e use os nomes reais dos arquivos, com as maiúsculas e a extensã
 
 A esteira da home se monta sozinha a partir dos times. Só edite `HERO_FIRST` se o usuário pedir destaque.
 
-## 4. Editar `assets-data.js`
+## 4. Editar `data/assets-data.js`
 
 - **Arma nova:** adicione em `WEAPONS`, em ordem alfabética: `["Nome: Frame", "Nome da Arma", "Tipo", "pasta/Arma - X.ext", "Efeito"]`, e em `WEAPON_STATS`: `"Nome da Arma": [ATK, CRIT]`. Sem os stats, a página Weapons quebra.
-- **Memória nova:** adicione em `MEMORY_TABS` (`app.js`), em `MEMORY_EFFECTS` e em `MEMORY_STATS` (`assets-data.js`, como `[ATK, DEF, CRIT, HP]`). Sem esses dados, as páginas de memória quebram.
-- **Skills do personagem:** ficam em `skills-data.js`, vindas da seção "Skills & Passives" da página dele na wiki. Sem elas, a página de skills dele avisa que ainda não há texto.
-- **Ícones das skills:** cada skill em `skills-data.js` precisa de `assets/characters/<nome-frame>/skills/<tipo>.png`, com o tipo exato da entrada (`Red Orb.png`, `SSS+ Rank.png`). Sem eles, `check-assets` dá erro. Os ícones estão em `https://huaxu.app/na/wiki/constructs/<frame>/skills`, no campo `icon` de cada skill.
-- **Personagem novo:** adicione em `CONSTRUCTS` (`assets-data.js`): `"Nome: Frame": [release, elemento, classe, rank, effect]`. Os valores vêm de `/wiki/constructs`; `release` é o campo `priority` da wiki, e o elemento é o campo `element`, não a maior porcentagem de `elements`, que guarda os híbridos antigos. Sem isso, as páginas Constructs, Weapons e C.U.B.s quebram.
-- **Capitão novo:** copie a skill de líder de `skills-data.js` para `LEADER_SKILLS` (`assets-data.js`).
+- **Memória nova:** adicione em `MEMORY_TABS` (`app.js`), em `MEMORY_EFFECTS` e em `MEMORY_STATS` (`data/assets-data.js`, como `[ATK, DEF, CRIT, HP]`). Sem esses dados, as páginas de memória quebram.
+- **Skills do personagem:** ficam em `data/skills-data.js`, vindas da seção "Skills & Passives" da página dele na wiki. Sem elas, a página de skills dele avisa que ainda não há texto.
+- **Ícones das skills:** cada skill em `data/skills-data.js` precisa de `assets/characters/<nome-frame>/skills/<tipo>.png`, com o tipo exato da entrada (`Red Orb.png`, `SSS+ Rank.png`). Sem eles, `check-assets` dá erro. Os ícones estão em `https://huaxu.app/na/wiki/constructs/<frame>/skills`, no campo `icon` de cada skill.
+- **Personagem novo:** adicione em `CONSTRUCTS` (`data/assets-data.js`): `"Nome: Frame": [release, elemento, classe, rank, effect]`. Os valores vêm de `/wiki/constructs`; `release` é o campo `priority` da wiki, e o elemento é o campo `element`, não a maior porcentagem de `elements`, que guarda os híbridos antigos. Sem isso, as páginas Constructs, Weapons e C.U.B.s quebram.
+- **Capitão novo:** copie a skill de líder de `data/skills-data.js` para `LEADER_SKILLS` (`data/assets-data.js`).
 - **Variantes:** nos times, `group` e `label` são opcionais e organizam o seletor (`app.js`).
 - **Memória nova (ordem):** adicione também em `MEMORY_RELEASE`, com o `id` da memória em `/wiki/memories`.
 - **CUB novo:** o texto das skills fica em `CUB_SKILLS`, pela pasta do personagem.
-- **Linha do tempo:** um S-Rank novo entra sozinho em `timeline-data.js` quando estiver na aba S-RANK TIMER e na wiki (`node tools/update-timeline.mjs`). Se a classe e o elemento forem novos, adicione a coluna em `COLUMNS`, nesse script.
+- **Linha do tempo:** um S-Rank novo entra sozinho em `data/timeline-data.js` quando estiver na aba S-RANK TIMER e na wiki (`node tools/update-timeline.mjs`). Se a classe e o elemento forem novos, adicione a coluna em `COLUMNS`, nesse script.
 
 A página do personagem (`/character/<id>`) e as listas de CUBs e Skills se montam sozinhas a partir dos times.
 

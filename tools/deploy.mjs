@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STAGE = join(ROOT, ".deploy");
-const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "assets-data.js", "calculator-data.js", "timeline-data.js", "skills-data.js", "assets", "assets-web"];
+const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "data", "assets", "assets-web"];
 
 const run = (command, args) => {
   const { status } = spawnSync(command, args, { cwd: ROOT, stdio: "inherit", shell: true });

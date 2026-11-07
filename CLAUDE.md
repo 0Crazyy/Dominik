@@ -9,18 +9,18 @@ Textos do site e comentários do código ficam em inglês. Mensagens das ferrame
 | Arquivo | Conteúdo |
 |---|---|
 | `app.js` | Dados dos times (`COMPS`, `PAGES`) até a linha `const $ = (s, r = document)`; depois a interface, dividida por comentários `/* ---------- seção ---------- */` |
-| `assets-data.js` | Textos das páginas Assets: memórias, armas, ressonâncias, CUBs, `CONSTRUCTS` |
-| `skills-data.js` | Textos das skills. Só carrega quando uma página precisa, via `loadSkills()` |
-| `calculator-data.js` | Renda por patch. `tools/update-calculator.mjs` atualiza a planilha; `frame` e as linhas de collab são escritos à mão |
-| `timeline-data.js` | Gerado por `tools/update-timeline.mjs`; não edite à mão |
+| `data/assets-data.js` | Textos das páginas Assets: memórias, armas, ressonâncias, CUBs, `CONSTRUCTS` |
+| `data/skills-data.js` | Textos das skills. Só carrega quando uma página precisa, via `loadSkills()` |
+| `data/calculator-data.js` | Renda por patch. `tools/update-calculator.mjs` atualiza a planilha; `frame` e as linhas de collab são escritos à mão |
+| `data/timeline-data.js` | Gerado por `tools/update-timeline.mjs`; não edite à mão |
 | `assets/` | Artes originais, e é para onde os caminhos do código apontam |
 | `assets-web/` | Cópias leves geradas por `tools/optimize-images.mjs`; `web()` no `app.js` troca o caminho ao renderizar. Nunca edite à mão |
 | `.deploy/`, `.smoke/` | Saídas geradas, fora do git |
 
 ## Economizar contexto
 
-- Não leia `app.js` nem `skills-data.js` inteiros. Busque com `Grep` e leia só o trecho. Para achar a parte da interface, busque `^/\* -{5,}` no `app.js`.
-- `skills-data.js` e `assets-data.js` têm linhas muito longas: limite o resultado (`head_limit`, ou `cut -c1-200` no shell).
+- Não leia `app.js` nem `data/skills-data.js` inteiros. Busque com `Grep` e leia só o trecho. Para achar a parte da interface, busque `^/\* -{5,}` no `app.js`.
+- `data/skills-data.js` e `data/assets-data.js` têm linhas muito longas: limite o resultado (`head_limit`, ou `cut -c1-200` no shell).
 
 ## Verificar
 
@@ -28,7 +28,7 @@ Depois de editar, rode o que couber na mudança e diga o resultado:
 
 1. `node tools/check-assets.mjs`: toda imagem usada existe, com maiúsculas exatas. Menos de 1 s, e o pre-commit também roda.
 2. `npm run lint`: nomes indefinidos e variáveis sem uso em todo o código, sem abrir o navegador. Pega o que o smoke não alcança, como um nome errado em um caminho raro.
-3. `npm run smoke`: abre todas as páginas do `sitemap.xml` no Edge, em desktop e celular, e testa busca, troca de time, detalhe de arma e menu do celular. Pega erro de JS, bloqueio de CSP, 404, página vazia e rolagem lateral. Leva cerca de 20 s. Na primeira vez em um computador, rode `npm install`.
+3. `npm run smoke`: abre todas as páginas do `sitemap.xml` no Edge, em desktop e celular, e testa busca, troca de time, detalhe de arma, página de skills e menu do celular. Pega erro de JS, bloqueio de CSP, 404, página vazia e rolagem lateral. Leva cerca de 20 s. Na primeira vez em um computador, rode `npm install`.
 4. `node tools/smoke.mjs timeline energy/fire`: só essas páginas, sem a barra inicial (o Git Bash a reescreve). `home` é a página inicial. Use também para páginas ainda fora do `sitemap.xml`, que só é refeito no deploy.
 
 O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints em `.smoke/desktop/` e `.smoke/mobile/`, e diga ao usuário o que você realmente viu.

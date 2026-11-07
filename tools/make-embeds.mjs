@@ -17,7 +17,7 @@ const app = read("app.js"), dataEnd = app.indexOf("const $ = (s, r = document)")
 if (dataEnd < 0) throw new Error("não achei o fim dos dados no app.js; atualize dataEnd em tools/make-embeds.mjs");
 const names = "COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RELEASE, MEMORY_STATS, WEAPONS, WEAPON_STATS, RESONANCE_EFFECTS, CUB_SKILLS, CONSTRUCTS, CHARACTER_SKILLS, TIMELINE, CHARS, WEAPON_RES, memFile";
 const { COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RELEASE, MEMORY_STATS, WEAPONS, WEAPON_STATS, RESONANCE_EFFECTS, CUB_SKILLS, CONSTRUCTS, CHARACTER_SKILLS, TIMELINE, CHARS, WEAPON_RES, memFile } =
-  vm.runInNewContext(`${["assets-data.js", "skills-data.js", "timeline-data.js"].map(read).join("\n")}\n${app.slice(0, dataEnd)}\n;({ ${names} })`);
+  vm.runInNewContext(`${["data/assets-data.js", "data/skills-data.js", "data/timeline-data.js"].map(read).join("\n")}\n${app.slice(0, dataEnd)}\n;({ ${names} })`);
 
 // Same as in app.js
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");

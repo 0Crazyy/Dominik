@@ -5,7 +5,7 @@ import js from "@eslint/js";
 import globals from "globals";
 
 // The site has no modules: index.html loads these as plain scripts, so they all share their top-level names
-const DATA = ["assets-data.js", "calculator-data.js", "timeline-data.js", "skills-data.js"];
+const DATA = ["data/assets-data.js", "data/calculator-data.js", "data/timeline-data.js", "data/skills-data.js"];
 const SCRIPTS = [...DATA, "app.js"];
 const shared = Object.fromEntries(SCRIPTS.flatMap(file =>
   [...readFileSync(new URL(file, import.meta.url), "utf8").matchAll(/^(const|let|function)\s+([\w$]+)/gm)].map(m => [m[2], m[1] === "let" ? "writable" : "readonly"])));
