@@ -225,14 +225,14 @@ const LILITH_KIT = {
   construct: `${LILITH}/CUB - Billie.png`, skills: cubSkills(LILITH)
 };
 
-const VERA_DESC = "Standard DPS build for Vera-chan. When below SSS, Hervor is needed to do 2 Signatures without using DLT and also not affecting other members' CUBs by making one of them use Lingya and weakening them. You have many options of secondary memories to use here, if at SS/SS3, and more memory options if at SSS. If your Kamui is using Shakespeare, you can opt on switching it to Cottie here for the Extra DMG, that will work since she enters her passive through her first signature, or even to Guinevere if you want to buff Kamui even more. If SSS, you can even use both or put Shakespeare + Cottie for a even high damage output of hers. Many things are possible with Vera-chan, since she doesn't need her signature memories to shine brightly.";
-const KAMUI_DESC = "Things have changed. Something on Kamui wasn't supposed to happen, according to Kuro, which being that his signature energy shouldn't be easily recovered through this yellow orb, and now, after a hotfix... He does need Cottie to run smoothly with 2 Signatures when below SS3. Since he does a bunch of damage outside the Signature before entering on it and uses a bunch of 3-ping, Darwin as 2x is also recommended for the maximum output possible. 4x Cottie also works in WZ, but not much in PPC. Now, he is more similar to Rosetta; needs Cottie on lower ranks, but does everything smoothly with it, and without DLT.";
-const LUCIA_IC_DESC = "Standard DPS build for Alpha: Inverse Crown. Well... Cottie on her is useless, and not because she generates too much energy, and yes because her energy ain't the same as almost everyone in the game, and yes kind of \"personal-signature-energy-type\", called \"Malison\", that is generated through her own skills only. If you want more energy, only at SS3, which is very saddening. All the rest, she just works. Since Cottie is useless, you can even consider other memories, even Da Vinci.";
-const VERONICA_DESC ="Support-DPS build for Veronica. Will serve as great intermediary between Selena's annoying noise system, or as Karenina and Hanying's sidekick. With everyone below SSS and with Selena, she can do her long damage output and you'll reach the timing to switch to Karenina right on time.";
-const KARENINA_DESC = "Build for every Physical necessity for Karenina. She already generates a lot of energy from her skills, so Cottie won't be needed, except for very specific moments, or if you wish to stay a long time with her on the field, or want to spam signatures on SS3 and above.";
-const ROSETTA_DESC ="Unfortunally, Cottie is needed for smooth damage loops at lower ranks. Rosetta won't need DLT at SS0 if you do a single Signature on her first damage loop and then switch the next character. After this, she will be able to do 2 Signatures in a row for a bunch of time until the WZ timer runs out. At SS3 and above, DLT is not needed anymore.";
-const ADELYDE_DESC = "Basically the same as Alpha Inverse Crown on one aspect: Cottie doesn't work on her, and not because she grants too much energy, and yes because her skills grants \"Anabasis points\" that are used as signature energy instead of the common signature energy, making the buffs of Cottie useless, and you can only increase her speed by evolving her rank to SS3 and SSS0. She's free, but still an annoying aspect, specially for players with low vouchers and the future players who won't get the \"Journey of Promise\" copy. On other aspects, she can work with anything alongside her signature memory, without DLT too.";
-const ADELYDE_QTE_DESC = `${ADELYDE_DESC} Her SSS skill increases any QTE damage by 50%, so if you want to abuse the Attacker''s SS3 QTE damage, you can opt for Da Vinci instead of Bathlon on Adelyde.`;
+const VERA_DESC = "Standard DPS build for Vera-chan. She doesn't need her Signature memories to shine.\n• Below SSS: Hervor lets her do 2 Signatures without DLT, and without forcing a teammate's CUB down to Lingya.\n• Secondary memory: many options at SS/SS3, even more at SSS.\n• If Kamui runs Shakespeare: swap it here for Cottie (the Extra DMG works, since her first Signature enters her passive) or for Guinevere to buff Kamui even more.\n• At SSS: Shakespeare + Cottie together for even more damage.";
+const KAMUI_DESC = "After a hotfix, his yellow orb no longer recovers Signature Energy so easily.\n• Cottie: needed below SS3 to do 2 Signatures smoothly. Like Rosetta, he needs Cottie at lower ranks, but no DLT.\n• 2 Darwin: recommended for maximum output, since he deals a lot of damage before his Signature and uses many 3-pings.\n• 4 Cottie: also works in WZ, but not much in PPC.";
+const LUCIA_IC_DESC = "Standard DPS build for Alpha: Inverse Crown.\n• No Cottie: her Signature runs on Malison, her own energy, which only her skills generate. Only SS3 gives her more energy.\n• Since Cottie is out, other memories work too, even Da Vinci.";
+const VERONICA_DESC ="Support-DPS build for Veronica.\n• Role: bridges Selena's noise system, or backs up Karenina and Hanying.\n• With Selena and everyone below SSS: she finishes her long damage output right in time to switch to Karenina.";
+const KARENINA_DESC = "Build for every Physical need of Karenina.\n• No Cottie: her skills already generate a lot of energy.\n• Exceptions: very specific moments, staying long on the field, or spamming Signatures at SS3 and above.";
+const ROSETTA_DESC ="Cottie is needed at lower ranks for smooth damage loops.\n• DLT at SS0: not needed if she does a single Signature on her first damage loop and then switches. After that, she can do 2 Signatures in a row until the WZ timer runs out.\n• SS3 and above: no DLT needed.";
+const ADELYDE_DESC = "Like Alpha: Inverse Crown, Cottie doesn't work on her.\n• Why: her skills grant Anabasis points, which she uses as Signature Energy, so Cottie's buffs do nothing. Only SS3 and SSS make her faster. She's free, but this hurts players with few vouchers and future players who won't get the Journey of Promise copy.\n• Otherwise: anything works alongside her Signature memory, without DLT.";
+const ADELYDE_QTE_DESC = `${ADELYDE_DESC}\n• QTE: her SSS skill increases any QTE damage by 50%. To abuse the Attacker's SS3 QTE damage, use Da Vinci instead of Bathlon.`;
 
 // Colors sampled from the reference images
 const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326" };
@@ -253,9 +253,20 @@ const RANK_SS = { rank: "assets/rank/SS.png" }, RANK_SS3 = { rank: "assets/rank/
 const rankArt = c => c.rank || (TL_FREE[c.name] ? "assets/rank/SSS.png" : RANK_SS.rank);
 // A Comet's Afterglow teams follow Spider 2B's Leia guide. Leia's build only changes with her rank
 const LEIA_SS = { ...RANK_SS, wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
-  desc: "Without Weapon Harmony, use 2 Einsteina instead of 2 Chen Jiyuan. Breaker class skill also works on the bottom resonance." };
+  desc: [
+    "Hypertune set for SS and below.",
+    "• No Weapon Harmony: 2 Einsteina instead of 2 Chen Jiyuan.",
+    "• Why no Cottie: without SS3's starting Signature Energy she can't reach her Signature fast, so 4 Chen Jiyuan deals more damage.",
+    "• Bottom resonance: Core Passive gives her the most damage. Pick Breaker class skill if your main DPS is highly invested."
+  ].join("\n") };
 const LEIA_SS3 = { ...RANK_SS3, wh: "Einsteina", memories: memBuild(MOUSME, COTTIE),
-  desc: "Breaker class skill also works on the bottom resonance." };
+  desc: [
+    "Hypertune set for SS3 and above.",
+    "• Why Cottie: SS3 gives her 20 Signature Energy on entry, so she can use her Signature right after the Gravity Orb form swap.",
+    "• No Weapon Harmony: keep 2 Cottie.",
+    "• Glaciation: if Selena runs 4 Burana + 4 Da Vinci and Helentine runs 4 Guinevere + 2 Cottie + 2 Einsteina, switch to 4 Chen Jiyuan.",
+    "• Bottom resonance: Breaker class skill also works."
+  ].join("\n") };
 const TEDDY_CLASS = { ...TEDDY_KIT, core: `${TEDDY}/Skill - Class Skill.png` };
 // As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
 const TEDDY_SUPPORT = { ...TEDDY_CLASS, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]] };
@@ -267,16 +278,16 @@ const cometTeam = (leia, rotation) => [
 ];
 const altIceTeam = (leia, rotation) => [
   { bar: "blue", role: "starter", ...WANSHI_COMET, wh: "Liston", memories: memBuild(DA_VINCI, LISTON),
-    desc: "Without Weapon Harmony, he still runs 2 Liston.", rotation: rotation.wanshi },
+    desc: "• No Weapon Harmony: keep 2 Liston.", rotation: rotation.wanshi },
   { bar: "red", role: "captain", ...LEIA_KIT, ...leia, rotation: rotation.leia },
   { bar: "gold", role: "", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(JOANNA, GUINEVERE),
-    desc: "Sub DPS build. Signature on the bottom resonance also works, or half of each.", rotation: rotation.teddy }
+    desc: "Sub DPS build.\n• Bottom resonance: Signature also works, or half of each.", rotation: rotation.teddy }
 ];
 const cometGlaciation = (helentine, leia, rotation) => [
   { bar: "blue", role: "captain", ...HELENTINE_KIT, memories: memBuild(CHEN_JIYUAN, COTTIE), ...helentine, rotation: rotation.helentine },
   { bar: "red", role: "", ...LEIA_KIT, ...leia, rotation: rotation.leia },
   { bar: "gold", role: "starter", ...TEDDY_SUPPORT, rotation: rotation.teddy,
-    desc: "Alisa: Echo can take this spot with the same build. Wanshi on 4 Liston + 4 Da Vinci also works, but a little worse. Selena on 4 Burana + 4 Da Vinci works too." }
+    desc: "Other options for this spot:\n• Alisa: Echo: same build.\n• Wanshi: 4 Liston + 4 Da Vinci, a little worse.\n• Selena: 4 Burana + 4 Da Vinci." }
 ];
 
 // A team is named after the patch (Global) of its newest character. Teams of one page that share
@@ -286,11 +297,11 @@ const COMPS = {
     name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a",
     cards: [
       { bar: "blue", role: "captain starter", ...SELENA_KIT, wh: "Klenova", matrix: matrix(DLT, GA, INC),
-        desc: "Standard Glaciation build for Selena. If everything is done right, you can land her final Signature during the effect's period with a little time remaining." },
+        desc: "Standard Glaciation build for Selena.\n• Done right, her final Signature lands during the effect with a little time to spare." },
       { bar: "red", name: "Wanshi: Lucid Dreamer", role: "", ...WANSHI_BUILD,
-        desc: "Support build. He stacks the effect for everyone; at SSS you can do fast Signatures with him and switch to Helentine with maximum stacks." },
+        desc: "Support build.\n• He stacks the effect for everyone.\n• At SSS: do fast Signatures with him and switch to Helentine at maximum stacks." },
       { bar: "gold", role: "", ...HELENTINE_KIT, wh: "Cottie", memories: memBuild(CHEN_JIYUAN, GUINEVERE),
-        desc: "Standard metan (phentamine) build. She needs Wanshi's stacks to start dealing damage, and the effect lasts as long as you have pings and energy." }
+        desc: "Standard metan (phentamine) build.\n• She needs Wanshi's stacks to start dealing damage.\n• The effect lasts as long as you have pings and energy." }
     ]
   },
   "comets-afterglow": {
@@ -303,7 +314,7 @@ const COMPS = {
       { id: "leia-pain-cage", group: "Spider 2B · Pain Cage", label: "Leia", name: "Spider 2B Leia Pain Cage", cards: [
         { bar: "blue", role: "", ...WANSHI_COMET, wh: "Einsteina", memories: memBuild(DA_VINCI, GLORIA), desc: "" },
         { bar: "red", role: "captain", ...LEIA_KIT, wh: "Cottie", memories: memBuild(MOUSME, COTTIE),
-          desc: "Main DPS for Pain Cage. Without Weapon Harmony, she still runs 2 Cottie." },
+          desc: "Main DPS for Pain Cage.\n• No Weapon Harmony: keep 2 Cottie." },
         { bar: "gold", role: "starter", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(CHEN_JIYUAN, GUINEVERE), desc: "" }
       ] }
     ]
@@ -331,10 +342,10 @@ const COMPS = {
         core: `${LUNA}/Skill - Signature HD.png`,
         construct: `${LUNA}/CUB - Guardrake.png`,
         skills: cubSkills(LUNA),
-        desc: "Luna unfortunally needs Cotties to smoothly all the time, but after her leap, DLT isn't required anymore for the basics. \"The\" set for all Nihil occassions, nothing much to change." },
+        desc: "\"The\" set for every Nihil occasion; not much to change.\n• Cottie: she still needs it to run smoothly.\n• DLT: not needed for the basics since her leap." },
       { bar: "red", role: "starter", ...ROSETTA_KIT, wh: "Bathlon", memories: memBuild(rotated(NIMUE), BATHLON), matrix: matrix(DD, ML, GA),
         resonance: `${ROSETTA}/Skill - Ataque Básico.webp`,
-        desc: "Designed specifically for Nihil team, doing a single signature per entrance. If SS3≥, you'll have to play with her as you were with SS0 instead. Awkward? Yeah, but every help is welcome. Rosetta will deal some damage, and in extra of having Bathlon, will debuff the enemies along with Luna's class skill effect, instead of using Cottie that will benefit only herself. A great harmony considering the lack of Israe- I mean, Ishmael." },
+        desc: "Made for the Nihil team: one Signature per entrance.\n• SS3 and above: still play her as at SS0. Awkward, but every help counts.\n• Bathlon over Cottie: she deals some damage and, with Luna's class skill effect, debuffs enemies, while Cottie would only help herself. A good fit given the lack of Ishmael." },
       { bar: "gold", name: "Nirvatia: Dirge", role: "",
         symbol: classIcon("Amplifier"),
         portrait: `${NIRVATIA}/Awaken - Nirvatia Dirge.png`,
@@ -346,17 +357,17 @@ const COMPS = {
         core: `${NIRVATIA}/Skill - Signature HD.png`,
         construct: `${NIRVATIA}/CUB - Morigan.webp`,
         skills: cubSkills(NIRVATIA, "webp"),
-        desc: "Uhh... Odd character. In certain cases, we would have put the elemental memory in here since another character is using Cottie, but Nihil doesn't have a single elemental memory, like Shakespeare, Bathlon, etc. So... If you want to buff the other teammates, use Guinevere or Da Vinci, based on your team's composition. If you're lacking Luna and/or Israe- I mean, Ishmael, Cottie can be considered on her too. She can only do 2 Signatures normally if she's at SSS. I personally don't know if DLT is also needed for that on SSS, but on SS3, DLT wasn't enough." }
+        desc: "An odd one.\n• Why no elemental memory: Nihil has none (like Shakespeare or Bathlon for other elements) to give her when a teammate holds Cottie.\n• To buff teammates: Guinevere or Da Vinci, depending on your team.\n• Without Luna and/or Ishmael: Cottie on her is an option too.\n• 2 Signatures: only at SSS. At SS3, DLT wasn't enough; untested whether SSS needs DLT." }
     ] }]
   },
   "homecoming-voyage": {
     name: "Homecoming Voyage", ...ICE_THEME,
     variants: [{ id: "ic-ss3", name: "IC SS3", cards: [
       { bar: "blue", name: "Wanshi: Lucid Dreamer", role: "starter", ...WANSHI_BUILD,
-        desc: "Support DPS build for Wanshi. Signature energy boost of 2x Cottie is totally useless on him, and 4x Cottie's Extra DMG Bonus doesn't work on him because it requires a Signature Move to activate, and 50% of his damage is outside the Signature. His damage loops steps won't change no matter what memory you use on him, so you can try various memory sets alongside his signature memory for various combos." },
+        desc: "Support DPS build for Wanshi.\n• No Cottie: 2 Cottie's Signature Energy is useless on him, and 4 Cottie's Extra DMG Bonus needs a Signature Move, while half his damage is outside it.\n• Memories: his damage loop doesn't change with any set, so try combos alongside his Signature memory." },
       { bar: "red", role: "captain", ...LUCIA_IC_KIT, ...RANK_SS3, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
       { bar: "gold", role: "", ...TEDDY_KIT, wh: "Chen Jiyuan", memories: memBuild(JOANNA, CHEN_JIYUAN),
-        desc: "Standard DPS build for Teddy. She works well with any memory alongside her signature memory, and she can do everything of her damage loop without any signature energy boost of 2x Cottie as well, so you can try various memories along with it and her damage loop steps won't change at all. By considering the other teammates's memories, Guinevere on here is a good choice too." }
+        desc: "Standard DPS build for Teddy.\n• Memories: anything works alongside her Signature memory. She doesn't need 2 Cottie's Signature Energy, and her damage loop doesn't change.\n• Guinevere: also a good choice, depending on your teammates' memories." }
     ] }]
   },
   "dying-sun-fire": {
@@ -373,7 +384,7 @@ const COMPS = {
         core: `${WATANABE}/Skill - Signature.png`,
         construct: `${WATANABE}/CUB - Shadow Wing.png`,
         skills: cubSkills(WATANABE),
-        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. This is the build recommended for the sinergy with Vera-chan and Kamui-kun. He will be doing a single signature per entrance, since the other two will take all the time for their damage loops, but whenever the one's damage's steps are over and the other is cooldown, Watanabe-kun will perfectly fill that hole within with a nice damage and a very-very fast damage steps, of less than 4 seconds." },
+        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. Build for the synergy with Vera-chan and Kamui-kun.\n• One Signature per entrance, since the other two take most of the time with their damage loops.\n• When one finishes and the other is on cooldown, he fills the gap with good damage and a very fast loop, under 4 seconds." },
       { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
       { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
     ] }, { id: "lucia-vera-kamui", name: "Lucia · Vera · Kamui", cards: [
@@ -389,7 +400,7 @@ const COMPS = {
         core: `${LUCIA_P}/Skill - Signature 2X.webp`,
         construct: `${LUCIA_P}/CUB - Corvus.webp`,
         skills: cubSkills(LUCIA_P, "webp"),
-        desc: "She... has to do something... Well, she aged badly, and we seen this coming ever since she released, and here we are. Da Vinci here will be to improve the other teammates while Lucia will be doing a single signature per entrance; she will not be using the shortened signature: Not just because she would need Cottie to do 2 signatures, but also you would just be wasting time that could be used on another character instead of dealing lower damage. Lucia will only use her long signature procedure every time she enters the field, and because of so, DLT is no longer required on her. She will only be handy indeed if at SS3 or above, either for damage in the field or bizarre QTEs of thousands of percentage. If at SS0.... Be patient with her." },
+        desc: "She aged badly, and we saw this coming since her release.\n• Da Vinci: buffs the teammates while she does one Signature per entrance.\n• Long Signature only: the short one would need Cottie for 2 Signatures and wastes time better spent on another character. So no DLT either.\n• Only really useful at SS3 and above, for field damage or QTEs of thousands of percent. At SS0, be patient with her." },
       { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
       { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
     ] }]
@@ -398,11 +409,11 @@ const COMPS = {
     name: "Of Solitude and Stillness", ...LIGHTNING_THEME,
     cards: [
       { bar: "blue", role: "", ...HELENTINE_KIT, wh: "Guinevere", memories: memBuild(HEISEN, GUINEVERE),
-        desc: "The meta(nphetamine) memory set of whoever this girl is from Alpha's last story and now already has a frame released instead of Trojan or Issarius. Seriously, I really couldn't test her as much as needed to confirm a good build for her; both because I didn't have the resources and also that I don't care a damn about her; so there we go. Only things I could test was this build, that works well when Nanami is with Da Vinci, and her Signature + Da Vinci when Nanami is using Heisen. These both options worked very well altogether." },
+        desc: "The meta(nphetamine) set for Helentine. I couldn't test her enough to confirm the best build.\n• This build: works well when Nanami runs Da Vinci.\n• Signature + Da Vinci: works well when Nanami runs Heisen." },
       { bar: "red", role: "captain", ...LIV_KIT, wh: "Heisen", memories: memBuild(NATASHA, HEISEN),
-        desc: "Standard build for Liv. She works with Heisen, with Cottie, with Signature memory, anything, and it changes according to your team's composition. If none of your members are using Heisen, place it on her, either along with Cottie or Signature, as you like. Personally, with Nanami with Heisen and Helentine with Da Vinci, the difference of the change between Liv's signature memory to Heisen were close to none, so it's your call" },
+        desc: "Standard build for Liv. Heisen, Cottie, Signature memory: anything works, so pick by your team.\n• Heisen: if no teammate runs it, put it on her, with Cottie or Signature.\n• Tested: with Nanami on Heisen and Helentine on Da Vinci, Liv's Signature memory and Heisen were almost the same." },
       { bar: "gold", role: "starter", ...NANAMI_KIT, wh: "Da Vinci", memories: memBuild(HERSCHELL, DA_VINCI),
-        desc: "Nanami didn't require any secondary memory to work properly before, and now with her leap, she unofficially received a \"Breaker\" level upgrade. If your Helentine is already using Da Vinci instead of Guinevere, opt to use Heisen as Nanami's secondary memory, as her field Tank debuff will inflict Heisen's effects constantly." }
+        desc: "Since her leap, Nanami unofficially got a Breaker-level upgrade. Before, she needed no secondary memory.\n• If Helentine runs Da Vinci instead of Guinevere: use Heisen here, since her field Tank debuff applies Heisen's effects constantly." }
     ]
   },
   "anchored-dark": {
@@ -419,17 +430,17 @@ const COMPS = {
         core: `${BIANCA}/Skill - Signature HD.png`,
         construct: `${BIANCA}/CUB - Noctiluca.png`,
         skills: cubSkills(BIANCA),
-        desc: "Cottie on her does help on her damage loop, but you'll lose a lot of damage during so, because she will take a while the activate her Signature that will activate the buffs, therefore, it's more worthy using the pings to make her recover energy while not losing the damage; Cottie only has a greater use starting from SSS rank. In a trio rotation where everyone does a single signature, she will not use DLT either." },
+        desc: "No Cottie below SSS.\n• Cottie: helps her damage loop, but she loses a lot of damage waiting to activate her Signature, which triggers the buffs. Using pings to recover energy is better. Cottie only pays off from SSS.\n• DLT: not used in a trio where everyone does one Signature." },
       { bar: "red", role: "", ...ADELYDE_KIT,
         desc: ADELYDE_QTE_DESC },
       { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
     ] }, { id: "adelyde-lilith-rosetta", name: "Adelyde · Lilith · Rosetta", cards: [
       { bar: "blue", role: "", ...ADELYDE_KIT, matrix: matrix(ML, INC, DLT),
-        desc: `${ADELYDE_DESC} If your Lilith is with Amplifier weapon resonances, focus on damage resonances on Adelyde, but if your Lilith don't, put them here.` },
+        desc: `${ADELYDE_DESC}\n• Resonances: if Lilith has the Amplifier weapon resonances, focus Adelyde on damage ones. If not, put them here.` },
       { bar: "red", role: "starter", ...LILITH_KIT, wh: "Da Vinci",
         memories: memBuild(BARCELO, DA_VINCI),
         matrix: matrix(SAR, GS, ML),
-        desc: "Support Sub DPS build for Lilith. If you have a better taste on charact- I mean, you prefer using Lilith over Bianca's weak SS0 perfomance, this is doable set for her with Adelyde if Lilith is SSS0 or beyond, since the Overliker's class skill is quite a clickbait. By carring the main Amplifier weapon resonances, you can focus solely on damage resonances for Adelyde, and speed-wise, is more worthy using 4-stack signatures rather than 5-stack ones on Lilith if you want to share a playtime with everyone." },
+        desc: "Support Sub DPS build for Lilith, if you prefer her over Bianca's weak SS0.\n• With Adelyde: works if Lilith is SSS or above, since the Overliker's class skill is quite a clickbait.\n• Resonances: she carries the main Amplifier weapon resonances, so Adelyde can focus on damage ones.\n• Signatures: 4-stack ones over 5-stack ones, to share field time with everyone." },
       { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
     ] }, { id: "kurumi-adelyde-rosetta", name: "Kurumi · Adelyde · Rosetta", cards: [
       { bar: "blue", name: "Kurumi Tokisaki", role: "starter",
@@ -443,7 +454,7 @@ const COMPS = {
         core: `${KURUMI}/Skill - Signature 2X.webp`,
         construct: `${KURUMI}/CUB - Zafkiel.webp`,
         skills: cubSkills(KURUMI, "webp"),
-        desc: "Kurumi already generates a lot of energy only from few skills, even at low rank, so Cottie isn't needed and so is DLT; 2 signatures are doable any rank, but not worthy if Kurumi is below SSS, or if Adelyde is SSS, or if Rosetta is SS3. Anything works on Kurumi. Technically, \"Boone\" memory would be better than Derketo, since it has 2 points of ATK higher than it per memory, but... Derketo will make Kurumi have a round number on BP (7100 BPs, if SS, fully hypertuned and 6-star weapon), and 4 points of ATK isn't much, so... Yeah. Choose your priority." },
+        desc: "Anything works on Kurumi.\n• Cottie and DLT: not needed; her skills generate a lot of energy, even at low rank.\n• 2 Signatures: doable at any rank, but not worth it if Kurumi is below SSS, Adelyde is SSS or Rosetta is SS3.\n• Boone vs Derketo: Boone has 2 more ATK per memory, but Derketo gives a round 7100 BP (SS, fully hypertuned, 6-star weapon). 4 ATK isn't much, so choose your priority." },
       { bar: "red", role: "", ...ADELYDE_KIT,
         desc: ADELYDE_QTE_DESC },
       { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
@@ -453,37 +464,37 @@ const COMPS = {
     name: "Anchored in Faith", ...PHYSICAL_THEME,
     cards: [
       { bar: "blue", role: "", ...HANYING_KIT, wh: "Da Vinci", memories: memBuild(CHANG_WUZI, DA_VINCI), matrix: matrix(DD, ML, INC),
-        desc: "Support Sub-DPS build for Hanying. Alongside Adelyde, will create the Ultima Slash stacks. 2 signatures for stacking is overkill for Rosetta's effect, only one is enough alongside Adelyde's effect. If both your Hanying and your Rosetta have weapon resonances, focus the Domain Deconstruction on Hanying instead." },
+        desc: "Support Sub-DPS build for Hanying. Alongside Adelyde, she builds the Ultima Slash stacks.\n• One Signature is enough with Adelyde's effect; 2 is overkill for Rosetta's effect.\n• Domain Deconstruction: if both Hanying and Rosetta have weapon resonances, put it on Hanying." },
       { bar: "red", role: "", ...ADELYDE_KIT, wh: "Patton", memories: memBuild(PESANTEUR, PATTON),
-        desc: "With all the \"Alpha IC\" aspect situation being previously said, Adelyde doesn't change anything on her Ultima Slash perfomance, while being a great stacker by increasing the stacks over time the seconds after casting signature, while dealing a decent Ultima Slash damage and not needing to consume many orbs for stacking, unlike Hanying. Since Cottie doesn't work, Patton is best choice for the Ultima Slash occasion." },
+        desc: "A great stacker for Ultima Slash.\n• Cottie doesn't work on her (same as Alpha: Inverse Crown), but that doesn't hurt her Ultima Slash performance.\n• Stacks: grow over time in the seconds after her Signature, with decent Ultima Slash damage and few orbs, unlike Hanying.\n• Patton: the best choice here, since Cottie doesn't work." },
       { bar: "gold", role: "captain starter", ...ROSETTA_KIT, matrix: matrix(GA, ML, INC),
-        desc: "As the starter, Rosetta will have a bunch of pings saved for rest of the round after you return to her, and with Adelyde's entrance, not making DLT necessary anymore. If your Hanying is with Domain Deconstruction, focus your Rosetta on the damage resonances above, if otherwise, put D.D. back. In my own tests, it was better using the same Grayscale Link colors on her first signature after entrance, and then different Grayscale Link colors for her second signature before leaving the field; the damage was better shared this way, and for 2 signatures, 4x Cottie worked better than 2x Cottie and WH Darwin, for same reason: Better distribution." }
+        desc: "As the starter, Rosetta saves plenty of pings for when she returns; with Adelyde's entrance, DLT isn't needed.\n• Domain Deconstruction: if Hanying has it, focus Rosetta on the damage resonances above. If not, put DD back on her.\n• Grayscale Link: in my tests, same colors on her first Signature after entering, then different colors on her second before leaving, shared the damage better.\n• 2 Signatures: 4 Cottie worked better than 2 Cottie + Weapon Harmony Darwin, for the same reason." }
     ]
   },
   "kamui-lilith-nanami": {
     name: "The Dying Sun", ...LIGHTNING_THEME,
     cards: [
       { bar: "blue", role: "captain", ...KAMUI_KIT, matrix: matrix(GA, ML, INC),
-        desc: "DPS build that speeds up his damage steps, previously mentioned in the observations of the Fire team. In here, will be needed because of the speedrun against the short time given by the Plasma Beam status. With this, will be enough to do 2 full signatures and also using his strong basic attacks. The rotation you'll use will be with 3-pings and tapped yellow orb for the first signature and holding yellow orb for the second one. By doing this, he will be able do all the damage he can do within the time, and still leave around a second or so remaining until the effect runs out. If your Nanami doesn't have a weapon resonance to hold Domain Deconstruction but you do for Kamui-kun, then his first weapon resonance should be DD instead, later Glorious Afterglow and then Matrix Lightning." },
+        desc: "DPS build that speeds up his damage steps (see the Fire team notes). Needed here to race the short Plasma Beam window.\n• Enough for 2 full Signatures plus his strong basic attacks, with about a second to spare.\n• Rotation: 3-pings and tapped yellow orb for the first Signature, held yellow orb for the second.\n• Resonances: if Nanami has no weapon resonance for Domain Deconstruction but Kamui-kun does, use DD first, then Glorious Afterglow, then Matrix Lightning." },
       { bar: "red", role: "", ...LILITH_KIT, wh: "Guinevere",
         // As in the reference image: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
         memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]],
         matrix: matrix(SAR, GS, INC),
-        desc: "Support build for the Plasma Beam effect. She'll do nothing but activate the effect all by herself to then Kamui deal his damage in the time given, and she doesn't need any memories to do so, then, support memories are the good choice here, to buff everyone that will have more active time in the field than her." },
+        desc: "Support build for the Plasma Beam effect.\n• She only activates the effect by herself, so Kamui deals his damage in time. She needs no memories for that.\n• Support memories: buff everyone who spends more time on the field than her." },
       { bar: "gold", role: "starter", ...NANAMI_KIT, wh: "Heisen", memories: memBuild(HERSCHELL, HEISEN),
-        desc: "The DPS build that works for Nanami in all cases you need. The same build for Lightning too, when she released, and will work perfectly in here again another time. She will deal a good Lightning damage; without having the worry with the timer effect; will also buff the other teammates with Heisen, and also will fulfill the time hole between Lilith and Kamui. We won't see Nanami outside this effect for a long time." }
+        desc: "The DPS build for Nanami in every case; the same one from her Lightning release.\n• Deals good Lightning damage without worrying about the effect timer.\n• Buffs teammates with Heisen.\n• Fills the gap between Lilith and Kamui. She'll stay in this effect for a long time." }
     ]
   },
   "steering-physical": {
     name: "Steering by Light", ...PHYSICAL_THEME,
     variants: [{ id: "selena-veronica-karenina", name: "Selena · Veronica · Karenina", cards: [
       { bar: "blue", role: "", ...SELENA_KIT, wh: "Cottie", matrix: matrix(GA, INC, DLT),
-        desc: "After needing a second-hand leap that added her another damn Za Warudo, Selena has some use for the Physical team if your Hanying isn't in a rank higher than your Karenina. Since she needs to enter her passive that is considered as 1st Signature, Cottie's DMG Boost will work better." },
+        desc: "Since her second leap (and another Za Warudo), Selena has a use in the Physical team, if your Hanying isn't a higher rank than your Karenina.\n• Cottie: its DMG Boost works better, since entering her passive counts as her 1st Signature." },
       { bar: "red", role: "starter", ...VERONICA_KIT, desc: VERONICA_DESC },
       { bar: "gold", role: "captain", ...KARENINA_KIT, desc: KARENINA_DESC }
     ] }, { id: "hanying-veronica-karenina", name: "Hanying · Veronica · Karenina", cards: [
       { bar: "blue", role: "", ...HANYING_KIT, wh: "Patton", memories: memBuild(CHANG_WUZI, PATTON), matrix: matrix(DD, DLT, INC),
-        desc: "Now, if your Hanying is a rank higher than your Karenina, then you can consider her instead of Selena; tank's debuffs are way too strong, even if it is just 10%. After her leap, anything works for her alongside her Signature memory. If both your Hanying and your Karenina has a weapon resonance, priorize the Domain Deconstruction on Hanying and place a damage-focused resonance on Karenina; will be more worth it." },
+        desc: "If your Hanying is a higher rank than your Karenina, use her instead of Selena: her Tank debuffs are very strong, even at only 10%.\n• Since her leap, anything works alongside her Signature memory.\n• Domain Deconstruction: if both Hanying and Karenina have weapon resonances, put it on Hanying and a damage resonance on Karenina." },
       { bar: "red", role: "starter", ...VERONICA_KIT, desc: VERONICA_DESC },
       { bar: "gold", role: "captain", ...KARENINA_KIT, desc: KARENINA_DESC }
     ] }]
@@ -492,11 +503,11 @@ const COMPS = {
     name: "Steering by Light", ...DARK_THEME,
     cards: [
       { bar: "blue", role: "starter", ...LIV_KIT, wh: "Bathlon", memories: memBuild(COTTIE, BATHLON),
-        desc: "Darkflow set for Liv. Starter, because she's the only of the trio that consumes stacks, while the other ones only either increase or don't use any stacks. Core Passive as memory skill if below SSS" },
+        desc: "Darkflow set for Liv.\n• Starter: she's the only one of the trio that consumes stacks; the others only add stacks or don't use them.\n• Below SSS: Core Passive as the memory skill." },
       { bar: "red", role: "", ...VERA_KIT, wh: "Guinevere", memories: memBuild(DA_VINCI, GUINEVERE),
-        desc: "Build solely focused on support for Vera-chan. She'll solely stack the Darkflow effect for the others, and as so, a single Signature will do everything and her Signature memory will only add unnecessary orbs for this. Thanks to her core passive, she'll do a decent damage whenever your charge her power through her QTEs." },
+        desc: "Pure support build for Vera-chan.\n• She only stacks Darkflow for the others, so one Signature does it all, and her Signature memory would only add orbs she doesn't need.\n• Thanks to her core passive, she still deals decent damage when you charge her power through her QTEs." },
       { bar: "gold", role: "captain", ...KARENINA_KIT, wh: "Bathlon", memories: memBuild(SANTIAGO, BATHLON),
-        desc: "Almost the same thing of her Physical build, just changing the Physical memory to Dark's, Bathlon. Nothing else changes for her, same functionality." }
+        desc: "Same as her Physical build, swapping the Physical memory for the Dark one, Bathlon. Nothing else changes." }
     ]
   },
   "homecoming-ignition": {
@@ -504,9 +515,9 @@ const COMPS = {
     cards: [
       { bar: "blue", role: "captain", ...LUCIA_IC_KIT, wh: "Shakespeare", memories: memBuild(PAVLICHENKO, SHAKESPEARE), desc: LUCIA_IC_DESC },
       { bar: "red", role: "starter", ...VERONICA_KIT, wh: "Shakespeare", memories: memBuild(KEATS, SHAKESPEARE),
-        desc: "Standard DPS build of Ignition for Veronica. If you desire, you can change the 4x Shakespeare for a 4x Guinevere set to buff everyone, it also works. A combo of 4x Cottie and 4x Shakespeare by removing Keats, is also a usable set. Almost anything works on her, she doesn't have any energy dependencies that would make her need Cottie." },
+        desc: "Standard Ignition DPS build for Veronica. Almost anything works: she has no energy needs that call for Cottie.\n• 4 Guinevere: can replace 4 Shakespeare to buff everyone.\n• 4 Cottie + 4 Shakespeare: also usable, dropping Keats." },
       { bar: "gold", role: "", ...NANAMI_KIT, wh: "Da Vinci", memories: memBuild(HERSCHELL, DA_VINCI),
-        desc: "Standard DPS build of Ignition for Nanami. If playing solo, DLT and Cottie will be needed for her sustainability. On team, Da Vinci is a greater call. She works with any memory set along with her signature, so you can change according to your team's memories." }
+        desc: "Standard Ignition DPS build for Nanami. Any memory set works with her Signature memory, so adapt to your team.\n• Solo: she needs DLT and Cottie to sustain.\n• Team: Da Vinci is the better call." }
     ]
   }
 };
@@ -678,13 +689,24 @@ function showGroups() {
   if (kind === "assets") toggle(true, assetsBtn, assetsMenu, false);
   else if (TEAM_LISTS[kind]) { toggle(true, btn, menu, false); openGroup(kind, true, false); }
 }
-let sideTimer;
+let sideTimer, changingPage = false, pointer = null;
+addEventListener("pointermove", e => { pointer = e; }, { passive: true });
+// The page change animation covers the whole window, so the browser counts the mouse as gone from the menu.
+// The menu ignores that exit, and closes after the animation only if the mouse really is off it
+function holdRail(done) {
+  changingPage = true;
+  done.finally(() => {
+    changingPage = false;
+    const under = pointer && document.elementFromPoint(pointer.clientX, pointer.clientY);
+    if (under && !side.contains(under)) setWide(false, 0);
+  });
+}
 // The waits keep a mouse just passing by from opening it, and a slip off the edge from closing it
 function setWide(wide, wait) {
   clearTimeout(sideTimer);
   sideTimer = setTimeout(() => {
     if (!isRail() || side.classList.contains("wide") === wide) return;
-    if (!wide && (side.matches(":hover") || $(":focus-visible", side))) return;
+    if (!wide && (changingPage || side.matches(":hover") || $(":focus-visible", side))) return;
     side.classList.toggle("wide", wide);
     if (!wide) clearSearch();
   }, wait);
@@ -1036,7 +1058,13 @@ function heroBelt() {
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
-  const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art"><svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg></span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
+  // Constructs and C.U.B.s use the drawn art, like the side menu; the rest are the symbols in index.html
+  const artIcons = new Set(["constructs", "cubs"]);
+  const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art">${
+    artIcons.has(icon)
+      ? `<span class="ico ico-art ico-${icon}" aria-hidden="true"></span>`
+      : `<svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg>`
+  }</span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
   const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
   const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
@@ -1372,8 +1400,8 @@ function charactersPage() {
 // Contact page. No art = the first letter of the name in a circle; art goes in assets/credits
 const CREDITS = [
   { name: "blacknovatech", text: "creator of Huaxu, for the assets", href: "https://huaxu.app/na/wiki", art: "assets/credits/blacknovatech.png", support: "https://ko-fi.com/blacknova" },
-  { name: "sidewayz.", text: "for helping with the card design", art: "assets/credits/sidewayz.png" },
-  { name: "GRAY RAVENS wiki", text: "for skills and the patch history", href: "https://grayravens.com/wiki" },
+  { name: "sidewayz.", text: "for helping with the site's overall design", art: "assets/credits/sidewayz.png" },
+  { name: "GRAY RAVENS wiki", text: "for skills and the patch history", href: "https://grayravens.com/wiki", art: "assets/credits/grayravens.png" },
   { name: "Spider 2B", text: "for the guides behind several builds", href: "https://www.youtube.com/@Spider2B", art: "assets/credits/Spider 2B.png" }
 ];
 const KOFI = "https://ko-fi.com/ofcrazy";
@@ -2113,7 +2141,7 @@ function theme(id) {
 // Page and composition swaps run through the View Transitions API (styled in style.css);
 // browsers without it, or with reduced motion on, just swap instantly.
 function swap(update) {
-  if (document.startViewTransition && !matchMedia("(prefers-reduced-motion:reduce)").matches) document.startViewTransition(update);
+  if (document.startViewTransition && !matchMedia("(prefers-reduced-motion:reduce)").matches) holdRail(document.startViewTransition(update).finished);
   else update();
 }
 // Written here because each address has its own title in the HTML, from tools/make-embeds.mjs

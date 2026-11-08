@@ -99,7 +99,7 @@ If the site helps you, you can [support it on Ko-fi](https://ko-fi.com/ofcrazy).
 ## Credits
 
 - **[blacknovatech](https://huaxu.app/na/wiki)**, creator of Huaxu, for the assets ([support on Ko-fi](https://ko-fi.com/blacknova))
-- **sidewayz.**, for helping with the card design
+- **sidewayz.**, for helping with the site's overall design
 - **[GRAY RAVENS wiki](https://grayravens.com/wiki)**, for skills and the patch history
 - **[Spider 2B](https://www.youtube.com/@Spider2B)**, for the guides behind several builds
 

@@ -28,6 +28,10 @@ nav a:hover,nav button:hover{background:var(--side-hover)}
 nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
 #side :focus-visible{outline-color:var(--red)}
 .ico{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+/* Constructs and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
+.ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
+.ico-constructs{--art:url(assets-web/icons/constructs.png.webp)}
+.ico-cubs{--art:url(assets-web/icons/cubs.png.webp)}
 nav button i{margin-left:auto;font-style:normal;transition:transform .2s}
 nav button[aria-expanded=true] i{transform:rotate(180deg)}
 #teamsMenu{padding-left:10px}
@@ -75,7 +79,7 @@ h1{font-size:34px;font-weight:800}
 .home-link{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;transition:border-color .15s,background-color .15s}
 .home-link:hover,.home-link:focus-visible{border-color:var(--red);background:#1c1516}
 .home-links.data .home-link{flex-direction:column;gap:8px;text-align:center}
-.hl-art{flex:none;display:grid;place-items:center;width:44px;height:44px;color:var(--red)}
+.hl-art{flex:none;display:grid;place-items:center;width:44px;height:44px;color:#fff}
 .hl-art .ico{width:34px;height:34px;stroke-width:1.25}
 .hl-tx{display:grid;gap:2px;min-width:0}
 .hl-tx b{font-size:14px;font-weight:700}
@@ -129,6 +133,11 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 ::view-transition-new(comp){animation:comp-in .45s ease both}
 @keyframes comp-out{to{opacity:0;transform:translateY(48px)}}
 @keyframes comp-in{from{opacity:0;transform:translateY(-48px)}}
+/* The menu gets its own layer so the sliding cards pass under it instead of over it. It shows the new state at once, without fading */
+#side{view-transition-name:side}
+::view-transition-group(side){z-index:1;animation:none}
+::view-transition-old(side){display:none}
+::view-transition-new(side){animation:none}
 .card{container-type:inline-size;flex:1 1 0;min-width:0;position:relative;background:var(--cp);border:1px solid #ffffff14}
 .cin{padding:calc(30*var(--u)) calc(14*var(--u)) calc(26*var(--u))}
 /* The bars sit outside the card, touching its border. Each one is two layers, so its edge also follows the ramps: the bar shows through as the edge, and ::before is the fill */
@@ -187,6 +196,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .wh-bar b{position:absolute;inset:0 0 0 20.5%;display:grid;place-items:center;color:#fff;font:700 8cqw/1 "Quantico";white-space:nowrap}
 .slot .n{position:absolute;right:0;bottom:0;padding:1px 3px 0 8px;background:#000000b3;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);color:#fff;font-size:max(8px,calc(10*var(--u)));font-weight:700}
 .desc{text-align:justify;font-size:calc(13*var(--u));line-height:1.5;color:#dcdaf0;background:#ffffff0d;padding:calc(12*var(--u));height:calc(240*var(--u));overflow-y:auto}
+p.desc{white-space:pre-line;text-align:left}
 /* Notes and Rotation tabs of a card: together they take the height of the text box, so all the cards stay level */
 .note-tabs{display:flex;gap:calc(4*var(--u));height:calc(30*var(--u))}
 .note-tabs button{flex:1;padding:0;background:#ffffff0d;border:0;border-bottom:2px solid #0000;color:#dcdaf0;font:600 calc(12*var(--u)) "Quantico";cursor:pointer}
@@ -542,7 +552,11 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 #side .logo{justify-content:flex-start;gap:12px;padding:0 0 24px;overflow:hidden}
 #side .logo img{width:44px;height:44px;margin:0;object-fit:contain}
 #side nav :is(a:not(.sr),button){gap:12px;overflow:hidden;white-space:nowrap}
-#side .search-ico{display:block;position:absolute;left:12px;top:9px;color:var(--mute);pointer-events:none}
+/* Slightly larger icons; the padding shrinks to match so each stays centred in the 44px the rail leaves inside */
+#side .ico{width:22px;height:22px}
+#side nav>:is(a,button),#side .nav-foot>*{padding-inline:11px}
+#side .subList :is(.ico,img){width:24px;height:24px}
+#side .search-ico{display:block;position:absolute;left:11px;top:8px;color:var(--mute);pointer-events:none}
 #side #searchBox{padding-left:44px}
 /* Closed, the box is only as wide as the icon */
 #side:not(.pinned,.wide) #searchBox{padding-inline:0;color:#0000}
@@ -553,7 +567,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 #side .subEmpty{overflow:hidden;white-space:nowrap}
 #side:not(.pinned,.wide) #teamsMenu{padding-left:0}
 #side:not(.pinned,.wide) .subList{margin-left:0;border-left-color:#0000}
-#side:not(.pinned,.wide) .subList a{padding-left:9px}
+#side:not(.pinned,.wide) .subList a{padding-left:10px}
 #side:not(.pinned,.wide) .subEmpty{color:#0000}
 }
 @media(max-width:760px),(hover:none) and (max-height:500px){.assets,.detail{grid-template-columns:minmax(0,1fr)}.atabs{display:flex;flex-wrap:wrap;position:static}body{flex-direction:column}#main{--pad:18px}
