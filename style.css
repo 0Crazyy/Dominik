@@ -20,7 +20,7 @@ body{font-family:"Quantico",system-ui,sans-serif;background:var(--bg);color:var(
 a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 #side{display:flex;flex-direction:column;width:280px;flex:none;background:#110c0d;border-right:1px solid var(--side-line);padding:24px 14px;position:sticky;top:0;height:100vh;overflow:auto}
-.logo{display:flex;align-items:center;justify-content:center;gap:10px;font-size:38px;line-height:1;font-weight:800;color:var(--red);padding:0 10px 24px}
+.logo{display:flex;flex:none;align-items:center;justify-content:center;gap:10px;font-size:38px;line-height:1;font-weight:800;color:var(--red);padding:0 10px 24px}
 .logo img{height:1.3em;width:auto;flex:none;margin:-.15em 0}
 nav a,nav button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;background:none;color:var(--txt);font-family:inherit;font-size:16px;font-weight:700;border-radius:6px;cursor:pointer;text-align:left}
 nav a,nav button{transition:background-color .15s}
@@ -28,10 +28,16 @@ nav a:hover,nav button:hover{background:var(--side-hover)}
 nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
 #side :focus-visible{outline-color:var(--red)}
 .ico{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+/* Constructs, Memories, Weapon Resonance and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
+.ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
+.ico-constructs{--art:url(assets-web/icons/constructs.png.webp)}
+.ico-cubs{--art:url(assets-web/icons/cubs.png.webp)}
+.ico-resonance{--art:url(assets-web/icons/resonance.png.webp)}
+.ico-memories{--art:url(assets-web/icons/memories.png.webp)}
 nav button i{margin-left:auto;font-style:normal;transition:transform .2s}
 nav button[aria-expanded=true] i{transform:rotate(180deg)}
 #teamsMenu{padding-left:10px}
-#teamsMenu .sub{padding:9px 12px;font-size:14px;color:#dcdce0}
+#teamsMenu .sub{margin:0;padding:9px 12px;font-size:14px;color:#dcdce0}
 #teamsMenu .sub[aria-expanded=true] i{transform:rotate(180deg)}
 .subList{margin:0 0 6px 12px;border-left:2px solid var(--side-line)}
 .subList a{justify-content:flex-start;align-items:center;gap:8px;padding:7px 12px 7px 16px;font-weight:400;font-size:14px;color:#dcdce0;border-radius:0 6px 6px 0}
@@ -76,7 +82,7 @@ h1{font-size:34px;font-weight:800}
 .home-link:hover,.home-link:focus-visible{border-color:var(--red);background:#1c1516}
 .home-links.data .home-link{flex-direction:column;gap:8px;text-align:center}
 .hl-art{flex:none;display:grid;place-items:center;width:44px;height:44px;color:var(--red)}
-.hl-art .ico{width:34px;height:34px;stroke-width:1.25}
+.hl-art .ico{width:37px;height:37px;stroke-width:1.25}
 .hl-tx{display:grid;gap:2px;min-width:0}
 .hl-tx b{font-size:14px;font-weight:700}
 .hl-tx small{font-size:12px;line-height:1.35;color:var(--mute)}
@@ -114,7 +120,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 #tip{position:fixed;z-index:30;max-width:340px;padding:6px 10px;background:#000000f0;border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 12px "Quantico";pointer-events:none}
 #tip b{display:block}
 #tip p{margin-top:4px;font-weight:400;line-height:1.45;color:#dcdaf0;white-space:pre-line}
-.notice{display:flex;align-items:center;margin:calc(-1*var(--pad)) calc(-1*var(--pad)) 20px;padding:8px 14px;background:#eecf22;border-bottom:2px solid #a8901a;color:#1c1602;font-size:13px;line-height:1.4}
+.notice{display:flex;align-items:center;margin:calc(-1*var(--pad)) calc(-1*var(--pad)) 20px;padding:8px 14px;background:#eecf22;border-bottom:2px solid #a8901a;color:#1c1602;font-size:15px;line-height:1.4}
 .slot.named{padding:3px;color:#dcdaf0;font-size:10px;line-height:1.2;text-align:center}
 .mem .slot.named{padding:2px 0 0 3px;font-size:8px;writing-mode:vertical-rl;place-items:end start}
 .mem .slot.named .n{padding-left:3px;background:none;clip-path:none;writing-mode:horizontal-tb}
@@ -129,6 +135,11 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 ::view-transition-new(comp){animation:comp-in .45s ease both}
 @keyframes comp-out{to{opacity:0;transform:translateY(48px)}}
 @keyframes comp-in{from{opacity:0;transform:translateY(-48px)}}
+/* The menu gets its own layer so the sliding cards pass under it instead of over it. It shows the new state at once, without fading */
+#side{view-transition-name:side}
+::view-transition-group(side){z-index:1;animation:none}
+::view-transition-old(side){display:none}
+::view-transition-new(side){animation:none}
 .card{container-type:inline-size;flex:1 1 0;min-width:0;position:relative;background:var(--cp);border:1px solid #ffffff14}
 .cin{padding:calc(30*var(--u)) calc(14*var(--u)) calc(26*var(--u))}
 /* The bars sit outside the card, touching its border. Each one is two layers, so its edge also follows the ramps: the bar shows through as the edge, and ::before is the fill */
@@ -160,13 +171,13 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .rank img{display:block;width:100%;height:auto;filter:drop-shadow(0 1px 2px #0009)}
 .sym:has(img){background:none;border:0}
 .sym img,.wp img{object-fit:contain}
-.box{background:#ffffff0d;padding:calc(10*var(--u));margin-bottom:calc(12*var(--u));display:flex;flex-wrap:wrap;gap:calc(10*var(--u))}
-/* The six memories have the whole width of the card; weapon and matrix share the row below them */
-.mem{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:calc(5*var(--u));flex:0 0 100%}
+.box{background:#ffffff0d;padding:calc(10*var(--u));margin-bottom:calc(12*var(--u));display:flex;gap:calc(10*var(--u))}
+/* Memories are always a 3x2 grid: beside the weapon and the matrix, and above them on small screens */
+.mem{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:center;gap:calc(5*var(--u));flex:1.2 1 0;min-width:0;padding:calc(6*var(--u));border:1px solid #ffffff30;background-image:linear-gradient(135deg,transparent 77%,#ffffff24 77%,#ffffff14 100%);background-clip:padding-box}
 .mem .slot{aspect-ratio:5/7;border:2px solid #000}
 .mem img,.mt-art img{transform:scale(1.07)}
 :is(.mem,.mt-art) img[data-full$=".webp"]{transform:scale(1.34)}
-.wp{display:grid;gap:calc(6*var(--u));width:30%}
+.wp{display:grid;gap:calc(6*var(--u));width:24%}
 .wp .slot{aspect-ratio:1}
 .wp .slot:last-child{aspect-ratio:3/2;container-type:inline-size}
 .mxw{flex:1;min-width:0;display:grid;grid-template-rows:auto 1fr;gap:calc(10*var(--u))}
@@ -180,7 +191,6 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .slot{position:relative;display:grid;place-items:center;background:#0000004b;border:1px solid #ffffff30;color:#ffffff66;font-size:11px;overflow:hidden}
 .slot img{width:100%;height:100%;object-fit:cover;display:block}
 .wp .slot,.mx .slot,.kit .slot{background-image:linear-gradient(135deg,transparent 71%,#ffffff1f 71%,#ffffff0f 100%);background-clip:padding-box}
-.mem{background-image:linear-gradient(135deg,transparent 77%,#ffffff24 77%,#ffffff14 100%);background-clip:padding-box;border-color:#ffffff30}
 .slot .stars{position:absolute;left:0;bottom:0;height:auto;transform:none}
 .wh-bar{position:absolute;top:0;left:0;right:0;line-height:0}
 .slot .wh-bar img{height:auto}
@@ -188,6 +198,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .wh-bar b{position:absolute;inset:0 0 0 20.5%;display:grid;place-items:center;color:#fff;font:700 8cqw/1 "Quantico";white-space:nowrap}
 .slot .n{position:absolute;right:0;bottom:0;padding:1px 3px 0 8px;background:#000000b3;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);color:#fff;font-size:max(8px,calc(10*var(--u)));font-weight:700}
 .desc{text-align:justify;font-size:calc(13*var(--u));line-height:1.5;color:#dcdaf0;background:#ffffff0d;padding:calc(12*var(--u));height:calc(240*var(--u));overflow-y:auto}
+p.desc{white-space:pre-line;text-align:left}
 /* Notes and Rotation tabs of a card: together they take the height of the text box, so all the cards stay level */
 .note-tabs{display:flex;gap:calc(4*var(--u));height:calc(30*var(--u))}
 .note-tabs button{flex:1;padding:0;background:#ffffff0d;border:0;border-bottom:2px solid #0000;color:#dcdaf0;font:600 calc(12*var(--u)) "Quantico";cursor:pointer}
@@ -340,29 +351,33 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 #calc input[type=number],#calc select{width:100%;min-width:0;height:38px;padding:0 10px;background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 15px "Quantico"}
 #calc select{cursor:pointer}
 .calc-card{padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
-.calc-patch{padding:0}
-.calc-patch+.calc-patch{margin-top:8px;border-top:1px solid var(--line)}
-.calc-patch summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 16px;padding:12px 16px 12px 34px;position:relative;cursor:pointer;list-style:none}
-.calc-patch summary::-webkit-details-marker{display:none}
-.calc-patch summary::before{content:"▸";position:absolute;left:14px;top:14px;color:var(--mute)}
-.calc-patch[open] summary::before{content:"▾"}
-.calc-patch summary:hover{background:#1c1c1e}
-.calc-patch summary h3{font-size:16px}
-.calc-patch summary p{margin-top:2px;font-size:12px}
+.calc-patch .calc-head{align-items:flex-start}
 /* Fixed columns, so dates and days start at the same point on every row. The frame goes last because not every patch has one */
 .calc-meta{display:grid;grid-template-columns:186px 56px;gap:0 10px}
 .calc-meta span:last-child{grid-column:1/-1}
 .calc-meta span:empty{display:none}
-@container calc-main (min-width:1160px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
-@container calc-main (min-width:480px) and (max-width:980px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
-.calc-patch[open] summary{grid-template-columns:minmax(0,1fr)}
-.calc-patch[open] .calc-sum{display:none}
-.calc-body{position:relative;padding:0 20px 18px}
-/* Fixed columns, so the same currency lines up on every row */
-.calc-sum{display:grid;grid-template-columns:56px repeat(7,84px);gap:4px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
-.calc-sum>span{display:flex;align-items:center;gap:4px;min-width:0;min-height:32px;padding:3px 5px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
-.calc-sum .calc-icon{width:20px;height:20px}
-.calc-sum .short{color:#ff6b6b}
+@container calc-main (min-width:480px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
+/* The patch belt: stops ride a striped rail, and the picked one drops its card below */
+.calc-belt-wrap{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:6px;margin-bottom:6px}
+.calc-nav{padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 22px "Quantico";cursor:pointer}
+.calc-nav:hover:not(:disabled){background:#4a4a4f}
+.calc-nav:disabled{opacity:.3;cursor:default}
+.calc-belt{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
+.calc-track{position:relative;display:flex;gap:12px;width:max-content;padding:16px 6px 18px}
+.calc-track::before{content:"";position:absolute;left:0;right:0;top:calc(50% - 4px);height:10px;background:repeating-linear-gradient(115deg,#26262a 0 8px,#141416 8px 16px);border-block:1px solid var(--line)}
+.calc-stop{position:relative;flex:none;display:grid;align-content:start;gap:4px;width:150px;padding:9px 11px;background:var(--panel);border:1px solid var(--line);border-top:3px solid #4a4a4f;border-radius:4px;color:var(--txt);font:inherit;text-align:left;cursor:pointer;scroll-snap-align:center;transition:transform .15s,border-color .15s,background .15s}
+.calc-stop:hover{border-top-color:var(--mute)}
+.calc-stop.guess{border-style:dashed;border-top-style:solid}
+.calc-stop.collab{border-top-color:var(--side-on)}
+.calc-stop[aria-selected=true]{background:#1c1c1e;border-color:var(--red);transform:translateY(-4px)}
+.calc-stop[aria-selected=true]::after{content:"";position:absolute;left:50%;top:100%;margin:1px 0 0 -8px;border:8px solid #0000;border-bottom:0;border-top-color:var(--red)}
+.calc-stop-top{min-width:0}
+.calc-stop-top b{display:-webkit-box;min-height:2.5em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:15px;line-height:1.25}
+.calc-stop-top .calc-tag{position:absolute;top:-10px;right:8px;padding:1px 5px;font-size:9px}
+.calc-stop small{font-size:11px;color:var(--mute)}
+.calc-stop-bc{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.calc-stop-bc .calc-icon{width:22px;height:22px}
+.calc-stop-bc .short{color:#ff6b6b}
 .calc-tabs{display:flex;gap:8px;margin-bottom:14px}
 .calc-bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;margin-bottom:14px;padding:8px 14px;background:#0f0f10;border:1px solid var(--line);border-bottom:2px solid var(--red)}
 .calc-bar-item{display:flex;align-items:center;gap:10px;min-width:0}
@@ -370,8 +385,6 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-bar-item output{display:block;font-size:17px;font-weight:700}
 .calc-bar-item output.short{color:#ff6b6b}
 .calc-bar-item small{display:block;font-size:11px;color:var(--mute)}
-.calc-fold{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-bottom:10px;font-size:13px;color:var(--mute)}
-.calc-fold span{display:flex;gap:8px}
 .calc-step{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:4px}
 .calc-step button{height:38px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 18px "Quantico";cursor:pointer}
 .calc-step button:hover{background:#4a4a4f}
@@ -389,9 +402,8 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-head a{color:var(--txt);text-decoration:underline}
 .calc-tag{padding:2px 7px;background:var(--side-on);border-radius:3px;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 .calc-tag.guess{background:#3a3a40}
-.calc-rank{position:absolute;top:-50px;right:20px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.calc-rank{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
 #calc .calc-rank select{width:62px}
-.calc-rank+.calc-label{margin-top:4px}
 .calc-label{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .calc-rc-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:8px}
 .calc-rc-row b{font-size:15px}
@@ -441,7 +453,6 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-margin.low{--tone:#6fcf8e}.calc-margin.mid{--tone:#e6bd52}.calc-margin.high{--tone:#ff6b6b}
 .calc-pull-page{display:grid;gap:14px}
 .calc-pull-page[hidden]{display:none}
-@container calc-main (max-width:980px){.calc-patch summary{grid-template-columns:minmax(0,1fr)}.calc-sum{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}}
 @media(max-width:760px){#calc{padding-bottom:64px}.calc-bar{position:fixed;top:auto;left:0;right:0;bottom:0;flex-wrap:nowrap;gap:12px;margin:0;padding:6px 14px calc(6px + env(safe-area-inset-bottom));border-width:2px 0 0;border-top-color:var(--red);border-bottom:0}.calc-bar-item .calc-icon{width:26px;height:26px}.calc-bar-item{flex:1;gap:6px}.calc-bar-item output{font-size:15px}.calc-bar-item small{font-size:10px;line-height:1.2}}
 /* Wide screens: the explanations sit beside the patches and stay in view */
 @media(min-width:1680px){.calc-layout{grid-template-columns:minmax(0,1fr) 360px}.calc-side{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 90px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--red) #0000}.calc-side h2.grp:first-child{margin-top:0}}
@@ -449,7 +460,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 @media(min-width:900px) and (max-width:1679px){.calc-info{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Black Cards take two columns, so the seven currencies always fill their rows */
 @media(max-width:1100px){.calc-money{grid-template-columns:repeat(4,minmax(0,1fr))}.calc-coin:first-child{grid-column:span 2}.calc-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.calc-passes,.calc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-patch{scroll-margin-top:68px}.calc-patch summary{padding:10px 10px 10px 28px}.calc-patch summary::before{left:12px;top:12px}.calc-sum{gap:4px;font-size:11px}.calc-sum>span{gap:3px;min-height:26px;padding:2px 3px}.calc-sum .calc-icon{width:16px;height:16px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-fold p,[data-calc-fold=open]{display:none}.calc-fold{justify-content:flex-end}.calc-rank{position:static;margin-bottom:12px}.calc-body{padding:0 14px 14px}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
+@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-belt-wrap{grid-template-columns:minmax(0,1fr)}.calc-nav{display:none}.calc-track{gap:10px}.calc-stop{width:136px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
 .mt-name a::after{content:"";position:absolute;inset:0}
 .mt-name small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--mute)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
@@ -501,11 +512,12 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .wpn h3{margin-top:0}
 .wpn img{object-fit:contain}
 .empty{color:var(--mute);padding:40px;border:1px dashed var(--line);text-align:center}
-/* Sliding cards: below this width three cards no longer fit at a readable size, so they keep their size and go side by side,
-   one in the center and the next ones peeking. The swipe is the browser's scroll snap. Keep in sync with "sliding" in app.js */
+/* Sliding cards: with less room than this three cards no longer fit at a readable size, so they keep their size and go side by
+   side, one in the center and the next ones peeking. It reads the room left by the side menu, not the window.
+   The swipe is the browser's scroll snap. Keep in sync with isSliding in app.js */
 .pager{display:none}
-@media(max-width:1240px),(hover:none) and (max-height:500px){
-#compBox{container-type:inline-size}
+#compBox{container:comp/inline-size}
+@container comp (max-width:959px){
 .comp{--w:calc(100cqi + 2*var(--pad));--cw:min(var(--w) - 52px,440px);position:relative;align-items:flex-start;gap:12px;margin-inline:calc(-1*var(--pad));padding-inline:calc((var(--w) - var(--cw))/2);overflow:auto hidden;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;transition:height .25s}
 .comp::-webkit-scrollbar{display:none}
 .card{--u:1px;flex:0 0 var(--cw);scroll-snap-align:center;scroll-snap-stop:always}
@@ -526,6 +538,40 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .pg-blue{--pg:#2a8cff}.pg-red{--pg:#e0303a}.pg-gold{--pg:#e6ad1e}
 }
 @media(hover:none){.pager .pg-step{display:none}}
+/* Side menu on desktop: a rail of icons that opens over the page while in use, or pinned open with the same layout. The negative margin keeps the room it takes
+   in the page the same, so nothing moves. Each link clips its own text, which starts right after the rail. See isRail in app.js */
+.site-search{position:relative}
+.search-ico,#pinBtn{display:none}
+#teamsBtn:has(+[hidden] a.on),#assetsBtn:has(+[hidden] a.on),.sub:has(+[hidden] a.on){background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
+@media(min-width:761px) and (hover:hover){
+#pinBtn{display:flex;margin-top:2px;font-size:14px;font-weight:400;color:var(--mute)}
+#pinBtn[aria-pressed=true]{color:var(--txt)}
+#side{padding-inline:10px}
+#side:not(.pinned){z-index:15;width:64px;overflow:hidden auto;transition:width .3s cubic-bezier(.4,0,.2,1),margin-right .3s cubic-bezier(.4,0,.2,1),box-shadow .3s cubic-bezier(.4,0,.2,1)}
+#side.wide:not(.pinned){width:280px;margin-right:-216px;box-shadow:16px 0 40px #000a}
+/* Only the closed rail hides its bar. Any other scrollbar-width here would make Chrome drop the themed ::-webkit-scrollbar */
+#side:not(.pinned,.wide){scrollbar-width:none}
+#side .logo{justify-content:flex-start;gap:12px;padding:0 0 24px;overflow:hidden}
+#side .logo img{width:44px;height:44px;margin:0;object-fit:contain}
+#side nav :is(a:not(.sr),button){gap:12px;overflow:hidden;white-space:nowrap}
+/* Slightly larger icons; the padding shrinks to match so each stays centred in the 44px the rail leaves inside */
+#side .ico{width:24px;height:24px}
+#side nav>:is(a,button),#side .nav-foot>*{padding-inline:10px}
+#side .subList :is(.ico,img){width:26px;height:26px}
+#side .search-ico{display:block;position:absolute;left:10px;top:8px;color:var(--mute);pointer-events:none}
+#side #searchBox{padding-left:44px}
+/* Closed, the box is only as wide as the icon */
+#side:not(.pinned,.wide) #searchBox{padding-inline:0;color:#0000}
+#side:not(.pinned,.wide) #searchBox::placeholder{color:#0000}
+/* Open groups stay in the rail as a column of icons, each on the same line as when the menu is open */
+#side:not(.pinned) :is(#teamsMenu,.subList,.subList a){transition:padding .3s cubic-bezier(.4,0,.2,1),margin .3s cubic-bezier(.4,0,.2,1)}
+.subList .ico{width:24px;height:24px}
+#side .subEmpty{overflow:hidden;white-space:nowrap}
+#side:not(.pinned,.wide) #teamsMenu{padding-left:0}
+#side:not(.pinned,.wide) .subList{margin-left:0;border-left-color:#0000}
+#side:not(.pinned,.wide) .subList a{padding-left:9px}
+#side:not(.pinned,.wide) .subEmpty{color:#0000}
+}
 @media(max-width:760px),(hover:none) and (max-height:500px){.assets,.detail{grid-template-columns:minmax(0,1fr)}.atabs{display:flex;flex-wrap:wrap;position:static}body{flex-direction:column}#main{--pad:18px}
 #side{width:100%;height:auto;position:sticky;top:0;z-index:10;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:8px 14px;border-right:0;border-bottom:1px solid var(--side-line);overflow:visible}
 .logo{padding:0;font-size:24px}
@@ -542,13 +588,18 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .psub button{min-height:48px;padding:12px 14px;font-size:15px}
 .b-mates .slot{width:48px;height:48px}
 .pager{top:61px}
+.box:not(.kit){flex-wrap:wrap}
+/* The margins fill the row, so the weapon always goes below the box */
+.mem{flex:0 0 min(100%,calc(222*var(--u)));margin-inline:max(0px,calc(50% - 111*var(--u)))}
+.wp{width:30%}
 .hero{min-height:190px;padding:24px 20px}.hero-art{width:100%}.hero-track a{width:130px}.hero::after{background:linear-gradient(90deg,#101012e6 30%,#10101299 100%)}h1{font-size:28px}}
 @media(max-width:1000px){.home-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;grid-auto-flow:row;gap:8px}.home-label{justify-content:center;font-size:11px;letter-spacing:.04em;text-align:center}.tile-gap{min-height:0}.home-links.tools{grid-template-columns:minmax(0,1fr)}.home-links.data{grid-template-columns:repeat(2,minmax(0,1fr))}.home-links.data a:first-child{grid-column:1/-1}.home-links.data .home-link{flex-direction:row;gap:12px;text-align:left}}
 @media(max-width:560px){.mtable th{width:50px}.mtable th button{justify-content:center;gap:1px;padding:0 2px;font-size:12px}.mtable th i{width:8px;font-size:8px}.mtable td{padding:5px 2px;font-size:13px;text-align:center}.mtable td:first-child{padding-left:6px}.mt-name{gap:8px}.mt-art{width:38px}.mt-name small{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.hero-track,.fcard .bar{animation:none!important}.hero-art{overflow-x:auto}}
 /* From this width the notice fits on one line, inside the empty space at the top of #main, so it moves nothing below it */
-@media(min-width:1360px){#main{position:relative}#noticeBox{position:absolute;inset:0 0 auto}.notice{height:30px;margin:0;padding:0 14px;font-size:12px}}
-@media(min-width:1540px){.notice{font-size:14px}}
+@media(min-width:1440px){#main{position:relative}#noticeBox{position:absolute;inset:0 0 auto}.notice{height:30px;margin:0;padding:0 14px;font-size:13px}}
+@media(min-width:1520px){.notice{font-size:14px}}
+@media(min-width:1590px){.notice{font-size:15px}}
 /* Meta timeline */
 #timeline{max-width:1640px}
 .tl-summary{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px;margin-bottom:12px}

@@ -100,7 +100,7 @@ function check() {
   }
   const light = new Set(listFiles(join(SITE, "assets-web")));
   for (const path of used.keys()) {
-    if (exact.has(path) && !path.startsWith("assets/embed-icon.") && !light.has(`${path.replace("assets/", "assets-web/")}.webp`)) {
+    if (exact.has(path) && !path.startsWith("assets/embed-icon") && !light.has(`${path.replace("assets/", "assets-web/")}.webp`)) {
       warnings.push(`sem cópia leve: ${path}; rode node tools/optimize-images.mjs`);
     }
   }

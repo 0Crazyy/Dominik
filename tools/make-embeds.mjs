@@ -43,8 +43,8 @@ const usedIn = test => plural(builds.filter(b => test(b.card)).length, "build");
 const cubs = [...new Map(builds.filter(({ card }) => card.construct?.split("/").at(-2) === charId(card.name)).map(({ card }) =>
   [fileName(card.construct), { name: fileName(card.construct), owner: card.name, art: card.construct }])).values()];
 
-// The file has to exist, or the card would show a broken picture
-const DEFAULT_IMAGE = "assets/embed-icon.png";
+// The file has to exist, or the card would show a broken picture. Discord keeps a preview picture per URL, so new art needs a new file name
+const DEFAULT_IMAGE = "assets/embed-icon-3.png";
 function image(...options) {
   const found = options.find(src => src && existsSync(join(ROOT, src)));
   if (!found) console.warn(`AVISO  sem imagem para o embed: ${options.filter(Boolean).join(", ") || "(vazio)"}`);
@@ -136,7 +136,7 @@ for (const cub of cubs) {
 }
 
 /* ---------- tools ---------- */
-add("calculator", "BC Calculator", "Plan your Black Cards across upcoming patches, add up the cost of the passes you pick, and check your pull odds on any banner, including how often pity triggers.", image("assets/calculator/black-card.png"));
+add("calculator", "Planner", "Plan your Black Cards across upcoming patches, add up the cost of the passes you pick, and check your pull odds on any banner, including how often pity triggers.", image("assets/calculator/black-card.png"));
 const newestFrame = TIMELINE.at(-1);
 add("timeline", "Meta Timeline", `How long each of ${TIMELINE.length} S-Rank frames held its place in the meta before a newer one replaced it, with rankings, class averages and a replacement watch.\nNewest: ${newestFrame.name}`, image(newestFrame.head));
 add("contact", "Contact", "Found a wrong build, or have a question or suggestion? Message crazy117 on Discord. Also the credits of the people behind the site's data and art.", image("assets/credits/crazy117.png"));

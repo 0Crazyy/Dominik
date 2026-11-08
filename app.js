@@ -225,14 +225,14 @@ const LILITH_KIT = {
   construct: `${LILITH}/CUB - Billie.png`, skills: cubSkills(LILITH)
 };
 
-const VERA_DESC = "Standard DPS build for Vera-chan. When below SSS, Hervor is needed to do 2 Signatures without using DLT and also not affecting other members' CUBs by making one of them use Lingya and weakening them. You have many options of secondary memories to use here, if at SS/SS3, and more memory options if at SSS. If your Kamui is using Shakespeare, you can opt on switching it to Cottie here for the Extra DMG, that will work since she enters her passive through her first signature, or even to Guinevere if you want to buff Kamui even more. If SSS, you can even use both or put Shakespeare + Cottie for a even high damage output of hers. Many things are possible with Vera-chan, since she doesn't need her signature memories to shine brightly.";
-const KAMUI_DESC = "Things have changed. Something on Kamui wasn't supposed to happen, according to Kuro, which being that his signature energy shouldn't be easily recovered through this yellow orb, and now, after a hotfix... He does need Cottie to run smoothly with 2 Signatures when below SS3. Since he does a bunch of damage outside the Signature before entering on it and uses a bunch of 3-ping, Darwin as 2x is also recommended for the maximum output possible. 4x Cottie also works in WZ, but not much in PPC. Now, he is more similar to Rosetta; needs Cottie on lower ranks, but does everything smoothly with it, and without DLT.";
-const LUCIA_IC_DESC = "Standard DPS build for Alpha: Inverse Crown. Well... Cottie on her is useless, and not because she generates too much energy, and yes because her energy ain't the same as almost everyone in the game, and yes kind of \"personal-signature-energy-type\", called \"Malison\", that is generated through her own skills only. If you want more energy, only at SS3, which is very saddening. All the rest, she just works. Since Cottie is useless, you can even consider other memories, even Da Vinci.";
-const VERONICA_DESC ="Support-DPS build for Veronica. Will serve as great intermediary between Selena's annoying noise system, or as Karenina and Hanying's sidekick. With everyone below SSS and with Selena, she can do her long damage output and you'll reach the timing to switch to Karenina right on time.";
-const KARENINA_DESC = "Build for every Physical necessity for Karenina. She already generates a lot of energy from her skills, so Cottie won't be needed, except for very specific moments, or if you wish to stay a long time with her on the field, or want to spam signatures on SS3 and above.";
-const ROSETTA_DESC ="Unfortunally, Cottie is needed for smooth damage loops at lower ranks. Rosetta won't need DLT at SS0 if you do a single Signature on her first damage loop and then switch the next character. After this, she will be able to do 2 Signatures in a row for a bunch of time until the WZ timer runs out. At SS3 and above, DLT is not needed anymore.";
-const ADELYDE_DESC = "Basically the same as Alpha Inverse Crown on one aspect: Cottie doesn't work on her, and not because she grants too much energy, and yes because her skills grants \"Anabasis points\" that are used as signature energy instead of the common signature energy, making the buffs of Cottie useless, and you can only increase her speed by evolving her rank to SS3 and SSS0. She's free, but still an annoying aspect, specially for players with low vouchers and the future players who won't get the \"Journey of Promise\" copy. On other aspects, she can work with anything alongside her signature memory, without DLT too.";
-const ADELYDE_QTE_DESC = `${ADELYDE_DESC} Her SSS skill increases any QTE damage by 50%, so if you want to abuse the Attacker''s SS3 QTE damage, you can opt for Da Vinci instead of Bathlon on Adelyde.`;
+const VERA_DESC = "Standard DPS build for Vera-chan. She doesn't need her Signature memories to shine.\n• Below SSS: Hervor lets her do 2 Signatures without DLT, and without forcing a teammate's CUB down to Lingya.\n• Secondary memory: many options at SS/SS3, even more at SSS.\n• If Kamui runs Shakespeare: swap it here for Cottie (the Extra DMG works, since her first Signature enters her passive) or for Guinevere to buff Kamui even more.\n• At SSS: Shakespeare + Cottie together for even more damage.";
+const KAMUI_DESC = "After a hotfix, his yellow orb no longer recovers Signature Energy so easily.\n• Cottie: needed below SS3 to do 2 Signatures smoothly. Like Rosetta, he needs Cottie at lower ranks, but no DLT.\n• 2 Darwin: recommended for maximum output, since he deals a lot of damage before his Signature and uses many 3-pings.\n• 4 Cottie: also works in WZ, but not much in PPC.";
+const LUCIA_IC_DESC = "Standard DPS build for Alpha: Inverse Crown.\n• No Cottie: her Signature runs on Malison, her own energy, which only her skills generate. Only SS3 gives her more energy.\n• Since Cottie is out, other memories work too, even Da Vinci.";
+const VERONICA_DESC ="Support-DPS build for Veronica.\n• Role: bridges Selena's noise system, or backs up Karenina and Hanying.\n• With Selena and everyone below SSS: she finishes her long damage output right in time to switch to Karenina.";
+const KARENINA_DESC = "Build for every Physical need of Karenina.\n• No Cottie: her skills already generate a lot of energy.\n• Exceptions: very specific moments, staying long on the field, or spamming Signatures at SS3 and above.";
+const ROSETTA_DESC ="Cottie is needed at lower ranks for smooth damage loops.\n• DLT at SS0: not needed if she does a single Signature on her first damage loop and then switches. After that, she can do 2 Signatures in a row until the WZ timer runs out.\n• SS3 and above: no DLT needed.";
+const ADELYDE_DESC = "Like Alpha: Inverse Crown, Cottie doesn't work on her.\n• Why: her skills grant Anabasis points, which she uses as Signature Energy, so Cottie's buffs do nothing. Only SS3 and SSS make her faster. She's free, but this hurts players with few vouchers and future players who won't get the Journey of Promise copy.\n• Otherwise: anything works alongside her Signature memory, without DLT.";
+const ADELYDE_QTE_DESC = `${ADELYDE_DESC}\n• QTE: her SSS skill increases any QTE damage by 50%. To abuse the Attacker's SS3 QTE damage, use Da Vinci instead of Bathlon.`;
 
 // Colors sampled from the reference images
 const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326" };
@@ -253,9 +253,20 @@ const RANK_SS = { rank: "assets/rank/SS.png" }, RANK_SS3 = { rank: "assets/rank/
 const rankArt = c => c.rank || (TL_FREE[c.name] ? "assets/rank/SSS.png" : RANK_SS.rank);
 // A Comet's Afterglow teams follow Spider 2B's Leia guide. Leia's build only changes with her rank
 const LEIA_SS = { ...RANK_SS, wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
-  desc: "Without Weapon Harmony, use 2 Einsteina instead of 2 Chen Jiyuan. Breaker class skill also works on the bottom resonance." };
+  desc: [
+    "Hypertune set for SS and below.",
+    "• No Weapon Harmony: 2 Einsteina instead of 2 Chen Jiyuan.",
+    "• Why no Cottie: without SS3's starting Signature Energy she can't reach her Signature fast, so 4 Chen Jiyuan deals more damage.",
+    "• Bottom resonance: Core Passive gives her the most damage. Pick Breaker class skill if your main DPS is highly invested."
+  ].join("\n") };
 const LEIA_SS3 = { ...RANK_SS3, wh: "Einsteina", memories: memBuild(MOUSME, COTTIE),
-  desc: "Breaker class skill also works on the bottom resonance." };
+  desc: [
+    "Hypertune set for SS3 and above.",
+    "• Why Cottie: SS3 gives her 20 Signature Energy on entry, so she can use her Signature right after the Gravity Orb form swap.",
+    "• No Weapon Harmony: keep 2 Cottie.",
+    "• Glaciation: if Selena runs 4 Burana + 4 Da Vinci and Helentine runs 4 Guinevere + 2 Cottie + 2 Einsteina, switch to 4 Chen Jiyuan.",
+    "• Bottom resonance: Breaker class skill also works."
+  ].join("\n") };
 const TEDDY_CLASS = { ...TEDDY_KIT, core: `${TEDDY}/Skill - Class Skill.png` };
 // As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
 const TEDDY_SUPPORT = { ...TEDDY_CLASS, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]] };
@@ -267,16 +278,16 @@ const cometTeam = (leia, rotation) => [
 ];
 const altIceTeam = (leia, rotation) => [
   { bar: "blue", role: "starter", ...WANSHI_COMET, wh: "Liston", memories: memBuild(DA_VINCI, LISTON),
-    desc: "Without Weapon Harmony, he still runs 2 Liston.", rotation: rotation.wanshi },
+    desc: "• No Weapon Harmony: keep 2 Liston.", rotation: rotation.wanshi },
   { bar: "red", role: "captain", ...LEIA_KIT, ...leia, rotation: rotation.leia },
   { bar: "gold", role: "", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(JOANNA, GUINEVERE),
-    desc: "Sub DPS build. Signature on the bottom resonance also works, or half of each.", rotation: rotation.teddy }
+    desc: "Sub DPS build.\n• Bottom resonance: Signature also works, or half of each.", rotation: rotation.teddy }
 ];
 const cometGlaciation = (helentine, leia, rotation) => [
   { bar: "blue", role: "captain", ...HELENTINE_KIT, memories: memBuild(CHEN_JIYUAN, COTTIE), ...helentine, rotation: rotation.helentine },
   { bar: "red", role: "", ...LEIA_KIT, ...leia, rotation: rotation.leia },
   { bar: "gold", role: "starter", ...TEDDY_SUPPORT, rotation: rotation.teddy,
-    desc: "Alisa: Echo can take this spot with the same build. Wanshi on 4 Liston + 4 Da Vinci also works, but a little worse. Selena on 4 Burana + 4 Da Vinci works too." }
+    desc: "Other options for this spot:\n• Alisa: Echo: same build.\n• Wanshi: 4 Liston + 4 Da Vinci, a little worse.\n• Selena: 4 Burana + 4 Da Vinci." }
 ];
 
 // A team is named after the patch (Global) of its newest character. Teams of one page that share
@@ -286,11 +297,11 @@ const COMPS = {
     name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a",
     cards: [
       { bar: "blue", role: "captain starter", ...SELENA_KIT, wh: "Klenova", matrix: matrix(DLT, GA, INC),
-        desc: "Standard Glaciation build for Selena. If everything is done right, you can land her final Signature during the effect's period with a little time remaining." },
+        desc: "Standard Glaciation build for Selena.\n• Done right, her final Signature lands during the effect with a little time to spare." },
       { bar: "red", name: "Wanshi: Lucid Dreamer", role: "", ...WANSHI_BUILD,
-        desc: "Support build. He stacks the effect for everyone; at SSS you can do fast Signatures with him and switch to Helentine with maximum stacks." },
+        desc: "Support build.\n• He stacks the effect for everyone.\n• At SSS: do fast Signatures with him and switch to Helentine at maximum stacks." },
       { bar: "gold", role: "", ...HELENTINE_KIT, wh: "Cottie", memories: memBuild(CHEN_JIYUAN, GUINEVERE),
-        desc: "Standard metan (phentamine) build. She needs Wanshi's stacks to start dealing damage, and the effect lasts as long as you have pings and energy." }
+        desc: "Standard metan (phentamine) build.\n• She needs Wanshi's stacks to start dealing damage.\n• The effect lasts as long as you have pings and energy." }
     ]
   },
   "comets-afterglow": {
@@ -303,7 +314,7 @@ const COMPS = {
       { id: "leia-pain-cage", group: "Spider 2B · Pain Cage", label: "Leia", name: "Spider 2B Leia Pain Cage", cards: [
         { bar: "blue", role: "", ...WANSHI_COMET, wh: "Einsteina", memories: memBuild(DA_VINCI, GLORIA), desc: "" },
         { bar: "red", role: "captain", ...LEIA_KIT, wh: "Cottie", memories: memBuild(MOUSME, COTTIE),
-          desc: "Main DPS for Pain Cage. Without Weapon Harmony, she still runs 2 Cottie." },
+          desc: "Main DPS for Pain Cage.\n• No Weapon Harmony: keep 2 Cottie." },
         { bar: "gold", role: "starter", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(CHEN_JIYUAN, GUINEVERE), desc: "" }
       ] }
     ]
@@ -331,10 +342,10 @@ const COMPS = {
         core: `${LUNA}/Skill - Signature HD.png`,
         construct: `${LUNA}/CUB - Guardrake.png`,
         skills: cubSkills(LUNA),
-        desc: "Luna unfortunally needs Cotties to smoothly all the time, but after her leap, DLT isn't required anymore for the basics. \"The\" set for all Nihil occassions, nothing much to change." },
+        desc: "\"The\" set for every Nihil occasion; not much to change.\n• Cottie: she still needs it to run smoothly.\n• DLT: not needed for the basics since her leap." },
       { bar: "red", role: "starter", ...ROSETTA_KIT, wh: "Bathlon", memories: memBuild(rotated(NIMUE), BATHLON), matrix: matrix(DD, ML, GA),
         resonance: `${ROSETTA}/Skill - Ataque Básico.webp`,
-        desc: "Designed specifically for Nihil team, doing a single signature per entrance. If SS3≥, you'll have to play with her as you were with SS0 instead. Awkward? Yeah, but every help is welcome. Rosetta will deal some damage, and in extra of having Bathlon, will debuff the enemies along with Luna's class skill effect, instead of using Cottie that will benefit only herself. A great harmony considering the lack of Israe- I mean, Ishmael." },
+        desc: "Made for the Nihil team: one Signature per entrance.\n• SS3 and above: still play her as at SS0. Awkward, but every help counts.\n• Bathlon over Cottie: she deals some damage and, with Luna's class skill effect, debuffs enemies, while Cottie would only help herself. A good fit given the lack of Ishmael." },
       { bar: "gold", name: "Nirvatia: Dirge", role: "",
         symbol: classIcon("Amplifier"),
         portrait: `${NIRVATIA}/Awaken - Nirvatia Dirge.png`,
@@ -346,17 +357,17 @@ const COMPS = {
         core: `${NIRVATIA}/Skill - Signature HD.png`,
         construct: `${NIRVATIA}/CUB - Morigan.webp`,
         skills: cubSkills(NIRVATIA, "webp"),
-        desc: "Uhh... Odd character. In certain cases, we would have put the elemental memory in here since another character is using Cottie, but Nihil doesn't have a single elemental memory, like Shakespeare, Bathlon, etc. So... If you want to buff the other teammates, use Guinevere or Da Vinci, based on your team's composition. If you're lacking Luna and/or Israe- I mean, Ishmael, Cottie can be considered on her too. She can only do 2 Signatures normally if she's at SSS. I personally don't know if DLT is also needed for that on SSS, but on SS3, DLT wasn't enough." }
+        desc: "An odd one.\n• Why no elemental memory: Nihil has none (like Shakespeare or Bathlon for other elements) to give her when a teammate holds Cottie.\n• To buff teammates: Guinevere or Da Vinci, depending on your team.\n• Without Luna and/or Ishmael: Cottie on her is an option too.\n• 2 Signatures: only at SSS. At SS3, DLT wasn't enough; untested whether SSS needs DLT." }
     ] }]
   },
   "homecoming-voyage": {
     name: "Homecoming Voyage", ...ICE_THEME,
     variants: [{ id: "ic-ss3", name: "IC SS3", cards: [
       { bar: "blue", name: "Wanshi: Lucid Dreamer", role: "starter", ...WANSHI_BUILD,
-        desc: "Support DPS build for Wanshi. Signature energy boost of 2x Cottie is totally useless on him, and 4x Cottie's Extra DMG Bonus doesn't work on him because it requires a Signature Move to activate, and 50% of his damage is outside the Signature. His damage loops steps won't change no matter what memory you use on him, so you can try various memory sets alongside his signature memory for various combos." },
+        desc: "Support DPS build for Wanshi.\n• No Cottie: 2 Cottie's Signature Energy is useless on him, and 4 Cottie's Extra DMG Bonus needs a Signature Move, while half his damage is outside it.\n• Memories: his damage loop doesn't change with any set, so try combos alongside his Signature memory." },
       { bar: "red", role: "captain", ...LUCIA_IC_KIT, ...RANK_SS3, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
       { bar: "gold", role: "", ...TEDDY_KIT, wh: "Chen Jiyuan", memories: memBuild(JOANNA, CHEN_JIYUAN),
-        desc: "Standard DPS build for Teddy. She works well with any memory alongside her signature memory, and she can do everything of her damage loop without any signature energy boost of 2x Cottie as well, so you can try various memories along with it and her damage loop steps won't change at all. By considering the other teammates's memories, Guinevere on here is a good choice too." }
+        desc: "Standard DPS build for Teddy.\n• Memories: anything works alongside her Signature memory. She doesn't need 2 Cottie's Signature Energy, and her damage loop doesn't change.\n• Guinevere: also a good choice, depending on your teammates' memories." }
     ] }]
   },
   "dying-sun-fire": {
@@ -373,7 +384,7 @@ const COMPS = {
         core: `${WATANABE}/Skill - Signature.png`,
         construct: `${WATANABE}/CUB - Shadow Wing.png`,
         skills: cubSkills(WATANABE),
-        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. This is the build recommended for the sinergy with Vera-chan and Kamui-kun. He will be doing a single signature per entrance, since the other two will take all the time for their damage loops, but whenever the one's damage's steps are over and the other is cooldown, Watanabe-kun will perfectly fill that hole within with a nice damage and a very-very fast damage steps, of less than 4 seconds." },
+        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. Build for the synergy with Vera-chan and Kamui-kun.\n• One Signature per entrance, since the other two take most of the time with their damage loops.\n• When one finishes and the other is on cooldown, he fills the gap with good damage and a very fast loop, under 4 seconds." },
       { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
       { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
     ] }, { id: "lucia-vera-kamui", name: "Lucia · Vera · Kamui", cards: [
@@ -389,7 +400,7 @@ const COMPS = {
         core: `${LUCIA_P}/Skill - Signature 2X.webp`,
         construct: `${LUCIA_P}/CUB - Corvus.webp`,
         skills: cubSkills(LUCIA_P, "webp"),
-        desc: "She... has to do something... Well, she aged badly, and we seen this coming ever since she released, and here we are. Da Vinci here will be to improve the other teammates while Lucia will be doing a single signature per entrance; she will not be using the shortened signature: Not just because she would need Cottie to do 2 signatures, but also you would just be wasting time that could be used on another character instead of dealing lower damage. Lucia will only use her long signature procedure every time she enters the field, and because of so, DLT is no longer required on her. She will only be handy indeed if at SS3 or above, either for damage in the field or bizarre QTEs of thousands of percentage. If at SS0.... Be patient with her." },
+        desc: "She aged badly, and we saw this coming since her release.\n• Da Vinci: buffs the teammates while she does one Signature per entrance.\n• Long Signature only: the short one would need Cottie for 2 Signatures and wastes time better spent on another character. So no DLT either.\n• Only really useful at SS3 and above, for field damage or QTEs of thousands of percent. At SS0, be patient with her." },
       { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
       { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
     ] }]
@@ -398,11 +409,11 @@ const COMPS = {
     name: "Of Solitude and Stillness", ...LIGHTNING_THEME,
     cards: [
       { bar: "blue", role: "", ...HELENTINE_KIT, wh: "Guinevere", memories: memBuild(HEISEN, GUINEVERE),
-        desc: "The meta(nphetamine) memory set of whoever this girl is from Alpha's last story and now already has a frame released instead of Trojan or Issarius. Seriously, I really couldn't test her as much as needed to confirm a good build for her; both because I didn't have the resources and also that I don't care a damn about her; so there we go. Only things I could test was this build, that works well when Nanami is with Da Vinci, and her Signature + Da Vinci when Nanami is using Heisen. These both options worked very well altogether." },
+        desc: "The meta(nphetamine) set for Helentine. I couldn't test her enough to confirm the best build.\n• This build: works well when Nanami runs Da Vinci.\n• Signature + Da Vinci: works well when Nanami runs Heisen." },
       { bar: "red", role: "captain", ...LIV_KIT, wh: "Heisen", memories: memBuild(NATASHA, HEISEN),
-        desc: "Standard build for Liv. She works with Heisen, with Cottie, with Signature memory, anything, and it changes according to your team's composition. If none of your members are using Heisen, place it on her, either along with Cottie or Signature, as you like. Personally, with Nanami with Heisen and Helentine with Da Vinci, the difference of the change between Liv's signature memory to Heisen were close to none, so it's your call" },
+        desc: "Standard build for Liv. Heisen, Cottie, Signature memory: anything works, so pick by your team.\n• Heisen: if no teammate runs it, put it on her, with Cottie or Signature.\n• Tested: with Nanami on Heisen and Helentine on Da Vinci, Liv's Signature memory and Heisen were almost the same." },
       { bar: "gold", role: "starter", ...NANAMI_KIT, wh: "Da Vinci", memories: memBuild(HERSCHELL, DA_VINCI),
-        desc: "Nanami didn't require any secondary memory to work properly before, and now with her leap, she unofficially received a \"Breaker\" level upgrade. If your Helentine is already using Da Vinci instead of Guinevere, opt to use Heisen as Nanami's secondary memory, as her field Tank debuff will inflict Heisen's effects constantly." }
+        desc: "Since her leap, Nanami unofficially got a Breaker-level upgrade. Before, she needed no secondary memory.\n• If Helentine runs Da Vinci instead of Guinevere: use Heisen here, since her field Tank debuff applies Heisen's effects constantly." }
     ]
   },
   "anchored-dark": {
@@ -419,17 +430,17 @@ const COMPS = {
         core: `${BIANCA}/Skill - Signature HD.png`,
         construct: `${BIANCA}/CUB - Noctiluca.png`,
         skills: cubSkills(BIANCA),
-        desc: "Cottie on her does help on her damage loop, but you'll lose a lot of damage during so, because she will take a while the activate her Signature that will activate the buffs, therefore, it's more worthy using the pings to make her recover energy while not losing the damage; Cottie only has a greater use starting from SSS rank. In a trio rotation where everyone does a single signature, she will not use DLT either." },
+        desc: "No Cottie below SSS.\n• Cottie: helps her damage loop, but she loses a lot of damage waiting to activate her Signature, which triggers the buffs. Using pings to recover energy is better. Cottie only pays off from SSS.\n• DLT: not used in a trio where everyone does one Signature." },
       { bar: "red", role: "", ...ADELYDE_KIT,
         desc: ADELYDE_QTE_DESC },
       { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
     ] }, { id: "adelyde-lilith-rosetta", name: "Adelyde · Lilith · Rosetta", cards: [
       { bar: "blue", role: "", ...ADELYDE_KIT, matrix: matrix(ML, INC, DLT),
-        desc: `${ADELYDE_DESC} If your Lilith is with Amplifier weapon resonances, focus on damage resonances on Adelyde, but if your Lilith don't, put them here.` },
+        desc: `${ADELYDE_DESC}\n• Resonances: if Lilith has the Amplifier weapon resonances, focus Adelyde on damage ones. If not, put them here.` },
       { bar: "red", role: "starter", ...LILITH_KIT, wh: "Da Vinci",
         memories: memBuild(BARCELO, DA_VINCI),
         matrix: matrix(SAR, GS, ML),
-        desc: "Support Sub DPS build for Lilith. If you have a better taste on charact- I mean, you prefer using Lilith over Bianca's weak SS0 perfomance, this is doable set for her with Adelyde if Lilith is SSS0 or beyond, since the Overliker's class skill is quite a clickbait. By carring the main Amplifier weapon resonances, you can focus solely on damage resonances for Adelyde, and speed-wise, is more worthy using 4-stack signatures rather than 5-stack ones on Lilith if you want to share a playtime with everyone." },
+        desc: "Support Sub DPS build for Lilith, if you prefer her over Bianca's weak SS0.\n• With Adelyde: works if Lilith is SSS or above, since the Overliker's class skill is quite a clickbait.\n• Resonances: she carries the main Amplifier weapon resonances, so Adelyde can focus on damage ones.\n• Signatures: 4-stack ones over 5-stack ones, to share field time with everyone." },
       { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
     ] }, { id: "kurumi-adelyde-rosetta", name: "Kurumi · Adelyde · Rosetta", cards: [
       { bar: "blue", name: "Kurumi Tokisaki", role: "starter",
@@ -443,7 +454,7 @@ const COMPS = {
         core: `${KURUMI}/Skill - Signature 2X.webp`,
         construct: `${KURUMI}/CUB - Zafkiel.webp`,
         skills: cubSkills(KURUMI, "webp"),
-        desc: "Kurumi already generates a lot of energy only from few skills, even at low rank, so Cottie isn't needed and so is DLT; 2 signatures are doable any rank, but not worthy if Kurumi is below SSS, or if Adelyde is SSS, or if Rosetta is SS3. Anything works on Kurumi. Technically, \"Boone\" memory would be better than Derketo, since it has 2 points of ATK higher than it per memory, but... Derketo will make Kurumi have a round number on BP (7100 BPs, if SS, fully hypertuned and 6-star weapon), and 4 points of ATK isn't much, so... Yeah. Choose your priority." },
+        desc: "Anything works on Kurumi.\n• Cottie and DLT: not needed; her skills generate a lot of energy, even at low rank.\n• 2 Signatures: doable at any rank, but not worth it if Kurumi is below SSS, Adelyde is SSS or Rosetta is SS3.\n• Boone vs Derketo: Boone has 2 more ATK per memory, but Derketo gives a round 7100 BP (SS, fully hypertuned, 6-star weapon). 4 ATK isn't much, so choose your priority." },
       { bar: "red", role: "", ...ADELYDE_KIT,
         desc: ADELYDE_QTE_DESC },
       { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
@@ -453,37 +464,37 @@ const COMPS = {
     name: "Anchored in Faith", ...PHYSICAL_THEME,
     cards: [
       { bar: "blue", role: "", ...HANYING_KIT, wh: "Da Vinci", memories: memBuild(CHANG_WUZI, DA_VINCI), matrix: matrix(DD, ML, INC),
-        desc: "Support Sub-DPS build for Hanying. Alongside Adelyde, will create the Ultima Slash stacks. 2 signatures for stacking is overkill for Rosetta's effect, only one is enough alongside Adelyde's effect. If both your Hanying and your Rosetta have weapon resonances, focus the Domain Deconstruction on Hanying instead." },
+        desc: "Support Sub-DPS build for Hanying. Alongside Adelyde, she builds the Ultima Slash stacks.\n• One Signature is enough with Adelyde's effect; 2 is overkill for Rosetta's effect.\n• Domain Deconstruction: if both Hanying and Rosetta have weapon resonances, put it on Hanying." },
       { bar: "red", role: "", ...ADELYDE_KIT, wh: "Patton", memories: memBuild(PESANTEUR, PATTON),
-        desc: "With all the \"Alpha IC\" aspect situation being previously said, Adelyde doesn't change anything on her Ultima Slash perfomance, while being a great stacker by increasing the stacks over time the seconds after casting signature, while dealing a decent Ultima Slash damage and not needing to consume many orbs for stacking, unlike Hanying. Since Cottie doesn't work, Patton is best choice for the Ultima Slash occasion." },
+        desc: "A great stacker for Ultima Slash.\n• Cottie doesn't work on her (same as Alpha: Inverse Crown), but that doesn't hurt her Ultima Slash performance.\n• Stacks: grow over time in the seconds after her Signature, with decent Ultima Slash damage and few orbs, unlike Hanying.\n• Patton: the best choice here, since Cottie doesn't work." },
       { bar: "gold", role: "captain starter", ...ROSETTA_KIT, matrix: matrix(GA, ML, INC),
-        desc: "As the starter, Rosetta will have a bunch of pings saved for rest of the round after you return to her, and with Adelyde's entrance, not making DLT necessary anymore. If your Hanying is with Domain Deconstruction, focus your Rosetta on the damage resonances above, if otherwise, put D.D. back. In my own tests, it was better using the same Grayscale Link colors on her first signature after entrance, and then different Grayscale Link colors for her second signature before leaving the field; the damage was better shared this way, and for 2 signatures, 4x Cottie worked better than 2x Cottie and WH Darwin, for same reason: Better distribution." }
+        desc: "As the starter, Rosetta saves plenty of pings for when she returns; with Adelyde's entrance, DLT isn't needed.\n• Domain Deconstruction: if Hanying has it, focus Rosetta on the damage resonances above. If not, put DD back on her.\n• Grayscale Link: in my tests, same colors on her first Signature after entering, then different colors on her second before leaving, shared the damage better.\n• 2 Signatures: 4 Cottie worked better than 2 Cottie + Weapon Harmony Darwin, for the same reason." }
     ]
   },
   "kamui-lilith-nanami": {
     name: "The Dying Sun", ...LIGHTNING_THEME,
     cards: [
       { bar: "blue", role: "captain", ...KAMUI_KIT, matrix: matrix(GA, ML, INC),
-        desc: "DPS build that speeds up his damage steps, previously mentioned in the observations of the Fire team. In here, will be needed because of the speedrun against the short time given by the Plasma Beam status. With this, will be enough to do 2 full signatures and also using his strong basic attacks. The rotation you'll use will be with 3-pings and tapped yellow orb for the first signature and holding yellow orb for the second one. By doing this, he will be able do all the damage he can do within the time, and still leave around a second or so remaining until the effect runs out. If your Nanami doesn't have a weapon resonance to hold Domain Deconstruction but you do for Kamui-kun, then his first weapon resonance should be DD instead, later Glorious Afterglow and then Matrix Lightning." },
+        desc: "DPS build that speeds up his damage steps (see the Fire team notes). Needed here to race the short Plasma Beam window.\n• Enough for 2 full Signatures plus his strong basic attacks, with about a second to spare.\n• Rotation: 3-pings and tapped yellow orb for the first Signature, held yellow orb for the second.\n• Resonances: if Nanami has no weapon resonance for Domain Deconstruction but Kamui-kun does, use DD first, then Glorious Afterglow, then Matrix Lightning." },
       { bar: "red", role: "", ...LILITH_KIT, wh: "Guinevere",
         // As in the reference image: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
         memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]],
         matrix: matrix(SAR, GS, INC),
-        desc: "Support build for the Plasma Beam effect. She'll do nothing but activate the effect all by herself to then Kamui deal his damage in the time given, and she doesn't need any memories to do so, then, support memories are the good choice here, to buff everyone that will have more active time in the field than her." },
+        desc: "Support build for the Plasma Beam effect.\n• She only activates the effect by herself, so Kamui deals his damage in time. She needs no memories for that.\n• Support memories: buff everyone who spends more time on the field than her." },
       { bar: "gold", role: "starter", ...NANAMI_KIT, wh: "Heisen", memories: memBuild(HERSCHELL, HEISEN),
-        desc: "The DPS build that works for Nanami in all cases you need. The same build for Lightning too, when she released, and will work perfectly in here again another time. She will deal a good Lightning damage; without having the worry with the timer effect; will also buff the other teammates with Heisen, and also will fulfill the time hole between Lilith and Kamui. We won't see Nanami outside this effect for a long time." }
+        desc: "The DPS build for Nanami in every case; the same one from her Lightning release.\n• Deals good Lightning damage without worrying about the effect timer.\n• Buffs teammates with Heisen.\n• Fills the gap between Lilith and Kamui. She'll stay in this effect for a long time." }
     ]
   },
   "steering-physical": {
     name: "Steering by Light", ...PHYSICAL_THEME,
     variants: [{ id: "selena-veronica-karenina", name: "Selena · Veronica · Karenina", cards: [
       { bar: "blue", role: "", ...SELENA_KIT, wh: "Cottie", matrix: matrix(GA, INC, DLT),
-        desc: "After needing a second-hand leap that added her another damn Za Warudo, Selena has some use for the Physical team if your Hanying isn't in a rank higher than your Karenina. Since she needs to enter her passive that is considered as 1st Signature, Cottie's DMG Boost will work better." },
+        desc: "Since her second leap (and another Za Warudo), Selena has a use in the Physical team, if your Hanying isn't a higher rank than your Karenina.\n• Cottie: its DMG Boost works better, since entering her passive counts as her 1st Signature." },
       { bar: "red", role: "starter", ...VERONICA_KIT, desc: VERONICA_DESC },
       { bar: "gold", role: "captain", ...KARENINA_KIT, desc: KARENINA_DESC }
     ] }, { id: "hanying-veronica-karenina", name: "Hanying · Veronica · Karenina", cards: [
       { bar: "blue", role: "", ...HANYING_KIT, wh: "Patton", memories: memBuild(CHANG_WUZI, PATTON), matrix: matrix(DD, DLT, INC),
-        desc: "Now, if your Hanying is a rank higher than your Karenina, then you can consider her instead of Selena; tank's debuffs are way too strong, even if it is just 10%. After her leap, anything works for her alongside her Signature memory. If both your Hanying and your Karenina has a weapon resonance, priorize the Domain Deconstruction on Hanying and place a damage-focused resonance on Karenina; will be more worth it." },
+        desc: "If your Hanying is a higher rank than your Karenina, use her instead of Selena: her Tank debuffs are very strong, even at only 10%.\n• Since her leap, anything works alongside her Signature memory.\n• Domain Deconstruction: if both Hanying and Karenina have weapon resonances, put it on Hanying and a damage resonance on Karenina." },
       { bar: "red", role: "starter", ...VERONICA_KIT, desc: VERONICA_DESC },
       { bar: "gold", role: "captain", ...KARENINA_KIT, desc: KARENINA_DESC }
     ] }]
@@ -492,11 +503,11 @@ const COMPS = {
     name: "Steering by Light", ...DARK_THEME,
     cards: [
       { bar: "blue", role: "starter", ...LIV_KIT, wh: "Bathlon", memories: memBuild(COTTIE, BATHLON),
-        desc: "Darkflow set for Liv. Starter, because she's the only of the trio that consumes stacks, while the other ones only either increase or don't use any stacks. Core Passive as memory skill if below SSS" },
+        desc: "Darkflow set for Liv.\n• Starter: she's the only one of the trio that consumes stacks; the others only add stacks or don't use them.\n• Below SSS: Core Passive as the memory skill." },
       { bar: "red", role: "", ...VERA_KIT, wh: "Guinevere", memories: memBuild(DA_VINCI, GUINEVERE),
-        desc: "Build solely focused on support for Vera-chan. She'll solely stack the Darkflow effect for the others, and as so, a single Signature will do everything and her Signature memory will only add unnecessary orbs for this. Thanks to her core passive, she'll do a decent damage whenever your charge her power through her QTEs." },
+        desc: "Pure support build for Vera-chan.\n• She only stacks Darkflow for the others, so one Signature does it all, and her Signature memory would only add orbs she doesn't need.\n• Thanks to her core passive, she still deals decent damage when you charge her power through her QTEs." },
       { bar: "gold", role: "captain", ...KARENINA_KIT, wh: "Bathlon", memories: memBuild(SANTIAGO, BATHLON),
-        desc: "Almost the same thing of her Physical build, just changing the Physical memory to Dark's, Bathlon. Nothing else changes for her, same functionality." }
+        desc: "Same as her Physical build, swapping the Physical memory for the Dark one, Bathlon. Nothing else changes." }
     ]
   },
   "homecoming-ignition": {
@@ -504,9 +515,9 @@ const COMPS = {
     cards: [
       { bar: "blue", role: "captain", ...LUCIA_IC_KIT, wh: "Shakespeare", memories: memBuild(PAVLICHENKO, SHAKESPEARE), desc: LUCIA_IC_DESC },
       { bar: "red", role: "starter", ...VERONICA_KIT, wh: "Shakespeare", memories: memBuild(KEATS, SHAKESPEARE),
-        desc: "Standard DPS build of Ignition for Veronica. If you desire, you can change the 4x Shakespeare for a 4x Guinevere set to buff everyone, it also works. A combo of 4x Cottie and 4x Shakespeare by removing Keats, is also a usable set. Almost anything works on her, she doesn't have any energy dependencies that would make her need Cottie." },
+        desc: "Standard Ignition DPS build for Veronica. Almost anything works: she has no energy needs that call for Cottie.\n• 4 Guinevere: can replace 4 Shakespeare to buff everyone.\n• 4 Cottie + 4 Shakespeare: also usable, dropping Keats." },
       { bar: "gold", role: "", ...NANAMI_KIT, wh: "Da Vinci", memories: memBuild(HERSCHELL, DA_VINCI),
-        desc: "Standard DPS build of Ignition for Nanami. If playing solo, DLT and Cottie will be needed for her sustainability. On team, Da Vinci is a greater call. She works with any memory set along with her signature, so you can change according to your team's memories." }
+        desc: "Standard Ignition DPS build for Nanami. Any memory set works with her Signature memory, so adapt to your team.\n• Solo: she needs DLT and Cottie to sustain.\n• Team: Da Vinci is the better call." }
     ]
   }
 };
@@ -611,12 +622,12 @@ const ICON_FIT = {
 };
 const menuIcon = (dir, e) => pic(`assets/${dir}/${e}.png`, `alt=""${ICON_FIT[e] ? ` style="transform:${ICON_FIT[e]}"` : ""}`);
 const group = (label, key, arr, iconDir) =>
-  `<button class="sub" data-grp="${key}" aria-expanded="false">${label} <i>▾</i></button>` +
+  `<button class="sub" data-grp="${key}" aria-expanded="false"><svg class="ico" aria-hidden="true"><use href="#i-${key}"/></svg>${label} <i>▾</i></button>` +
   `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">Nothing here yet</p>`}</div>`;
 menu.innerHTML = group(TEAM_LISTS.energy.label, "energy", ENERGY, "energy type") + group(TEAM_LISTS.effect.label, "effect", EFFECT, "effects") +
   group(TEAM_LISTS.special.label, "special", SPECIAL_EFFECT, "effects");
-// A list of the side menu bursts open and squeezes shut. Only clicks animate: a page opening its own group doesn't
-const MENU_OPEN = { duration: 260, easing: "cubic-bezier(.34,1.45,.64,1)" }, MENU_CLOSE = { duration: 170, easing: "cubic-bezier(.5,0,.75,.4)" };
+// A list of the side menu glides open and shut at one pace, so the group closing and the one opening balance out. Only clicks animate: a page opening its own group doesn't
+const MENU_SLIDE = { duration: 280, easing: "cubic-bezier(.4,0,.2,1)" };
 function slideMenu(el, open, animate) {
   if (el.sliding ? el.slidingOpen === open : el.hidden === !open) return;
   const from = el.hidden ? 0 : el.getBoundingClientRect().height;
@@ -632,21 +643,27 @@ function slideMenu(el, open, animate) {
   const to = open ? el.scrollHeight : 0, margin = getComputedStyle(el).marginBottom;
   const frames = [{ height: `${from}px`, opacity: from ? 1 : 0, marginBottom: from ? margin : "0px" }, { height: `${to}px`, opacity: open ? 1 : 0, marginBottom: open ? margin : "0px" }];
   el.slidingOpen = open;
-  el.sliding = el.animate(frames, open ? MENU_OPEN : MENU_CLOSE);
+  el.sliding = el.animate(frames, MENU_SLIDE);
   el.sliding.onfinish = () => {
     el.sliding = null;
     el.style.overflow = "";
     el.hidden = !open;
   };
 }
+// One group open at a time on each level: open together, the groups outgrow the screen
 function toggle(open, b = btn, m = menu, animate = true) {
   b.setAttribute("aria-expanded", open);
   slideMenu(m, open, animate);
+  if (!open) return;
+  const [otherBtn, otherMenu] = b === btn ? [assetsBtn, assetsMenu] : [btn, menu];
+  otherBtn.setAttribute("aria-expanded", false);
+  slideMenu(otherMenu, false, animate);
 }
 function openGroup(key, open, animate = true) {
   const b = $(`[data-grp="${key}"]`);
   b.setAttribute("aria-expanded", open);
   slideMenu($(`[data-list="${key}"]`), open, animate);
+  if (open) Object.keys(TEAM_LISTS).filter(k => k !== key).forEach(k => openGroup(k, false, animate));
 }
 // Phones: the side panel is a top bar and its menu opens with the ☰ button
 const menuBtn = $("#menuBtn");
@@ -655,9 +672,65 @@ function setNav(open) {
   menuBtn.setAttribute("aria-expanded", open);
 }
 menuBtn.onclick = () => setNav(!$("#side").classList.contains("open"));
-$("#sideNav").addEventListener("click", e => { if (e.target.closest("a")) setNav(false); });
+$("#sideNav").addEventListener("click", e => {
+  if (e.target.closest("a")) setNav(false);
+  // Enter on a result leaves the focus in the box, which would hold the menu open over the new page
+  if (e.target.closest("a.sr")) searchBox.blur();
+});
 btn.onclick = () => toggle(btn.getAttribute("aria-expanded") !== "true");
 assetsBtn.onclick = () => toggle(assetsBtn.getAttribute("aria-expanded") !== "true", assetsBtn, assetsMenu);
+// Desktop: the side menu is a rail of icons that opens over the page while in use, so the page never moves.
+// Open groups stay open in the rail, showing their icons: every link keeps its height, so nothing moves under the mouse
+const side = $("#side"), pinBtn = $("#pinBtn"), railScreen = matchMedia("(min-width:761px) and (hover:hover)"), PIN_KEY = "dominik-menu-pinned";
+const isRail = () => railScreen.matches && !side.classList.contains("pinned");
+// Opens the groups of the page on screen and closes the rest, so a group left open from another page doesn't linger
+function showGroups() {
+  const kind = location.pathname.split("/")[1];
+  toggle(kind === "assets", assetsBtn, assetsMenu, false);
+  toggle(!!TEAM_LISTS[kind], btn, menu, false);
+  Object.keys(TEAM_LISTS).forEach(k => openGroup(k, k === kind, false));
+}
+let sideTimer, changingPage = false, pointer = null;
+addEventListener("pointermove", e => { pointer = e; }, { passive: true });
+// The page change animation covers the whole window, so the browser counts the mouse as gone from the menu.
+// The menu ignores that exit, and closes after the animation only if the mouse really is off it
+function holdRail(done) {
+  changingPage = true;
+  done.finally(() => {
+    changingPage = false;
+    const under = pointer && document.elementFromPoint(pointer.clientX, pointer.clientY);
+    if (under && !side.contains(under)) setWide(false, 0);
+  });
+}
+// The waits keep a mouse just passing by from opening it, and a slip off the edge from closing it
+function setWide(wide, wait) {
+  clearTimeout(sideTimer);
+  sideTimer = setTimeout(() => {
+    if (!isRail() || side.classList.contains("wide") === wide) return;
+    if (!wide && (changingPage || side.matches(":hover") || $(":focus-visible", side))) return;
+    side.classList.toggle("wide", wide);
+    if (!wide) clearSearch();
+  }, wait);
+}
+side.addEventListener("mouseenter", () => setWide(true, 90));
+side.addEventListener("mouseleave", () => setWide(false, 260));
+side.addEventListener("focusin", e => { if (e.target.matches(":focus-visible")) setWide(true, 0); });
+side.addEventListener("focusout", () => setWide(false, 200));
+function setPinned(on) {
+  side.classList.toggle("pinned", on);
+  side.classList.toggle("wide", !on);
+  pinBtn.setAttribute("aria-pressed", on);
+}
+pinBtn.onclick = () => {
+  const on = !side.classList.contains("pinned");
+  setPinned(on);
+  try { localStorage.setItem(PIN_KEY, on ? "1" : ""); }
+  catch { /* the choice just lasts until the page closes */ }
+};
+railScreen.addEventListener("change", () => side.classList.remove("wide"));
+try {
+  if (localStorage.getItem(PIN_KEY)) { side.classList.add("pinned"); pinBtn.setAttribute("aria-pressed", true); }
+} catch { /* no saved choice: the rail stays */ }
 menu.onclick = e => {
   const b = e.target.closest(".sub");
   if (b) openGroup(b.dataset.grp, b.getAttribute("aria-expanded") !== "true");
@@ -679,7 +752,7 @@ function rotationLine(name, text) {
 function rotationBox(c) {
   const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(turn)}</h4>
     <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(note)}</p>` : ""}`).join("");
-  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}<a class="rot-source" href="${LEIA_GUIDE}" target="_blank" rel="noopener">Source: Spider 2B's Leia guide</a>`;
+  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}<a class="rot-source" href="${LEIA_GUIDE}" target="_blank" rel="noopener noreferrer">Source: Spider 2B's Leia guide</a>`;
 }
 // With a rotation, the text box of the card gets a tab for each. A card with no notes opens on the rotation
 function cardNotes(c) {
@@ -737,8 +810,9 @@ const FOCUS_CLOSE_MS = 360; // keep in sync with .stage.closing in style.css
 const FOCUS_FADE_MS = 180;
 // The enlarged card is laid out at this width, then scaled to fill the screen
 const FOCUS_W = 640;
-// The text box of the enlarged card opens beside it, at the card's full height. Its width on screen, whatever the card's scale
-const FOCUS_PANEL = 460;
+// The text box of the enlarged card opens beside it, at the card's full height. Its width on screen, whatever the card's scale:
+// narrower on small windows, to leave room for the card
+const focusPanel = w => Math.min(460, w * .36);
 let view = null;
 const place = (el, x, y, s) => { el.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px) scale(${s})`; };
 function toOrigin(v) {
@@ -755,8 +829,8 @@ function layout() {
   const w = stage.clientWidth, h = stage.clientHeight, cw = clones[0].offsetWidth, ch = clones[active].offsetHeight;
   const extended = clones[active].classList.contains("extended");
   // With the panel, the margins stay wide enough for the Export button, so it never covers the tabs
-  const big = Math.min(1.6, (h - 110) / ch, (w - (extended ? 290 + FOCUS_PANEL : 32)) / cw), small = big * .68;
-  const panel = extended ? FOCUS_PANEL / big : 0;
+  const big = Math.min(1.6, (h - 110) / ch, (w - (extended ? 290 + focusPanel(w) : 32)) / cw), small = big * .68;
+  const panel = extended ? focusPanel(w) / big : 0;
   stage.style.setProperty("--panel", `${panel}px`);
   stage.style.setProperty("--panel-u", `${1.1 / big}px`);
   const spread = Math.min(((cw + panel) * big + cw * small) / 2 - cw * small * .25, w / 2 - cw * small * .2);
@@ -777,11 +851,11 @@ function setBackground(locked) {
   document.documentElement.classList.toggle("locked", locked);
   $("#main").inert = $("#side").inert = locked;
 }
-// Below this width three cards no longer fit at a readable size: they slide one at a time, each already at full size, so
-// there is nothing to enlarge. Keep in sync with the media query of .comp in style.css
-const sliding = matchMedia("(max-width:1240px),(hover:none) and (max-height:500px)");
+// With less room than this three cards no longer fit at a readable size: they slide one at a time, each already at full size,
+// so there is nothing to enlarge. Keep in sync with the @container of .comp in style.css
+const isSliding = () => ($("#compBox")?.clientWidth || 0) < 960;
 function openFocus(src) {
-  if (sliding.matches) return;
+  if (isSliding()) return;
   const comp = src.closest(".comp"), sources = [...comp.querySelectorAll(".card")];
   setBackground(true);
   const stage = document.createElement("div");
@@ -925,7 +999,8 @@ function slideTo(index) {
 function showSlide() {
   const box = $(".comp");
   if (!box) return;
-  const on = sliding.matches, active = on ? activeSlide() : -1, cards = [...box.children];
+  const on = isSliding(), active = on ? activeSlide() : -1, cards = [...box.children];
+  if (on) closeFocus(true);
   cards.forEach((c, i) => c.classList.toggle("peek", on && i !== active));
   document.querySelectorAll("[data-slide]").forEach((b, i) => b.setAttribute("aria-current", i === active));
   // The page ends with the card on screen, not with the tallest of the three. 30 is the padding of .comp
@@ -938,7 +1013,6 @@ new MutationObserver(() => {
   showSlide();
 }).observe($("#main"), { childList: true, subtree: true });
 $("#main").addEventListener("scroll", e => { if (e.target.matches?.(".comp")) showSlide(); }, true);
-sliding.addEventListener("change", () => { closeFocus(true); showSlide(); });
 
 /* ---------- pages ---------- */
 // Every character with a build and all their builds, read from PAGES and COMPS, so a new team shows up by itself
@@ -985,11 +1059,17 @@ function heroBelt() {
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
-  const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art"><svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg></span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
+  // Constructs, Memories, Weapon Resonance and C.U.B.s use the drawn art, like the side menu; the rest are the symbols in index.html
+  const artIcons = new Set(["constructs", "memories", "resonance", "cubs"]);
+  const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art">${
+    artIcons.has(icon)
+      ? `<span class="ico ico-art ico-${icon}" aria-hidden="true"></span>`
+      : `<svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg>`
+  }</span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
   const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
   const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
-    ["BC Calculator", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
+    ["Planner", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
     ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."]
   ];
   const data = [
@@ -1321,19 +1401,19 @@ function charactersPage() {
 // Contact page. No art = the first letter of the name in a circle; art goes in assets/credits
 const CREDITS = [
   { name: "blacknovatech", text: "creator of Huaxu, for the assets", href: "https://huaxu.app/na/wiki", art: "assets/credits/blacknovatech.png", support: "https://ko-fi.com/blacknova" },
-  { name: "sidewayz.", text: "for helping with the card design", art: "assets/credits/sidewayz.png" },
-  { name: "GRAY RAVENS wiki", text: "for skills and the patch history", href: "https://grayravens.com/wiki" },
+  { name: "sidewayz.", text: "for helping with the site's overall design", art: "assets/credits/sidewayz.png" },
+  { name: "GRAY RAVENS wiki", text: "for skills and the patch history", href: "https://grayravens.com/wiki", art: "assets/credits/grayravens.png" },
   { name: "Spider 2B", text: "for the guides behind several builds", href: "https://www.youtube.com/@Spider2B", art: "assets/credits/Spider 2B.png" }
 ];
 const KOFI = "https://ko-fi.com/ofcrazy";
 const creditRow = ({ name, text, href, art, support }) => `<li><span class="credit-art">${art ? pic(art) : esc(name[0].toUpperCase())}</span>
-  <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(text)}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener">Support on Ko-fi</a>` : ""}</span></li>`;
+  <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(text)}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>` : ""}</span></li>`;
 const contactPage = () => `<h1>Contact</h1><p class="sub">Found a wrong build, or have a question or suggestion? Send me a message.</p>
   <div class="contact">
     <section class="contact-card">
       <p class="contact-label">Discord</p>
       <div class="contact-name"><span class="credit-art big">${pic("assets/credits/crazy117.png")}</span><strong>crazy117</strong><button class="tool" data-copy="crazy117">Copy</button></div>
-      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener">Support me on Ko-fi</a>
+      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener noreferrer">Support me on Ko-fi</a>
     </section>
     <section class="contact-card">
       <p class="contact-label">Credits</p>
@@ -1356,11 +1436,17 @@ const CURRENCIES = [
   { key: "voucher", name: "Vouchers", art: `${CALC_ART}/voucher.png` },
   { key: "shard", name: "Shards", art: `${CALC_ART}/shard.png` }
 ];
+// What each pass pays when bought ("upfront") and then once a day for "days" days, in the currencies above.
+// Rewards the calculator doesn't track, like Serum, are left out. Monthly bundles from huaxu.app/na/shops/rc/2
 const CALC_PASSES = [
-  { key: "bcPass", name: "Monthly Pass A", rc: 30, max: 2, art: `${CALC_ART}/monthly-pass.png` },
-  { key: "encrypted", name: "Encrypted Pass", rc: 30, max: 1, art: `${CALC_ART}/encrypted-pass.png` },
-  { key: "topSecret", name: "Top-Secret Pass", rc: 68, max: 1, art: `${CALC_ART}/top-secret-pass.png` }
+  { key: "bcPass", name: "Monthly Pass A", rc: 30, max: 2, art: `${CALC_ART}/bc-pass.png`, upfront: { bc: 300 }, daily: { bc: 100 }, days: 30 },
+  { key: "passC", name: "Monthly Pass C", rc: 28, max: 2, art: `${CALC_ART}/monthly-pass-c.png`, upfront: { bc: 300 }, daily: { bc: 90 }, days: 30 },
+  { key: "serumPass", name: "Advanced Character Serum Monthly Pass Bundle", rc: 30, max: 1, art: `${CALC_ART}/serum-pass.png`, upfront: { bc: 300 } },
+  { key: "weaponPass", name: "Weapon Resonance Monthly Pass Bundle", rc: 98, max: 1, art: `${CALC_ART}/weapon-pass.png`, upfront: { bc: 980, shard: 30 }, daily: { weapon: 50, shard: 4 }, days: 30 },
+  { key: "encrypted", name: "Encrypted Pass", rc: 30, max: 1, art: `${CALC_ART}/encrypted-pass.png`, upfront: { cub: 2500, voucher: 10000 } },
+  { key: "topSecret", name: "Top-Secret Pass", rc: 68, max: 1, art: `${CALC_ART}/top-secret-pass.png`, upfront: { limited: 2500, voucher: 18500 } }
 ];
+const DAILY_PASSES = CALC_PASSES.filter(pass => pass.daily);
 const CALC_SPENDING = [
   { key: "copies", name: "Frame copies" },
   { key: "shards", name: "Frame shards", note: "804 Vouchers each" },
@@ -1369,18 +1455,19 @@ const CALC_SPENDING = [
   { key: "cubs", name: "C.U.B.s" },
   { key: "custom", name: "Other BC spend", note: "Skins, special banners...", step: 1000 }
 ];
-// Monthly Pass A pays on the day it is bought and then once a day, so it can run into the next patch
-const MONTHLY_PASS = { upfront: 300, daily: 100, days: 30 };
 // Eneba prices before checkout fees: [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
-const RC_PRICES_DATE = "7 Nov 2026";
+const RC_PRICES_DATE = "8 Nov 2026";
 const RC_PACKS = [[5, 4.40, 1.07], [28, 22.57, 4.34], [34, 27.76, 5.29], [59, 45.93, 8.62], [71, 54.59, 10.20], [119, 90.92, 16.86], [299, 229.36, 42.20], [600, 458.64, 84.16]];
 const RC_STORE = "https://www.eneba.com/top-up-punishing-gray-raven-android-rainbow-cards-global";
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
 // A collab gives free pulls, so its first frame and weapon are cheaper. It pays in BC only, and tickets carry over untouched
 const COLLAB_COST = { S: 10500, A: 2500, firstFrame: 6300, firstWeapon: 4000 };
-const PULL_ODDS = { Frame: { rate: 0.005, pity: 60, cost: COST.S }, Weapon: { rate: 0.04, pity: 30, cost: COST.weapon }, "C.U.B.": { rate: 0.0582, pity: 20, cost: COST.cub } };
+// Base rates from each banner's in-game Drop Details. The first key is the banner the page opens on
+const FRAME_ODDS = { rate: 0.005, pity: 60, cost: COST.S };
+const PULL_ODDS = { "Themed Construct": FRAME_ODDS, "Arrival Construct": FRAME_ODDS, "Target Weapon": { rate: 0.04, pity: 30, cost: COST.weapon }, "C.U.B. Target": { rate: 0.0582, pity: 20, cost: COST.cub } };
 // What's left after one patch. "start" is the balance going in, "plan" what was typed in that patch's card
-function patchResult(patch, start, plan, { calibration, useVouchers }, monthlyDays = 0) {
+// "passDays" holds how many days of each daily pass fall in this patch
+function patchResult(patch, start, plan, { calibration, useVouchers }, passDays = {}) {
   const count = key => plan[key] || 0;
   const rank = plan.rank || patch.rank;
   const weaponCost = COST.weapon * (calibration ? 2 : 1);
@@ -1392,10 +1479,10 @@ function patchResult(patch, start, plan, { calibration, useVouchers }, monthlyDa
     bcSpent += count("cubs") * COST.cub;
   } else {
     for (const { key } of CURRENCIES) left[key] += patch.gains[key];
-    left.bc += count("bcPass") * MONTHLY_PASS.upfront + monthlyDays * MONTHLY_PASS.daily;
-    left.cub += count("encrypted") * 2500;
-    left.limited += count("topSecret") * 2500;
-    left.voucher += count("encrypted") * 10000 + count("topSecret") * 18500;
+    for (const { key, upfront, daily = {} } of CALC_PASSES) {
+      for (const c in upfront) left[c] += count(key) * upfront[c];
+      for (const c in daily) left[c] += (passDays[key] || 0) * daily[c];
+    }
     // Tickets pay first, and BC covers what they can't
     const pay = (cost, ticket) => {
       const used = Math.min(cost, left[ticket]);
@@ -1435,27 +1522,43 @@ function saveCalc() {
   try { localStorage.setItem(CALC_KEY, JSON.stringify(calc)); }
   catch { /* Private windows can refuse storage: the page still works, it just won't remember */ }
 }
-const newCalc = () => ({ balance: {}, plans: {}, open: {}, tab: "plan", calibration: false, useVouchers: true, pullKind: "Frame", pulls: 0 });
+const newCalc = () => ({ balance: {}, plans: {}, pick: "", tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0 });
 let calc = { ...newCalc(), ...readCalc() };
+// Plans saved while patches were folding cards still carry which ones were open
+delete calc.open;
+// A plan saved before a banner was renamed still holds the old name
+if (!PULL_ODDS[calc.pullKind]) calc.pullKind = newCalc().pullKind;
 const calcId = patch => patch.patch || patch.frame;
-const calcToday = () => new Date().toLocaleDateString("en-CA");
+// The game day turns at the daily reset, 05:00 UTC, wherever the player is
+const calcToday = () => new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
 const dayNumber = iso => Date.parse(`${iso}T00:00Z`) / 864e5;
 // Weeklies reset on Mondays: the spreadsheet's weekly income matches the Mondays of each patch. Day 0 was a Thursday
 const mondays = (from, to) => Math.floor((to + 3) / 7) - Math.floor((from + 2) / 7);
+// Norman Revival Plan and Clash Reflection reset every other Thursday and take turns: these are one reset of each.
+// tools/update-calculator.mjs keeps the same dates for the forecast
+const FORTNIGHTLY = [
+  { key: "nrp", name: "Norman Revival Plan", reset: "2026-11-12" },
+  { key: "clash", name: "Clash Reflection", reset: "2026-11-19" }
+];
+// Resets of a fortnightly mode from day "from" to day "to", both counted
+const fortnights = (from, to, reset) => Math.floor((to - dayNumber(reset)) / 14) - Math.floor((from - 1 - dayNumber(reset)) / 14);
 // How much of the patch running today is still ahead, counting today. Any other patch has no answer here
 function patchTime(patch, today) {
   if (!patch.patch || today < patch.start || today > patch.end) return null;
   const start = dayNumber(patch.start), end = dayNumber(patch.end), now = dayNumber(today);
-  return { day: now - start + 1, days: end - start + 1, daysLeft: end - now + 1, weeks: mondays(start, end), weeksLeft: mondays(now, end) };
+  return { day: now - start + 1, days: end - start + 1, daysLeft: end - now + 1, weeks: mondays(start, end), weeksLeft: mondays(now, end),
+    cycles: FORTNIGHTLY.map(mode => ({ ...mode, total: fortnights(start, end, mode.reset), left: fortnights(now, end, mode.reset) })) };
 }
 // The part of a patch's income that can still be earned: dailies and weeklies shrink as the patch goes on, and events leave once they end
 function incomeLeft(patch, today) {
   const time = patchTime(patch, today);
   if (!time || !patch.daily) return patch.gains;
-  const missed = (part, key, share) => Math.round((part[key] || 0) * (1 - share));
+  // A part with no reset in the patch counts in full
+  const missed = (part = {}, key, left, total) => total ? Math.round((part[key] || 0) * (1 - left / total)) : 0;
   const ended = patch.events.filter(event => event.end < today);
   return Object.fromEntries(CURRENCIES.map(({ key }) => [key, Math.max(0, patch.gains[key]
-    - missed(patch.daily, key, time.daysLeft / time.days) - missed(patch.weekly, key, time.weeksLeft / time.weeks)
+    - missed(patch.daily, key, time.daysLeft, time.days) - missed(patch.weekly, key, time.weeksLeft, time.weeks)
+    - time.cycles.reduce((total, cycle) => total + missed(patch.fortnightly?.[cycle.key], key, cycle.left, cycle.total), 0)
     - ended.reduce((total, event) => total + (event.gains[key] || 0), 0))]));
 }
 // The patch running today and the ones after it. Patches that already ended don't matter for a plan
@@ -1470,17 +1573,20 @@ function planDays(patch, today) {
   if (patch.collab) return 0;
   return patchTime(patch, today)?.daysLeft ?? dayNumber(patch.end) - dayNumber(patch.start) + 1;
 }
-// Each patch starts with what the one before it left. Monthly Passes run one after the other, and what doesn't fit moves on
+// Each patch starts with what the one before it left. Copies of the same daily pass run one after the other, and what doesn't fit moves on
 function calcRun() {
   const today = calcToday();
-  let balance = Object.fromEntries(CURRENCIES.map(({ key }) => [key, calc.balance[key] || 0])), monthlyLeft = 0;
+  let balance = Object.fromEntries(CURRENCIES.map(({ key }) => [key, calc.balance[key] || 0]));
+  const queued = {};
   return calcPlan().map(patch => {
-    const plan = calc.plans[calcId(patch)] || {};
-    monthlyLeft += (patch.collab ? 0 : plan.bcPass || 0) * MONTHLY_PASS.days;
-    const monthlyDays = Math.min(monthlyLeft, planDays(patch, today));
-    monthlyLeft -= monthlyDays;
-    balance = patchResult(patch, balance, plan, calc, monthlyDays);
-    return { plan, left: balance, monthlyDays, monthlyLeft };
+    const plan = calc.plans[calcId(patch)] || {}, passDays = {}, passLeft = {};
+    for (const { key, days } of DAILY_PASSES) {
+      const total = (queued[key] || 0) + (patch.collab ? 0 : plan[key] || 0) * days;
+      passDays[key] = Math.min(total, planDays(patch, today));
+      queued[key] = passLeft[key] = total - passDays[key];
+    }
+    balance = patchResult(patch, balance, plan, calc, passDays);
+    return { plan, left: balance, passDays, passLeft };
   });
 }
 const whole = value => Math.max(0, Math.floor(Number(value)) || 0);
@@ -1495,15 +1601,22 @@ function packCost(rc, column) {
 }
 const rcPrice = rc => rc ? `≈ ${packCost(rc, 2).toLocaleString("en-US", { style: "currency", currency: "USD" })} · ${packCost(rc, 1).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} on Eneba` : "";
 const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
-const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${value || ""}" aria-label="${esc(label)}">`;
+const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
 const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(c.name)}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
 const frameLink = name => characters().some(c => c.name === name) ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
-// A closed patch still shows what matters: RC spent and the balance it leaves
-const patchSummary = () => `<span class="calc-sum">
-    <span>${calcIcon(RC_ART)}<output data-sum="rc"></output></span>
-    ${CURRENCIES.map(c => `<span title="${esc(c.name)}">${calcIcon(c.art)}<output data-sum="${c.key}"></output></span>`).join("")}
-  </span>`;
-function patchCard(patch, today, startOpen) {
+// The belt: one stop per patch, in order, with the BC it leaves and the RC spent in it. Picking a stop shows that patch's card
+const dayMonth = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+function patchStop(patch, today, picked) {
+  const time = patchTime(patch, today);
+  const name = patch.collab ? esc(patch.frame || "Frame to be confirmed") : esc(patch.patch);
+  const when = patch.collab ? "Collab" : `${dayMonth(patch.start)} – ${dayMonth(patch.end)}`;
+  const tag = time ? `<span class="calc-tag">Now</span>` : patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : "";
+  return `<button class="calc-stop${patch.collab ? " collab" : ""}${patch.predicted ? " guess" : ""}" type="button" role="tab" data-pick="${esc(calcId(patch))}" aria-selected="${picked}" tabindex="${picked ? 0 : -1}">
+    <span class="calc-stop-top"><b>${name}</b>${tag}</span><small>${when}</small>
+    <span class="calc-stop-bc">${calcIcon(CURRENCIES[0].art)}<output data-stop-bc></output></span><small data-stop-rc></small>
+  </button>`;
+}
+function patchCard(patch, today, picked) {
   const plan = calc.plans[calcId(patch)] || {};
   const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(name)}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="Less: ${esc(name)}">−</button>${numberBox(`data-plan="${key}"`, plan[key], name)}<button type="button" data-step="${step}" aria-label="More: ${esc(name)}">+</button></span>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
   const passes = CALC_PASSES.map(({ key, name, art, rc, max }) => `<label class="calc-pass">${calcIcon(art)}<span>${esc(name)}<small>${rc} RC${max > 1 ? " each" : ""}</small></span>
@@ -1516,40 +1629,56 @@ function patchCard(patch, today, startOpen) {
     : `<h3>${esc(patch.patch)}${time ? `<span class="calc-tag">Day ${time.day} of ${time.days}</span>` : ""}${patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : ""}</h3>
       <p class="calc-meta"><span>${shortDate(patch.start)} to ${shortDate(patch.end)}</span><span>${time?.days ?? planDays(patch, today)} days</span><span>${patch.patch === patch.frame ? "" : frameLink(patch.frame)}</span></p>`;
   const income = time && patch.daily
-    ? `<p class="calc-label">Income left</p><p class="calc-hint">Still to come: ${time.daysLeft} of ${time.days} days of dailies, ${time.weeksLeft} of ${time.weeks} weekly resets and ${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</p>`
+    ? `<p class="calc-label">Income left</p><p class="calc-hint">Still to come: ${time.daysLeft} of ${time.days} days of dailies, ${time.weeksLeft} of ${time.weeks} weekly resets, ${time.cycles.map(cycle => `${cycle.left} of ${cycle.total} ${cycle.name} resets`).join(", ")} and ${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</p>`
     : `<p class="calc-label">Patch income</p>`;
-  return `<details class="calc-card calc-patch" data-id="${esc(calcId(patch))}"${calc.open[calcId(patch)] ?? startOpen ? " open" : ""}>
-    <summary><span class="calc-head"><span>${head}</span></span>${patchSummary()}</summary>
-    <div class="calc-body">
-    ${patch.collab ? "" : `<label class="calc-rank">Rank <select data-plan="rank" aria-label="Frame rank">${["S", "A"].map(r => `<option${r === rank ? " selected" : ""}>${r}</option>`).join("")}</select></label>
-    ${income}${currencyGrid(patch.gains, (c, value) => `<b>${amount(value)}</b>`)}
+  return `<section class="calc-card calc-patch" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
+    <div class="calc-head"><div>${head}</div>${patch.collab ? "" : `<label class="calc-rank">Rank <select data-plan="rank" aria-label="Frame rank">${["S", "A"].map(r => `<option${r === rank ? " selected" : ""}>${r}</option>`).join("")}</select></label>`}</div>
+    ${patch.collab ? "" : `${income}${currencyGrid(patch.gains, (c, value) => `<b>${amount(value)}</b>`)}
     <p class="calc-label">Passes</p><div class="calc-passes">${passes}</div>
     <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
     <p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div>
     ${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>Repeat this plan in later patches</button>`}
     <p class="calc-label">Final balance</p>${currencyGrid({}, c => `<output data-left="${c.key}"></output>`)}
-    </div>
-  </details>`;
+  </section>`;
+}
+// The stop picked last time, or the first one when that patch has already left the plan
+const pickedId = patches => patches.some(p => calcId(p) === calc.pick) ? calc.pick : calcId(patches[0]);
+// Keeps the picked stop in the middle of the belt, without moving the page
+function centerStop() {
+  const belt = $(".calc-belt"), stop = $('.calc-stop[aria-selected="true"]');
+  if (belt && stop) belt.scrollTo({ left: stop.offsetLeft - (belt.clientWidth - stop.offsetWidth) / 2, behavior: "smooth" });
+}
+function pickPatch(id, focus) {
+  calc.pick = id;
+  saveCalc();
+  const stops = [...document.querySelectorAll(".calc-stop")], at = stops.findIndex(s => s.dataset.pick === id);
+  stops.forEach((stop, i) => { stop.setAttribute("aria-selected", i === at); stop.tabIndex = i === at ? 0 : -1; });
+  document.querySelectorAll(".calc-patch").forEach(card => { card.hidden = card.dataset.id !== id; });
+  $("[data-belt=prev]").disabled = at === 0;
+  $("[data-belt=next]").disabled = at === stops.length - 1;
+  if (focus) stops[at].focus({ preventScroll: true });
+  centerStop();
 }
 const calcStat = (label, value, note) => `<div class="calc-stat"><small>${esc(label)}</small><b>${esc(value)}</b><small>${esc(note)}</small></div>`;
 function showCalc() {
-  const cards = document.querySelectorAll(".calc-patch"), run = calcRun();
-  run.forEach(({ plan, left, monthlyDays, monthlyLeft }, i) => {
+  const cards = document.querySelectorAll(".calc-patch"), stops = document.querySelectorAll(".calc-stop"), run = calcRun();
+  run.forEach(({ plan, left, passDays, passLeft }, i) => {
     for (const { key } of CURRENCIES) {
       const out = $(`[data-left="${key}"]`, cards[i]);
       out.textContent = amount(left[key]);
       out.classList.toggle("short", left[key] < 0);
-      const sum = $(`[data-sum="${key}"]`, cards[i]);
-      sum.textContent = amount(left[key]);
-      sum.classList.toggle("short", left[key] < 0);
     }
-    $('[data-sum="rc"]', cards[i]).textContent = passCost(plan);
+    const bc = $("[data-stop-bc]", stops[i]);
+    bc.textContent = amount(left.bc);
+    bc.classList.toggle("short", left.bc < 0);
+    $("[data-stop-rc]", stops[i]).textContent = passCost(plan) ? `${passCost(plan)} RC on passes` : "No passes";
     const cost = $("[data-rc]", cards[i]);
     if (cost) cost.textContent = `${passCost(plan)} RC`;
     const price = $("[data-rc-price]", cards[i]);
     if (price) price.textContent = rcPrice(passCost(plan));
     const monthly = $("[data-monthly]", cards[i]);
-    if (monthly) monthly.textContent = monthlyDays ? `Monthly Pass A: ${monthlyDays} days in this patch${monthlyLeft ? `, ${monthlyLeft} more after it` : ""}` : "";
+    if (monthly) monthly.textContent = DAILY_PASSES.filter(({ key }) => passDays[key]).map(({ key, name }) =>
+      `${name}: ${passDays[key]} days in this patch${passLeft[key] ? `, ${passLeft[key]} more after it` : ""}`).join(" · ");
   });
   const bought = CALC_PASSES.map(({ key, name }) => [name, run.reduce((total, { plan }) => total + (plan[key] || 0), 0)]).filter(([, count]) => count);
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0);
@@ -1564,8 +1693,8 @@ function showCalc() {
   const { rate, pity, average, averageCost, early, noPity } = pullStats(calc.pullKind, calc.pulls);
   $("#calcOdds").innerHTML = calcStat("Chance before pity", `${(early * 100).toFixed(2)}%`, calc.pulls >= pity ? `Pity reached: guaranteed by pull ${pity}` : `${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}% per pull`)
     + calcStat("Pity hits", `${Math.floor(calc.pulls / pity)}×`, `Every ${pity} pulls · ${pity - calc.pulls % pity} to the next`)
-    + calcStat("Average pulls", `${Math.round(average)}`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
-    + calcStat(`${NEARLY_SURE * 100}% without pity`, `${noPity} pulls`, "What pity saves you");
+    + calcStat("Expected", `${Math.round(average)} pulls`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
+    + calcStat("Nearly Guaranteed", `${noPity} pulls`, `${NEARLY_SURE * 100}% chance without pity`);
 }
 // Phones keep the explanations closed, and only one patch open, so the page stays short
 const calcPhone = matchMedia("(max-width:760px)");
@@ -1575,8 +1704,8 @@ function calculatorPage() {
   const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(name)}<small>${esc(note)}</small></span></label>`;
   const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${name}</button>`;
   const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${what}</span></div>`;
-  const today = calcToday();
-  return `<h1>BC Calculator</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p>
+  const today = calcToday(), patches = calcPlan(), picked = calc.pick = pickedId(patches);
+  return `<h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p>
   <div id="calc">
     <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
     <div data-calc-panel="plan"${calc.tab === "plan" ? "" : " hidden"}>
@@ -1592,18 +1721,22 @@ function calculatorPage() {
             <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
           </section>
           <h2 class="grp">Patches</h2>
-          <div class="calc-fold"><p>Each row shows the RC spent and the balance left after that patch. Open one to plan it.</p>
-            <span><button class="tool" type="button" data-calc-fold="open">Expand all</button><button class="tool" type="button" data-calc-fold="close">Collapse all</button></span></div>
-          ${calcPlan().map((p, i) => patchCard(p, today, i === 0)).join("")}
+          <p class="calc-hint">Each stop shows the BC left after that patch. Pick one to plan it.</p>
+          <div class="calc-belt-wrap">
+            <button class="calc-nav" type="button" data-belt="prev" aria-label="Previous patch"${picked === calcId(patches[0]) ? " disabled" : ""}>‹</button>
+            <div class="calc-belt"><div class="calc-track" role="tablist" aria-label="Patches">${patches.map(p => patchStop(p, today, calcId(p) === picked)).join("")}</div></div>
+            <button class="calc-nav" type="button" data-belt="next" aria-label="Next patch"${picked === calcId(patches.at(-1)) ? " disabled" : ""}>›</button>
+          </div>
+          ${patches.map(p => patchCard(p, today, calcId(p) === picked)).join("")}
         </div>
         <aside class="calc-side">
           <h2 class="grp">Passes total</h2>
           <section class="calc-card calc-total">${calcIcon(RC_ART)}<output id="calcRc"></output><b id="calcRcPrice"></b><small id="calcRcList"></small>
-            <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
+            <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener noreferrer">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
           ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
             ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500)."],
-            ["Current patch", "Dailies shrink with the days left, weeklies with the resets left, and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them."],
-            ["Monthly Pass A", `${MONTHLY_PASS.upfront} BC when bought and ${MONTHLY_PASS.daily} BC a day for ${MONTHLY_PASS.days} days. A second one adds ${MONTHLY_PASS.days} more days, not more per day. Days that don't fit move to the next patch.`],
+            ["Current patch", "Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC."],
+            ["Daily passes", `Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`],
             ["Patch income", "Only the highest difficulty of each mode counts."]
           ])}</section>`)}
           ${calcMore("Predicted patches", `<section class="calc-card">
@@ -1629,9 +1762,9 @@ function calculatorPage() {
       ${calcMore("What the numbers mean", `<section class="calc-card">${calcNotes([
         ["Chance before pity", "The odds of getting it from luck alone. It stops growing one pull before pity, because the next pull is guaranteed."],
         ["Pity hits", "How many times pity triggers in these pulls if luck never comes first. Getting it early restarts the count."],
-        ["Average pulls", "What one copy takes on average once pity is counted, at 250 BC per pull."],
-        [`${NEARLY_SURE * 100}% without pity`, "How many pulls a 99% chance would take if pity didn't exist."],
-        ["Method", `The rate is treated as flat until pity. Average pulls and the ${NEARLY_SURE * 100}% figure adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener">FINNER's expected and nearly guaranteed numbers</a> from Warframe.`]
+        ["Expected", "What one copy takes on average once pity is counted, at 250 BC per pull."],
+        ["Nearly Guaranteed", `How many pulls a ${NEARLY_SURE * 100}% chance would take if pity didn't exist.`],
+        ["Method", `The rate is treated as flat until pity. Expected and Nearly Guaranteed adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener noreferrer">FINNER's numbers</a> from Warframe.`]
       ])}</section>`)}
     </div>
   </div>`;
@@ -1651,11 +1784,17 @@ $("#main").addEventListener("input", e => {
   saveCalc();
   showCalc();
 });
-let calcClicked = null;
+// Moves the pick one stop along the belt: -1 back, 1 forward
+function stepBelt(by, focus) {
+  const stops = [...document.querySelectorAll(".calc-stop")], at = stops.findIndex(s => s.dataset.pick === calc.pick);
+  const next = stops[Math.min(Math.max((at < 0 ? 0 : at) + by, 0), stops.length - 1)];
+  if (next) pickPatch(next.dataset.pick, focus);
+}
 $("#main").addEventListener("click", e => {
-  const tab = e.target.closest("[data-calc-tab]"), fold = e.target.closest("[data-calc-fold]");
+  const tab = e.target.closest("[data-calc-tab]"), stop = e.target.closest("[data-pick]"), nav = e.target.closest("[data-belt]");
   const step = e.target.closest("[data-step]"), copy = e.target.closest("[data-calc-copy]");
-  calcClicked = e.target.closest(".calc-patch summary")?.parentElement;
+  if (stop) pickPatch(stop.dataset.pick);
+  if (nav) stepBelt(nav.dataset.belt === "next" ? 1 : -1);
   if (step) {
     const box = step.parentElement.querySelector("input");
     box.value = Math.max(0, whole(box.value) + Number(step.dataset.step)) || "";
@@ -1679,21 +1818,19 @@ $("#main").addEventListener("click", e => {
     document.querySelectorAll("[data-calc-tab]").forEach(b => b.classList.toggle("on", b === tab));
     document.querySelectorAll("[data-calc-panel]").forEach(panel => { panel.hidden = panel.dataset.calcPanel !== calc.tab; });
   }
-  if (fold) document.querySelectorAll(".calc-patch").forEach(card => { card.open = fold.dataset.calcFold === "open"; });
   if (!e.target.closest("[data-calc-clear]")) return;
   calc = newCalc();
   saveCalc();
   route();
 });
-// toggle does not bubble, so it is caught on the way down. Which patches are open stays with the rest of the plan
-$("#main").addEventListener("toggle", e => {
-  if (!e.target.matches(".calc-patch")) return;
-  calc.open[e.target.dataset.id] = e.target.open;
-  saveCalc();
-  if (!calcPhone.matches || !e.target.open || e.target !== calcClicked) return;
-  document.querySelectorAll(".calc-patch[open]").forEach(card => { card.open = card === e.target; });
-  e.target.scrollIntoView();
-}, true);
+// Arrow keys walk the belt, as in any row of tabs
+$("#main").addEventListener("keydown", e => {
+  if (!e.target.matches(".calc-stop")) return;
+  const by = { ArrowLeft: -1, ArrowRight: 1, Home: -Infinity, End: Infinity }[e.key];
+  if (!by) return;
+  e.preventDefault();
+  stepBelt(by, true);
+});
 /* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */
 const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overlinker", "Annihilator", "Observer"];
 // Each class here is the next step of the one before it, so a newer frame of any of them replaces the older ones
@@ -1816,7 +1953,7 @@ function timelineBody() {
 }
 function timelinePage() {
   const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${TL_VIEWS[key].name}</button>`;
-  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener">Chinese wiki</a>, and Global release dates are not considered. Collabs and uniframes are not counted. "Free" marks frames you can get without pulling.</p>
+  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">Chinese wiki</a>, and Global release dates are not considered. Collabs and uniframes are not counted. "Free" marks frames you can get without pulling.</p>
   <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
 }
 $("#main").addEventListener("click", e => {
@@ -2058,7 +2195,7 @@ function theme(id) {
 // Page and composition swaps run through the View Transitions API (styled in style.css);
 // browsers without it, or with reduced motion on, just swap instantly.
 function swap(update) {
-  if (document.startViewTransition && !matchMedia("(prefers-reduced-motion:reduce)").matches) document.startViewTransition(update);
+  if (document.startViewTransition && !matchMedia("(prefers-reduced-motion:reduce)").matches) holdRail(document.startViewTransition(update).finished);
   else update();
 }
 // Written here because each address has its own title in the HTML, from tools/make-embeds.mjs
@@ -2083,13 +2220,12 @@ function route() {
   main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage()
     : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path) : home();
   theme(null);
-  if (kind === "calculator") showCalc();
+  if (kind === "calculator") { showCalc(); centerStop(); }
   const heading = kind && $("h1", main)?.textContent;
   document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
   const navPath = kind === "character" ? "constructs" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;
   document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + navPath));
-  if (kind === "assets") toggle(true, assetsBtn, assetsMenu, false);
-  else if (TEAM_LISTS[kind]) { toggle(true, btn, menu, false); openGroup(kind, true, false); }
+  showGroups();
   const sel0 = $(".picker button[data-id][aria-pressed=true]");
   if (sel0) theme(sel0.dataset.id);
   const picker = $(".picker");
@@ -2232,7 +2368,7 @@ function searchData() {
     ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),
     ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Contact", "/contact"]]
       .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
-    { label: "BC Calculator", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
+    { label: "Planner", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
     { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },
     ...Object.entries(PAGES).flatMap(([path, ids]) => ids.flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name }]).map(v =>
       ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: `/${path}/${v.id}`, art: "" }))))

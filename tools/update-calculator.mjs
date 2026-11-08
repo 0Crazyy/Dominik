@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Refreshes calculator-data.js with the patch income in the RESUME tab of the spreadsheet.
 // Run it when a new patch shows up there: node tools/update-calculator.mjs
-// Dates, rank and income come from the sheet, and "daily", "weekly" and "events" from the tab of each patch. "frame" and the collab rows are written by hand in calculator-data.js,
+// Dates, rank and income come from the sheet, and "daily", "weekly", "fortnightly" and "events" from the tab of each patch. "frame" and the collab rows are written by hand in calculator-data.js,
 // because the sheet shows frames as pictures there: a new patch comes in with no frame, so fill it in after running this.
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -59,20 +59,58 @@ async function readTab(tab, range = "") {
   if (!response.ok) throw new Error(`a planilha respondeu ${response.status}`);
   return readCsv(await response.text());
 }
+// Same dates as FORTNIGHTLY in app.js: one reset of each, every other Thursday, and what each reset pays.
+// "earlier" holds what a reset paid before a given day, and "extra" the one-off resets outside the cycle.
+// Clash Reflection went from 14 to 15 stages in Steering By Light, which also reset it once on its first day
+const FORTNIGHTLY = [
+  { key: "nrp", name: "Norman Revival Plan", reset: "2026-11-12", pays: { bc: 500, cub: 250, shard: 25 } },
+  { key: "clash", name: "Clash Reflection", reset: "2026-11-19", pays: { limited: 210, voucher: 240 },
+    earlier: [{ until: "2026-08-19", pays: { limited: 210, voucher: 180 } }], extra: ["2026-08-19"] }
+];
+const dayOf = iso => Date.parse(`${iso}T00:00Z`) / 864e5;
+// The days a mode resets from day "from" to day "to", both counted
+function resetDays(mode, from, to) {
+  const anchor = dayOf(mode.reset), days = (mode.extra || []).map(dayOf).filter(day => day >= from && day <= to);
+  for (let day = anchor + 14 * Math.ceil((from - anchor) / 14); day <= to; day += 14) days.push(day);
+  return days;
+}
+// What a mode pays over those days, each reset at the rate of its own day
+function fortnightPay(mode, from, to) {
+  const total = {};
+  for (const day of resetDays(mode, from, to)) {
+    const { pays } = (mode.earlier || []).find(rate => day < dayOf(rate.until)) || mode;
+    for (const [key, pay] of Object.entries(pays)) total[key] = (total[key] || 0) + pay;
+  }
+  return total;
+}
 // Where each currency sits in a patch tab. Column M is left out: the planner does not use it
 const TAB_COLUMNS = { bc: 6, limited: 8, construct: 10, weapon: 14, cub: 16, voucher: 18, shard: 20 };
-// The first "Modes" block of a patch tab lists what repeats: rows starting with "Daily" are dailies, the rest weeklies.
+// The first "Modes" block of a patch tab lists what repeats: rows starting with "Daily" are dailies, Norman Revival Plan and
+// Clash Reflection go to "fortnightly", and the rest are weeklies.
 // A patch with no tab of its own gets nothing here (the sheet answers with another tab), and counts in full on the page
-async function patchIncome({ patch, end }) {
+async function patchIncome({ patch, start, end, gains }) {
   const lines = await readTab(patch);
   const first = lines.findIndex(line => line[1] === "Modes");
   if (first < 0 || lines[first + 1][1] !== "Daily") return {};
   const last = lines.findIndex((line, i) => i > first && line[1] === "Modes");
-  const income = { daily: {}, weekly: {}, events: [], oneOff: {} };
+  const found = [];
+  const income = { daily: {}, weekly: {}, fortnightly: Object.fromEntries(FORTNIGHTLY.map(mode => [mode.key, {}])), events: [], oneOff: {} };
   for (const line of lines.slice(first + 1, last).filter(line => line[1])) {
-    const part = line[1].startsWith("Daily") ? income.daily : income.weekly;
+    const mode = FORTNIGHTLY.find(mode => line[1].startsWith(mode.name));
+    if (mode) found.push(mode);
+    const part = line[1].startsWith("Daily") ? income.daily : mode ? income.fortnightly[mode.key] : income.weekly;
     for (const [key, column] of Object.entries(TAB_COLUMNS)) {
       if (line[column]) part[key] = (part[key] || 0) + number(line[column]);
+    }
+  }
+  // The sheet's rows for these modes don't always match what the resets pay, so each becomes the pay of the resets in the
+  // patch, and the patch total moves by the difference
+  income.gains = { ...gains };
+  for (const mode of found) {
+    const sheet = income.fortnightly[mode.key];
+    income.fortnightly[mode.key] = fortnightPay(mode, dayOf(start), dayOf(end));
+    for (const key of new Set([...Object.keys(sheet), ...Object.keys(income.fortnightly[mode.key])])) {
+      income.gains[key] += (income.fortnightly[mode.key][key] || 0) - (sheet[key] || 0);
     }
   }
   // Below that block come the events. Only the ones ending before the patch does are kept: the rest last all of it, and an
@@ -105,29 +143,34 @@ const merged = old.filter(p => p.patch && !p.predicted && !rows.some(row => row.
 const waiting = old.filter(p => p.predicted && !rows.some(row => row.patch === p.patch));
 for (const row of rows) {
   const at = old.findIndex(p => p.patch === row.patch), before = old[at];
-  const jump = !FORCE && before && !before.predicted && Object.keys(row.gains).find(key =>
-    Math.abs(row.gains[key] - before.gains[key]) > Math.max(before.gains[key] * MAX_CHANGE, MIN_CHANGE));
+  const income = await patchIncome(row), gains = income.gains || row.gains;
+  const jump = !FORCE && before && !before.predicted && Object.keys(gains).find(key =>
+    Math.abs(gains[key] - before.gains[key]) > Math.max(before.gains[key] * MAX_CHANGE, MIN_CHANGE));
   if (jump) {
-    held.push(`${row.patch} (${jump}: ${before.gains[jump]} -> ${row.gains[jump]})`);
+    held.push(`${row.patch} (${jump}: ${before.gains[jump]} -> ${gains[jump]})`);
     merged.push(before);
   } else {
     const frame = before ? before.frame : waiting.shift()?.frame ?? "";
     if (!frame && !row.predicted) missing.push(row.patch);
-    merged.push({ ...row, ...await patchIncome(row), frame });
+    merged.push({ ...row, ...income, frame });
   }
   for (let i = at + 1; at >= 0 && old[i]?.collab; i++) merged.push(old[i]);
 }
 
-const dayOf = iso => Date.parse(`${iso}T00:00Z`) / 864e5;
 const isoOf = day => new Date(day * 864e5).toISOString().slice(0, 10);
 // Same rule as the page: weeklies reset on Mondays, and day 0 was a Thursday
 const mondays = (from, to) => Math.floor((to + 3) / 7) - Math.floor((from + 2) / 7);
+// How a part of the income changes when its resets move from the old dates to the new ones. A part with no reset stays the same
+const rescale = (value, now, before) => before ? Math.round((value || 0) * (now / before - 1)) : 0;
 // A patch copied from the same period a year before: same length and income, with weeklies following the Mondays of the new dates
+// and Norman Revival Plan and Clash Reflection paying for the resets of the new dates, at today's rates
 function forecast(slot, after, name, frame) {
   const start = dayOf(after.end) + 1, end = start + dayOf(slot.end) - dayOf(slot.start);
-  const share = mondays(start, end) / mondays(dayOf(slot.start), dayOf(slot.end));
-  const gains = Object.fromEntries(Object.entries(slot.gains).map(([key, value]) =>
-    [key, Math.max(0, value - (slot.oneOff?.[key] || 0) + Math.round((slot.weekly?.[key] || 0) * (share - 1)))]));
+  const from = dayOf(slot.start), to = dayOf(slot.end);
+  const gains = Object.fromEntries(Object.entries(slot.gains).map(([key, value]) => [key, Math.max(0, value - (slot.oneOff?.[key] || 0)
+    + rescale(slot.weekly?.[key], mondays(start, end), mondays(from, to))
+    + FORTNIGHTLY.reduce((total, mode) => total + (slot.fortnightly?.[mode.key]
+      ? (fortnightPay(mode, start, end)[key] || 0) - (slot.fortnightly[mode.key][key] || 0) : 0), 0))]));
   return { patch: name, start: isoOf(start), end: isoOf(end), rank: slot.rank, predicted: true, forecast: true, gains, frame };
 }
 const series = merged.filter(p => !p.collab);
