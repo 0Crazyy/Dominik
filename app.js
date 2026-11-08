@@ -683,11 +683,12 @@ assetsBtn.onclick = () => toggle(assetsBtn.getAttribute("aria-expanded") !== "tr
 // Open groups stay open in the rail, showing their icons: every link keeps its height, so nothing moves under the mouse
 const side = $("#side"), pinBtn = $("#pinBtn"), railScreen = matchMedia("(min-width:761px) and (hover:hover)"), PIN_KEY = "dominik-menu-pinned";
 const isRail = () => railScreen.matches && !side.classList.contains("pinned");
-// Opens the groups of the page on screen
+// Opens the groups of the page on screen and closes the rest, so a group left open from another page doesn't linger
 function showGroups() {
   const kind = location.pathname.split("/")[1];
-  if (kind === "assets") toggle(true, assetsBtn, assetsMenu, false);
-  else if (TEAM_LISTS[kind]) { toggle(true, btn, menu, false); openGroup(kind, true, false); }
+  toggle(kind === "assets", assetsBtn, assetsMenu, false);
+  toggle(!!TEAM_LISTS[kind], btn, menu, false);
+  Object.keys(TEAM_LISTS).forEach(k => openGroup(k, k === kind, false));
 }
 let sideTimer, changingPage = false, pointer = null;
 addEventListener("pointermove", e => { pointer = e; }, { passive: true });
@@ -1058,8 +1059,8 @@ function heroBelt() {
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
-  // Constructs and C.U.B.s use the drawn art, like the side menu; the rest are the symbols in index.html
-  const artIcons = new Set(["constructs", "cubs"]);
+  // Constructs, Memories, Weapon Resonance and C.U.B.s use the drawn art, like the side menu; the rest are the symbols in index.html
+  const artIcons = new Set(["constructs", "memories", "resonance", "cubs"]);
   const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art">${
     artIcons.has(icon)
       ? `<span class="ico ico-art ico-${icon}" aria-hidden="true"></span>`
@@ -1435,11 +1436,17 @@ const CURRENCIES = [
   { key: "voucher", name: "Vouchers", art: `${CALC_ART}/voucher.png` },
   { key: "shard", name: "Shards", art: `${CALC_ART}/shard.png` }
 ];
+// What each pass pays when bought ("upfront") and then once a day for "days" days, in the currencies above.
+// Rewards the calculator doesn't track, like Serum, are left out. Monthly bundles from huaxu.app/na/shops/rc/2
 const CALC_PASSES = [
-  { key: "bcPass", name: "Monthly Pass A", rc: 30, max: 2, art: `${CALC_ART}/monthly-pass.png` },
-  { key: "encrypted", name: "Encrypted Pass", rc: 30, max: 1, art: `${CALC_ART}/encrypted-pass.png` },
-  { key: "topSecret", name: "Top-Secret Pass", rc: 68, max: 1, art: `${CALC_ART}/top-secret-pass.png` }
+  { key: "bcPass", name: "Monthly Pass A", rc: 30, max: 2, art: `${CALC_ART}/bc-pass.png`, upfront: { bc: 300 }, daily: { bc: 100 }, days: 30 },
+  { key: "passC", name: "Monthly Pass C", rc: 28, max: 2, art: `${CALC_ART}/monthly-pass-c.png`, upfront: { bc: 300 }, daily: { bc: 90 }, days: 30 },
+  { key: "serumPass", name: "Advanced Character Serum Monthly Pass Bundle", rc: 30, max: 1, art: `${CALC_ART}/serum-pass.png`, upfront: { bc: 300 } },
+  { key: "weaponPass", name: "Weapon Resonance Monthly Pass Bundle", rc: 98, max: 1, art: `${CALC_ART}/weapon-pass.png`, upfront: { bc: 980, shard: 30 }, daily: { weapon: 50, shard: 4 }, days: 30 },
+  { key: "encrypted", name: "Encrypted Pass", rc: 30, max: 1, art: `${CALC_ART}/encrypted-pass.png`, upfront: { cub: 2500, voucher: 10000 } },
+  { key: "topSecret", name: "Top-Secret Pass", rc: 68, max: 1, art: `${CALC_ART}/top-secret-pass.png`, upfront: { limited: 2500, voucher: 18500 } }
 ];
+const DAILY_PASSES = CALC_PASSES.filter(pass => pass.daily);
 const CALC_SPENDING = [
   { key: "copies", name: "Frame copies" },
   { key: "shards", name: "Frame shards", note: "804 Vouchers each" },
@@ -1448,8 +1455,6 @@ const CALC_SPENDING = [
   { key: "cubs", name: "C.U.B.s" },
   { key: "custom", name: "Other BC spend", note: "Skins, special banners...", step: 1000 }
 ];
-// Monthly Pass A pays on the day it is bought and then once a day, so it can run into the next patch
-const MONTHLY_PASS = { upfront: 300, daily: 100, days: 30 };
 // Eneba prices before checkout fees: [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
 const RC_PRICES_DATE = "7 Nov 2026";
 const RC_PACKS = [[5, 4.40, 1.07], [28, 22.57, 4.34], [34, 27.76, 5.29], [59, 45.93, 8.62], [71, 54.59, 10.20], [119, 90.92, 16.86], [299, 229.36, 42.20], [600, 458.64, 84.16]];
@@ -1461,7 +1466,8 @@ const COLLAB_COST = { S: 10500, A: 2500, firstFrame: 6300, firstWeapon: 4000 };
 const FRAME_ODDS = { rate: 0.005, pity: 60, cost: COST.S };
 const PULL_ODDS = { "Themed Construct": FRAME_ODDS, "Arrival Construct": FRAME_ODDS, "Target Weapon": { rate: 0.04, pity: 30, cost: COST.weapon }, "C.U.B. Target": { rate: 0.0582, pity: 20, cost: COST.cub } };
 // What's left after one patch. "start" is the balance going in, "plan" what was typed in that patch's card
-function patchResult(patch, start, plan, { calibration, useVouchers }, monthlyDays = 0) {
+// "passDays" holds how many days of each daily pass fall in this patch
+function patchResult(patch, start, plan, { calibration, useVouchers }, passDays = {}) {
   const count = key => plan[key] || 0;
   const rank = plan.rank || patch.rank;
   const weaponCost = COST.weapon * (calibration ? 2 : 1);
@@ -1473,10 +1479,10 @@ function patchResult(patch, start, plan, { calibration, useVouchers }, monthlyDa
     bcSpent += count("cubs") * COST.cub;
   } else {
     for (const { key } of CURRENCIES) left[key] += patch.gains[key];
-    left.bc += count("bcPass") * MONTHLY_PASS.upfront + monthlyDays * MONTHLY_PASS.daily;
-    left.cub += count("encrypted") * 2500;
-    left.limited += count("topSecret") * 2500;
-    left.voucher += count("encrypted") * 10000 + count("topSecret") * 18500;
+    for (const { key, upfront, daily = {} } of CALC_PASSES) {
+      for (const c in upfront) left[c] += count(key) * upfront[c];
+      for (const c in daily) left[c] += (passDays[key] || 0) * daily[c];
+    }
     // Tickets pay first, and BC covers what they can't
     const pay = (cost, ticket) => {
       const used = Math.min(cost, left[ticket]);
@@ -1516,29 +1522,43 @@ function saveCalc() {
   try { localStorage.setItem(CALC_KEY, JSON.stringify(calc)); }
   catch { /* Private windows can refuse storage: the page still works, it just won't remember */ }
 }
-const newCalc = () => ({ balance: {}, plans: {}, open: {}, tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0 });
+const newCalc = () => ({ balance: {}, plans: {}, pick: "", tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0 });
 let calc = { ...newCalc(), ...readCalc() };
+// Plans saved while patches were folding cards still carry which ones were open
+delete calc.open;
 // A plan saved before a banner was renamed still holds the old name
 if (!PULL_ODDS[calc.pullKind]) calc.pullKind = newCalc().pullKind;
 const calcId = patch => patch.patch || patch.frame;
-const calcToday = () => new Date().toLocaleDateString("en-CA");
+// The game day turns at the daily reset, 05:00 UTC, wherever the player is
+const calcToday = () => new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
 const dayNumber = iso => Date.parse(`${iso}T00:00Z`) / 864e5;
 // Weeklies reset on Mondays: the spreadsheet's weekly income matches the Mondays of each patch. Day 0 was a Thursday
 const mondays = (from, to) => Math.floor((to + 3) / 7) - Math.floor((from + 2) / 7);
+// Norman Revival Plan and Clash Reflection reset every other Thursday and take turns: these are one reset of each.
+// tools/update-calculator.mjs keeps the same dates for the forecast
+const FORTNIGHTLY = [
+  { key: "nrp", name: "Norman Revival Plan", reset: "2026-11-12" },
+  { key: "clash", name: "Clash Reflection", reset: "2026-11-19" }
+];
+// Resets of a fortnightly mode from day "from" to day "to", both counted
+const fortnights = (from, to, reset) => Math.floor((to - dayNumber(reset)) / 14) - Math.floor((from - 1 - dayNumber(reset)) / 14);
 // How much of the patch running today is still ahead, counting today. Any other patch has no answer here
 function patchTime(patch, today) {
   if (!patch.patch || today < patch.start || today > patch.end) return null;
   const start = dayNumber(patch.start), end = dayNumber(patch.end), now = dayNumber(today);
-  return { day: now - start + 1, days: end - start + 1, daysLeft: end - now + 1, weeks: mondays(start, end), weeksLeft: mondays(now, end) };
+  return { day: now - start + 1, days: end - start + 1, daysLeft: end - now + 1, weeks: mondays(start, end), weeksLeft: mondays(now, end),
+    cycles: FORTNIGHTLY.map(mode => ({ ...mode, total: fortnights(start, end, mode.reset), left: fortnights(now, end, mode.reset) })) };
 }
 // The part of a patch's income that can still be earned: dailies and weeklies shrink as the patch goes on, and events leave once they end
 function incomeLeft(patch, today) {
   const time = patchTime(patch, today);
   if (!time || !patch.daily) return patch.gains;
-  const missed = (part, key, share) => Math.round((part[key] || 0) * (1 - share));
+  // A part with no reset in the patch counts in full
+  const missed = (part = {}, key, left, total) => total ? Math.round((part[key] || 0) * (1 - left / total)) : 0;
   const ended = patch.events.filter(event => event.end < today);
   return Object.fromEntries(CURRENCIES.map(({ key }) => [key, Math.max(0, patch.gains[key]
-    - missed(patch.daily, key, time.daysLeft / time.days) - missed(patch.weekly, key, time.weeksLeft / time.weeks)
+    - missed(patch.daily, key, time.daysLeft, time.days) - missed(patch.weekly, key, time.weeksLeft, time.weeks)
+    - time.cycles.reduce((total, cycle) => total + missed(patch.fortnightly?.[cycle.key], key, cycle.left, cycle.total), 0)
     - ended.reduce((total, event) => total + (event.gains[key] || 0), 0))]));
 }
 // The patch running today and the ones after it. Patches that already ended don't matter for a plan
@@ -1553,17 +1573,20 @@ function planDays(patch, today) {
   if (patch.collab) return 0;
   return patchTime(patch, today)?.daysLeft ?? dayNumber(patch.end) - dayNumber(patch.start) + 1;
 }
-// Each patch starts with what the one before it left. Monthly Passes run one after the other, and what doesn't fit moves on
+// Each patch starts with what the one before it left. Copies of the same daily pass run one after the other, and what doesn't fit moves on
 function calcRun() {
   const today = calcToday();
-  let balance = Object.fromEntries(CURRENCIES.map(({ key }) => [key, calc.balance[key] || 0])), monthlyLeft = 0;
+  let balance = Object.fromEntries(CURRENCIES.map(({ key }) => [key, calc.balance[key] || 0]));
+  const queued = {};
   return calcPlan().map(patch => {
-    const plan = calc.plans[calcId(patch)] || {};
-    monthlyLeft += (patch.collab ? 0 : plan.bcPass || 0) * MONTHLY_PASS.days;
-    const monthlyDays = Math.min(monthlyLeft, planDays(patch, today));
-    monthlyLeft -= monthlyDays;
-    balance = patchResult(patch, balance, plan, calc, monthlyDays);
-    return { plan, left: balance, monthlyDays, monthlyLeft };
+    const plan = calc.plans[calcId(patch)] || {}, passDays = {}, passLeft = {};
+    for (const { key, days } of DAILY_PASSES) {
+      const total = (queued[key] || 0) + (patch.collab ? 0 : plan[key] || 0) * days;
+      passDays[key] = Math.min(total, planDays(patch, today));
+      queued[key] = passLeft[key] = total - passDays[key];
+    }
+    balance = patchResult(patch, balance, plan, calc, passDays);
+    return { plan, left: balance, passDays, passLeft };
   });
 }
 const whole = value => Math.max(0, Math.floor(Number(value)) || 0);
@@ -1581,12 +1604,19 @@ const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
 const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${value || ""}" aria-label="${esc(label)}">`;
 const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(c.name)}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
 const frameLink = name => characters().some(c => c.name === name) ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
-// A closed patch still shows what matters: RC spent and the balance it leaves
-const patchSummary = () => `<span class="calc-sum">
-    <span>${calcIcon(RC_ART)}<output data-sum="rc"></output></span>
-    ${CURRENCIES.map(c => `<span title="${esc(c.name)}">${calcIcon(c.art)}<output data-sum="${c.key}"></output></span>`).join("")}
-  </span>`;
-function patchCard(patch, today, startOpen) {
+// The belt: one stop per patch, in order, with the BC it leaves and the RC spent in it. Picking a stop shows that patch's card
+const dayMonth = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+function patchStop(patch, today, picked) {
+  const time = patchTime(patch, today);
+  const name = patch.collab ? esc(patch.frame || "Frame to be confirmed") : esc(patch.patch);
+  const when = patch.collab ? "Collab" : `${dayMonth(patch.start)} – ${dayMonth(patch.end)}`;
+  const tag = time ? `<span class="calc-tag">Now</span>` : patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : "";
+  return `<button class="calc-stop${patch.collab ? " collab" : ""}${patch.predicted ? " guess" : ""}" type="button" role="tab" data-pick="${esc(calcId(patch))}" aria-selected="${picked}" tabindex="${picked ? 0 : -1}">
+    <span class="calc-stop-top"><b>${name}</b>${tag}</span><small>${when}</small>
+    <span class="calc-stop-bc">${calcIcon(CURRENCIES[0].art)}<output data-stop-bc></output></span><small data-stop-rc></small>
+  </button>`;
+}
+function patchCard(patch, today, picked) {
   const plan = calc.plans[calcId(patch)] || {};
   const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(name)}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="Less: ${esc(name)}">−</button>${numberBox(`data-plan="${key}"`, plan[key], name)}<button type="button" data-step="${step}" aria-label="More: ${esc(name)}">+</button></span>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
   const passes = CALC_PASSES.map(({ key, name, art, rc, max }) => `<label class="calc-pass">${calcIcon(art)}<span>${esc(name)}<small>${rc} RC${max > 1 ? " each" : ""}</small></span>
@@ -1599,40 +1629,56 @@ function patchCard(patch, today, startOpen) {
     : `<h3>${esc(patch.patch)}${time ? `<span class="calc-tag">Day ${time.day} of ${time.days}</span>` : ""}${patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : ""}</h3>
       <p class="calc-meta"><span>${shortDate(patch.start)} to ${shortDate(patch.end)}</span><span>${time?.days ?? planDays(patch, today)} days</span><span>${patch.patch === patch.frame ? "" : frameLink(patch.frame)}</span></p>`;
   const income = time && patch.daily
-    ? `<p class="calc-label">Income left</p><p class="calc-hint">Still to come: ${time.daysLeft} of ${time.days} days of dailies, ${time.weeksLeft} of ${time.weeks} weekly resets and ${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</p>`
+    ? `<p class="calc-label">Income left</p><p class="calc-hint">Still to come: ${time.daysLeft} of ${time.days} days of dailies, ${time.weeksLeft} of ${time.weeks} weekly resets, ${time.cycles.map(cycle => `${cycle.left} of ${cycle.total} ${cycle.name} resets`).join(", ")} and ${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</p>`
     : `<p class="calc-label">Patch income</p>`;
-  return `<details class="calc-card calc-patch" data-id="${esc(calcId(patch))}"${calc.open[calcId(patch)] ?? startOpen ? " open" : ""}>
-    <summary><span class="calc-head"><span>${head}</span></span>${patchSummary()}</summary>
-    <div class="calc-body">
-    ${patch.collab ? "" : `<label class="calc-rank">Rank <select data-plan="rank" aria-label="Frame rank">${["S", "A"].map(r => `<option${r === rank ? " selected" : ""}>${r}</option>`).join("")}</select></label>
-    ${income}${currencyGrid(patch.gains, (c, value) => `<b>${amount(value)}</b>`)}
+  return `<section class="calc-card calc-patch" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
+    <div class="calc-head"><div>${head}</div>${patch.collab ? "" : `<label class="calc-rank">Rank <select data-plan="rank" aria-label="Frame rank">${["S", "A"].map(r => `<option${r === rank ? " selected" : ""}>${r}</option>`).join("")}</select></label>`}</div>
+    ${patch.collab ? "" : `${income}${currencyGrid(patch.gains, (c, value) => `<b>${amount(value)}</b>`)}
     <p class="calc-label">Passes</p><div class="calc-passes">${passes}</div>
     <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
     <p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div>
     ${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>Repeat this plan in later patches</button>`}
     <p class="calc-label">Final balance</p>${currencyGrid({}, c => `<output data-left="${c.key}"></output>`)}
-    </div>
-  </details>`;
+  </section>`;
+}
+// The stop picked last time, or the first one when that patch has already left the plan
+const pickedId = patches => patches.some(p => calcId(p) === calc.pick) ? calc.pick : calcId(patches[0]);
+// Keeps the picked stop in the middle of the belt, without moving the page
+function centerStop() {
+  const belt = $(".calc-belt"), stop = $('.calc-stop[aria-selected="true"]');
+  if (belt && stop) belt.scrollTo({ left: stop.offsetLeft - (belt.clientWidth - stop.offsetWidth) / 2, behavior: "smooth" });
+}
+function pickPatch(id, focus) {
+  calc.pick = id;
+  saveCalc();
+  const stops = [...document.querySelectorAll(".calc-stop")], at = stops.findIndex(s => s.dataset.pick === id);
+  stops.forEach((stop, i) => { stop.setAttribute("aria-selected", i === at); stop.tabIndex = i === at ? 0 : -1; });
+  document.querySelectorAll(".calc-patch").forEach(card => { card.hidden = card.dataset.id !== id; });
+  $("[data-belt=prev]").disabled = at === 0;
+  $("[data-belt=next]").disabled = at === stops.length - 1;
+  if (focus) stops[at].focus({ preventScroll: true });
+  centerStop();
 }
 const calcStat = (label, value, note) => `<div class="calc-stat"><small>${esc(label)}</small><b>${esc(value)}</b><small>${esc(note)}</small></div>`;
 function showCalc() {
-  const cards = document.querySelectorAll(".calc-patch"), run = calcRun();
-  run.forEach(({ plan, left, monthlyDays, monthlyLeft }, i) => {
+  const cards = document.querySelectorAll(".calc-patch"), stops = document.querySelectorAll(".calc-stop"), run = calcRun();
+  run.forEach(({ plan, left, passDays, passLeft }, i) => {
     for (const { key } of CURRENCIES) {
       const out = $(`[data-left="${key}"]`, cards[i]);
       out.textContent = amount(left[key]);
       out.classList.toggle("short", left[key] < 0);
-      const sum = $(`[data-sum="${key}"]`, cards[i]);
-      sum.textContent = amount(left[key]);
-      sum.classList.toggle("short", left[key] < 0);
     }
-    $('[data-sum="rc"]', cards[i]).textContent = passCost(plan);
+    const bc = $("[data-stop-bc]", stops[i]);
+    bc.textContent = amount(left.bc);
+    bc.classList.toggle("short", left.bc < 0);
+    $("[data-stop-rc]", stops[i]).textContent = passCost(plan) ? `${passCost(plan)} RC on passes` : "No passes";
     const cost = $("[data-rc]", cards[i]);
     if (cost) cost.textContent = `${passCost(plan)} RC`;
     const price = $("[data-rc-price]", cards[i]);
     if (price) price.textContent = rcPrice(passCost(plan));
     const monthly = $("[data-monthly]", cards[i]);
-    if (monthly) monthly.textContent = monthlyDays ? `Monthly Pass A: ${monthlyDays} days in this patch${monthlyLeft ? `, ${monthlyLeft} more after it` : ""}` : "";
+    if (monthly) monthly.textContent = DAILY_PASSES.filter(({ key }) => passDays[key]).map(({ key, name }) =>
+      `${name}: ${passDays[key]} days in this patch${passLeft[key] ? `, ${passLeft[key]} more after it` : ""}`).join(" · ");
   });
   const bought = CALC_PASSES.map(({ key, name }) => [name, run.reduce((total, { plan }) => total + (plan[key] || 0), 0)]).filter(([, count]) => count);
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0);
@@ -1658,7 +1704,7 @@ function calculatorPage() {
   const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(name)}<small>${esc(note)}</small></span></label>`;
   const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${name}</button>`;
   const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${what}</span></div>`;
-  const today = calcToday();
+  const today = calcToday(), patches = calcPlan(), picked = calc.pick = pickedId(patches);
   return `<h1>BC Calculator</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p>
   <div id="calc">
     <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
@@ -1675,9 +1721,13 @@ function calculatorPage() {
             <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
           </section>
           <h2 class="grp">Patches</h2>
-          <div class="calc-fold"><p>Each row shows the RC spent and the balance left after that patch. Open one to plan it.</p>
-            <span><button class="tool" type="button" data-calc-fold="open">Expand all</button><button class="tool" type="button" data-calc-fold="close">Collapse all</button></span></div>
-          ${calcPlan().map((p, i) => patchCard(p, today, i === 0)).join("")}
+          <p class="calc-hint">Each stop shows the BC left after that patch. Pick one to plan it.</p>
+          <div class="calc-belt-wrap">
+            <button class="calc-nav" type="button" data-belt="prev" aria-label="Previous patch"${picked === calcId(patches[0]) ? " disabled" : ""}>‹</button>
+            <div class="calc-belt"><div class="calc-track" role="tablist" aria-label="Patches">${patches.map(p => patchStop(p, today, calcId(p) === picked)).join("")}</div></div>
+            <button class="calc-nav" type="button" data-belt="next" aria-label="Next patch"${picked === calcId(patches.at(-1)) ? " disabled" : ""}>›</button>
+          </div>
+          ${patches.map(p => patchCard(p, today, calcId(p) === picked)).join("")}
         </div>
         <aside class="calc-side">
           <h2 class="grp">Passes total</h2>
@@ -1685,8 +1735,8 @@ function calculatorPage() {
             <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
           ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
             ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500)."],
-            ["Current patch", "Dailies shrink with the days left, weeklies with the resets left, and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them."],
-            ["Monthly Pass A", `${MONTHLY_PASS.upfront} BC when bought and ${MONTHLY_PASS.daily} BC a day for ${MONTHLY_PASS.days} days. A second one adds ${MONTHLY_PASS.days} more days, not more per day. Days that don't fit move to the next patch.`],
+            ["Current patch", "Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC."],
+            ["Daily passes", `Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`],
             ["Patch income", "Only the highest difficulty of each mode counts."]
           ])}</section>`)}
           ${calcMore("Predicted patches", `<section class="calc-card">
@@ -1734,11 +1784,17 @@ $("#main").addEventListener("input", e => {
   saveCalc();
   showCalc();
 });
-let calcClicked = null;
+// Moves the pick one stop along the belt: -1 back, 1 forward
+function stepBelt(by, focus) {
+  const stops = [...document.querySelectorAll(".calc-stop")], at = stops.findIndex(s => s.dataset.pick === calc.pick);
+  const next = stops[Math.min(Math.max((at < 0 ? 0 : at) + by, 0), stops.length - 1)];
+  if (next) pickPatch(next.dataset.pick, focus);
+}
 $("#main").addEventListener("click", e => {
-  const tab = e.target.closest("[data-calc-tab]"), fold = e.target.closest("[data-calc-fold]");
+  const tab = e.target.closest("[data-calc-tab]"), stop = e.target.closest("[data-pick]"), nav = e.target.closest("[data-belt]");
   const step = e.target.closest("[data-step]"), copy = e.target.closest("[data-calc-copy]");
-  calcClicked = e.target.closest(".calc-patch summary")?.parentElement;
+  if (stop) pickPatch(stop.dataset.pick);
+  if (nav) stepBelt(nav.dataset.belt === "next" ? 1 : -1);
   if (step) {
     const box = step.parentElement.querySelector("input");
     box.value = Math.max(0, whole(box.value) + Number(step.dataset.step)) || "";
@@ -1762,21 +1818,19 @@ $("#main").addEventListener("click", e => {
     document.querySelectorAll("[data-calc-tab]").forEach(b => b.classList.toggle("on", b === tab));
     document.querySelectorAll("[data-calc-panel]").forEach(panel => { panel.hidden = panel.dataset.calcPanel !== calc.tab; });
   }
-  if (fold) document.querySelectorAll(".calc-patch").forEach(card => { card.open = fold.dataset.calcFold === "open"; });
   if (!e.target.closest("[data-calc-clear]")) return;
   calc = newCalc();
   saveCalc();
   route();
 });
-// toggle does not bubble, so it is caught on the way down. Which patches are open stays with the rest of the plan
-$("#main").addEventListener("toggle", e => {
-  if (!e.target.matches(".calc-patch")) return;
-  calc.open[e.target.dataset.id] = e.target.open;
-  saveCalc();
-  if (!calcPhone.matches || !e.target.open || e.target !== calcClicked) return;
-  document.querySelectorAll(".calc-patch[open]").forEach(card => { card.open = card === e.target; });
-  e.target.scrollIntoView();
-}, true);
+// Arrow keys walk the belt, as in any row of tabs
+$("#main").addEventListener("keydown", e => {
+  if (!e.target.matches(".calc-stop")) return;
+  const by = { ArrowLeft: -1, ArrowRight: 1, Home: -Infinity, End: Infinity }[e.key];
+  if (!by) return;
+  e.preventDefault();
+  stepBelt(by, true);
+});
 /* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */
 const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overlinker", "Annihilator", "Observer"];
 // Each class here is the next step of the one before it, so a newer frame of any of them replaces the older ones
@@ -2166,7 +2220,7 @@ function route() {
   main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage()
     : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path) : home();
   theme(null);
-  if (kind === "calculator") showCalc();
+  if (kind === "calculator") { showCalc(); centerStop(); }
   const heading = kind && $("h1", main)?.textContent;
   document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
   const navPath = kind === "character" ? "constructs" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;

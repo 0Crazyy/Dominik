@@ -28,10 +28,12 @@ nav a:hover,nav button:hover{background:var(--side-hover)}
 nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
 #side :focus-visible{outline-color:var(--red)}
 .ico{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-/* Constructs and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
+/* Constructs, Memories, Weapon Resonance and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
 .ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
 .ico-constructs{--art:url(assets-web/icons/constructs.png.webp)}
 .ico-cubs{--art:url(assets-web/icons/cubs.png.webp)}
+.ico-resonance{--art:url(assets-web/icons/resonance.png.webp)}
+.ico-memories{--art:url(assets-web/icons/memories.png.webp)}
 nav button i{margin-left:auto;font-style:normal;transition:transform .2s}
 nav button[aria-expanded=true] i{transform:rotate(180deg)}
 #teamsMenu{padding-left:10px}
@@ -79,8 +81,8 @@ h1{font-size:34px;font-weight:800}
 .home-link{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;transition:border-color .15s,background-color .15s}
 .home-link:hover,.home-link:focus-visible{border-color:var(--red);background:#1c1516}
 .home-links.data .home-link{flex-direction:column;gap:8px;text-align:center}
-.hl-art{flex:none;display:grid;place-items:center;width:44px;height:44px;color:#fff}
-.hl-art .ico{width:34px;height:34px;stroke-width:1.25}
+.hl-art{flex:none;display:grid;place-items:center;width:44px;height:44px;color:var(--red)}
+.hl-art .ico{width:37px;height:37px;stroke-width:1.25}
 .hl-tx{display:grid;gap:2px;min-width:0}
 .hl-tx b{font-size:14px;font-weight:700}
 .hl-tx small{font-size:12px;line-height:1.35;color:var(--mute)}
@@ -349,29 +351,33 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 #calc input[type=number],#calc select{width:100%;min-width:0;height:38px;padding:0 10px;background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 15px "Quantico"}
 #calc select{cursor:pointer}
 .calc-card{padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
-.calc-patch{padding:0}
-.calc-patch+.calc-patch{margin-top:8px;border-top:1px solid var(--line)}
-.calc-patch summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 16px;padding:12px 16px 12px 34px;position:relative;cursor:pointer;list-style:none}
-.calc-patch summary::-webkit-details-marker{display:none}
-.calc-patch summary::before{content:"▸";position:absolute;left:14px;top:14px;color:var(--mute)}
-.calc-patch[open] summary::before{content:"▾"}
-.calc-patch summary:hover{background:#1c1c1e}
-.calc-patch summary h3{font-size:16px}
-.calc-patch summary p{margin-top:2px;font-size:12px}
+.calc-patch .calc-head{align-items:flex-start}
 /* Fixed columns, so dates and days start at the same point on every row. The frame goes last because not every patch has one */
 .calc-meta{display:grid;grid-template-columns:186px 56px;gap:0 10px}
 .calc-meta span:last-child{grid-column:1/-1}
 .calc-meta span:empty{display:none}
-@container calc-main (min-width:1160px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
-@container calc-main (min-width:480px) and (max-width:980px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
-.calc-patch[open] summary{grid-template-columns:minmax(0,1fr)}
-.calc-patch[open] .calc-sum{display:none}
-.calc-body{position:relative;padding:0 20px 18px}
-/* Fixed columns, so the same currency lines up on every row */
-.calc-sum{display:grid;grid-template-columns:56px repeat(7,84px);gap:4px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
-.calc-sum>span{display:flex;align-items:center;gap:4px;min-width:0;min-height:32px;padding:3px 5px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
-.calc-sum .calc-icon{width:20px;height:20px}
-.calc-sum .short{color:#ff6b6b}
+@container calc-main (min-width:480px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
+/* The patch belt: stops ride a striped rail, and the picked one drops its card below */
+.calc-belt-wrap{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:6px;margin-bottom:6px}
+.calc-nav{padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 22px "Quantico";cursor:pointer}
+.calc-nav:hover:not(:disabled){background:#4a4a4f}
+.calc-nav:disabled{opacity:.3;cursor:default}
+.calc-belt{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
+.calc-track{position:relative;display:flex;gap:12px;width:max-content;padding:16px 6px 18px}
+.calc-track::before{content:"";position:absolute;left:0;right:0;top:calc(50% - 4px);height:10px;background:repeating-linear-gradient(115deg,#26262a 0 8px,#141416 8px 16px);border-block:1px solid var(--line)}
+.calc-stop{position:relative;flex:none;display:grid;align-content:start;gap:4px;width:150px;padding:9px 11px;background:var(--panel);border:1px solid var(--line);border-top:3px solid #4a4a4f;border-radius:4px;color:var(--txt);font:inherit;text-align:left;cursor:pointer;scroll-snap-align:center;transition:transform .15s,border-color .15s,background .15s}
+.calc-stop:hover{border-top-color:var(--mute)}
+.calc-stop.guess{border-style:dashed;border-top-style:solid}
+.calc-stop.collab{border-top-color:var(--side-on)}
+.calc-stop[aria-selected=true]{background:#1c1c1e;border-color:var(--red);transform:translateY(-4px)}
+.calc-stop[aria-selected=true]::after{content:"";position:absolute;left:50%;top:100%;margin:1px 0 0 -8px;border:8px solid #0000;border-bottom:0;border-top-color:var(--red)}
+.calc-stop-top{min-width:0}
+.calc-stop-top b{display:-webkit-box;min-height:2.5em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:15px;line-height:1.25}
+.calc-stop-top .calc-tag{position:absolute;top:-10px;right:8px;padding:1px 5px;font-size:9px}
+.calc-stop small{font-size:11px;color:var(--mute)}
+.calc-stop-bc{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.calc-stop-bc .calc-icon{width:22px;height:22px}
+.calc-stop-bc .short{color:#ff6b6b}
 .calc-tabs{display:flex;gap:8px;margin-bottom:14px}
 .calc-bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;margin-bottom:14px;padding:8px 14px;background:#0f0f10;border:1px solid var(--line);border-bottom:2px solid var(--red)}
 .calc-bar-item{display:flex;align-items:center;gap:10px;min-width:0}
@@ -379,8 +385,6 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-bar-item output{display:block;font-size:17px;font-weight:700}
 .calc-bar-item output.short{color:#ff6b6b}
 .calc-bar-item small{display:block;font-size:11px;color:var(--mute)}
-.calc-fold{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-bottom:10px;font-size:13px;color:var(--mute)}
-.calc-fold span{display:flex;gap:8px}
 .calc-step{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:4px}
 .calc-step button{height:38px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 18px "Quantico";cursor:pointer}
 .calc-step button:hover{background:#4a4a4f}
@@ -398,9 +402,8 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-head a{color:var(--txt);text-decoration:underline}
 .calc-tag{padding:2px 7px;background:var(--side-on);border-radius:3px;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 .calc-tag.guess{background:#3a3a40}
-.calc-rank{position:absolute;top:-50px;right:20px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.calc-rank{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
 #calc .calc-rank select{width:62px}
-.calc-rank+.calc-label{margin-top:4px}
 .calc-label{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .calc-rc-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:8px}
 .calc-rc-row b{font-size:15px}
@@ -450,7 +453,6 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-margin.low{--tone:#6fcf8e}.calc-margin.mid{--tone:#e6bd52}.calc-margin.high{--tone:#ff6b6b}
 .calc-pull-page{display:grid;gap:14px}
 .calc-pull-page[hidden]{display:none}
-@container calc-main (max-width:980px){.calc-patch summary{grid-template-columns:minmax(0,1fr)}.calc-sum{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}}
 @media(max-width:760px){#calc{padding-bottom:64px}.calc-bar{position:fixed;top:auto;left:0;right:0;bottom:0;flex-wrap:nowrap;gap:12px;margin:0;padding:6px 14px calc(6px + env(safe-area-inset-bottom));border-width:2px 0 0;border-top-color:var(--red);border-bottom:0}.calc-bar-item .calc-icon{width:26px;height:26px}.calc-bar-item{flex:1;gap:6px}.calc-bar-item output{font-size:15px}.calc-bar-item small{font-size:10px;line-height:1.2}}
 /* Wide screens: the explanations sit beside the patches and stay in view */
 @media(min-width:1680px){.calc-layout{grid-template-columns:minmax(0,1fr) 360px}.calc-side{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 90px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--red) #0000}.calc-side h2.grp:first-child{margin-top:0}}
@@ -458,7 +460,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 @media(min-width:900px) and (max-width:1679px){.calc-info{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Black Cards take two columns, so the seven currencies always fill their rows */
 @media(max-width:1100px){.calc-money{grid-template-columns:repeat(4,minmax(0,1fr))}.calc-coin:first-child{grid-column:span 2}.calc-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.calc-passes,.calc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-patch{scroll-margin-top:68px}.calc-patch summary{padding:10px 10px 10px 28px}.calc-patch summary::before{left:12px;top:12px}.calc-sum{gap:4px;font-size:11px}.calc-sum>span{gap:3px;min-height:26px;padding:2px 3px}.calc-sum .calc-icon{width:16px;height:16px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-fold p,[data-calc-fold=open]{display:none}.calc-fold{justify-content:flex-end}.calc-rank{position:static;margin-bottom:12px}.calc-body{padding:0 14px 14px}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
+@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-belt-wrap{grid-template-columns:minmax(0,1fr)}.calc-nav{display:none}.calc-track{gap:10px}.calc-stop{width:136px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
 .mt-name a::after{content:"";position:absolute;inset:0}
 .mt-name small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--mute)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
@@ -553,21 +555,21 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 #side .logo img{width:44px;height:44px;margin:0;object-fit:contain}
 #side nav :is(a:not(.sr),button){gap:12px;overflow:hidden;white-space:nowrap}
 /* Slightly larger icons; the padding shrinks to match so each stays centred in the 44px the rail leaves inside */
-#side .ico{width:22px;height:22px}
-#side nav>:is(a,button),#side .nav-foot>*{padding-inline:11px}
-#side .subList :is(.ico,img){width:24px;height:24px}
-#side .search-ico{display:block;position:absolute;left:11px;top:8px;color:var(--mute);pointer-events:none}
+#side .ico{width:24px;height:24px}
+#side nav>:is(a,button),#side .nav-foot>*{padding-inline:10px}
+#side .subList :is(.ico,img){width:26px;height:26px}
+#side .search-ico{display:block;position:absolute;left:10px;top:8px;color:var(--mute);pointer-events:none}
 #side #searchBox{padding-left:44px}
 /* Closed, the box is only as wide as the icon */
 #side:not(.pinned,.wide) #searchBox{padding-inline:0;color:#0000}
 #side:not(.pinned,.wide) #searchBox::placeholder{color:#0000}
 /* Open groups stay in the rail as a column of icons, each on the same line as when the menu is open */
 #side:not(.pinned) :is(#teamsMenu,.subList,.subList a){transition:padding .3s cubic-bezier(.4,0,.2,1),margin .3s cubic-bezier(.4,0,.2,1)}
-.subList .ico{width:22px;height:22px}
+.subList .ico{width:24px;height:24px}
 #side .subEmpty{overflow:hidden;white-space:nowrap}
 #side:not(.pinned,.wide) #teamsMenu{padding-left:0}
 #side:not(.pinned,.wide) .subList{margin-left:0;border-left-color:#0000}
-#side:not(.pinned,.wide) .subList a{padding-left:10px}
+#side:not(.pinned,.wide) .subList a{padding-left:9px}
 #side:not(.pinned,.wide) .subEmpty{color:#0000}
 }
 @media(max-width:760px),(hover:none) and (max-height:500px){.assets,.detail{grid-template-columns:minmax(0,1fr)}.atabs{display:flex;flex-wrap:wrap;position:static}body{flex-direction:column}#main{--pad:18px}
