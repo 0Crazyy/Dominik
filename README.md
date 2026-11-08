@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://dominiko.pages.dev/"><b>Open the site</b></a>
   ·
-  <a href="https://dominiko.pages.dev/calculator">BC Calculator</a>
+  <a href="https://dominiko.pages.dev/calculator">Planner</a>
   ·
   <a href="https://dominiko.pages.dev/timeline">Meta Timeline</a>
   ·
@@ -62,7 +62,7 @@ To share a build, copy the page address, which always points to the team on scre
 
 ### Plan your pulls
 
-The [BC Calculator](https://dominiko.pages.dev/calculator) has two tabs:
+The [Planner](https://dominiko.pages.dev/calculator) has two tabs:
 
 - **Planner:** enter your starting balance and see your Black Cards across upcoming patches. It also adds up the cost of the passes you pick, with estimated real-money prices.
 - **Pull chance:** choose a banner and a number of pulls to see your odds, including how often pity triggers.

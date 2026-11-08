@@ -752,7 +752,7 @@ function rotationLine(name, text) {
 function rotationBox(c) {
   const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(turn)}</h4>
     <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(note)}</p>` : ""}`).join("");
-  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}<a class="rot-source" href="${LEIA_GUIDE}" target="_blank" rel="noopener">Source: Spider 2B's Leia guide</a>`;
+  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}<a class="rot-source" href="${LEIA_GUIDE}" target="_blank" rel="noopener noreferrer">Source: Spider 2B's Leia guide</a>`;
 }
 // With a rotation, the text box of the card gets a tab for each. A card with no notes opens on the rotation
 function cardNotes(c) {
@@ -1069,7 +1069,7 @@ function homeLinks() {
   const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
   const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
-    ["BC Calculator", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
+    ["Planner", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
     ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."]
   ];
   const data = [
@@ -1407,13 +1407,13 @@ const CREDITS = [
 ];
 const KOFI = "https://ko-fi.com/ofcrazy";
 const creditRow = ({ name, text, href, art, support }) => `<li><span class="credit-art">${art ? pic(art) : esc(name[0].toUpperCase())}</span>
-  <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(text)}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener">Support on Ko-fi</a>` : ""}</span></li>`;
+  <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(text)}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>` : ""}</span></li>`;
 const contactPage = () => `<h1>Contact</h1><p class="sub">Found a wrong build, or have a question or suggestion? Send me a message.</p>
   <div class="contact">
     <section class="contact-card">
       <p class="contact-label">Discord</p>
       <div class="contact-name"><span class="credit-art big">${pic("assets/credits/crazy117.png")}</span><strong>crazy117</strong><button class="tool" data-copy="crazy117">Copy</button></div>
-      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener">Support me on Ko-fi</a>
+      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener noreferrer">Support me on Ko-fi</a>
     </section>
     <section class="contact-card">
       <p class="contact-label">Credits</p>
@@ -1601,7 +1601,7 @@ function packCost(rc, column) {
 }
 const rcPrice = rc => rc ? `≈ ${packCost(rc, 2).toLocaleString("en-US", { style: "currency", currency: "USD" })} · ${packCost(rc, 1).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} on Eneba` : "";
 const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
-const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${value || ""}" aria-label="${esc(label)}">`;
+const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
 const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(c.name)}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
 const frameLink = name => characters().some(c => c.name === name) ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
 // The belt: one stop per patch, in order, with the BC it leaves and the RC spent in it. Picking a stop shows that patch's card
@@ -1705,7 +1705,7 @@ function calculatorPage() {
   const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${name}</button>`;
   const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${what}</span></div>`;
   const today = calcToday(), patches = calcPlan(), picked = calc.pick = pickedId(patches);
-  return `<h1>BC Calculator</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p>
+  return `<h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p>
   <div id="calc">
     <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
     <div data-calc-panel="plan"${calc.tab === "plan" ? "" : " hidden"}>
@@ -1732,7 +1732,7 @@ function calculatorPage() {
         <aside class="calc-side">
           <h2 class="grp">Passes total</h2>
           <section class="calc-card calc-total">${calcIcon(RC_ART)}<output id="calcRc"></output><b id="calcRcPrice"></b><small id="calcRcList"></small>
-            <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
+            <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener noreferrer">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
           ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
             ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500)."],
             ["Current patch", "Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC."],
@@ -1764,7 +1764,7 @@ function calculatorPage() {
         ["Pity hits", "How many times pity triggers in these pulls if luck never comes first. Getting it early restarts the count."],
         ["Expected", "What one copy takes on average once pity is counted, at 250 BC per pull."],
         ["Nearly Guaranteed", `How many pulls a ${NEARLY_SURE * 100}% chance would take if pity didn't exist.`],
-        ["Method", `The rate is treated as flat until pity. Expected and Nearly Guaranteed adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener">FINNER's numbers</a> from Warframe.`]
+        ["Method", `The rate is treated as flat until pity. Expected and Nearly Guaranteed adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener noreferrer">FINNER's numbers</a> from Warframe.`]
       ])}</section>`)}
     </div>
   </div>`;
@@ -1953,7 +1953,7 @@ function timelineBody() {
 }
 function timelinePage() {
   const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${TL_VIEWS[key].name}</button>`;
-  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener">Chinese wiki</a>, and Global release dates are not considered. Collabs and uniframes are not counted. "Free" marks frames you can get without pulling.</p>
+  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">Chinese wiki</a>, and Global release dates are not considered. Collabs and uniframes are not counted. "Free" marks frames you can get without pulling.</p>
   <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
 }
 $("#main").addEventListener("click", e => {
@@ -2368,7 +2368,7 @@ function searchData() {
     ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),
     ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Contact", "/contact"]]
       .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
-    { label: "BC Calculator", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
+    { label: "Planner", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
     { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },
     ...Object.entries(PAGES).flatMap(([path, ids]) => ids.flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name }]).map(v =>
       ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: `/${path}/${v.id}`, art: "" }))))

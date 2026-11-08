@@ -17,7 +17,7 @@ const FORCE = process.argv.includes("--force");
 const QUALITY = "85", JOBS = 6;
 
 // Not loaded through web(): home thumbnails and the link preview are used as they are
-const SKIP = [/^home\//, /^embed-icon\./];
+const SKIP = [/^home\//, /^embed-icon/];
 // Largest size of each kind of image, about twice what the biggest view shows (the focus view enlarges cards 1.35x)
 const DEFAULT_SIZE = "512x512";
 const SIZES = [

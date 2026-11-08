@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "anthropic.claude-code",
+    "dbaeumer.vscode-eslint",
+    "usernamehw.errorlens",
+    "ecmel.vscode-html-css",
+    "esbenp.prettier-vscode",
+    "xabikos.javascriptsnippets",
+    "ritwickdey.liveserver",
+    "ms-playwright.playwright",
+    "ms-vscode.powershell",
+    "tomoki1207.pdf",
+    "upstash.context7-mcp"
+  ]
+}

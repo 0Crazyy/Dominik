@@ -4,6 +4,18 @@ Site de builds de Punishing: Gray Raven em HTML, CSS e JS puros, sem build e sem
 
 Textos do site e comentários do código ficam em inglês. Mensagens das ferramentas em `tools/` ficam em português.
 
+## Computador novo
+
+Na primeira sessão em um computador, confira estes itens antes de qualquer tarefa. Diga ao usuário o que falta e ofereça instalar o que der para instalar pelo terminal (`winget`, `npm`, `pip`, `code --install-extension`). O login do Cloudflare abre o navegador, então quem faz é o usuário.
+
+1. Programas: Git, Node.js (hoje v26), Python 3 e Microsoft Edge (o smoke usa o Edge).
+2. `git config core.hooksPath tools/githooks`: liga o pre-commit. Essa configuração não vem no clone.
+3. `npm install`: ESLint e Playwright das ferramentas.
+4. `pip install pillow numpy scipy`: só para `tools/style-ranks.py`.
+5. `npx wrangler@4 login`: só para o deploy, uma vez por computador.
+6. Extensões do VS Code: ficam em `.vscode/extensions.json`, e o VS Code oferece instalar ao abrir a pasta. Para instalar de uma vez: `code --install-extension <id>` para cada uma.
+7. Pastas fora do git, que só existem se o usuário tiver guardado uma cópia: `drafts/` e `Dominik - arquivos fonte/`.
+
 ## Onde está cada coisa
 
 | Arquivo | Conteúdo |
@@ -41,6 +53,7 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 - **Páginas novas:** cada endereço é um arquivo escrito por `tools/make-embeds.mjs`. Um tipo de página fora da lista desse script dá 404 no site publicado, mesmo funcionando no smoke, que serve `index.html` para qualquer endereço.
 - **`_headers`:** o CSP não permite scripts inline nem imagens de outros sites. Tudo precisa estar no próprio site.
 - **Cache de imagens:** `/assets-web/*` fica 7 dias no navegador. Arte trocada com o mesmo nome parece deploy com falha.
+- **Ícone do embed:** o Discord guarda a imagem do preview pelo endereço dela, e `?v=` no link da página não muda isso. Arte nova do embed precisa de nome de arquivo novo (hoje `assets/embed-icon-3.png`).
 - **`const $ = (s, r = document)`:** `check-assets`, `make-sitemap` e `make-embeds` usam essa linha para achar o fim dos dados. Se ela mudar, atualize esses scripts.
 - **`SITE_FILES` em `tools/deploy.mjs`:** um arquivo novo do site só é publicado se estiver nessa lista.
 
