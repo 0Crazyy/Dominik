@@ -1456,7 +1456,7 @@ const CALC_SPENDING = [
   { key: "custom", name: "Other BC spend", note: "Skins, special banners...", step: 1000 }
 ];
 // Eneba prices before checkout fees: [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
-const RC_PRICES_DATE = "7 Nov 2026";
+const RC_PRICES_DATE = "8 Nov 2026";
 const RC_PACKS = [[5, 4.40, 1.07], [28, 22.57, 4.34], [34, 27.76, 5.29], [59, 45.93, 8.62], [71, 54.59, 10.20], [119, 90.92, 16.86], [299, 229.36, 42.20], [600, 458.64, 84.16]];
 const RC_STORE = "https://www.eneba.com/top-up-punishing-gray-raven-android-rainbow-cards-global";
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
