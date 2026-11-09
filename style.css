@@ -30,10 +30,10 @@ nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#ff
 .ico{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 /* Constructs, Memories, Weapon Resonance and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
 .ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
-.ico-constructs{--art:url(assets-web/icons/constructs.png.webp)}
-.ico-cubs{--art:url(assets-web/icons/cubs.png.webp)}
-.ico-resonance{--art:url(assets-web/icons/resonance.png.webp)}
-.ico-memories{--art:url(assets-web/icons/memories.png.webp)}
+.ico-constructs{--art:url(assets-web/icons/constructs.png.webp?v=2)}
+.ico-cubs{--art:url(assets-web/icons/cubs.png.webp?v=2)}
+.ico-resonance{--art:url(assets-web/icons/resonance.png.webp?v=2)}
+.ico-memories{--art:url(assets-web/icons/memories.png.webp?v=2)}
 nav button i{margin-left:auto;font-style:normal;transition:transform .2s}
 nav button[aria-expanded=true] i{transform:rotate(180deg)}
 #teamsMenu{padding-left:10px}
