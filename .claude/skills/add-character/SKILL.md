@@ -57,6 +57,7 @@ A esteira da home se monta sozinha a partir dos times. Só edite `HERO_FIRST` se
 ## 4. Editar `data/assets-data.js`
 
 - **Arma nova:** adicione em `WEAPONS`, em ordem alfabética: `["Nome: Frame", "Nome da Arma", "Tipo", "pasta/Arma - X.ext", "Efeito"]`, e em `WEAPON_STATS`: `"Nome da Arma": [ATK, CRIT]`. Sem os stats, a página Weapons quebra.
+- **Arma 5★ independente:** adicione em `FIVE_STAR_WEAPONS` como `["", "Nome", "", "assets/weapons/5stars/arquivo.png", "Efeito", 5]`, mais os stats em `WEAPON_STATS`. Esses itens aparecem em All, sem filtro por elemento ou opção no Team Builder.
 - **Memória nova:** adicione em `MEMORY_TABS` (`app.js`), em `MEMORY_EFFECTS` e em `MEMORY_STATS` (`data/assets-data.js`, como `[ATK, DEF, CRIT, HP]`). Sem esses dados, as páginas de memória quebram.
 - **Skills do personagem:** ficam em `data/skills-data.js`, vindas da seção "Skills & Passives" da página dele na wiki. Sem elas, a página de skills dele avisa que ainda não há texto.
 - **Ícones das skills:** cada skill em `data/skills-data.js` precisa de `assets/characters/<nome-frame>/skills/<tipo>.png`, com o tipo exato da entrada (`Red Orb.png`, `SSS+ Rank.png`). Sem eles, `check-assets` dá erro. Os ícones estão em `https://huaxu.app/na/wiki/constructs/<frame>/skills`, no campo `icon` de cada skill.

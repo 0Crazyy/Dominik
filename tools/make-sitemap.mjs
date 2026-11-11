@@ -12,7 +12,7 @@ const { COMPS, PAGES } = vm.runInNewContext(`${readFileSync(join(ROOT, "data/ass
 const names = Object.values(COMPS).flatMap(c => (c.variants || [c]).flatMap(team => team.cards.map(card => card.name)));
 // Same address as charId in app.js
 const characterId = name => name.replace(":", "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-const pages = ["", "constructs", "calculator", "timeline", "contact", "assets/memories", "assets/weapons", "assets/resonances", "assets/cubs",
+const pages = ["", "constructs", "calculator", "timeline", "editor", "contact", "assets/memories", "assets/weapons", "assets/resonances", "assets/cubs",
   ...Object.keys(PAGES), ...[...new Set(names)].map(name => `character/${characterId(name)}`)];
 const urls = pages.map(page => `  <url><loc>${SITE}/${page}</loc></url>`).join("\n");
 writeFileSync(join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);

@@ -24,6 +24,12 @@ Na primeira sessão em um computador, confira estes itens antes de qualquer tare
 | `data/assets-data.js` | Textos das páginas Assets: memórias, armas, ressonâncias, CUBs, `CONSTRUCTS` |
 | `data/skills-data.js` | Textos das skills. Só carrega quando uma página precisa, via `loadSkills()` |
 | `data/calculator-data.js` | Renda por patch. `tools/update-calculator.mjs` atualiza a planilha; `frame` e as linhas de collab são escritos à mão |
+| `editor.js` | Team Builder (`/editor`). Só carrega nessa página, junto com o catálogo |
+| `data/catalog-data.js` | Gerado por `tools/make-catalog.mjs` (o deploy roda): o que um time do Team Builder pode ter. Não edite à mão |
+| `functions/api/` | API no Cloudflare Pages: `submit.js` recebe um time do Team Builder (Turnstile, limites por IP, fila), `teams.js` devolve os aprovados, `admin.js` é por onde o bot do Discord aprova (segredo `ADMIN_KEY`; o bot fica em `../Dominik - bot/`). Só `/api/*` passa por aqui |
+| `server/` | O que a API importa: `team.js` (validação, igual ao `edClean` do `editor.js`), `schema.sql` (tabelas do D1) e `catalog.js` (gerado por `make-catalog`) |
+| `tools/review-teams.mjs` | Aprova ou rejeita os times enviados, no terminal, e regrava a chave `teams` do KV que o site lê. `--aprovados` lista e remove; `--local` usa o banco do `wrangler pages dev` |
+| `wrangler.toml` | Ligações da API (D1 `DB`, KV `CACHE`). Segredos nunca entram aqui: `npx wrangler@4 pages secret put NOME --project-name dominiko` |
 | `data/timeline-data.js` | Gerado por `tools/update-timeline.mjs`; não edite à mão |
 | `assets/` | Artes originais, e é para onde os caminhos do código apontam |
 | `assets-web/` | Cópias leves geradas por `tools/optimize-images.mjs`; `web()` no `app.js` troca o caminho ao renderizar. Nunca edite à mão |
@@ -44,6 +50,8 @@ Depois de editar, rode o que couber na mudança e diga o resultado:
 3. `npm run smoke`: abre todas as páginas do `sitemap.xml` no Edge, em desktop e celular, e testa busca, troca de time, detalhe de arma, página de skills e menu do celular. Pega erro de JS, bloqueio de CSP, 404, página vazia e rolagem lateral. Leva cerca de 20 s. Na primeira vez em um computador, rode `npm install`.
 4. `node tools/smoke.mjs timeline energy/fire`: só essas páginas, sem a barra inicial (o Git Bash a reescreve). `home` é a página inicial. Use também para páginas ainda fora do `sitemap.xml`, que só é refeito no deploy.
 
+5. API e times da comunidade: o smoke não tem API. Rode `node tools/deploy.mjs --stage-only`, depois `npx wrangler@4 d1 execute dominik --local --file server/schema.sql` e `npx wrangler@4 pages dev .deploy --port 8788`. O `.dev.vars` (fora do git) guarda as chaves de teste do Turnstile, que sempre passam.
+
 O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints em `.smoke/desktop/` e `.smoke/mobile/`, e diga ao usuário o que você realmente viu.
 
 ## Armadilhas
@@ -55,6 +63,7 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 - **Cache de imagens:** `/assets-web/*` fica 7 dias no navegador. Arte trocada com o mesmo nome parece deploy com falha.
 - **Ícone do embed:** o Discord guarda a imagem do preview pelo endereço dela, e `?v=` no link da página não muda isso. Arte nova do embed precisa de nome de arquivo novo (hoje `assets/embed-icon-3.png`).
 - **`const $ = (s, r = document)`:** `check-assets`, `make-sitemap` e `make-embeds` usam essa linha para achar o fim dos dados. Se ela mudar, atualize esses scripts.
+- **Times da comunidade:** entram em `PAGES` e `COMPS` depois que a página carrega (`loadCommunity()` no `app.js`), com endereço `/energy/fire?team=c-12`, porque só os endereços escritos pelo `make-embeds` existem como arquivo. Mudou `edClean` no `editor.js`? Mude `cleanTeam` em `server/team.js` igual.
 - **`SITE_FILES` em `tools/deploy.mjs`:** um arquivo novo do site só é publicado se estiver nessa lista.
 
 ## Combinados

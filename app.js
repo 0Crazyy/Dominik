@@ -316,7 +316,10 @@ const COMPS = {
         { bar: "red", role: "captain", ...LEIA_KIT, wh: "Cottie", memories: memBuild(MOUSME, COTTIE),
           desc: "Main DPS for Pain Cage.\n• No Weapon Harmony: keep 2 Cottie." },
         { bar: "gold", role: "starter", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(CHEN_JIYUAN, GUINEVERE), desc: "" }
-      ] }
+      ] },
+      // The same teams as Spider 2B's SS ones, with Leia playing Player03's orb rotation. Lucia, Teddy and Wanshi keep the guide's
+      { id: "leia-orb-alpha", group: "Leia Orb rotation", label: "Alpha Ice · SS Sub-Dps", name: "Leia Orb rotation SS Alpha Ice", cards: cometTeam(LEIA_SS, withPlayer03Leia(LEIA_ROTATIONS.alphaSS)) },
+      { id: "leia-orb-alt-ice", group: "Leia Orb rotation", label: "Alt Ice · SS", name: "Leia Orb rotation SS Alt Ice", cards: altIceTeam(LEIA_SS, withPlayer03Leia(LEIA_ROTATIONS.altIceSS)) }
     ]
   },
   "comets-afterglow-glaciation": {
@@ -605,8 +608,14 @@ const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", inf
   return `<${tag} class="slot${named ? " named" : ""}"${href ? ` href="${esc(href)}"` : ""}${tipAttr(tip, info)}>${src ? pic(src) : esc(label)}${src || named ? overlay : ""}</${tag}>`;
 };
 // Both bars are 2048x230 and span the whole slot
-const STARS_BAR = "assets/overlay/UI-Supply-6Star.png", WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", BAR_RATIO = 230 / 2048;
-const STARS = pic(STARS_BAR, 'class="stars" alt="6 stars"');
+const STAR_BARS = {
+  4: "assets/overlay/UI-Supply-4Star.png",
+  5: "assets/overlay/UI-Supply-5Star.png",
+  6: "assets/overlay/UI-Supply-6Star.png"
+};
+const STARS_BAR = STAR_BARS[6], WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", BAR_RATIO = 230 / 2048;
+const starOverlay = rank => pic(STAR_BARS[rank] || STARS_BAR, `class="stars" alt="${rank || 6} stars"`);
+const STARS = starOverlay(6);
 const numbered = (src, i, href = "") => `<div class="cell">${slot(src, "", "", undefined, href)}<span>${i}</span></div>`;
 const n = (k, f) => Array.from({ length: k }, (_, i) => f(i));
 
@@ -752,7 +761,9 @@ function rotationLine(name, text) {
 function rotationBox(c) {
   const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(turn)}</h4>
     <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(note)}</p>` : ""}`).join("");
-  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}<a class="rot-source" href="${LEIA_GUIDE}" target="_blank" rel="noopener noreferrer">Source: Spider 2B's Leia guide</a>`;
+  // A rotation with source: null (one written in the Team Builder) shows no source link
+  const source = c.rotation.source === undefined ? { label: "Spider 2B's Leia guide", href: LEIA_GUIDE } : c.rotation.source;
+  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}${source ? `<a class="rot-source" href="${esc(source.href)}" target="_blank" rel="noopener noreferrer">Source: ${esc(source.label)}</a>` : ""}`;
 }
 // With a rotation, the text box of the card gets a tab for each. A card with no notes opens on the rotation
 function cardNotes(c) {
@@ -770,7 +781,7 @@ function showNote(tab) {
   box.querySelectorAll("[data-pane]").forEach(pane => { pane.hidden = pane.dataset.pane !== tab.dataset.note; });
 }
 function card(c) {
-  const [, weapon = "", , , weaponEffect = ""] = WEAPONS.find(w => w[0] === c.name) || [];
+  const [, weapon = "", weaponType = "weapon", , weaponEffect = ""] = WEAPONS.find(w => w[0] === c.name) || [];
   const memory = (piece, i) => {
     if (!piece) return slot("", i + 1);
     const art = piece.startsWith("assets/") ? piece : "", name = art ? iconName(art) : piece;
@@ -783,12 +794,12 @@ function card(c) {
   const resonance = src => src ? resonanceHref(iconName(src)) : "";
   return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}"><div class="cin">
     <h3><a href="${characterHref(c.name)}">${esc(c.name)}</a></h3>
-    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "icon"}</div>
-      <div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "portrait"}</div>
-      <div class="rank"${tipAttr(iconName(rankArt(c)))}>${pic(rankArt(c), 'alt="rank"')}</div></div>
+    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "Class"}</div>
+      <div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "Construct"}</div>
+      <div class="rank"${tipAttr(c.name && iconName(rankArt(c)))}>${c.name ? pic(rankArt(c), 'alt="rank"') : ""}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
-      <div class="wp">${slot(c.weapon, weapon || "weapon", STARS, weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
+      <div class="wp">${slot(c.weapon, weaponType, c.weapon ? starOverlay(weaponRank(weapon, c.weapon, c.weaponRank)) : "", weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
       <div class="mxw">
         <div class="mx">${n(3, i => numbered((c.matrix || [])[i], i + 1, resonance((c.matrix || [])[i]))).join("")}</div>
         <div class="res"><span>6×</span>${skillSlot(c.resonance)}<span>6×</span>${skillSlot(c.core)}</div>
@@ -933,7 +944,8 @@ $("#main").addEventListener("click", e => {
   if (save) return exportBuild(save, shownTeam.cards);
   const note = e.target.closest("[data-note]");
   if (note) return showNote(note);
-  if (c && !e.target.closest("a")) openFocus(c);
+  // Team Builder cards are for editing: clicks there place and clear pieces instead of enlarging the card
+  if (c && !e.target.closest("a") && !c.closest(".ed-live")) openFocus(c);
 });
 $("#main").addEventListener("click", e => {
   const filter = e.target.closest("[data-filter]");
@@ -1018,6 +1030,8 @@ $("#main").addEventListener("scroll", e => { if (e.target.matches?.(".comp")) sh
 // Every character with a build and all their builds, read from PAGES and COMPS, so a new team shows up by itself
 // on the conveyor and on the character pages. Energy pages come first, then Derivative Effect pages.
 let characterList = null;
+// A community team (id c-12) has no file of its own on the server, so it opens as its page plus ?team=
+const buildHref = (path, id) => /^c-\d+$/.test(id) ? `/${path}?team=${id}` : `/${path}/${id}`;
 function characters() {
   if (characterList) return characterList;
   const found = new Map();
@@ -1027,7 +1041,7 @@ function characters() {
     const page = TEAM_LISTS[kind].items.find(e => slug(e) === key);
     for (const t of variants || [{ id, cards }]) for (const c of t.cards) {
       if (!found.has(c.name)) found.set(c.name, { name: c.name, portrait: c.portrait, symbol: c.symbol, builds: [] });
-      found.get(c.name).builds.push({ href: `/${path}/${t.id}`, page, team, variant: t.name, card: c, mates: t.cards.filter(x => x !== c) });
+      found.get(c.name).builds.push({ href: buildHref(path, t.id), page, team, variant: t.name, card: c, mates: t.cards.filter(x => x !== c) });
     }
   }
   return characterList = [...found.values()];
@@ -1070,7 +1084,8 @@ function homeLinks() {
   const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
     ["Planner", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
-    ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."]
+    ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."],
+    ["Team Builder", "/editor", "editor", "Put a team together, see its cards and share it as a link or an image."]
   ];
   const data = [
     ["Constructs", "/constructs", "constructs", count(chars, "construct")],
@@ -1105,24 +1120,32 @@ function home() {
     <div class="home-grid">${labels}${columns}</div>
     ${homeLinks()}`;
 }
-// Every page visit opens the newest team (first composition in PAGES, on its first variant) unless
-// the link names another. A composition with variants shows its build only while one of its
-// variant buttons is pressed, so closing the group clears the choice.
-let shown = "", expanded = "", chosen = "";
-function pickerHtml(path, sel) {
-  const btn = (attr, label, on) => `<button ${attr} aria-pressed="${on}">${label}</button>`;
-  return PAGES[path].map(id => {
-    const { name, variants } = COMPS[id], open = id === expanded;
-    const head = variants ? btn(`data-id="${id}" aria-expanded="${open}"`, `${name} <i>▾</i>`, id === sel)
-      : btn(`data-id="${id}"`, name, id === sel);
-    const pick = v => btn(`data-variant="${v.id}" title="${esc(v.name)}"`, v.label || v.name, v.id === chosen);
-    const sets = variants && [...new Set(variants.map(v => v.group))].map(group => {
-      const items = variants.filter(v => v.group === group).map(pick).join("");
-      return group ? `<div class="pset"><span>${esc(group)}</span><div>${items}</div></div>` : items;
-    }).join("");
-    const sub = variants && open ? `<div class="psub">${sets}</div>` : "";
-    return `<div class="pgroup">${head}${sub}</div>`;
-  }).join("");
+// A team page lists its builds, newest patch first, with a search box above. Each build has a page of its own with the
+// cards, at /energy/ice/<build>: the variant id, or the composition id when it has no variants (a composition id with
+// variants opens its first one, as older links did)
+let shown = "", chosen = "";
+// Every build of a page, flat: a composition with variants gives one per variant
+const pageBuilds = path => PAGES[path].flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name, cards: COMPS[id].cards }])
+  .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, cards: v.cards })));
+// The patch and the group, without repeating the patch when a build has no group of its own
+const buildTags = (comp, group) => `${isNewTeam(comp) ? `<i class="new">New</i>` : ""}${[COMPS[comp].name, group !== COMPS[comp].name && group].filter(Boolean).map(t => `<i>${esc(t)}</i>`).join("")}`;
+function listRow(path, b) {
+  const { name: patch } = COMPS[b.comp];
+  // The captain leads the row, as the build's main character
+  const main = b.cards.find(c => /\bcaptain\b/.test(c.role)) || b.cards[0], mates = b.cards.filter(c => c !== main);
+  const search = [b.name, patch, b.group, ...b.cards.map(c => c.name)].filter(Boolean).join(" ").toLowerCase();
+  return `<a class="brow" href="${buildHref(path, b.variant || b.comp)}" data-search="${esc(search)}">
+    <span class="brow-art">${main.portrait ? pic(main.portrait) : ""}</span>
+    <span class="brow-tx"><b>${esc(b.name)}</b>
+      <small><em>${esc(main.name)}</em> with ${mates.map(c => esc(c.name.split(":")[0])).join(" and ")}</small>
+      <span class="brow-tags">${buildTags(b.comp, b.group)}</span></span>
+  </a>`;
+}
+function buildList(path) {
+  const builds = pageBuilds(path);
+  return `<div class="picker"><label class="bsearch"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" placeholder="Search ${builds.length} build${builds.length === 1 ? "" : "s"}" aria-label="Search builds by name, patch or character"></label>
+    <div class="blist">${builds.map(b => listRow(path, b)).join("")}</div>
+    <p class="empty" hidden>No builds match this search.</p></div>`;
 }
 const noticeTimeLeft = () => Date.parse(NEW_CHARACTER_NOTICE.until) - Date.now();
 const notice = cards => noticeTimeLeft() > 0 && cards.some(c => c.name === NEW_CHARACTER_NOTICE.name) ? `<p class="notice" role="note">${esc(NEW_CHARACTER_NOTICE.text)}</p>` : "";
@@ -1142,21 +1165,29 @@ function compBody(sel) {
   shownTeam = { id: sel, title: [COMPS[sel].name, pickedVariant(sel)?.name].filter(Boolean).join(" · "), cards: shownCards };
   return `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + pager(shownCards) + comp(sel, shownCards);
 }
-function team(path) {
+function team(path, pick) {
   const [kind, key] = path.split("/");
   const list = TEAM_LISTS[kind]?.items.find(e => slug(e) === key);
   if (!list) return `<p class="empty">Page not found.</p>`;
   const ids = PAGES[path] || [];
+  if (pick) {
+    const back = `<div class="backs"><a class="back" href="/${path}">‹ ${esc(list)} builds</a></div>`;
+    if (!shown) return `${back}<p class="empty">Build not found.</p>`;
+    const name = pickedVariant(shown)?.name || COMPS[shown].name, group = pickedVariant(shown)?.group;
+    return `<div id="noticeBox">${teamNotice(shown)}</div>${back}<h1>${esc(name)}</h1>
+      <p class="sub">${esc(list)} · ${TEAM_LISTS[kind].label}</p><p class="brow-tags build-tags">${buildTags(shown, group)}</p>
+      <div id="compBox">${compBody(shown)}</div>`;
+  }
   const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
   if (!ids.length) return head + `<p class="empty">No teams yet.</p>`;
-  return `<div id="noticeBox">${teamNotice(shown)}</div>${head}<div class="picker" role="group" aria-label="Composition">${pickerHtml(path, shown)}</div><div id="compBox">${compBody(shown)}</div>`;
+  return head + buildList(path);
 }
 
 /* ---------- assets pages ---------- */
 const thumb = (src, overlay = "") => `<div class="slot">${src ? pic(src) + overlay : ""}</div>`;
-// The 6-star bar goes on every memory and weapon of the Assets pages, except these 5-star ones
-const FIVE_STAR = new Set(["Gloria", "Purple Peony"]);
-const starsOf = name => FIVE_STAR.has(name) ? "" : STARS;
+const FIVE_STAR = new Set(["Gloria"]);
+const weaponRank = (name, file = "", rank = "") => Number(rank || String(file || "").match(/\s\(([456])\)(?=\.[^.]+$)/)?.[1] || (FIVE_STAR.has(name) ? 5 : 6));
+const starsOf = (name, file = "", rank = "") => starOverlay(weaponRank(name, file, rank));
 const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(src => thumb(src, starsOf(name))).join("");
 // The tables of the Assets pages. Clicking a column header or the release button goes through its two orders, then
 // back to the default one. The order stays while browsing and goes in the address (?sort=), so a link keeps it
@@ -1185,19 +1216,20 @@ const memoryRow = ([name, boost, ext]) => `<tr>
     <td><div class="mt-name"><div class="mt-art">${thumb(ext && memFile(name, "1-4"), starsOf(name))}</div>
       <div><a href="${memoryHref(name)}">${esc(name)}</a><small>${esc(boost)}</small></div></div></td>
     ${MEMORY_STATS[name].map(value => `<td>${value}</td>`).join("")}</tr>`;
-const weaponThumb = (file, name) => thumb(file && `${CHARS}/${file}`, starsOf(name));
+const weaponFile = file => file && (file.startsWith("assets/") ? file : `${CHARS}/${file}`);
+const weaponThumb = (file, name, rank = "") => thumb(weaponFile(file), file ? starsOf(name, file, rank) : "");
 // A character without a build has no page to link to
 const ownerLink = name => characters().some(c => c.name === name) ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name);
-const weaponRow = ([owner, name, type, file]) => `<tr>
-    <td><div class="mt-name"><div class="mt-art wpn-art">${weaponThumb(file, name)}</div>
-      <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${ownerLink(owner)} · ${esc(type)}</small></div></div></td>
+const weaponRow = ([owner, name, type, file, , rank]) => `<tr>
+    <td><div class="mt-name"><div class="mt-art wpn-art">${weaponThumb(file, name, rank)}</div>
+      <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${owner ? `${ownerLink(owner)}${type ? ` · ${esc(type)}` : ""}` : `${rank || weaponRank(name, file)}-star weapon`}</small></div></div></td>
     ${WEAPON_STATS[name].map(value => `<td>${value}</td>`).join("")}</tr>`;
 const SORT_TABLES = {
   memories: { columns: STAT_NAMES, row: set => memoryRow(set), name: ([name]) => name,
     value: ([name], column) => column === "Release" ? MEMORY_RELEASE[name] : MEMORY_STATS[name][STAT_NAMES.indexOf(column)] },
-  // A weapon came out with the frame it belongs to
+  // Character-bound weapons follow their frame's release; standalone weapons sort after them
   weapons: { columns: ["ATK", "CRIT"], row: weapon => weaponRow(weapon), name: ([, name]) => name,
-    value: ([owner, name], column) => column === "Release" ? CONSTRUCTS[owner][0] : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
+    value: ([owner, name], column) => column === "Release" ? CONSTRUCTS[owner]?.[0] ?? 0 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
   // Same for a CUB. They all have the same ATK, so no stat column
   cubs: { columns: [], row: cub => cubRow(cub), name: cub => cub.name, value: cub => CONSTRUCTS[cub.owner][0] },
   resonances: { columns: [], row: resonance => resonanceRow(resonance), name: ([name]) => name, noRelease: true }
@@ -1292,10 +1324,11 @@ function memoryPage([name, boost, ext]) {
       <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>
     ${usedIn(c => c.wh === name || (c.memories || []).some(piece => piece === name || iconName(piece) === name))}`;
 }
-function weaponPage([owner, name, type, file, effect]) {
+function weaponPage([owner, name, type, file, effect, rank]) {
   const [ATK, CRIT] = WEAPON_STATS[name];
-  return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc([type, owner].filter(Boolean).join(" · "))}</p>
-    <div class="detail wpn-detail">${weaponThumb(file, name)}<div class="fx">${statRow({ ATK, CRIT })}<h2>Effect</h2><p>${esc(effect)}</p></div></div>
+  const subtitle = owner ? [type, owner].filter(Boolean).join(" · ") : `${rank || weaponRank(name, file)}-star weapon`;
+  return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
+    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}<h2>Effect</h2><p>${esc(effect)}</p></div></div>
     ${usedIn(c => c.name === owner)}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
@@ -1378,7 +1411,7 @@ function assetsPage(key, pick = "all") {
   if (key === "weapons") {
     const tabs = ["All", ...ENERGY], tab = tabs.find(t => slug(t) === pick);
     if (!tab) return notFound;
-    shownRows.weapons = tab === "All" ? WEAPONS : WEAPONS.filter(([owner]) => CONSTRUCTS[owner][1] === tab);
+    shownRows.weapons = tab === "All" ? WEAPONS : WEAPONS.filter(([owner]) => CONSTRUCTS[owner]?.[1] === tab);
     return `<h1>Weapons</h1><p class="sub">Assets</p>
     <div class="assets">${assetTabs("weapons", tabs, tab, "Weapon element")}
       ${openTable("weapons", shownRows.weapons)}</div>`;
@@ -1831,6 +1864,64 @@ $("#main").addEventListener("keydown", e => {
   e.preventDefault();
   stepBelt(by, true);
 });
+/* ---------- Team Builder: its code (editor.js) and catalog load only when the page opens ---------- */
+let editorState = "", editorLoad = null;
+const loadScript = src => new Promise((done, fail) => {
+  const script = document.createElement("script");
+  script.src = src;
+  script.onload = done;
+  script.onerror = fail;
+  document.head.append(script);
+});
+// Loads once, whoever asks first: the Team Builder page, or the community teams of the other pages
+function loadEditor() {
+  if (editorLoad) return editorLoad;
+  editorState = "loading";
+  return editorLoad = loadScript("data/catalog-data.js").then(() => loadScript("editor.js"))
+    .then(() => { editorState = "ready"; }, () => { editorState = "failed"; throw new Error("editor.js failed to load"); });
+}
+function editorPage() {
+  if (editorState === "ready") return teamBuilder();
+  const head = `<h1>Team Builder</h1>`;
+  if (editorState === "failed") return `${head}<p class="empty">The Team Builder failed to load. Reload the page to try again.</p>`;
+  loadEditor().catch(() => {}).then(() => { if (location.pathname === "/editor") route(); });
+  return `${head}<p class="empty">Loading...</p>`;
+}
+
+/* ---------- community teams: approved teams sent from the Team Builder, read from /api/teams ---------- */
+// They join PAGES and COMPS as one more composition on their page, so the lists, the character pages and the search
+// show them like any other build. If the API fails or has no teams, the site stays as it is
+function addCommunity(list) {
+  let added = 0;
+  for (const item of list) {
+    const team = edClean(item?.team), cards = edCards(team), id = `c-${item?.id}`;
+    if (!team.page || cards.length < 3 || !/^c-\d+$/.test(id)) continue;
+    const comp = `community-${team.page}`;
+    if (!COMPS[comp]) {
+      const { c1, c2, cp } = edTheme(team);
+      COMPS[comp] = { name: "Community", c1, c2, cp, variants: [] };
+      (PAGES[team.page] ||= []).push(comp);
+    }
+    const author = typeof item.author === "string" ? item.author.slice(0, 32) : "";
+    COMPS[comp].variants.push({ id, name: team.name.trim() || "Untitled team", group: author ? `by ${author}` : undefined, cards });
+    added++;
+  }
+  return added;
+}
+function loadCommunity() {
+  fetch("/api/teams").then(r => r.ok ? r.json() : []).then(list => {
+    if (!Array.isArray(list) || !list.length) return;
+    return loadEditor().then(() => {
+      if (!addCommunity(list)) return;
+      characterList = null;
+      searchItems = null;
+      // Only pages that list builds are drawn again: the others have nothing new to show
+      const kind = location.pathname.split("/")[1];
+      if (!kind || TEAM_LISTS[kind] || kind === "character") route();
+    });
+  }).catch(() => { /* no API here (a local copy) or a bad answer: official builds only */ });
+}
+
 /* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */
 const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overlinker", "Annihilator", "Observer"];
 // Each class here is the next step of the one before it, so a newer frame of any of them replaces the older ones
@@ -2098,7 +2189,8 @@ function drawCard(g, c, art, cardColor, stars, x, y, flare) {
   drawSlot(g, wpX, boxY + pad, wpW, weaponH);
   drawArt(g, art.get(c.weapon), wpX, boxY + pad, wpW, weaponH, { fit: "contain" });
   const barH = wpW * BAR_RATIO;
-  if (stars) drawArt(g, stars, wpX, boxY + pad + weaponH - barH, wpW, barH, { fit: "contain" });
+  const weaponBar = art.get(STAR_BARS[weaponRank(WEAPONS.find(w => w[0] === c.name)?.[1], c.weapon, c.weaponRank)]);
+  if (weaponBar) drawArt(g, weaponBar, wpX, boxY + pad + weaponH - barH, wpW, barH, { fit: "contain" });
   const whY = boxY + pad + weaponH + gap, whH = boxH - pad * 2 - weaponH - gap;
   drawSlot(g, wpX, whY, wpW, whH);
   if (c.wh) {
@@ -2144,10 +2236,9 @@ function drawCard(g, c, art, cardColor, stars, x, y, flare) {
     drawText(g, tag.toUpperCase(), left + tagW / 2, y + h - 8, exportFont(12, 800), text);
   });
 }
-async function renderBuild(cards, { id, title }) {
-  const theme = COMPS[id];
+async function renderBuild(cards, { id, title, theme = COMPS[id] }) {
   await Promise.all([document.fonts.load(exportFont(16)), document.fonts.load(exportFont(13, 400))]);
-  const sources = [...new Set([...cards.flatMap(cardArt), STARS_BAR, WH_BAR])];
+  const sources = [...new Set([...cards.flatMap(cardArt), ...Object.values(STAR_BARS), WH_BAR])];
   const art = new Map(await Promise.all(sources.map(async src => [src, await loadImage(src)])));
   const width = EXPORT_PAD * 2 + cards.length * EXPORT_W;
   const height = EXPORT_HEAD + EXPORT_H + EXPORT_FOOT + 16;
@@ -2207,49 +2298,34 @@ function route() {
     pageUrl = location.href;
   }
   // A link can name a team as a third part: /energy/dark/kurumi-adelyde-rosetta
-  const [kind, key, pick] = location.pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  // A community team is named in the query instead: /energy/dark?team=c-12
+  const [kind, key, part] = location.pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  const pick = part || (key && TEAM_LISTS[kind] && new URLSearchParams(location.search).get("team")) || undefined;
   const path = key ? `${kind}/${key}` : kind;
   const ids = (key && PAGES[path]) || [];
   const owner = ids.find(id => (COMPS[id].variants || []).some(v => v.id === pick));
-  shown = owner || (ids.includes(pick) ? pick : ids[0]) || "";
-  const { variants } = COMPS[shown] || {};
-  expanded = variants ? shown : "";
-  chosen = owner ? pick : variants ? variants[0].id : "";
+  shown = owner || (ids.includes(pick) ? pick : "");
+  chosen = owner ? pick : COMPS[shown]?.variants?.[0].id || "";
   const main = $("#main");
   const character = kind === "character" && characters().find(c => charId(c.name) === key);
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage()
-    : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path) : home();
-  theme(null);
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
+    : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path, pick) : home();
+  theme(shown || null);
+  if (kind === "editor" && editorState === "ready") edPaint();
   if (kind === "calculator") { showCalc(); centerStop(); }
   const heading = kind && $("h1", main)?.textContent;
   document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
   const navPath = kind === "character" ? "constructs" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;
   document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + navPath));
   showGroups();
-  const sel0 = $(".picker button[data-id][aria-pressed=true]");
-  if (sel0) theme(sel0.dataset.id);
   const picker = $(".picker");
-  if (picker) picker.onclick = e => {
-    const b = e.target.closest("button"); if (!b) return;
-    const { variant, id } = b.dataset;
-    if (variant) chosen = variant;
-    else {
-      const grouped = COMPS[id].variants;
-      expanded = grouped && expanded !== id ? id : "";
-      chosen = "";
-    }
-    const sel = expanded || (variant || COMPS[id].variants ? "" : id);
-    // The address follows the pick, so going back from another page returns to this same build
-    const pick = variant || (COMPS[id].variants ? "" : sel);
-    history.replaceState(null, "", `/${path}${pick ? `/${pick}` : ""}`);
-    pageUrl = location.href;
-    swap(() => {
-      picker.innerHTML = pickerHtml(path, sel);
-      $("#noticeBox").innerHTML = teamNotice(sel);
-      $("#compBox").innerHTML = compBody(sel);
-      theme(sel);
-      $(variant ? `[data-variant="${variant}"]` : `[data-id="${id}"]`, picker).focus();
-    });
+  if (!picker) return;
+  // The search only hides rows
+  const box = $(".bsearch input", picker), rows = [...picker.querySelectorAll(".brow")];
+  box.oninput = () => {
+    const words = box.value.toLowerCase().split(/\s+/).filter(Boolean);
+    for (const row of rows) row.hidden = !words.every(w => row.dataset.search.includes(w));
+    $(".empty", picker).hidden = rows.some(row => !row.hidden);
   };
 }
 // Icon names on hover: one shared box on <body>, because .slot and .comp clip anything inside them
@@ -2292,7 +2368,7 @@ if (matchMedia("(hover:hover)").matches) {
   };
   addEventListener("click", e => {
     const el = e.target.closest("[data-tip]");
-    if (!el || el.matches(".portrait") || el.closest(".fcard.side")) return;
+    if (!el || el.matches(".portrait") || el.closest(".fcard.side, #edPicker") || el.matches(".ed-live [data-ed-drop]")) return;
     e.preventDefault();
     e.stopPropagation();
     const href = el.getAttribute("href");
@@ -2338,14 +2414,16 @@ function pageChanged() {
   const fromDetail = DETAIL_PAGE.test(oldUrl), fromTeam = /\/(energy|effect|special)\//.test(oldUrl);
   if (fromTeam && DETAIL_PAGE.test(pageUrl)) buildReturn = new URL(oldUrl).pathname;
   else if (!fromDetail || !DETAIL_PAGE.test(pageUrl)) buildReturn = "";
-  swap(() => { route(); scrollTo(0, fromDetail ? scrollSaved.get(pageUrl) || 0 : 0); });
+  // Coming back from a detail page, or from a build to its list, returns to the same place on the page
+  const fromBuild = /\/(energy|effect|special)\/[^/]+(\/[^/]+|\?team=)/.test(oldUrl);
+  swap(() => { route(); scrollTo(0, fromDetail || fromBuild ? scrollSaved.get(pageUrl) || 0 : 0); });
 }
 // Links inside the site change the page without reloading it. Ctrl+click and the like stay with the browser
 addEventListener("click", e => {
   const link = e.target.closest?.('a[href^="/"]');
   if (!link || e.defaultPrevented || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
-  if (link.pathname === location.pathname) return;
+  if (link.pathname === location.pathname && link.search === location.search) return;
   history.pushState(null, "", link.href);
   pageChanged();
 });
@@ -2359,7 +2437,7 @@ function searchData() {
   const items = [
     ...characters().map(c => ({ label: c.name, kind: "Construct", href: characterHref(c.name), art: c.portrait })),
     ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `Memory · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4") })),
-    ...WEAPONS.map(([owner, name, , file]) => ({ label: name, kind: `Weapon · ${owner}`, href: weaponHref(name), art: file && `${CHARS}/${file}` })),
+    ...WEAPONS.map(([owner, name, , file, , rank]) => ({ label: name, kind: owner ? `Weapon · ${owner}` : `${rank || weaponRank(name, file)}-star weapon`, href: weaponHref(name), art: file && weaponFile(file) })),
     ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner}`, href: cubHref(c.name), art: c.art })),
     ...Object.keys(RESONANCE_EFFECTS).map(name => ({ label: name, kind: "Weapon Resonance", href: resonanceHref(name), art: WEAPON_RES(name) })),
     ...ENERGY.map(e => ({ label: e, kind: "Energy teams", href: `/energy/${slug(e)}`, art: `assets/energy type/${e}.png` })),
@@ -2370,8 +2448,9 @@ function searchData() {
       .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
     { label: "Planner", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
     { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },
+    { label: "Team Builder", kind: "Tool", href: "/editor", art: "" },
     ...Object.entries(PAGES).flatMap(([path, ids]) => ids.flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name }]).map(v =>
-      ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: `/${path}/${v.id}`, art: "" }))))
+      ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: buildHref(path, v.id), art: "" }))))
   ];
   return searchItems = items.map(item => ({ ...item, text: plain(item.label), more: plain(item.kind).replace(/\./g, "") }));
 }
@@ -2417,3 +2496,4 @@ if (noticeTimeLeft() > 0) setTimeout(() => document.querySelectorAll(".notice").
 dropOldHash();
 pageUrl = location.href;
 route();
+loadCommunity();

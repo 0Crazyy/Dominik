@@ -30,7 +30,9 @@ nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#ff
 .ico{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 /* Constructs, Memories, Weapon Resonance and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
 .ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
-.ico-constructs{--art:url(assets-web/icons/constructs.png.webp?v=2)}
+.ico-constructs{--art:url(assets-web/icons/constructs.png.webp?v=3)}
+/* The Teams art is tall and narrow, so it is enlarged to match the visual weight of the others */
+.ico-teams{--art:url(assets-web/icons/teams.png.webp);width:24px;height:24px;margin:-2px}
 .ico-cubs{--art:url(assets-web/icons/cubs.png.webp?v=2)}
 .ico-resonance{--art:url(assets-web/icons/resonance.png.webp?v=2)}
 .ico-memories{--art:url(assets-web/icons/memories.png.webp?v=2)}
@@ -106,17 +108,26 @@ h1{font-size:34px;font-weight:800}
 .tile.none small{color:var(--mute)}
 h2.grp{display:flex;align-items:center;gap:12px;font-size:14px;margin:30px 0 14px;color:#c4c4ca;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
-.picker{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;min-height:88px;margin-bottom:22px}
-.pgroup{display:grid;gap:8px}
-.pset{display:grid;gap:4px}
-.pset>span{font-size:12px;color:var(--mute)}
-.pset>div{display:flex;flex-wrap:wrap;gap:6px}
-.psub{display:grid;gap:6px;padding:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:6px}
-.picker button i{display:inline-block;font-style:normal;margin-left:6px;transition:transform .2s}
-.picker button[aria-expanded=true] i{transform:rotate(180deg)}
-.picker button{padding:9px 18px;background:var(--panel);border:1px solid var(--line);color:var(--txt);font:600 14px "Quantico";border-radius:4px;cursor:pointer}
-.picker button[aria-pressed=true]{background:#d8d8dc;border-color:#d8d8dc;color:#0b0b0c}
-.psub button{padding:5px 10px;font-size:12px;text-align:left}
+.picker{display:grid;gap:10px;margin-bottom:22px}
+.bsearch{display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.bsearch:focus-within{border-color:#8a8a92}
+.bsearch input{flex:1;min-width:0;height:44px;background:none;border:0;outline:0;color:var(--txt);font:14px "Quantico"}
+.bsearch input::placeholder{color:var(--mute)}
+.blist{display:grid;gap:6px}
+.brow{display:flex;align-items:stretch;gap:14px;width:100%;padding:0 14px 0 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid transparent;border-radius:6px;color:var(--txt);font:inherit;text-align:left;cursor:pointer;overflow:hidden}
+.brow[hidden]{display:none}
+.brow:hover{border-color:#5a5a62;border-left-color:#d8d8dc;background:rgba(255,255,255,.06)}
+.brow:focus-visible{outline:2px solid #d8d8dc;outline-offset:2px}
+.build-tags{margin:10px 0 18px}
+.brow-art{flex:none;width:88px;height:76px;background:rgba(0,0,0,.3)}
+.brow-art img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
+.brow-tx{display:grid;align-content:center;gap:4px;min-width:0;padding:8px 0}
+.brow-tx b{font:700 16px "Quantico";overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow-tx small{font-size:13px;color:var(--mute)}
+.brow-tx em{font-style:normal;color:#c4c4ca}
+.brow-tags{display:flex;flex-wrap:wrap;gap:5px}
+.brow-tags i{padding:2px 7px;background:rgba(255,255,255,.08);border-radius:3px;font:700 10px "Quantico";font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:#c4c4ca}
+.brow-tags i.new{background:var(--red);color:#fff}
 #tip{position:fixed;z-index:30;max-width:340px;padding:6px 10px;background:#000000f0;border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 12px "Quantico";pointer-events:none}
 #tip b{display:block}
 #tip p{margin-top:4px;font-weight:400;line-height:1.45;color:#dcdaf0;white-space:pre-line}
@@ -584,8 +595,8 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .filters{display:none}
 .filters.open{display:grid}
 .mtable th{top:61px}
-.psub{gap:12px;padding:12px}
-.psub button{min-height:48px;padding:12px 14px;font-size:15px}
+.brow-art{width:72px;height:72px}
+.brow-tx b{font-size:15px;white-space:normal}
 .b-mates .slot{width:48px;height:48px}
 .pager{top:61px}
 .box:not(.kit){flex-wrap:wrap}
@@ -685,3 +696,98 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .lost{align-items:center;justify-content:center;text-align:center}
 .lost main{flex:none}
 .lost .tool{display:inline-block;text-decoration:none}
+/* Team Builder (/editor): one panel for the team, one per slot in the slot's bar color */
+.ed{display:grid;gap:16px}
+.ed fieldset{min-width:0;padding:14px 18px 18px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
+.ed legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.ed .ed-blue{border-top-color:#19c4ff}
+.ed .ed-red{border-top-color:#ff5a5a}
+.ed .ed-gold{border-top-color:#ffc400}
+.ed-grid{clear:both;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ed .ed-team{border-radius:8px;box-shadow:0 10px 24px #0003}
+.ed-team-layout{clear:both;display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:16px;align-items:stretch}
+.ed-team-info{min-width:0;padding:2px 0}
+.ed-team-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ed-team-fields>.ed-field.wide{grid-column:1/-1}
+.ed-team-roles{min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--line);border-left:2px solid var(--red);border-radius:6px}
+.ed-team-heading{grid-column:1/-1;margin:0 0 2px;color:var(--mute);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.ed-field{display:grid;align-content:start;gap:5px;min-width:0;font-size:13px;color:#dcdce0}
+.ed-field.wide,.ed-grid>.wide,.ed-hint{grid-column:1/-1}
+.ed :is(select,input:not([type=radio]),textarea){width:100%;min-width:0;height:38px;padding:0 10px;background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 14px "Quantico"}
+.ed select{cursor:pointer}
+.ed textarea{height:auto;min-height:225px;padding:8px 10px;resize:vertical;font-weight:400;line-height:1.4}
+.ed ::placeholder{color:#6c6c72}
+.ed-hint{color:var(--mute);font-size:13px}
+/* the cards and their inline equipment pickers */
+.ed-studio{display:block}
+.ed-work{min-width:0;display:grid;gap:14px}
+.ed-work .ed-tools{margin-top:0}
+#edStage{position:relative}
+.ed-picker{position:absolute;z-index:20;display:grid;grid-template-columns:minmax(0,1fr) 30px;grid-template-rows:auto 38px minmax(0,1fr);gap:8px;padding:10px;background:var(--panel);border:1px solid var(--line);box-shadow:0 6px 24px #000b;max-height:min(70vh,500px)}
+.ed-picker[hidden]{display:none}
+.ed-picker-head{display:grid;align-content:center;gap:2px;min-width:0;color:var(--txt)}
+.ed-picker-head strong{font-size:12px}
+.ed-picker-head small{font-size:10px;color:var(--mute)}
+.ed-picker>input{grid-column:1/-1}
+.ed-picker-options{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;max-height:min(52vh,360px);overflow:auto;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
+.ed-picker-option[hidden]{display:none}
+.ed-picker-option{position:relative;min-width:0;display:grid;grid-template-rows:44px minmax(24px,auto);align-content:start;justify-items:center;gap:4px;padding:4px;background:#0000004b;border:1px solid var(--line);color:#dcdce0;font:600 9px/1.2 "Quantico";text-align:center;cursor:pointer}
+.ed-picker-option:hover,.ed-picker-option:focus-visible{border-color:#fff;outline:2px solid #ffffff80;outline-offset:-2px;color:#fff}
+.ed-picker-option.on{background:#cf142433;border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red);color:#fff}
+.ed-picker-option.on::after{content:"✓";position:absolute;top:2px;right:2px;display:grid;place-items:center;width:14px;height:14px;background:var(--red);border-radius:50%;color:#fff;font:700 9px/1 "Quantico"}
+.ed-picker-option img{display:block;width:100%;height:44px;object-fit:contain}
+.ed-picker-option>span:last-child{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.ed-picker-noart{display:grid;place-items:center;width:34px;height:34px;align-self:center;border:1px solid var(--line);border-radius:50%;font:400 24px/1 "Quantico";color:var(--mute)}
+.ed-picker-close{align-self:start;width:30px;height:30px;background:var(--bg);border:1px solid var(--line);color:var(--txt);cursor:pointer}
+.ed-picker-empty{grid-column:1/-1;margin:4px 0;color:var(--mute);font-size:12px}
+.ed-picker-empty[hidden]{display:none}
+/* the cards as drop targets */
+.ed-live p.desc:empty{display:none}
+.ed-live .card{transition:opacity .18s}
+.ed-live .card:hover,.ed-live .card:active{transform:none;filter:none}
+.ed-live .card.ed-role-drop-target{outline:2px dashed #fff;outline-offset:3px}
+.ed-live .tag[data-ed-role]{cursor:grab}
+.ed-live .tag[data-ed-role]:active{cursor:grabbing}
+.ed-live [data-ed-drop]{position:relative;cursor:pointer;transition:outline-color .12s,filter .12s}
+.ed-live [data-ed-drop]:hover,.ed-live [data-ed-drop]:focus-visible{z-index:2;outline:2px solid #ffffffa6;outline-offset:1px;filter:brightness(1.25)}
+.ed-live [data-ed-drop]:focus-visible{outline-color:var(--red);box-shadow:0 0 0 2px #000}
+.ed-live .ed-cub-skill-selected{outline:2px solid var(--red);outline-offset:1px;z-index:2}
+.ed-live .ed-memory-group{flex:1.2 1 0;min-width:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:4px}
+.ed-live .mem{width:100%;min-width:0;min-height:0;flex:1;margin:0}
+.ed-live .ed-memory-resonance-button{width:100%;min-height:30px;padding:4px 8px;background:#17171b;border:1px solid #ffffff50;border-left:3px solid #55b7ff;color:var(--txt);font:700 10px "Quantico";letter-spacing:.06em;text-align:left;cursor:pointer}
+.ed-live .ed-memory-resonance-button:hover,.ed-live .ed-memory-resonance-button:focus-visible,.ed-live .ed-memory-resonance-button[aria-expanded=true]{background:#292930;border-color:#fff;outline:1px solid #ffffff80;outline-offset:-2px}
+.ed-res-menu{grid-template-columns:minmax(0,1fr) 30px;grid-template-rows:auto minmax(0,1fr)}
+.ed-res-menu.has-options{grid-template-rows:auto minmax(0,1fr) minmax(0,auto)}
+.ed-res-menu-list{grid-column:1/-1;display:grid;gap:5px;max-height:min(56vh,400px);overflow:auto;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
+.ed-res-menu.has-options .ed-res-menu-list{max-height:min(30vh,220px)}
+.ed-res-menu-row{display:grid;grid-template-columns:minmax(70px,.7fr) repeat(2,minmax(0,1fr));align-items:center;gap:6px;padding:4px;background:#0000004b;border:1px solid var(--line)}
+.ed-res-menu-row>strong{font-size:11px}
+.ed-res-menu-row>button{min-width:0;min-height:38px;display:grid;align-content:center;gap:2px;padding:4px 7px;background:#17171b;border:1px solid #ffffff30;color:var(--txt);font:600 11px/1.2 "Quantico";text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.ed-res-menu-row>button[aria-pressed=true]{background:#292930;border-color:#fff;box-shadow:inset 0 0 0 1px var(--red)}
+.ed-res-menu-row>button:first-of-type{border-left:3px solid #55b7ff}
+.ed-res-menu-row>button:last-of-type{border-left:3px solid #ffc400}
+.ed-res-menu-row>button:hover,.ed-res-menu-row>button:focus-visible{background:#35353d;border-color:#fff;outline:1px solid #ffffff80;outline-offset:-2px}
+.ed-res-menu-row>button small{font-size:9px;color:var(--mute);letter-spacing:.06em}
+.ed-res-menu-options{grid-column:1/-1;display:grid;gap:6px;min-height:0}
+.ed-res-menu-choice-head{font-size:11px}
+.ed-res-menu-options>.ed-picker-options{max-height:min(30vh,220px)}
+.ed-live .res{grid-template-columns:minmax(0,1fr);grid-template-rows:1fr 1fr;grid-auto-flow:row;align-items:center;gap:4px}
+.ed-live .ed-res-total{display:grid;gap:2px;min-width:0;text-align:center;line-height:1.15}
+.ed-live .ed-res-total small{font-size:calc(9*var(--u));color:var(--mute)}
+.ed-live .ed-res-total span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:calc(9*var(--u))}
+#edDetail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.ed-detail-fields{clear:both;display:grid;gap:12px}
+@media(min-width:981px){.ed-studio #edStage{--pad:0px}}
+@media(max-width:980px){#edDetail{grid-template-columns:minmax(0,1fr)}}
+.ed-tools{flex-wrap:wrap;align-items:center;gap:8px}
+.ed-status{margin-right:auto;color:var(--mute);font-size:13px;overflow-wrap:anywhere}
+.ed-tools .tool:disabled{cursor:default}
+.ed-send{display:grid;gap:12px;justify-items:start;max-width:420px;margin:0 0 16px;padding:14px 18px 18px;background:var(--panel);border:1px solid var(--line)}
+.ed-send[hidden]{display:none}
+.ed-send .ed-field{width:100%}
+.ed-send .tool:disabled{opacity:.5;cursor:default}
+/* Bots fill in every field they find; people never see this one */
+.ed-trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+@media(max-width:760px){.ed-team-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.ed fieldset{padding:12px 12px 14px}.ed-team-fields,.ed-team-roles{grid-template-columns:minmax(0,1fr)}.ed-team-fields>.ed-field.wide{grid-column:auto}.ed-team-roles{padding:12px}.ed :is(select,input:not([type=radio]),textarea){font-size:16px}}
+@media(max-width:600px){.ed-live .ed-memory-group{flex:0 0 min(100%,222px);margin-inline:max(0px,calc(50% - 111px))}.ed-res-menu-row{grid-template-columns:minmax(58px,.55fr) repeat(2,minmax(0,1fr));gap:4px}.ed-res-menu-row>button{min-height:42px;padding:4px;font-size:10px}}

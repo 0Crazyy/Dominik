@@ -1,6 +1,6 @@
 /* Text shown on the Assets pages, kept out of app.js because it is long.
    Memory bonuses: https://huaxu.app/na/wiki/memories
-   Weapons: https://grayravens.com/wiki/Weapons/6%E2%98%85_Weapons and https://huaxu.app/na/wiki/weapons */
+   Weapons: https://grayravens.com/wiki/Weapons/5%E2%98%85_Weapons and https://grayravens.com/wiki/Weapons/6%E2%98%85_Weapons and https://huaxu.app/na/wiki/weapons */
 
 // Memory set name: [2-piece bonus, 4-piece bonus, 6-piece bonus if it has one]
 const MEMORY_EFFECTS = {
@@ -72,14 +72,87 @@ const MEMORY_EFFECTS = {
   "Wu'an": ["Basic Attack's Extra DMG Bonus increases by 5%, Physical DMG increases by 7%.", "The Super Armor of Sweeping Tempest lasts 2s longer. Physical DMG increases by 15% while Super Armor is active."]
 };
 
-// [owner, weapon name, weapon type, file inside assets/characters, effect]
+// [owner, weapon name, weapon type, image path, effect, optional rank]
+// Standalone 5-star weapons have no frame owner, so they appear only in All.
+const FIVE_STAR_WEAPONS = [
+  ["", "Abyss Forgefire", "", "assets/weapons/5stars/e2heavycrossmd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Animus", "", "assets/weapons/5stars/e2ballrobotmd020011.png", "When No. 21: XXI uses a Shadow Prism attack or interrupts an enemy, the Co-Bot releases a Force Wave for 50% AoE Dark DMG (1s cooldown). Twilight Matrix and Resonance Pulse gain 10% Extra DMG Bonus.", 5],
+  ["", "Base Fog", "", "assets/weapons/5stars/e2chainsawmd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Bipolar Star Rift", "", "assets/weapons/5stars/e2wandmd020011.png", "After making a Prayer, gain 15% Extra DMG Bonus for 10s.", 5],
+  ["", "Blooming Rose", "", "assets/weapons/5stars/e2luolanmd020011.png", "Using a valid combo twice within 6s grants +10% All DMG for 5s; triggering it again refreshes the duration.", 5],
+  ["", "BX-02M Fellfrost", "", "assets/weapons/5stars/e2ssalphamd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Celestial Reflection", "", "assets/weapons/5stars/e2keywandmd020011.png", "Grants +10% Nihil DMG.", 5],
+  ["", "Clock Hands", "", "assets/weapons/5stars/e2kurumimd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Comet's Edge", "", "assets/weapons/5stars/e2bangbinatamd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Crowned Laurel", "", "assets/weapons/5stars/e2lyreswordmd020011.png", "Grants +10% Physical DMG.", 5],
+  ["", "Cruel Oath", "", "assets/weapons/5stars/e39smd010011.webp", "Overclock Indicator DMG increases by 10%.", 5],
+  ["", "Cyan Blossom", "", "assets/weapons/5stars/e2lotusblademd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Dark Moon", "", "assets/weapons/5stars/e2circlemd020011.png", "Grants +10% Nihil DMG.", 5],
+  ["", "Death's Plume", "", "assets/weapons/5stars/e2sicklemd020011.png", "Grants +10% Nihil DMG.", 5],
+  ["", "Despair Breaker", "", "assets/weapons/5stars/e2hammermd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Devil Hunter Sword", "", "assets/weapons/5stars/e3ddevilsworddantemd010011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Dual Rainbows", "", "assets/weapons/5stars/e2beamlancemd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Dynamo Greatsword", "", "assets/weapons/5stars/e2claymoremd050011.png", "Attacks have a 10% chance to send out a shockwave that deals 100% Physical DMG to nearby enemies.", 5],
+  ["", "Eternal Peace", "", "assets/weapons/5stars/e2revolvermd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "FA2D-AP", "", "assets/weapons/5stars/e2riflemd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Falcon E-3320", "", "assets/weapons/5stars/e2bowmd050011.png", "When no enemies are within 2m, gain 10% CRIT Rate and 10% CRIT DMG.", 5],
+  ["", "Fiery Twilight", "", "assets/weapons/5stars/e2bladespearmd020011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Firecrackers", "", "assets/weapons/5stars/e2sleevemd110011.png", "While Artillery Tactics or Thermal Armament is active, dealing DMG triggers an explosion at the target for 250% total Physical DMG (10s cooldown).", 5],
+  ["", "FPT-II - Mod", "", "assets/weapons/5stars/e2armmd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Glazed Enigma", "", "assets/weapons/5stars/e2brollymd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Glimpse", "", "assets/weapons/5stars/e2kamumd020011.png", "After a 3-Ping, gain 12% Extra DMG Bonus for 4s.", 5],
+  ["", "Glorious Knight", "", "assets/weapons/5stars/e2lancemd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Guardian Mount", "", "assets/weapons/5stars/e2floatmd050011.png", "Gain 1 random Signal Orb for every 30 combos (8s cooldown).", 5],
+  ["", "Guiyun", "", "assets/weapons/5stars/e2qumd020011.png", "After using a Blue Orb skill, gain 10% Physical DMG for 5s; further triggers refresh the duration.", 5],
+  ["", "Kara Type 1 Gunblade", "", "assets/weapons/5stars/e2gunblademd020011.png", "After a 3-Ping, gain 5% All DMG for 5s.", 5],
+  ["", "Kuji no Sada", "", "assets/weapons/5stars/e2swordmd050011.png", "Attacks have a 20% chance to call down a lightning strike for 50% Physical DMG (3s cooldown).", 5],
+  ["", "Lethal Shadow", "", "assets/weapons/5stars/e2pistolmd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Lightning Spark", "", "assets/weapons/5stars/e2sawmd050011.png", "Attacks have a 30% chance to inflict Broken Armor, lowering the target's DEF by 5% for 3s. It stacks up to 5 times, and further triggers refresh the duration.", 5],
+  ["", "Magma Pillar", "", "assets/weapons/5stars/e2sleevemd050011.png", "After a 3-Ping, gain 12% ATK for 4s; further triggers refresh the duration.", 5],
+  ["", "Marrow's Glimmer", "", "assets/weapons/5stars/e2gymnasticmd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Mirage Halberd", "", "assets/weapons/5stars/e2halberdmd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Mist Netherlight", "", "assets/weapons/5stars/e2tachiamd020011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Moonside Petal", "", "assets/weapons/5stars/e2pipamd020011.png", "Grants +10% Physical DMG.", 5],
+  ["", "Neapolitan Solo", "", "assets/weapons/5stars/e2fluntmd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Night Sunderer", "", "assets/weapons/5stars/e2chainswordmd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "Nuclear Meltdown δ", "", "assets/weapons/5stars/e2superlimd020011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Odette", "", "assets/weapons/5stars/e2cellomd020011.png", "A 3-Ping grants 3% ATK for 5s, stacking up to 5 times; new triggers refresh the duration.", 5],
+  ["", "Pale Plume", "", "assets/weapons/5stars/e2sabremd020011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Phoenix Edge", "", "assets/weapons/5stars/e2jianmd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Polar Night", "", "assets/weapons/5stars/e2bigswordmd020011.png", "Grants +5% ATK and +10% CRIT DMG.", 5],
+  ["", "Progressive Knife", "", "assets/weapons/5stars/e2nuoanmd020011.png", "Signal Orb ping DMG increases by 20%.", 5],
+  ["", "Raijin", "", "assets/weapons/5stars/e2packmd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Ray Slasher", "", "assets/weapons/5stars/e2greatswordmd020011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Red Shift", "", "assets/weapons/5stars/e2cuttingmd020011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Red Sprite", "", "assets/weapons/5stars/e2alphamd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Returning Wind", "", "assets/weapons/5stars/e2fanmd020011.png", "Grants +10% Physical DMG.", 5],
+  ["", "Reversal Node", "", "assets/weapons/5stars/e2lamiyamd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "RL-03C Black Spike", "", "assets/weapons/5stars/e2spearmd020011.png", "After casting a small-, medium-, or wide-area electromagnetic beam, gain 10% ATK for 3s; further triggers refresh the duration.", 5],
+  ["", "Rock Cannon", "", "assets/weapons/5stars/e3rockcannon5md010011.png", "Grants +10% Fire DMG.", 5],
+  ["", "Skybound Beats", "", "assets/weapons/5stars/e2shoesmd020011.png", "Grants +10% Ice DMG.", 5],
+  ["", "Skyradiance", "", "assets/weapons/5stars/e2dragonlancemd020011.png", "Grants +10% Physical DMG.", 5],
+  ["", "Solar Ring", "", "assets/weapons/5stars/e2ringmd020011.png", "Pinging three Signal Orbs of different colors within 6s grants 15% All DMG for 8s.", 5],
+  ["", "Sparkle ZL-09 - Mod", "", "assets/weapons/5stars/e2swordaxemd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Spindrift Shimmer", "", "assets/weapons/5stars/e2anchormd020011.png", "Grants +10% Physical DMG.", 5],
+  ["", "Star Of Bethlehem", "", "assets/weapons/5stars/e2claymoremd110011.png", "3-Pings create an aura that grants 8% ATK and Movement Speed for 15s (30s cooldown).", 5],
+  ["", "Stone Heart", "", "assets/weapons/5stars/e2daggermd050011.png", "Performing consecutive 3-Pings grants 15% Extra DMG Bonus for 5s; further triggers refresh the duration.", 5],
+  ["", "Trio-Claws", "", "assets/weapons/5stars/e2clawmd020011.png", "Grants +10% Lightning DMG.", 5],
+  ["", "Type-4O Lance", "", "assets/weapons/5stars/e3a2md010011.png", "Deploying POD: Shield grants A2 10% Physical DMG; sliding for 1s raises the bonus by another 5%.", 5],
+  ["", "Virtuous Contract", "", "assets/weapons/5stars/e22bmd010011.webp", "Grants +10% Physical DMG while in Battle Stance.", 5],
+  ["", "White Night's Noise", "", "assets/weapons/5stars/e2headsetmd020011.png", "Grants +10% Dark DMG.", 5],
+  ["", "White Qilin", "", "assets/weapons/5stars/e2glovemd020011.png", "After dodging, gain 8% Extra DMG Bonus for 4s.", 5],
+  ["", "Whitefrost Ruler", "", "assets/weapons/5stars/e2boomerangmd020011.png", "Signature - Spirit Blade Dance gains 20% Base DMG.", 5],
+  ["", "Yamato - Kageuchi", "", "assets/weapons/5stars/e2vyamatomd020011.png", "Grants +5% ATK and +10% CRIT DMG.", 5],
+  ["", "Yuan Night", "", "assets/weapons/5stars/e2daggermd090011.png", "Dealing DMG has a 20% chance to release a Yuanxiao for 15% Physical DMG (1s cooldown).", 5],
+];
+
 const WEAPONS = [
   ["Adelyde: Anabasis", "Unforsaken Beacon", "Cross Cannon", "adelyde-anabasis/Arma - Adelyde Anabasis.webp", "ATK increases by 10%. Consuming Echo Points doubles the Base DMG bonus for Burst Mode, Suppression Mode, Lightpierce Form, and Pressure Form."],
   ["Alisa: Echo", "Astraea", "Bow", "alisa-echo/Arma - Alisa Echo.png", "Increases ATK by 10%. Base DMG of Signature - Celestial Edge increases by 15%. Each time Splendor Points are full, one random Signal Orb and one Cipher Orb of the same color will be generated. Ultralimit Torque now increases Physical DMG by 20%."],
-  ["Ayla: Brilliance", "Purple Peony", "Scythe", "ayla-brilliance/Arma - Ayla Brilliance (5).png", "Extra DMG Bonus increases by 2% for 5s when dealing DMG to enemies with Super Armor. Can be stacked up to 3 times. Duration resets every time it is triggered. Stuns an enemy for 2s when breaking its Super Armor. 10s cooldown for the same target. Physical DMG increases by 15% for 7s when releasing Vector Cube. Duration resets every time it is triggered."],
+  ["Ayla: Brilliance", "Faded Color", "Scythe", "ayla-brilliance/Arma - Ayla Brilliance (5).png", "QTEs and 3-Pings grant 10% Extra DMG Bonus for 4s; further triggers refresh the duration."],
   ["Bianca: Crepuscule", "Aurora", "Lashblade", "bianca-crepuscule/Arma - Bianca Crepuscule.png", "ATK increases by 10%. Gains 1 Signal Orb for every 3 Commandment consumed, up to 12 per entry."],
-  ["Bridget: Ardeo", "Cestus", "Tactical Tonfas", "bridget-ardeo/Arma - Bridget (5).png", "ATK increases by 10%. Base DMG of Steel Charge increases by 60%. When Red Orbs are depleted, casting Steel Charge or performing a precise block immediately restores 1 Red Orb. The Combustible Charges produced by Prairie Fire increases by 40%."],
-  ["Discord: Secator", "Osseous Guillotine", "Scissors", "discord-secator/Arma - Discord (5).png", "ATK +10%. Reduces additional Signature Energy consumption by 50% during Rampant Disaster."],
+  ["Bridget: Ardeo", "Everburning Ray", "Tactical Tonfas", "bridget-ardeo/Arma - Bridget (5).png", "Grants +10% Fire DMG."],
+  ["Discord: Secator", "Spinebreaker", "Scissors", "discord-secator/Arma - Discord (5).png", "Grants +10% Physical DMG."],
   ["Hanying: Solacetune", "Dream Roamer", "Pipa", "hanying-solacetune/Arma - Hanying Solacetune.png", "ATK increases by 10%. The effect of Piercing Blow launched by Hanying: Solacetune increases by 20%. Casting Jade Bloom continuously will stack damage up to 3 times instead. Triggering Ethereal Symphony grants additional 50 Sharp Reserve."],
   ["Hanying: Zitherwoe", "Perpetuity", "Folding Fan", "hanying-zitherwoe/Arma - Hanying Zitherwoe.png", "ATK increases by 10%. During the action of pinging any orb, Hanying: Zitherwoe is able to immediately cast another ping for once only. The Base DMG Increase effect of each stack of Emerald Flow increases to 40%."],
   ["Helentine: Lacrimosa", "Hear the Bell", "Folding Buzzsaw", "helentine-lacrimosa/Arma - Helentine Lacrimosa.webp", "ATK increases by 10%. The first two casts of Scrutiny and Manifest upon each switch-in grant 3 orbs. Extra DMG of Metaphor Surge increases by 50%, and Extra DMG of Scrutiny, Cathexis, and Regression increases by 100%. Each stack of Metaphor increases the Base DMG boost effect of Illusory Vision to 30%."],
@@ -88,7 +161,7 @@ const WEAPONS = [
   ["Karenina: Effulgence", "Star of Niflheim", "Drift Anchor", "karenina-effulgence/Arma - Karenina Effulgence.webp", "ATK increases by 10%, and the Piercing Strike effect applied by Karenina: Effulgence is increased by 20%. After entering the battlefield, the first Surge Breach that consumes 300 or more Tidal Force grants 6 Signal Orbs. The effect of consuming Tidal Force to boost Surge Breach's Base DMG is doubled."],
   ["Kurumi Tokisaki", "Hour & Minute", "Zafkiel - Dual Guns", "kurumi-tokisaki/Arma - Kurumi Tokisaki.webp", "ATK increases by 10%. Phantom and Signature - Angel of Time: Zafkiel deal 50% more DMG. When Bullet Brand is active, Aleph, Dalet, and Het deal 50% more DMG. Gains 1 stack of Imprint upon first deployment. After casting Phantom, gains 2 Signal Orbs, up to 4 per deployment."],
   ["Lee: Hyperreal", "Key of Tempus Gate - Stokes", "Composite Armaments", "lee-hyperreal/Arma - Lee Hyperreal.png", "ATK increases by 10%. Casting Realm Travel will trigger Matrix if it is not on cooldown. The first Hypermatrix Strike launched upon entering battle will generate 1 extra Sight Point."],
-  ["Lee: Palefire", "Wolf Fang", "Dual Guns", "lee-palefire/Arma - Lee Palefire (5).png", "Extra DMG Bonus increases by 20% when attacking enemies in a burning area."],
+  ["Lee: Palefire", "Gloomlight", "Dual Guns", "lee-palefire/Arma - Lee Palefire (5).png", "Pinging all three Signal Orb colors within 5s grants 15% Extra DMG Bonus for 5s; repeat triggers refresh the duration."],
   ["Leia: Fortunaster", "Edges of the Twisted Ribbon", "Rhythmic Ray", "leia-fortunaster/Arma - Leia Fortunaster.png", "ATK increases by 10%, and the damage dealt by Ring Theorem is doubled. While holding a Photonic Mark, the damage dealt by Signature - Stardust of the Luminous Waltz is doubled."],
   ["Lilith: Daemonissa", "Sorrow of Fata Morgana", "Moon Umbrella", "lilith-daemonissa/Arma - Lilith Daemonissa.png", "Gains 10% ATK. When casting Dreamfall Showdown at Card Rank B, gains 12 Signature Energy."],
   ["Liv: Limpidity", "Ripples of the Aloft Sea", "Lotus Wheel", "liv-limpidity/Arma - Liv Limpidity.png", "ATK increases by 10%. Thousand Rays and Dawn Dream deal 50% more damage. When casting Signature - Mirrored Renewal, gains 2 Signal Orbs; if having 12 stacks of Delicate Heart when casting, gains 1 additional Signal Orb."],
@@ -106,7 +179,8 @@ const WEAPONS = [
   ["Vergil", "Yamato", "Yamato", "vergil/Arma - Vergil.png", "Deals 30% more CRIT DMG. Triggers Matrix if it is not on cooldown when casting Sin Devil Trigger. Doubles the JCE Points acquisition efficiency."],
   ["Veronica: Aegis", "Empyrean Wrath", "Lance", "veronica-aegis/Arma - Veronica Aegis.png", "ATK increases by 10%. Heavy Edge and Piercing Judgement grant double Rekindle stacks. The first Heavy Edge cast upon entering the field grants additional 25 Purge Value."],
   ["Wanshi: Lucid Dreamer", "Renewed Dawn", "Revolver", "wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png", "ATK increases by 10%. Doubles the Base DMG of Flurry Blitz, Frosty Barrage, and Snow Storm."],
-  ["Watanabe: Epitaph", "Dark Falcon", "Trailblade", "watanabe-epitaph/Arma - Watanabe Epitaph.png", "ATK increases by 10%. Upon entering the Assault Mode, gains 3 Red Orbs, up to 6 orbs each time when entering the battlefield. Can quickly cast Scorching Torrent after pinging Red Orbs."]
+  ["Watanabe: Epitaph", "Dark Falcon", "Trailblade", "watanabe-epitaph/Arma - Watanabe Epitaph.png", "ATK increases by 10%. Upon entering the Assault Mode, gains 3 Red Orbs, up to 6 orbs each time when entering the battlefield. Can quickly cast Scorching Torrent after pinging Red Orbs."],
+  ...FIVE_STAR_WEAPONS,
 ];
 
 // Memory stats: [ATK, DEF, CRIT, HP]. Source: https://grayravens.com/wiki/Memories/Omniframe_Memories and .../Uniframe_Memories
@@ -140,7 +214,27 @@ const WEAPON_STATS = {
   "Reconstruction of Law": [436, 249], "Starlight Glare": [436, 249], "Obituary for Yesterday": [436, 249], "Managarm": [458, 249],
   "Akasha Keyblade": [467, 241], "Mirage Halberd: Amalga": [436, 249], "Orpheus' Lullaby": [436, 249], "Neon Wayfarer": [436, 249],
   "Deathless Flame": [436, 249], "Yamato": [436, 249], "Empyrean Wrath": [436, 249], "Renewed Dawn": [436, 249],
-  "Dark Falcon": [436, 249]
+  "Dark Falcon": [436, 249],
+// 5-star weapon stats: [ATK, CRIT]. Source: https://grayravens.com/wiki/Weapons/5%E2%98%85_Weapons
+  "Abyss Forgefire": [354, 201], "Animus": [368, 203], "Base Fog": [354, 201], "Bipolar Star Rift": [386, 201],
+  "Blooming Rose": [379, 201], "BX-02M Fellfrost": [354, 201], "Celestial Reflection": [354, 201], "Clock Hands": [365, 203],
+  "Comet's Edge": [368, 201], "Crowned Laurel": [354, 201], "Cruel Oath": [361, 205], "Cyan Blossom": [354, 201],
+  "Dark Moon": [354, 201], "Death's Plume": [354, 201], "Despair Breaker": [372, 201], "Devil Hunter Sword": [365, 203],
+  "Dual Rainbows": [390, 201], "Dynamo Greatsword": [354, 186], "Eternal Peace": [354, 201], "Everburning Ray": [354, 197],
+  "FA2D-AP": [368, 201], "Faded Color": [345, 201], "Falcon E-3320": [382, 206], "Fiery Twilight": [354, 201],
+  "Firecrackers": [365, 205], "FPT-II - Mod": [354, 201], "Glazed Enigma": [354, 201], "Glimpse": [400, 201],
+  "Gloomlight": [372, 201], "Glorious Knight": [365, 205], "Guardian Mount": [336, 201], "Guiyun": [411, 211],
+  "Kara Type 1 Gunblade": [361, 206], "Kuji no Sada": [354, 186], "Lethal Shadow": [354, 197], "Lightning Spark": [345, 190],
+  "Magma Pillar": [372, 201], "Marrow's Glimmer": [354, 201], "Mirage Halberd": [354, 201], "Mist Netherlight": [354, 201],
+  "Moonside Petal": [354, 201], "Neapolitan Solo": [375, 205], "Night Sunderer": [354, 201], "Nuclear Meltdown δ": [393, 195],
+  "Odette": [382, 211], "Pale Plume": [354, 201], "Phoenix Edge": [379, 195], "Polar Night": [382, 201],
+  "Progressive Knife": [390, 191], "Raijin": [354, 197], "Ray Slasher": [354, 201], "Red Shift": [379, 191],
+  "Red Sprite": [393, 195], "Returning Wind": [336, 201], "Reversal Node": [372, 201], "RL-03C Black Spike": [372, 186],
+  "Rock Cannon": [365, 203], "Skybound Beats": [354, 201], "Skyradiance": [354, 201], "Solar Ring": [390, 211],
+  "Sparkle ZL-09 - Mod": [354, 201], "Spindrift Shimmer": [354, 201], "Spinebreaker": [354, 201], "Star Of Bethlehem": [363, 183],
+  "Stone Heart": [372, 209], "Trio-Claws": [372, 201], "Type-4O Lance": [372, 201], "Virtuous Contract": [379, 211],
+  "White Night's Noise": [354, 195], "White Qilin": [379, 191], "Whitefrost Ruler": [375, 217], "Yamato - Kageuchi": [365, 203],
+  "Yuan Night": [368, 213],
 };
 
 // CUB skills by character folder, as [name, effect at level 5], in the order of the files "CUB - Skill 1" to "CUB - Skill 6".
@@ -516,3 +610,17 @@ const LEIA_ROTATIONS = {
   glaciationSS: glaciationRotation([{ turn: "Turn 2", steps: ROTATION_LEIA_SS }]),
   glaciationSS3: glaciationRotation([{ turn: "Turn 2: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 2 after that: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }])
 };
+
+// Player03's SS Leia rotation, written for Leia alone. His "Ult 1" and "Ult 2" are Signature here. Not from Spider 2B's guide, so it has its own source
+const PLAYER03_ORBS_END = ["Red Orb 2x", "Gravity Orb", "Swap out"];
+const LEIA_PLAYER03 = {
+  source: { label: "Player03's Ice Warzone run", href: "https://youtu.be/YXq7LQmhTfw" },
+  turns: [
+    { turn: "Rotation", steps: ["Swap in", "Red Orb until the Passive Gauge is full", "Gravity Orb 2x", "Hold Gravity Orb", "Signature", "Hold Gravity Orb", "Signature", "Swap out"],
+      note: "Assumes the build is 4pc Mousme and 4pc Chen Jiyuan." },
+    { turn: "Variant: first rotation", steps: ["Swap in", "Red Orb until the Passive Gauge is full", "Gravity Orb 2x", "Hold Gravity Orb", "Signature", "Hold Gravity Orb", "Signature", ...PLAYER03_ORBS_END] },
+    { turn: "Variant: subsequent rotations", steps: ["Gravity Orb", "Gravity Orb 2x", "Signature", "Hold Gravity Orb", "Signature", ...PLAYER03_ORBS_END] }
+  ]
+};
+// A team's rotations with Leia's swapped for Player03's. The team order is the guide's, so it stays
+const withPlayer03Leia = rotations => ({ ...rotations, leia: { ...LEIA_PLAYER03, order: rotations.leia.order } });

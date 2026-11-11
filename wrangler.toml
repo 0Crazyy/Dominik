@@ -1,0 +1,21 @@
+# Cloudflare Pages settings of the site: what the API (functions/) can reach. Not published as a site file.
+# Secrets never go here: they are set with "npx wrangler@4 pages secret put NAME --project-name dominiko".
+name = "dominiko"
+pages_build_output_dir = ".deploy"
+compatibility_date = "2026-10-01"
+
+# Community teams: the review queue and the approved teams
+[[d1_databases]]
+binding = "DB"
+database_name = "dominik"
+database_id = "add1ebcd-9cb9-4956-9dd9-9936999d2eb4"
+
+# Fast copy of the approved teams (and their likes) that pages read, rebuilt on each approval.
+# KV allows only 1000 writes a day on the free plan, so counters and likes live in D1, never here
+[[kv_namespaces]]
+binding = "CACHE"
+id = "c6badb0f774540a1bc86f433b543173e"
+
+[vars]
+# Public key of the Turnstile widget (the secret key is the TURNSTILE_SECRET secret)
+TURNSTILE_SITE_KEY = "0x4AAAAAAF6XVjCqC8wjRFFx"

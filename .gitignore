@@ -9,3 +9,5 @@ Dominik - arquivos fonte/
 # Development tools: dependencies and the screenshots of tools/smoke.mjs
 node_modules
 .smoke
+# Local copies of the API secrets, for wrangler pages dev
+.dev.vars

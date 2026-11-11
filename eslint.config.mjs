@@ -5,8 +5,8 @@ import js from "@eslint/js";
 import globals from "globals";
 
 // The site has no modules: index.html loads these as plain scripts, so they all share their top-level names
-const DATA = ["data/assets-data.js", "data/calculator-data.js", "data/timeline-data.js", "data/skills-data.js"];
-const SCRIPTS = [...DATA, "app.js"];
+const DATA = ["data/assets-data.js", "data/calculator-data.js", "data/timeline-data.js", "data/skills-data.js", "data/catalog-data.js"];
+const SCRIPTS = [...DATA, "app.js", "editor.js"];
 const shared = Object.fromEntries(SCRIPTS.flatMap(file =>
   [...readFileSync(new URL(file, import.meta.url), "utf8").matchAll(/^(const|let|function)\s+([\w$]+)/gm)].map(m => [m[2], m[1] === "let" ? "writable" : "readonly"])));
 
@@ -24,6 +24,8 @@ export default [
   // Data files only declare: what they hold is used by app.js
   { files: DATA, rules: { "no-unused-vars": ["error", { vars: "local" }] } },
   { files: ["tools/**/*.mjs", "eslint.config.mjs"], languageOptions: { globals: globals.node } },
+  // The API runs on Cloudflare, as modules
+  { files: ["functions/**/*.js", "server/**/*.js"], languageOptions: { sourceType: "module", globals: globals.serviceworker } },
   // Its page.evaluate() callbacks run inside the browser
   { files: ["tools/smoke.mjs"], languageOptions: { globals: globals.browser } }
 ];

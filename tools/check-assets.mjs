@@ -70,8 +70,11 @@ function check() {
     if (!d.MEMORY_STATS[name]) errors.push(`memória "${name}" não tem stats em MEMORY_STATS (a página dela quebra)`);
     if (!d.MEMORY_RELEASE[name]) errors.push(`memória "${name}" não tem ordem em MEMORY_RELEASE (o Sort quebra)`);
   }
-  for (const [owner, , , file] of d.WEAPONS) if (file) use(`${d.CHARS}/${file}`, `arma de ${owner}`);
-  for (const [owner, name] of d.WEAPONS) if (!d.CONSTRUCTS[owner]) errors.push(`dono da arma "${name}" sem dados em CONSTRUCTS (a página Weapons quebra): ${owner}`);
+  for (const [owner, name, , file] of d.WEAPONS) if (file) {
+    const path = file.startsWith("assets/") ? file : `${d.CHARS}/${file}`;
+    use(path, owner ? `arma de ${owner}` : `arma ${name}`);
+  }
+  for (const [owner, name] of d.WEAPONS) if (owner && !d.CONSTRUCTS[owner]) errors.push(`dono da arma "${name}" sem dados em CONSTRUCTS (a página Weapons quebra): ${owner}`);
   for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
   for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type] of skills) {
     use(`${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${type}.png`, `skill de ${name}`);

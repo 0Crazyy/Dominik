@@ -44,7 +44,7 @@ const cubs = [...new Map(builds.filter(({ card }) => card.construct?.split("/").
   [fileName(card.construct), { name: fileName(card.construct), owner: card.name, art: card.construct }])).values()];
 
 // The file has to exist, or the card would show a broken picture. Discord keeps a preview picture per URL, so new art needs a new file name
-const DEFAULT_IMAGE = "assets/embed-icon-3.png";
+const DEFAULT_IMAGE = "assets/embed-icon-4.png";
 function image(...options) {
   const found = options.find(src => src && existsSync(join(ROOT, src)));
   if (!found) console.warn(`AVISO  sem imagem para o embed: ${options.filter(Boolean).join(", ") || "(vazio)"}`);
@@ -53,7 +53,7 @@ function image(...options) {
 // The light square thumbnail of the home page, or the full art when there is none
 const portrait = ({ name, portrait: art }) => image(`assets/home/${slug(name.replace(":", ""))}.jpg`, art);
 const memoryArt = ([name, , ext]) => ext ? memFile(name, "1-4") : "";
-const weaponArt = ([, , , file]) => file ? `${CHARS}/${file}` : "";
+const weaponArt = ([, , , file]) => file ? (file.startsWith("assets/") ? file : `${CHARS}/${file}`) : "";
 
 const pages = new Map();
 const add = (path, title, description, picture = DEFAULT_IMAGE) => pages.set(path, { title, description, picture });
@@ -68,7 +68,7 @@ for (const [kind, { items, label }] of Object.entries(TEAM_LISTS)) for (const it
     add(path, `${item} Teams`, `No teams for ${what} yet.`, image(`assets/${kind === "energy" ? "energy type" : "effects"}/${item}.png`));
     continue;
   }
-  // The page opens on its first composition, which is the newest one
+  // The page lists every build; the newest composition comes first
   const count = ids.reduce((sum, id) => sum + teamsOf(id).length, 0), [first] = teamsOf(ids[0]);
   add(path, `${item} Teams`, `${plural(count, "team")} for ${what}, with memories, weapons and resonances.\nNewest: ${COMPS[ids[0]].name}\n${first.cards.map(c => c.name).join(" · ")}`, teamImage(first.cards));
   for (const id of ids) {
@@ -81,7 +81,7 @@ for (const [kind, { items, label }] of Object.entries(TEAM_LISTS)) for (const it
 }
 
 /* ---------- constructs ---------- */
-const releaseOf = name => CONSTRUCTS[name][0];
+const releaseOf = name => CONSTRUCTS[name]?.[0] ?? 0;
 const newestConstructs = [...characters].sort((a, b) => releaseOf(b.name) - releaseOf(a.name));
 add("constructs", "Constructs", `${plural(characters.length, "construct")} with builds, filtered by element, class, rank and effect.\nNewest: ${newestConstructs.slice(0, 3).map(c => c.name).join(" · ")}`, portrait(newestConstructs[0]));
 for (const ch of characters) {
@@ -106,7 +106,7 @@ function listPages(base, title, tabs, summary, release, nameOf, artOf) {
     add(`assets/${base}/${slug(tab)}`, ...page);
   }
 }
-const elementTabs = (list, ownerOf) => [["All", list], ...ENERGY.map(e => [e, list.filter(item => CONSTRUCTS[ownerOf(item)][1] === e)])];
+const elementTabs = (list, ownerOf) => [["All", list], ...ENERGY.map(e => [e, list.filter(item => CONSTRUCTS[ownerOf(item)]?.[1] === e)])];
 
 const memories = Object.values(MEMORY_TABS).flat();
 listPages("memories", "Memories", [["All", memories], ...Object.entries(MEMORY_TABS)], count => `${plural(count, "memory set")}, sortable by ATK, DEF, CRIT and HP, each with its set bonuses.`, ([name]) => MEMORY_RELEASE[name], ([name]) => name, memoryArt);
@@ -119,8 +119,9 @@ for (const set of memories) {
 
 listPages("weapons", "Weapons", elementTabs(WEAPONS, ([owner]) => owner), count => `${plural(count, "weapon")}, sortable by ATK and CRIT, each with its effect.`, ([owner]) => releaseOf(owner), ([, name]) => name, weaponArt);
 for (const weapon of WEAPONS) {
-  const [owner, name, type, , effect] = weapon, [ATK, CRIT] = WEAPON_STATS[name];
-  add(`assets/weapon/${linkId(name)}`, name, `${[type, owner].filter(Boolean).join(" · ")} · ATK ${ATK} · CRIT ${CRIT}\n${effect}`, weaponArt(weapon) ? image(weaponArt(weapon)) : DEFAULT_IMAGE);
+  const [owner, name, type, , effect, rank] = weapon, [ATK, CRIT] = WEAPON_STATS[name];
+  const subtitle = owner ? [type, owner].filter(Boolean).join(" · ") : `${rank || 5}-star weapon`;
+  add(`assets/weapon/${linkId(name)}`, name, `${subtitle} · ATK ${ATK} · CRIT ${CRIT}\n${effect}`, weaponArt(weapon) ? image(weaponArt(weapon)) : DEFAULT_IMAGE);
 }
 
 const resonances = Object.entries(RESONANCE_EFFECTS);
@@ -139,6 +140,7 @@ for (const cub of cubs) {
 add("calculator", "Planner", "Plan your Black Cards across upcoming patches, add up the cost of the passes you pick, and check your pull odds on any banner, including how often pity triggers.", image("assets/calculator/black-card.png"));
 const newestFrame = TIMELINE.at(-1);
 add("timeline", "Meta Timeline", `How long each of ${TIMELINE.length} S-Rank frames held its place in the meta before a newer one replaced it, with rankings, class averages and a replacement watch.\nNewest: ${newestFrame.name}`, image(newestFrame.head));
+add("editor", "Team Builder", "Put a full team together from the site's characters, memories and resonances, see its cards as the site shows them, and share it as a link or an image.", DEFAULT_IMAGE);
 add("contact", "Contact", "Found a wrong build, or have a question or suggestion? Message crazy117 on Discord. Also the credits of the people behind the site's data and art.", image("assets/credits/crazy117.png"));
 
 /* ---------- writing ---------- */

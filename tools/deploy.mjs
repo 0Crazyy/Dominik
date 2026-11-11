@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Publishes the site. The repository root also holds tools/ and .claude/, so only the files below go up:
 // they are copied to .deploy/ and that folder is what Cloudflare Pages receives.
+// The API is not in the list: wrangler reads functions/ (and server/, which it imports) and wrangler.toml from the root by itself.
 // Run it with: node tools/deploy.mjs     (--stage-only copies the files and stops before publishing)
 // Once per computer: npx wrangler@4 login. Once ever: npx wrangler@4 pages project create dominiko --production-branch main
 import { spawnSync } from "node:child_process";
@@ -10,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STAGE = join(ROOT, ".deploy");
-const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "data", "assets", "assets-web"];
+const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "editor.js", "data", "assets", "assets-web"];
 
 const run = (command, args) => {
   const { status } = spawnSync(command, args, { cwd: ROOT, stdio: "inherit", shell: true });
@@ -24,6 +25,7 @@ const refresh = script => {
 };
 const stageOnly = process.argv.includes("--stage-only");
 if (!stageOnly) ["tools/update-prices.mjs", "tools/update-calculator.mjs", "tools/update-timeline.mjs", "tools/make-sitemap.mjs"].forEach(refresh);
+run("node", ["tools/make-catalog.mjs"]);
 run("node", ["tools/check-assets.mjs"]);
 rmSync(STAGE, { recursive: true, force: true });
 for (const file of SITE_FILES) cpSync(join(ROOT, file), join(STAGE, file), { recursive: true });
