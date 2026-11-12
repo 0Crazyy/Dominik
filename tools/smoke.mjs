@@ -19,7 +19,7 @@ const SIZES = {
   mobile: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
 };
 // Default run: one page of each kind gets a screenshot, since all of them together would be too many to look at
-const SHOT_PAGES = ["/", "/constructs", "/energy/fire", "/character/leia-fortunaster", "/calculator", "/timeline", "/assets/memories"];
+const SHOT_PAGES = ["/", "/constructs", "/energy/fire", "/constructs/fortunaster", "/calculator", "/timeline", "/assets/memories"];
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".xml": "application/xml", ".txt": "text/plain" };
 
 // The rules _headers gives every page. The strict Content-Security-Policy there blocks things only on the published site, so it has to apply here too
@@ -97,6 +97,32 @@ async function checkPage(context, size, path, base, shot) {
 
 // The clicks people depend on most. Each one starts from a fresh page, so one failure does not hide the others
 const FLOWS = {
+  "esteira de personagens": async page => {
+    await page.goto("/");
+    await page.locator(".hero-track").evaluate(track => { track.style.animationPlayState = "paused"; });
+    const icon = page.locator('.hero-track a:not([aria-hidden="true"])').first();
+    const href = await icon.getAttribute("href");
+    if (!href?.startsWith("/constructs/")) throw new Error("o ícone da esteira não aponta para a página do personagem");
+    await icon.evaluate(anchor => anchor.click());
+    await page.waitForURL(/\/constructs\/[^/]+$/);
+    await page.waitForSelector("#main .char-detail");
+    await page.goto(href.replace("/constructs/", "/character/"));
+    await page.waitForURL(/\/constructs\/[^/]+$/);
+    await page.waitForSelector("#main .char-detail");
+    await page.goto("/character/leia-fortunaster");
+    await page.waitForURL(/\/constructs\/fortunaster$/);
+    await page.waitForSelector("#main .char-detail");
+  },
+  "frase do ícone": async page => {
+    await page.goto("/");
+    const mark = page.locator(".hero-mark");
+    const previous = await mark.getAttribute("data-splash");
+    await mark.click();
+    const next = await mark.getAttribute("data-splash");
+    const text = await page.locator(".hero-splash").textContent();
+    if (next === previous || text !== next.replace(/\*\*(.+?)\*\*/g, "$1"))
+      throw new Error("o ícone não gerou uma frase nova");
+  },
   "busca": async (page, size) => {
     await page.goto("/");
     if (size === "mobile") await page.click("#menuBtn");

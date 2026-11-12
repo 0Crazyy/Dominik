@@ -593,15 +593,16 @@ function iconInfo(src = "") {
   return RESONANCE_EFFECTS[iconName(src)] || "";
 }
 const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(info)}"` : "");
-// Detail pages: /assets/<memory|weapon|resonance|cub|skill>/<id> and /character/<id>
+// Detail pages: /assets/<memory|weapon|resonance|cub|skill>/<id> and /constructs/<id>
 const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
 const memoryHref = name => `/assets/memory/${linkId(name)}`;
 const weaponHref = name => `/assets/weapon/${linkId(name)}`;
 const resonanceHref = name => `/assets/resonance/${linkId(name)}`;
 const cubHref = name => `/assets/cub/${linkId(name)}`;
 const charId = name => linkId(name.replace(":", ""));
+const constructId = name => linkId(name.split(":").at(-1).trim());
 const skillHref = name => `/assets/skill/${charId(name)}`;
-const characterHref = name => `/character/${charId(name)}`;
+const characterHref = name => `/constructs/${constructId(name)}`;
 // With href, the slot is a link. With a tip but no image, it shows that name in place of the art
 const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", info = iconInfo(src)) => {
   const tag = href ? "a" : "div", named = !src && tip;
@@ -805,7 +806,7 @@ function card(c) {
         <div class="res"><span>6×</span>${skillSlot(c.resonance)}<span>6×</span>${skillSlot(c.core)}</div>
       </div>
     </div>
-    <div class="box kit">${slot(c.construct, "construct", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub)).join("")}</div>
+    <div class="box kit">${slot(c.construct, "C.U.B.", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub)).join("")}</div>
     ${cardNotes(c)}
     </div><i class="bar bar-top"></i><i class="bar bar-bot"></i><div class="tags">${tags}</div>
   </article>`;
@@ -1046,6 +1047,11 @@ function characters() {
   }
   return characterList = [...found.values()];
 }
+const constructPortrait = name => `${CHARS}/${charId(name)}/Awaken - ${name.replace(":", "").trim()}.png`;
+function constructRoster() {
+  const built = new Map(characters().map(ch => [ch.name, ch]));
+  return Object.keys(CONSTRUCTS).map(name => built.get(name) || ({ name, portrait: constructPortrait(name), builds: [] }));
+}
 // Each CUB shown in a build, under the character it belongs to. A card can borrow another character's CUB as a
 // placeholder, so the owner is the character named after the folder of the art
 function cubList() {
@@ -1059,7 +1065,7 @@ function cubList() {
 }
 function heroChars() {
   const rank = c => { const i = HERO_FIRST.indexOf(c.name); return i < 0 ? HERO_FIRST.length : i; };
-  return characters().map(c => ({ ...c, href: c.builds[0].href })).sort((a, b) => rank(a) - rank(b));
+  return characters().map(c => ({ ...c, href: characterHref(c.name) })).sort((a, b) => rank(a) - rank(b));
 }
 function heroBelt() {
   const chars = heroChars();
@@ -1099,6 +1105,15 @@ function homeLinks() {
 }
 // Teams are named after the patch of their newest character, so a team named after the patch running today is new. The tag leaves by itself when that patch ends
 const isNewTeam = id => CALC_PATCHES.some(p => patchTime(p, calcToday()) && p.patch.toLowerCase() === COMPS[id].name.toLowerCase());
+function splashMarkup(phrase) {
+  let splashChar = 0;
+  const typed = text => Array.from(text, char => `<span style="animation-delay:${splashChar++ * 30}ms">${esc(char)}</span>`).join("");
+  return phrase.split(/(\*\*.+?\*\*)/g).map(part => {
+    const bold = part.startsWith("**") && part.endsWith("**");
+    const text = typed(bold ? part.slice(2, -2) : part);
+    return bold ? `<strong>${text}</strong>` : text;
+  }).join("");
+}
 function home() {
   const tile = (e, p, iconDir, color = TILE_COLOR[e]) => {
     if (!e) return `<span class="tile-gap">N/A</span>`;
@@ -1113,9 +1128,13 @@ function home() {
   // Cells go column by column: the row names, then each energy with its effects
   const labels = Object.values(TEAM_LISTS).map(l => `<h2 class="home-label">${l.label}</h2>`).join("");
   const columns = ENERGY.map(e => tile(e, "energy", "energy type") + tile(ENERGY_EFFECT[e], "effect", "effects", TILE_COLOR[e]) + tile(ENERGY_SPECIAL[e], "special", "effects", TILE_COLOR[e])).join("");
+  const splash = HOME_SPLASHES[Math.floor(Math.random() * HOME_SPLASHES.length)];
   return `<section class="hero">
+      <div class="hero-tx">
+        <button class="hero-mark" type="button" aria-label="Show another phrase" data-splash="${esc(splash)}"><img src="assets-web/logo.webp.webp" alt=""></button>
+        <p class="hero-splash">${splashMarkup(splash)}</p>
+      </div>
       ${heroBelt()}
-      <div class="hero-tx"><h1>Punishing: Gray Raven Builds</h1><p class="sub">Pick a team by energy or derivative effect.</p></div>
     </section>
     <div class="home-grid">${labels}${columns}</div>
     ${homeLinks()}`;
@@ -1219,11 +1238,17 @@ const memoryRow = ([name, boost, ext]) => `<tr>
 const weaponFile = file => file && (file.startsWith("assets/") ? file : `${CHARS}/${file}`);
 const weaponThumb = (file, name, rank = "") => thumb(weaponFile(file), file ? starsOf(name, file, rank) : "");
 // A character without a build has no page to link to
-const ownerLink = name => characters().some(c => c.name === name) ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name);
-const weaponRow = ([owner, name, type, file, , rank]) => `<tr>
+const ownerLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name);
+const weaponRow = ([owner, name, type, file, , rank]) => {
+  const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
+  const subtitle = owner
+    ? `${ownerLink(owner)}${type ? ` · ${esc(type)}` : ""}`
+    : listedOwner ? `${ownerLink(listedOwner)}${type ? ` · ${esc(type)}` : ""}` : esc(type);
+  return `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${weaponThumb(file, name, rank)}</div>
-      <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${owner ? `${ownerLink(owner)}${type ? ` · ${esc(type)}` : ""}` : `${rank || weaponRank(name, file)}-star weapon`}</small></div></div></td>
+      <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${subtitle}</small></div></div></td>
     ${WEAPON_STATS[name].map(value => `<td>${value}</td>`).join("")}</tr>`;
+};
 const SORT_TABLES = {
   memories: { columns: STAT_NAMES, row: set => memoryRow(set), name: ([name]) => name,
     value: ([name], column) => column === "Release" ? MEMORY_RELEASE[name] : MEMORY_STATS[name][STAT_NAMES.indexOf(column)] },
@@ -1279,25 +1304,27 @@ const constructValue = (c, group) => CONSTRUCTS[c.name][CONSTRUCT_FILTERS.indexO
 // Class files that are not named after the class. Only rank S has art: any other rank shows its letter
 const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${ADELYDE}/Classe - Adelyde Anabasis.png` };
 const filterIcon = (group, value) => group === "Element" ? menuIcon("energy type", value) : group === "Effect" ? menuIcon("effects", value)
-  : group === "Class" ? pic(CLASS_ART[value] || classIcon(value)) : value === "S" ? pic("assets/rank/S.png") : `<b>${esc(value)}</b>`;
+  : group === "Class" ? value === "Vanguard" ? `<b>V</b>` : pic(CLASS_ART[value] || classIcon(value))
+    : value === "S" ? pic("assets/rank/S.png") : `<b>${esc(value)}</b>`;
 function constructFilters() {
   const active = CONSTRUCT_FILTERS.filter(group => constructFilter[group]).length;
   const bar = `<div class="filter-bar"><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">Filters${active ? ` (${active})` : ""}</button>${active ? `<button class="tool" data-clear-filters>Clear filters</button>` : ""}</div>`;
   return `${bar}<div class="filters${filtersOpen ? " open" : ""}">${CONSTRUCT_FILTERS.map(group => {
-    const found = new Set(characters().map(c => constructValue(c, group)).filter(Boolean));
+    const found = new Set(constructRoster().map(c => constructValue(c, group)).filter(Boolean));
     const values = group === "Element" ? ENERGY.filter(e => found.has(e)) : group === "Rank" ? [...found].sort().reverse() : [...found].sort();
     const chip = (label, value) => `<button class="tool chip${(constructFilter[group] || "") === value ? " on" : ""}" data-filter="${group}" data-value="${esc(value)}" aria-pressed="${(constructFilter[group] || "") === value}">${value ? `<span class="chip-icon">${filterIcon(group, value)}</span>` : ""}${esc(label)}</button>`;
     return `<div class="filter" role="group" aria-label="${group}"><span>${group}</span>${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div>`;
   }).join("")}</div>`;
 }
 function constructCards() {
-  const list = characters().filter(c => CONSTRUCT_FILTERS.every(group => !constructFilter[group] || constructValue(c, group) === constructFilter[group]))
+  const list = constructRoster().filter(c => CONSTRUCT_FILTERS.every(group => !constructFilter[group] || constructValue(c, group) === constructFilter[group]))
     .sort((a, b) => CONSTRUCTS[b.name][0] - CONSTRUCTS[a.name][0]);
   if (!list.length) return `<p class="sub">No constructs match these filters.</p>`;
   return `<div class="agrid">${list.map(c => {
     const [, element, type, rank, effect] = CONSTRUCTS[c.name];
     const count = c.builds.length;
-    return charCard(c, characterHref(c.name), [rank, type, element, effect, `${count} build${count > 1 ? "s" : ""}`].filter(Boolean).join(" · "));
+    const builds = count ? `${count} build${count === 1 ? "" : "s"}` : "No builds yet";
+    return charCard(c, characterHref(c.name), [rank, type, element, effect, builds].filter(Boolean).join(" · "));
   }).join("")}</div>`;
 }
 const constructsView = () => `${constructFilters()}${constructCards()}`;
@@ -1326,10 +1353,18 @@ function memoryPage([name, boost, ext]) {
 }
 function weaponPage([owner, name, type, file, effect, rank]) {
   const [ATK, CRIT] = WEAPON_STATS[name];
-  const subtitle = owner ? [type, owner].filter(Boolean).join(" · ") : `${rank || weaponRank(name, file)}-star weapon`;
+  const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
+  const subtitle = listedOwner
+    ? [type, listedOwner].filter(Boolean).join(" · ")
+    : [type, `${rank || weaponRank(name, file)}-star weapon`].filter(Boolean).join(" · ");
+  const users = WEAPON_USERS[type] || (listedOwner ? [listedOwner] : []);
+  const usableBy = users.length
+    ? `<section class="used"><h2>Usable by</h2><p>${users.map(ownerLink).join(" · ")}</p></section>`
+    : "";
+  const buildUsage = owner ? usedIn(c => c.name === owner) : "";
   return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
     <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}<h2>Effect</h2><p>${esc(effect)}</p></div></div>
-    ${usedIn(c => c.name === owner)}`;
+    ${usableBy}${buildUsage}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${thumb(WEAPON_RES(name))}</div>
@@ -1429,7 +1464,7 @@ function assetsPage(key, pick = "all") {
 /* ---------- character pages ---------- */
 function charactersPage() {
   readFilters();
-  return `<h1>Constructs</h1><p class="sub">Every construct with a build</p><div id="constructs">${constructsView()}</div>`;
+  return `<h1>Constructs</h1><p class="sub">Every playable construct</p><div id="constructs">${constructsView()}</div>`;
 }
 // Contact page. No art = the first letter of the name in a circle; art goes in assets/credits
 const CREDITS = [
@@ -1636,7 +1671,7 @@ const rcPrice = rc => rc ? `≈ ${packCost(rc, 2).toLocaleString("en-US", { styl
 const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
 const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
 const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(c.name)}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
-const frameLink = name => characters().some(c => c.name === name) ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
+const frameLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
 // The belt: one stop per patch, in order, with the BC it leaves and the RC spent in it. Picking a stop shows that patch's card
 const dayMonth = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 function patchStop(patch, today, picked) {
@@ -1917,7 +1952,7 @@ function loadCommunity() {
       searchItems = null;
       // Only pages that list builds are drawn again: the others have nothing new to show
       const kind = location.pathname.split("/")[1];
-      if (!kind || TEAM_LISTS[kind] || kind === "character") route();
+      if (!kind || TEAM_LISTS[kind] || kind === "constructs") route();
     });
   }).catch(() => { /* no API here (a local copy) or a bad answer: official builds only */ });
 }
@@ -1963,7 +1998,7 @@ function timelineLanes(field, group) {
   }) })).filter(lane => lane.reigns.length);
 }
 const reignInfo = r => `Released in ${r.patch} · ${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"} · ${amount(r.days)} days${r.next ? ` · replaced by ${r.next.name}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : " · still in place"}${TL_FREE[r.name] ? ` · free from ${TL_FREE[r.name]}` : ""}`;
-const reignHref = name => characters().some(c => c.name === name) ? ` href="${characterHref(name)}"` : "";
+const reignHref = name => CONSTRUCTS[name] ? ` href="${characterHref(name)}"` : "";
 // What the page shows after the filters. The numbers at the top always use every character
 function timelineShown(view) {
   return view.groups().filter(group => !timelineGroup || group === timelineGroup).map(group => ({
@@ -2075,15 +2110,25 @@ const buildRow = ({ href, page, team, variant, card, mates }) => `<a class="acar
   </a>`;
 function characterPage(ch) {
   const count = ch.builds.length, card = ch.builds.find(b => b.card.construct)?.card;
+  const [, element, type, rank, effect] = CONSTRUCTS[ch.name];
+  const details = [rank && `${rank}-Rank`, type, element, effect].filter(Boolean).join(" · ");
   const weapon = WEAPONS.find(w => w[0] === ch.name), cub = cubList().find(c => c.owner === ch.name);
   const links = [
     weapon && `<a class="acard wpn" href="${weaponHref(weapon[1])}">${weaponThumb(weapon[3], weapon[1])}<div><h3>${esc(weapon[1])}</h3><p>Weapon</p></div></a>`,
     cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`,
-    `<a class="acard wpn" href="${skillHref(ch.name)}">${thumb(card?.core)}<div><h3>Skills</h3><p>All skills and passives</p></div></a>`
+    count && `<a class="acard wpn" href="${skillHref(ch.name)}">${thumb(card?.core)}<div><h3>Skills</h3><p>All skills and passives</p></div></a>`
   ].filter(Boolean).join("");
-  return `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub">${esc(iconName(ch.symbol))} · ${count} build${count > 1 ? "s" : ""}</p>
-    <div class="detail char-detail"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div><div class="char-links">${links}</div></div>
-    <h2 class="grp">Builds</h2><div class="builds">${ch.builds.map(buildRow).join("")}</div>`;
+  const buildCount = `${count} build${count === 1 ? "" : "s"}`;
+  const summary = count ? `${iconName(ch.symbol)} · ${buildCount}` : details;
+  const content = count
+    ? links
+    : `<div class="fx"><h2>Construct details</h2><p>${esc(details)}</p></div>`;
+  const builds = count
+    ? `<h2 class="grp">Builds</h2><div class="builds">${ch.builds.map(buildRow).join("")}</div>`
+    : `<section class="used"><h2>Builds</h2><p>No builds available yet.</p></section>`;
+  return `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub">${esc(summary)}</p>
+    <div class="detail char-detail"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div><div class="char-links">${content}</div></div>
+    ${builds}`;
 }
 
 /* ---------- export a build as an image ---------- */
@@ -2297,6 +2342,14 @@ function route() {
     history.replaceState(null, "", `/constructs${location.search}`);
     pageUrl = location.href;
   }
+  // Keep old character detail links working with their new Constructs address
+  const legacyCharacter = location.pathname.match(/^\/character\/([^/]+)\/?$/);
+  if (legacyCharacter) {
+    const id = decodeURIComponent(legacyCharacter[1]);
+    const character = constructRoster().find(c => charId(c.name) === id || constructId(c.name) === id);
+    history.replaceState(null, "", `${character ? characterHref(character.name) : `/constructs/${id}`}${location.search}`);
+    pageUrl = location.href;
+  }
   // A link can name a team as a third part: /energy/dark/kurumi-adelyde-rosetta
   // A community team is named in the query instead: /energy/dark?team=c-12
   const [kind, key, part] = location.pathname.split("/").filter(Boolean).map(decodeURIComponent);
@@ -2307,15 +2360,19 @@ function route() {
   shown = owner || (ids.includes(pick) ? pick : "");
   chosen = owner ? pick : COMPS[shown]?.variants?.[0].id || "";
   const main = $("#main");
-  const character = kind === "character" && characters().find(c => charId(c.name) === key);
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? charactersPage() : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
-    : kind === "character" ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : path ? team(path, pick) : home();
+  const character = kind === "constructs" && key && !part && constructRoster().find(c => constructId(c.name) === key || charId(c.name) === key);
+  if (character && key !== constructId(character.name)) {
+    history.replaceState(null, "", `${characterHref(character.name)}${location.search}`);
+    pageUrl = location.href;
+  }
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : charactersPage()) : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
+    : path ? team(path, pick) : home();
   theme(shown || null);
   if (kind === "editor" && editorState === "ready") edPaint();
   if (kind === "calculator") { showCalc(); centerStop(); }
   const heading = kind && $("h1", main)?.textContent;
   document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
-  const navPath = kind === "character" ? "constructs" : { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;
+  const navPath = { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;
   document.querySelectorAll("#side a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "/" + navPath));
   showGroups();
   const picker = $(".picker");
@@ -2393,7 +2450,7 @@ addEventListener("error", e => {
 }, true);
 // Every page opens at the top, except when coming back from a detail page to where you were.
 // A new detail page only needs to be listed here and to use backLink
-const DETAIL_PAGE = /\/(assets\/(memory|weapon|skill|resonance|cub)|character)\//;
+const DETAIL_PAGE = /\/(assets\/(memory|weapon|skill|resonance|cub)|constructs)\//;
 const scrollSaved = new Map();
 history.scrollRestoration = "manual";
 // The address of the page on screen: when the browser goes back, location already shows the next one
@@ -2420,6 +2477,15 @@ function pageChanged() {
 }
 // Links inside the site change the page without reloading it. Ctrl+click and the like stay with the browser
 addEventListener("click", e => {
+  const mark = e.target.closest?.(".hero-mark[data-splash]");
+  if (mark) {
+    const current = mark.dataset.splash;
+    const options = HOME_SPLASHES.filter(phrase => phrase !== current);
+    const phrase = options[Math.floor(Math.random() * options.length)];
+    mark.dataset.splash = phrase;
+    mark.nextElementSibling.innerHTML = splashMarkup(phrase);
+    return;
+  }
   const link = e.target.closest?.('a[href^="/"]');
   if (!link || e.defaultPrevented || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
@@ -2435,7 +2501,7 @@ let searchItems = null;
 function searchData() {
   if (searchItems) return searchItems;
   const items = [
-    ...characters().map(c => ({ label: c.name, kind: "Construct", href: characterHref(c.name), art: c.portrait })),
+    ...constructRoster().map(c => ({ label: c.name, kind: "Construct", href: characterHref(c.name), art: c.portrait })),
     ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `Memory · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4") })),
     ...WEAPONS.map(([owner, name, , file, , rank]) => ({ label: name, kind: owner ? `Weapon · ${owner}` : `${rank || weaponRank(name, file)}-star weapon`, href: weaponHref(name), art: file && weaponFile(file) })),
     ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner}`, href: cubHref(c.name), art: c.art })),

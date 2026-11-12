@@ -23,6 +23,7 @@ const { COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RE
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
 const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
 const charId = name => linkId(name.replace(":", ""));
+const constructId = name => linkId(name.split(":").at(-1).trim());
 const fileName = src => src.split("/").pop().replace(/\.\w+$/, "").replace(/^(Memória|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
 const memoryName = piece => piece.startsWith("assets/") ? fileName(piece) : piece;
 function memorySummary(memories) {
@@ -52,6 +53,7 @@ function image(...options) {
 }
 // The light square thumbnail of the home page, or the full art when there is none
 const portrait = ({ name, portrait: art }) => image(`assets/home/${slug(name.replace(":", ""))}.jpg`, art);
+const constructPortrait = name => `${CHARS}/${charId(name)}/Awaken - ${name.replace(":", "").trim()}.png`;
 const memoryArt = ([name, , ext]) => ext ? memFile(name, "1-4") : "";
 const weaponArt = ([, , , file]) => file ? (file.startsWith("assets/") ? file : `${CHARS}/${file}`) : "";
 
@@ -82,14 +84,21 @@ for (const [kind, { items, label }] of Object.entries(TEAM_LISTS)) for (const it
 
 /* ---------- constructs ---------- */
 const releaseOf = name => CONSTRUCTS[name]?.[0] ?? 0;
-const newestConstructs = [...characters].sort((a, b) => releaseOf(b.name) - releaseOf(a.name));
-add("constructs", "Constructs", `${plural(characters.length, "construct")} with builds, filtered by element, class, rank and effect.\nNewest: ${newestConstructs.slice(0, 3).map(c => c.name).join(" · ")}`, portrait(newestConstructs[0]));
-for (const ch of characters) {
+const builtByName = new Map(characters.map(ch => [ch.name, ch]));
+const constructRoster = Object.keys(CONSTRUCTS).map(name => builtByName.get(name) || ({ name, portrait: constructPortrait(name), builds: [] }));
+const newestConstructs = [...constructRoster].sort((a, b) => releaseOf(b.name) - releaseOf(a.name));
+add("constructs", "Constructs", `${plural(constructRoster.length, "construct")}, filtered by element, class, rank and effect.\nNewest: ${newestConstructs.slice(0, 3).map(c => c.name).join(" · ")}`, portrait(newestConstructs[0]));
+for (const ch of constructRoster) {
   const [, element, type, rank, effect] = CONSTRUCTS[ch.name];
   const weapon = WEAPONS.find(w => w[0] === ch.name), cub = cubs.find(c => c.owner === ch.name);
   const teams = [...new Set(ch.builds.map(b => b.team))];
   const gear = [weapon && `Weapon: ${weapon[1]}`, cub && `C.U.B.: ${cub.name}`].filter(Boolean).join(" · ");
-  add(`character/${charId(ch.name)}`, ch.name, [[`${rank}-Rank ${type}`, element, effect].filter(Boolean).join(" · "), `${plural(ch.builds.length, "build")}: ${teams.join(" · ")}`, gear].filter(Boolean).join("\n"), portrait(ch));
+  const builds = ch.builds.length ? `${plural(ch.builds.length, "build")}: ${teams.join(" · ")}` : "No builds available yet.";
+  const description = [[`${rank}-Rank ${type}`, element, effect].filter(Boolean).join(" · "), builds, gear].filter(Boolean).join("\n");
+  add(`constructs/${constructId(ch.name)}`, ch.name, description, portrait(ch));
+  if (!ch.builds.length) continue;
+  add(`character/${charId(ch.name)}`, ch.name, description, portrait(ch));
+  add(`character/${constructId(ch.name)}`, ch.name, description, portrait(ch));
   const skills = CHARACTER_SKILLS[ch.name] || [];
   add(`assets/skill/${charId(ch.name)}`, `${ch.name} Skills`, skills.length ? `${plural(skills.length, "skill")} and passives of ${ch.name}.\n${skills.map(([, name]) => name).join(" · ")}` : `Skills of ${ch.name}.`, portrait(ch));
 }

@@ -46,6 +46,7 @@ function check() {
   const teams = Object.entries(d.COMPS).flatMap(([id, c]) => {
     return (c.variants || [{ id, cards: c.cards }]).map(t => ({ label: t.id === id ? id : `${id} / ${t.id}`, cards: t.cards }));
   });
+  const builtNames = new Set(teams.flatMap(({ cards }) => cards.map(card => card.name)));
   const thumbs = new Map();
   for (const { label, cards } of teams) for (const card of cards) {
     const where = `${card.name} (${label})`;
@@ -59,6 +60,12 @@ function check() {
     if (!d.CONSTRUCTS[card.name]) errors.push(`personagem sem dados em CONSTRUCTS (a página Constructs quebra): ${where}`);
     if (card.role.includes("captain") && !d.LEADER_SKILLS[card.name]) errors.push(`capitão sem texto em LEADER_SKILLS: ${where}`);
     if (card.portrait) thumbs.set(`assets/home/${slug(card.name.replace(":", ""))}.jpg`, card.name);
+  }
+
+  for (const name of Object.keys(d.CONSTRUCTS)) {
+    if (builtNames.has(name)) continue;
+    const folder = slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "");
+    use(`${d.CHARS}/${folder}/Awaken - ${name.replace(":", "").trim()}.png`, `construct ${name}`);
   }
 
   for (const [path, ids] of Object.entries(d.PAGES)) for (const id of ids) {

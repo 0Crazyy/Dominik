@@ -68,13 +68,13 @@ A esteira da home se monta sozinha a partir dos times. Só edite `HERO_FIRST` se
 - **CUB novo:** o texto das skills fica em `CUB_SKILLS`, pela pasta do personagem.
 - **Linha do tempo:** um S-Rank novo entra sozinho em `data/timeline-data.js` quando estiver na aba S-RANK TIMER e na wiki (`node tools/update-timeline.mjs`). Se a classe e o elemento forem novos, adicione a coluna em `COLUMNS`, nesse script.
 
-A página do personagem (`/character/<id>`) e as listas de CUBs e Skills se montam sozinhas a partir dos times.
+A página de cada personagem (`/constructs/<frame>`, usando só o nome do frame no endereço) se monta a partir de `CONSTRUCTS`. Quem ainda não tem time precisa do retrato `assets/characters/<nome-sem-":">/Awaken - <nome-sem-":">.png` e aparece sem builds. As listas de CUBs e Skills continuam se montando a partir dos times.
 
 ## 5. Verificar
 
 1. Na raiz do repositório, gere a miniatura da home: `powershell -File tools/make-thumbs.ps1`. O script só cria as que faltam.
 2. Gere as cópias leves que o site carrega: `node tools/optimize-images.mjs`. Os caminhos no `app.js` continuam apontando para `assets/`; as cópias em `assets-web/` são geradas, nunca editadas à mão.
 3. Rode `node tools/check-assets.mjs` e corrija todos os erros.
-4. Rode `node tools/smoke.mjs home character/<id> <página do time>` e corrija os erros. Abra com `Read` os prints em `.smoke/` e confira o card e a home antes de dizer que terminou. Se não conseguir abrir, diga isso ao usuário.
+4. Rode `node tools/smoke.mjs home constructs/<frame> <página do time>` e corrija os erros. Abra com `Read` os prints em `.smoke/` e confira o card e a home antes de dizer que terminou. Se não conseguir abrir, diga isso ao usuário.
 
 Não faça commit nem deploy sem o usuário pedir.

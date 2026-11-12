@@ -4,6 +4,7 @@
   <url><loc>https://dominiko.pages.dev/constructs</loc></url>
   <url><loc>https://dominiko.pages.dev/calculator</loc></url>
   <url><loc>https://dominiko.pages.dev/timeline</loc></url>
+  <url><loc>https://dominiko.pages.dev/editor</loc></url>
   <url><loc>https://dominiko.pages.dev/contact</loc></url>
   <url><loc>https://dominiko.pages.dev/assets/memories</loc></url>
   <url><loc>https://dominiko.pages.dev/assets/weapons</loc></url>
@@ -20,26 +21,90 @@
   <url><loc>https://dominiko.pages.dev/effect/glaciation</loc></url>
   <url><loc>https://dominiko.pages.dev/effect/ultima-slash</loc></url>
   <url><loc>https://dominiko.pages.dev/effect/darkflow</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/selena-pianissimo</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/wanshi-lucid-dreamer</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/helentine-lacrimosa</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/leia-fortunaster</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/lucia-inverse-crown</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/teddy-spectre</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/luna-oblivion</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/rosetta-arete</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/nirvatia-dirge</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/watanabe-epitaph</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/vera-geiravor</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/kamui-aeternion</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/lucia-pyroath</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/liv-limpidity</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/nanami-startrail</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/bianca-crepuscule</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/adelyde-anabasis</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/lilith-daemonissa</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/kurumi-tokisaki</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/hanying-solacetune</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/veronica-aegis</loc></url>
-  <url><loc>https://dominiko.pages.dev/character/karenina-effulgence</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/lotus</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/eclipse</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/palefire</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/bastion</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/storm</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/zero</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/blast</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/nightblade</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/lux</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/dawn</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/brilliance</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/entropy</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/luminance</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/tenebrion</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/ember</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/pulse</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/crimson-abyss</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/astral</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/veritas</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/silverfang</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/arclight</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/plume</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/rozen</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/crocotta</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/rigor</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/pavo</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/qilin</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/laurel</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/2b</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/9s</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/a2</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/hypnos</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/tempest</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/glory</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/xxi</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/garnet</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/flambeau</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/empyrea</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/capriccio</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/dragontoll</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/starfarer</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/starveil</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/scire</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/arca</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/stigmata</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/vitrum</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/hyperreal</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/kaleido</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/crimson-weave</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/zitherwoe</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/feral</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/indomitus</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/echo</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/lost-lullaby</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/blackrock-shooter</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/epitaph</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/shukra</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/decryptor</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/oblivion</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/ardeo</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/solacetune</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/lucid-dreamer</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/pyroath</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/fulgor</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/startrail</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/parhelion</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/daemonissa</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/pianissimo</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/daybreak</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/geiravor</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/vergil</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/dante</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/crepuscule</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/secator</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/aegis</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/limpidity</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/spectre</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/arete</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/dirge</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/aeternion</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/inverse-crown</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/lacrimosa</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/effulgence</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/kurumi-tokisaki</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/anabasis</loc></url>
+  <url><loc>https://dominiko.pages.dev/constructs/fortunaster</loc></url>
 </urlset>

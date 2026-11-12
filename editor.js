@@ -289,12 +289,27 @@ const ED_PICKER_LABELS = {
   char: "Character", cub: "C.U.B.", rank: "Rank", weapon: "Weapon", mem: "Memory",
   mx: "Weapon resonance", memres: "Memory resonance", wh: "Weapon Harmony"
 };
+function edPositionPicker(picker, stage, anchor) {
+  const bounds = stage.getBoundingClientRect(), rect = anchor.getBoundingClientRect();
+  const width = Math.max(1, Math.min(440, stage.clientWidth - 16));
+  const left = Math.max(8, Math.min(rect.left - bounds.left, stage.clientWidth - width - 8));
+  const anchorTop = rect.top - bounds.top, anchorBottom = rect.bottom - bounds.top;
+  const gap = 6, inset = 8;
+  const belowSpace = stage.clientHeight - anchorBottom - gap - inset;
+  const aboveSpace = anchorTop - gap - inset;
+  const below = belowSpace >= aboveSpace;
+  const available = Math.max(1, below ? belowSpace : aboveSpace);
+  picker.style.width = `${width}px`;
+  picker.style.left = `${left}px`;
+  picker.style.maxHeight = `${Math.min(available, window.innerHeight * .7, 500)}px`;
+  const height = picker.offsetHeight;
+  picker.style.top = `${below ? anchorBottom + gap : Math.max(inset, anchorTop - height - gap)}px`;
+}
 function edShowPicker(kind, i, slot, side, anchor) {
   const picker = $("#edPicker"), stage = $("#edStage");
   if (!picker || !stage) return;
   clearTimeout(edTimer);
   edTimer = 0;
-  const anchorRect = anchor.getBoundingClientRect();
   picker.className = "ed-picker";
   picker.classList.remove("ed-res-menu");
   const c = edDraft.cards[i], options = edPickerOptions(kind, i, side);
@@ -319,15 +334,7 @@ function edShowPicker(kind, i, slot, side, anchor) {
     </div><p class="ed-picker-empty" hidden>No options match this search.</p>`;
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
-  const bounds = stage.getBoundingClientRect(), rect = anchorRect;
-  const width = Math.max(1, Math.min(440, stage.clientWidth - 16));
-  const left = Math.max(8, Math.min(rect.left - bounds.left, stage.clientWidth - width - 8));
-  picker.style.width = `${width}px`;
-  picker.style.left = `${left}px`;
-  const below = rect.bottom - bounds.top + 6;
-  const preferredTop = below + picker.offsetHeight <= stage.clientHeight
-    ? below : rect.top - bounds.top - picker.offsetHeight - 6;
-  picker.style.top = `${Math.max(8, Math.min(preferredTop, stage.clientHeight - picker.offsetHeight - 8))}px`;
+  edPositionPicker(picker, stage, anchor);
   picker.querySelector("#edPickerSearch")?.focus({ preventScroll: true });
 }
 function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
@@ -359,15 +366,7 @@ function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
     </div></div>`);
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
-  const bounds = stage.getBoundingClientRect(), rect = anchor.getBoundingClientRect();
-  const width = Math.max(1, Math.min(440, stage.clientWidth - 16));
-  const left = Math.max(8, Math.min(rect.left - bounds.left, stage.clientWidth - width - 8));
-  picker.style.width = `${width}px`;
-  picker.style.left = `${left}px`;
-  const below = rect.bottom - bounds.top + 6;
-  const preferredTop = below + picker.offsetHeight <= stage.clientHeight
-    ? below : rect.top - bounds.top - picker.offsetHeight - 6;
-  picker.style.top = `${Math.max(8, Math.min(preferredTop, stage.clientHeight - picker.offsetHeight - 8))}px`;
+  edPositionPicker(picker, stage, anchor);
 }
 function edFilterPicker(query) {
   const term = query.trim().toLowerCase();
@@ -393,10 +392,65 @@ function edStageBody() {
   // #compBox is what the sliding cards measure, as on team pages
   return `<div id="compBox">${pager(views)}<section class="comp ed-live" style="--c1:${theme.c1};--c2:${theme.c2};--cp:${theme.cp}">${views.map(card).join("")}</section></div><div id="edPicker" class="ed-picker" hidden></div>`;
 }
+function edSetDetailWidth() {
+  const card = $("#edStage .comp .card"), detail = $("#edDetail");
+  if (card && detail) detail.style.setProperty("--ed-slide-width", `${card.offsetWidth}px`);
+}
+function edBeltIndex(belt) {
+  const middle = belt.scrollLeft + belt.clientWidth / 2;
+  return [...belt.children].reduce((best, item, i) => {
+    const distance = Math.abs(item.offsetLeft + item.offsetWidth / 2 - middle);
+    return distance < best.distance ? { index: i, distance } : best;
+  }, { index: 0, distance: Infinity }).index;
+}
+function edSyncDetailBelt(source) {
+  if (!matchMedia("(max-width:600px)").matches) return;
+  const target = source.matches("#edDetail") ? $("#edStage .comp") : $("#edDetail");
+  if (!target) return;
+  if (!source.children.length || source.children.length !== target.children.length) return;
+  const active = edBeltIndex(source);
+  const item = target.children[active];
+  const left = item.offsetLeft + item.offsetWidth / 2 - target.clientWidth / 2;
+  if (Math.abs(target.scrollLeft - left) > 1) target.scrollLeft = left;
+}
+let edBeltTouch = null;
+$("#main").addEventListener("touchstart", e => {
+  const belt = e.target.closest?.("#edStage .comp, #edDetail");
+  if (!belt || e.touches.length !== 1 || e.target.closest("input,textarea,select,button,a")) return;
+  edBeltTouch = { belt, index: edBeltIndex(belt), x: e.touches[0].clientX, y: e.touches[0].clientY, horizontal: false };
+}, { passive: true });
+$("#main").addEventListener("touchmove", e => {
+  if (!edBeltTouch || e.touches.length !== 1) return;
+  const dx = e.touches[0].clientX - edBeltTouch.x, dy = e.touches[0].clientY - edBeltTouch.y;
+  if (!edBeltTouch.horizontal && Math.abs(dx) < 8) return;
+  if (Math.abs(dx) <= Math.abs(dy)) return;
+  edBeltTouch.horizontal = true;
+  e.preventDefault();
+}, { passive: false });
+const edEndBeltTouch = e => {
+  const touch = edBeltTouch;
+  edBeltTouch = null;
+  if (!touch?.horizontal) return;
+  const end = e.changedTouches[0]?.clientX;
+  if (end === undefined || Math.abs(end - touch.x) < 36) return;
+  const step = end < touch.x ? 1 : -1;
+  const target = touch.belt.children[Math.max(0, Math.min(touch.index + step, touch.belt.children.length - 1))];
+  if (target) touch.belt.scrollTo({
+    left: target.offsetLeft + target.offsetWidth / 2 - touch.belt.clientWidth / 2,
+    behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth"
+  });
+};
+$("#main").addEventListener("touchend", edEndBeltTouch, { passive: true });
+$("#main").addEventListener("touchcancel", () => { edBeltTouch = null; }, { passive: true });
+const edDetailSizer = new ResizeObserver(edSetDetailWidth);
 // The cards come out of card() as the site shows them; links and native image dragging are disabled for editing.
 function edWire() {
   const stage = $("#edStage");
   if (!stage) return;
+  const comp = $(".comp", stage);
+  edDetailSizer.disconnect();
+  if (comp) edDetailSizer.observe(comp);
+  edSetDetailWidth();
   stage.querySelectorAll("a[href]").forEach(a => a.removeAttribute("href"));
   stage.querySelectorAll("img").forEach(img => { img.draggable = false; });
   stage.querySelectorAll(".card").forEach((el, i) => {
@@ -640,6 +694,9 @@ function teamBuilder() {
     </form>`;
 }
 
+$("#main").addEventListener("scroll", e => {
+  if (e.target.matches?.("#edStage .comp, #edDetail")) edSyncDetailBelt(e.target);
+}, true);
 addEventListener("input", e => {
   const el = e.target;
   if (el.id === "edPickerSearch") {
