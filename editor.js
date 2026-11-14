@@ -231,9 +231,14 @@ function edPageBody(team) {
 }
 const edTagsBody = team => ED_TAGS.map(tag => `<button type="button" class="ed-tag${team.tags.includes(tag) ? " on" : ""}"
   data-ed-tag="${tag}" aria-pressed="${team.tags.includes(tag)}">${tag}</button>`).join("");
+// Captain and Starter list the characters by name, so this part is drawn again when a character changes
+function edRolesBody(team) {
+  const picks = [0, 1, 2].map(i => [String(i), edShortName(team.cards[i]) || `${ED_SLOTS[i]} slot`]);
+  return `<h2 class="ed-team-heading">Battle positions</h2>
+      ${edField("Captain", edSelect("captain", edOptions(picks, String(team.captain))))}
+      ${edField("Starter", edSelect("starter", edOptions(picks, String(team.starter))))}`;
+}
 function edTeamBody(team) {
-  const who = i => edShortName(team.cards[i]) || `${ED_SLOTS[i]} slot`;
-  const picks = [0, 1, 2].map(i => [String(i), who(i)]);
   return `<legend>Team</legend><div class="ed-team-layout">
     <section class="ed-team-info" aria-label="Team details">
       <label class="ed-team-name"><span>Team name</span>
@@ -244,11 +249,23 @@ function edTeamBody(team) {
       <div class="ed-team-block"><h2 class="ed-team-heading">Team rotation</h2>
         <input type="hidden" name="order" value="${esc(team.order)}"><div id="edOrder">${edOrderBody(team)}</div></div>
     </section>
-    <section class="ed-team-roles" aria-label="Battle positions">
-      <h2 class="ed-team-heading">Battle positions</h2>
-      ${edField("Captain", edSelect("captain", edOptions(picks, String(team.captain))))}
-      ${edField("Starter", edSelect("starter", edOptions(picks, String(team.starter))))}
-    </section>
+    <div class="ed-team-side">
+      <section id="edRoles" class="ed-team-roles" aria-label="Battle positions">${edRolesBody(team)}</section>
+      <section class="ed-team-actions" aria-label="Share and send">
+        <h2 class="ed-team-heading">Share</h2>
+        <button type="button" class="tool ed-primary" data-ed="send">Submit for review</button>
+        <button type="button" class="tool" data-ed="link">Copy link</button>
+        <button type="button" class="tool" data-export>Export image</button>
+        <button type="button" class="tool ed-danger" data-ed="reset">Start over</button>
+        <div id="edSend" class="ed-send" hidden>
+          <p class="ed-hint">Your team goes to a review queue. Once approved, it shows up on its page as a community build.</p>
+          <label class="ed-field"><span>Your name · optional</span><input id="edAuthor" maxlength="32" autocomplete="off"></label>
+          <label class="ed-trap" aria-hidden="true">Website<input id="edWebsite" tabindex="-1" autocomplete="off"></label>
+          <div id="edCaptcha"></div>
+          <button type="button" class="tool ed-primary" data-ed="confirm" disabled>Send team</button>
+        </div>
+      </section>
+    </div>
   </div>`;
 }
 // Reads the form back into a team. Fields the page doesn't show right now keep what the team had
@@ -565,9 +582,15 @@ function edRefresh(now) {
   if (now) edRender();
   else edTimer = setTimeout(edRender, 150);
 }
+// Messages show as a toast at the bottom of the screen, so they are seen wherever the page is scrolled. Each fades after a while
+let edStatusTimer = 0;
 const edStatus = text => {
   const box = $("#edStatus");
-  if (box) box.textContent = text;
+  if (!box) return;
+  clearTimeout(edStatusTimer);
+  box.textContent = text;
+  box.classList.toggle("on", !!text);
+  if (text) edStatusTimer = setTimeout(() => box.classList.remove("on"), 7000);
 };
 
 /* Each position keeps its Notes and Rotation fields visible below the team cards. */
@@ -621,8 +644,8 @@ function edApply(kind, name, i, slot, rank = "", side = "") {
   edCubSkillPick = null;
   edRender();
   if (kind === "char") {
-    const team = $("#edTeam");
-    if (team) team.innerHTML = edTeamBody(edDraft); // The Captain and Starter options carry the characters' names
+    if ($("#edRoles")) $("#edRoles").innerHTML = edRolesBody(edDraft);
+    if ($("#edOrder")) $("#edOrder").innerHTML = edOrderBody(edDraft);
   }
   if (kind === "char") $("#edDetail").innerHTML = edDetailBody();
 }
@@ -702,7 +725,7 @@ function teamBuilder() {
   const message = edMessage;
   edMessage = "";
   // The cards go out as plain HTML with the page; editable slots are marked once they are in the document
-  queueMicrotask(() => { edWire(); edPaint(); });
+  queueMicrotask(() => { edWire(); edPaint(); edStatus(message); });
   return `<h1>Team Builder</h1>
     <ul class="ed-help">
       <li>Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it.</li>
@@ -715,20 +738,9 @@ function teamBuilder() {
     </ul>
     <form id="edForm" class="ed" autocomplete="off">
       <fieldset id="edTeam" class="ed-team">${edTeamBody(edDraft)}</fieldset>
+      <div id="edStatus" class="ed-status" role="status" aria-live="polite"></div>
       <div class="ed-studio">
         <div class="ed-work">
-          <div class="comp-tools ed-tools"><span id="edStatus" class="ed-status" role="status">${esc(message)}</span>
-            <button type="button" class="tool" data-ed="link">Copy link</button>
-            <button type="button" class="tool" data-export>Export image</button>
-            <button type="button" class="tool" data-ed="send">Submit for review</button>
-            <button type="button" class="tool" data-ed="reset">Start over</button></div>
-          <div id="edSend" class="ed-send" hidden>
-            <p class="ed-hint">Your team goes to a review queue. Once approved, it shows up on its page as a community build.</p>
-            <label class="ed-field"><span>Your name · optional</span><input id="edAuthor" maxlength="32" autocomplete="off"></label>
-            <label class="ed-trap" aria-hidden="true">Website<input id="edWebsite" tabindex="-1" autocomplete="off"></label>
-            <div id="edCaptcha"></div>
-            <button type="button" class="tool" data-ed="confirm" disabled>Send team</button>
-          </div>
           <div id="edStage">${edStageBody()}</div>
           <div id="edDetail">${edDetailBody()}</div>
         </div>

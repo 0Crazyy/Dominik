@@ -175,6 +175,7 @@ const FLOWS = {
     step = "loading test team";
     await page.reload();
     await page.waitForSelector("#edStage .card");
+    await page.evaluate(() => document.querySelector("#edStage").scrollIntoView()); // the Team box is tall on a phone, and images below the screen load lazily
     await page.waitForSelector("#edStage .card .rank[data-ed-drop]");
     const cards = page.locator("#edStage .card");
     if (await page.locator("#edPanel").count()) throw new Error("o painel lateral de peças ainda aparece");
