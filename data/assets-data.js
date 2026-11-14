@@ -149,7 +149,6 @@ const FIVE_STAR_WEAPONS = [
 // 6-star weapons that no frame in the Assets pages owns, and every weapon of 4 stars or fewer. All-only, like the 5-star ones above.
 // Source: https://huaxu.app/na/wiki/weapons. 3 and 2-star weapons have no weapon skill, so their effect is empty.
 const OTHER_WEAPONS = [
-  ["", "Apollo", "Gunblade", "assets/weapons/6stars/e3gunblademd010011p01.png", "Ice DMG increases by 15%, QTE and any 3-Ping skill can trigger Frost Corrosion.", 6],
   ["", "Baji", "Gauntlets", "assets/weapons/6stars/e3glovemd010011.png", "Ice DMG increases by 15%. Creates Mirror Crystals for 8s after casting Flowing Whirlpool or QTE skill.", 6],
   ["", "Benediction", "Levi-Gun", "assets/weapons/6stars/e3floatmd080011.png", "For every 12 orbs pinged, increases Extra DMG Bonus of the allies within 5m by 10% for 5s. Duration resets every time it is triggered. When attacking Imprisoned enemies, Extra DMG Bonus increases by 10%.", 6],
   ["", "Berserk Fusion", "Cannon", "assets/weapons/6stars/e3sleevemd070011.png", "Physical DMG increases by 10%. After a 3-Ping, Basic Attack's Extra DMG Bonus increases by 30% for 5s. Duration resets every time it is triggered.", 6],
@@ -158,7 +157,6 @@ const OTHER_WEAPONS = [
   ["", "Crimson Birch", "Katana", "assets/weapons/6stars/e3swordmd130111p01.png", "Ice DMG increases by 15%. All DMG increases by 10% for 5s after a 3-Ping.", 6],
   ["", "Crimson Howl", "Robotic Arm", "assets/weapons/6stars/e3armmd010011.png", "ATK increases by 10%. Noctis: Indomitus gains 120 Energy each time upon entering battle. Immediately gains a Blast Orb after casting Signature - Magnetic Blast.", 6],
   ["", "Cruel Oath - Mod", "Katana (NieR)", "assets/weapons/6stars/e39smd010011p02.webp", "Increases Physical DMG and Healing effects by 15%, also doubles the effects of Leader Skill. After triggering Overclock Indicator, swapping cooldown for 2B and A2 decreases by 1s and they gain 1 random Signal Orb.", 6],
-  ["", "Devil Sword Dante", "Devil Sword", "assets/weapons/6stars/e3ddevilsworddantemd010011.png", "ATK increases by 10%. After casting SDT - Sin Inferno or SDT - Final Judgement, gains a Signal Orb and converts the remaining SDT into DT. For every 30 SDT converted, additionally gains a Signal Orb. When more than 60 SDT is converted, gains 6 Devil Arm Energy.", 6],
   ["", "Dragon Wind", "Levi-Gun", "assets/weapons/6stars/e3floatmd090011.png", "Basic Attacks have a 10% chance to inflict Frail, reducing the target's ATK by 10% for 5s. Duration resets every time it is triggered. Attacking a Frail enemy has a 10% chance to restore 1 Signal Orb. 6s cooldown.", 6],
   ["", "Durendal", "Uniframe: Chain Blade", "assets/weapons/6stars/e3luolanmd010011.png", "Fire DMG increases by 10%. The cooldown between consecutive dodging is removed. After dodging a damage, accumulates 1 Combo 2 - Dazzling Blade, which can be cast directly toward the direction of the joystick by tapping the White Orb. Also increases Extra DMG Bonus by 10% for 8s. During Apex of Trickery, the Deception Points generated from this combo are converted into 10 Trickery Points instead.", 6],
   ["", "Final Arbiter", "Fusion Gunsword", "assets/weapons/6stars/e3pistolmd010011.png", "ATK increases by 10%. Returns 1 Cluster Orb for every 3 Cluster Orbs consumed. Extra DMG Bonus of Reflection Chain and Flaming Gush increases by 20%.", 6],
@@ -457,6 +455,8 @@ const WEAPONS = [
   ["Ayla: Brilliance", "Faded Color", "Scythe", "ayla-brilliance/Arma - Ayla Brilliance (5).png", "QTEs and 3-Pings grant 10% Extra DMG Bonus for 4s; further triggers refresh the duration."],
   ["Bianca: Crepuscule", "Aurora", "Lashblade", "bianca-crepuscule/Arma - Bianca Crepuscule.png", "ATK increases by 10%. Gains 1 Signal Orb for every 3 Commandment consumed, up to 12 per entry."],
   ["Bridget: Ardeo", "Everburning Ray", "Tactical Tonfas", "bridget-ardeo/Arma - Bridget (5).png", "Grants +10% Fire DMG."],
+  ["Chrome: Glory", "Apollo", "Gunblade", "chrome-glory/Arma - Chrome Glory.png", "Ice DMG increases by 15%, QTE and any 3-Ping skill can trigger Frost Corrosion."],
+  ["Dante", "Devil Sword Dante", "Devil Sword", "dante/Arma - Dante.png", "ATK increases by 10%. After casting SDT - Sin Inferno or SDT - Final Judgement, gains a Signal Orb and converts the remaining SDT into DT. For every 30 SDT converted, additionally gains a Signal Orb. When more than 60 SDT is converted, gains 6 Devil Arm Energy."],
   ["Discord: Secator", "Spinebreaker", "Scissors", "discord-secator/Arma - Discord (5).png", "Grants +10% Physical DMG."],
   ["Hanying: Solacetune", "Dream Roamer", "Pipa", "hanying-solacetune/Arma - Hanying Solacetune.png", "ATK increases by 10%. The effect of Piercing Blow launched by Hanying: Solacetune increases by 20%. Casting Jade Bloom continuously will stack damage up to 3 times instead. Triggering Ethereal Symphony grants additional 50 Sharp Reserve."],
   ["Hanying: Zitherwoe", "Perpetuity", "Folding Fan", "hanying-zitherwoe/Arma - Hanying Zitherwoe.png", "ATK increases by 10%. During the action of pinging any orb, Hanying: Zitherwoe is able to immediately cast another ping for once only. The Base DMG Increase effect of each stack of Emerald Flow increases to 40%."],
@@ -827,7 +827,7 @@ const CUB_SKILLS = {
     ["Fighting Spirit", "Increases the carrier's ATK by 100."],
     ["Blast Booster", "Nitor's Active Skills deal 70% more damage."]
   ],
-  "boreas": [
+  "chrome-glory": [
     ["Azure Blast: Ice / Frigid Wings: Ice", "Azure Blast: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Boreas will fly toward the enemy to deal 750% Ice DMG and apply a Weakness Mark on the target that increases the Extra DMG Bonus by 3% for 8s upon taking Ice DMG. Triggering this effect again will renew its duration.\n\nFrigid Wings: Ice: After pinging a total of 6 basic Signal Orbs, the CUB button will become available. After casting, Boreas will fly toward the enemy along with the carrier to deal 750% Ice DMG and apply a Weakness Mark on the target that increases the Extra DMG Bonus by 3% for 8s upon taking Ice DMG. Triggering this effect again will renew its duration."],
     ["Glorious Hawk", "Upon activating Frost Spirit, Chrome: Glory receives Boreas's enhancement, gaining 30% more Basic Attack DMG. Boreas will also continuously create frost hawks that fly toward the enemy for 8s, dealing Ice DMG equal to 500% of Chrome: Glory's ATK. When Condensed Frost is triggered, Boreas will also cast Azure Blast. Cooldown: 2.5s."],
     ["Frost Emblem", "Increases the carrier's Ice DMG by 10%."],
@@ -931,7 +931,7 @@ const CUB_SKILLS = {
     ["Photophage Storm", "Increases the carrier's ATK by 100."],
     ["Spectral Barrage", "If the carrier is not Vergil, Mirage Blades' Active Skills deal 70% more damage. If the carrier is Vergil, Base DMG of Devil Hunter Skill - Blistering/Heavy Rain Blades and Devil Hunter Skill - Storm/Spiral Blades increases by 70%."]
   ],
-  "cavaliere": [
+  "dante": [
     ["Cavaliere - Full Throttle - Fire / Cavaliere - Air Spin - Fire", "Cavaliere - Full Throttle - Fire: After pinging a total of 6 basic Signal Orbs, the Netherworld Arm button will become available. After casting, Cavaliere will charge the enemy, dealing 1050% Fire DMG twice.\n\nCavaliere - Air Spin - Fire: After pinging a total of 6 basic Signal Orbs, the Netherworld Arm button will become available. After casting, Cavaliere will pull in nearby enemies, dealing 650% Fire DMG 3 times."],
     ["Road Rash", "When Dante carries Cavaliere, tap the Netherworld Arm button that is not charged to release Cavaliere while summoning Conjured Swords to attack the enemy. The first tap will cast Cavaliere - Redline, which will be regarded as Stinger and deal 100% of the skill's Fire DMG. Tapping the button during Cavaliere - Redline will cast Cavaliere - Aerial Slash, which will be regarded as Million Stab and deal 160% of the skill's Fire DMG. Tapping Basic Attack during Aerial Slash will cast Cavaliere - Aerial Combo, which will be regarded as DSD Combo and deal 65% of the skill's Fire DMG. Base DMG of SDT - Sin Inferno and SDT - Final Judgement increases by 125%."],
     ["Overtop Gear", "Increases the carrier's Fire DMG by 10%. If the carrier has the Ignition Mark, Ignition DMG increases by 10%."],
@@ -953,7 +953,7 @@ const EXTRA_CUBS = [
   ["Toniris", "Bianca: Veritas", "S", "Lightning", "assets/cubs/toniris", false],
   ["Frost Oath", "Rosetta: Rigor", "S", "Physical", "assets/cubs/frost-oath", false],
   ["Nitor", "Karenina: Ember", "S", "Fire", "assets/cubs/nitor", false],
-  ["Boreas", "Chrome: Glory", "S", "Ice", "assets/cubs/boreas", false],
+  ["Boreas", "Chrome: Glory", "S", "Ice", "assets/characters/chrome-glory", true],
   ["Jet Jaeger", "Nanami: Starfarer", "S", "Fire", "assets/cubs/jet-jaeger", false],
   ["Moonhopper", "Karenina: Scire", "S", "Dark", "assets/cubs/moonhopper", false],
   ["Shimmer", "Bianca: Stigmata", "S", "Physical", "assets/cubs/shimmer", false],
@@ -966,8 +966,16 @@ const EXTRA_CUBS = [
   ["Diamaton", "Ishmael: Parhelion", "S", "Nihil", "assets/characters/ishmael-parhelion", true],
   ["Huiyu", "Qu: Shukra", "S", "Ice", "assets/characters/qu-shukra", true],
   ["Mirage Blades", "Vergil", "S", "Physical", "assets/characters/vergil", true],
-  ["Cavaliere", "Dante", "S", "Fire", "assets/cubs/cavaliere", false]
+  ["Cavaliere", "Dante", "S", "Fire", "assets/characters/dante", true]
 ];
+
+// The Global patch each early CUB launched in, from the user's notes. It can differ from its owner's frame. A CUB not listed here
+// (every S-Rank CUB after Reveries With a Whale) came out with its owner, so the owner's patch is used
+const CUB_PATCH = {
+  "Yuan Ye": "Echo Aria", "Toniris": "Imprisoned Sight", "Noctua": "Imprisoned Sight", "Frost Oath": "Inscription of Labyrinth",
+  "Seeshell": "The Last Spark", "Nitor": "Evernight Beat", "Lingya": "The Surviving Lucem", "Boreas": "Recitativo di Fantasia",
+  "Thorny": "Reveries With A Whale"
+};
 
 // Weapon resonance effects. Source: https://grayravens.com/wiki/Weapons/Weapon_Resonance
 const RESONANCE_EFFECTS = {
@@ -1120,7 +1128,17 @@ const CONSTRUCTS = {
 // Patch of the frames the Meta Timeline does not list. Their CUBs and weapons follow. Written by hand
 const FRAME_PATCH = {
   "No.21: Feral": "Chaos Unsnarled", "Dante": "Lamento di Phantasma", "Vergil": "Lamento di Phantasma",
-  "Kurumi Tokisaki": "Anchored in Faith" // the same patch as Adelyde: Anabasis
+  "Kurumi Tokisaki": "Anchored in Faith", // the same patch as Adelyde: Anabasis
+  // Frames before Firn Night's successors that the Meta Timeline skips. Dates: https://punishing-gray-raven.fandom.com/wiki/Characters
+  "Qu: Pavo": "Lost Chapter", "Selena: Tempest": "Echo Aria", "Roland: Flambeau": "Evernight Beat",
+  "Pulao: Dragontoll": "Reveries With A Whale", "Haicma: Starveil": "The Ark Beyond", "Noan: Arca": "Cinder Burns"
+};
+// Patch of the memories with no signature frame, from the "New memory set" lines on the patch pages of the Fandom wiki
+const MEMORY_PATCH = {
+  ...Object.fromEntries(["Gloria", "Condelina", "Shakespeare", "Heisen", "Darwin", "Hanna", "Cottie", "Da Vinci", "Catherine", "Einsteina",
+    "Philip II", "Guinevere", "Frederick", "Bathlon", "Patton", "Chen Jiyuan", "Koya"].map(name => [name, "Base Game"])),
+  "Liliana": "Polaris Bond", "Wilde": "Shaper's Ripples", "Klenova": "Dream Till the Timeless End",
+  "Poincare": "Where Nightmares Dwell", "Bunsen": "Withering Crown", "Clusius": "Homecoming Voyage"
 };
 const MEMORY_RELEASE = {
   "Gloria": 1505, "Condelina": 1601, "Shakespeare": 1602, "Heisen": 1603, "Darwin": 1604, "Hanna": 1605,
@@ -1134,6 +1152,24 @@ const MEMORY_RELEASE = {
   "Burana": 1649, "Klenova": 1650, "Hervor": 1651, "Jeanne": 1652, "Keats": 1653, "Natasha": 1654,
   "Poincare": 1655, "Joanna": 1656, "Nimue": 1657, "Bunsen": 1658, "Bulgakov": 1659, "Feynman": 1660,
   "Pavlichenko": 1661, "Clusius": 1662, "Cogito": 1663, "Santiago": 1664, "Pesanteur": 1665, "Mousme": 1666
+};
+
+// The signature memory of each frame, from the user's notes (patches memories.txt) and the wiki. Only frames named in CONSTRUCTS are listed;
+// frames without a known memory are left out on purpose
+const SIGNATURE_MEMORY = {
+  "Vera: Garnet": "Tifa", "Liv: Empyrea": "Elizabeth", "Selena: Capriccio": "Seraphine", "Nanami: Starfarer": "Unimate",
+  "Karenina: Scire": "Boone", "Noan: Arca": "Shelley", "No.21: Feral": "Fran", "Alisa: Echo": "Signa",
+  "Lamia: Lost Lullaby": "Derketo", "Watanabe: Epitaph": "Alphonse", "Qu: Shukra": "Ji Bo'an", "Luna: Oblivion": "Cleopatra",
+  "Wanshi: Lucid Dreamer": "Liston", "Hanying: Solacetune": "Chang Wuzi", "Lucia: Pyroath": "Heraclitus",
+  "Nanami: Startrail": "Herschell", "Lilith: Daemonissa": "Barcelo", "Ishmael: Parhelion": "Sothoth", "Vera: Geiravor": "Hervor",
+  "Bianca: Crepuscule": "Jeanne", "Veronica: Aegis": "Keats", "Liv: Limpidity": "Natasha", "Teddy: Spectre": "Joanna",
+  "Rosetta: Arete": "Nimue", "Nirvatia: Dirge": "Bulgakov", "Kamui: Aeternion": "Feynman", "Lucia: Inverse Crown": "Pavlichenko",
+  "Helentine: Lacrimosa": "Cogito", "Karenina: Effulgence": "Santiago", "Adelyde: Anabasis": "Pesanteur",
+  "Lee: Hyperreal": "Turing", "Selena: Pianissimo": "Burana", "Leia: Fortunaster": "Mousme",
+  // Signature memories began in Firn Night, with Rosetta: Rigor. The ones below say "designed specifically for use by" on their grayravens.com page
+  "Rosetta: Rigor": "Leeuwenhoek", "Luna: Laurel": "Flamel", "Qu: Pavo": "Wu'an", "Selena: Tempest": "Lucrezia", "Roland: Flambeau": "Jack",
+  "Pulao: Dragontoll": "Marco", "Haicma: Starveil": "Isabel", "Bianca: Stigmata": "Charlotte", "Ayla: Kaleido": "Aline",
+  "Lucia: Crimson Weave": "Diesel"
 };
 
 // Rotations of the Leia teams, from the steps on screen in Spider 2B's guide. "Ult" there is "Signature" here, and "Alpha" is Lucia.

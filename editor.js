@@ -7,7 +7,7 @@ const EDITOR_KEY = "dominik-editor";
 const ED_BARS = ["blue", "red", "gold"];
 const ED_SLOTS = ["Blue", "Red", "Yellow"];
 const ED_TAGS = ["Budget", "Warzone", "PPC", "General"]; // keep in step with TAGS in server/team.js
-const ED_LIMITS = { name: 60, order: 120, desc: 1500, rotation: 3000 };
+const ED_LIMITS = { name: 60, order: 120, desc: 3000, rotation: 3000 };
 const ED_MAIN = [0, 1, 2, 4], ED_SUB = [3, 5]; // 4 pieces of the main set and 2 of the sub set, as memBuild() lays them out
 const ED_CUB_SKILL_ORDER = [0, 1, 2, 3, 4, 5];
 // Resonance picker art when no character is picked: Lucia: Lotus's Basic Attack, and a plain white card for the rest
@@ -34,7 +34,8 @@ const ED_UPPER_RESONANCES = [
   ["Ex- Enhanced Power", "Ex- Enhanced Power · ATK +15, DEF +23"],
   ["Ex- Precision Attack", "Ex- Precision Attack · ATK +15, CRIT +15"],
   ["Ex- Tactical Adjustment", "Ex- Tactical Adjustment · HP +75, ATK +15"],
-  ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"]
+  ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"],
+  ["Random", "Random · Left as rolled, to save materials"], ["None", "None · No resonance"]
 ];
 const ED_BOTTOM_RESONANCES = [
   ["Signature Move", "Signature Move Level +1"], ["QTE", "QTE Level +1"], ["Core Passive", "Core Passive +1"],
@@ -42,7 +43,8 @@ const ED_BOTTOM_RESONANCES = [
   ["Ex- Enhanced Power", "Ex- Enhanced Power · ATK +15, DEF +23"],
   ["Ex- Precision Attack", "Ex- Precision Attack · ATK +15, CRIT +15"],
   ["Ex- Tactical Adjustment", "Ex- Tactical Adjustment · HP +75, ATK +15"],
-  ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"]
+  ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"],
+  ["Random", "Random · Left as rolled, to save materials"], ["None", "None · No resonance"]
 ];
 const ED_NEUTRAL = { c1: "#8a8f98", c2: "#101114", cp: "#26282d" };
 const ED_ROTATION_HINT = "# Turn 1: Start\nSwap in\nTap Signature\n# Turn 4\nTap Yellow Orb ASAP";
@@ -59,7 +61,7 @@ const edWeaponOptions = name => edWeaponsFor(name).flatMap(w => w.ranks.map(({ r
 const edBlankCard = () => ({
   char: "", cub: "", rank: "SS", mem: ["", "", "", "", "", ""],
   memRes: Array.from({ length: 6 }, () => ["Any ATK", "Signature Move"]),
-  wh: "", matrix: ["", "", ""], cubSkills: ED_CUB_SKILL_ORDER.slice(),
+  wh: "", matrix: ["", "", ""], cubSkills: ED_CUB_SKILL_ORDER.slice(), cubOff: ED_CUB_SKILL_ORDER.map(() => false),
   res: "Any ATK", core: "Signature Move", desc: "", rotation: ""
 });
 const edBlank = () => ({ v: 1, page: "", name: "", order: "", captain: 1, starter: 0, tags: [], cards: ED_BARS.map(edBlankCard) });
@@ -110,6 +112,8 @@ function edClean(raw) {
         wh: pick(c.wh, CATALOG.harmony),
         matrix: list(c.matrix, 3, matrixOptions),
         cubSkills: edSkillOrder(c.cubSkills),
+        // Which C.U.B. skills the owner has not unlocked at SSS+, by skill (not by position)
+        cubOff: ED_CUB_SKILL_ORDER.map(k => Array.isArray(c.cubOff) && c.cubOff[k] === true),
         res: memRes[0][0],
         core: memRes[0][1],
         desc: text(c.desc, ED_LIMITS.desc),
@@ -130,8 +134,38 @@ const edSave = () => {
 const edEncode = team => btoa(Array.from(new TextEncoder().encode(JSON.stringify(team)), b => String.fromCharCode(b)).join(""))
   .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const edDecode = code => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(code.replace(/-/g, "+").replace(/_/g, "/")), ch => ch.charCodeAt(0))));
+// The short link (/editor?s=<code>) is made by /api/share. If it can't be made, the long link above still works
+async function edCopyLink() {
+  const long = `${location.origin}/editor#t=${edEncode(edDraft)}`;
+  const copy = (link, ok) => navigator.clipboard?.writeText(link).then(() => edStatus(ok), () => edStatus(`Copy this link: ${link}`))
+    ?? edStatus(`Copy this link: ${link}`);
+  if (!edDraft.cards.some(c => c.char)) return copy(long, "Link copied.");
+  edStatus("Making the link...");
+  const result = await fetch("/api/share", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ team: edDraft }) })
+    .then(r => r.json()).catch(() => ({}));
+  if (result.code) return copy(`${location.origin}/editor?s=${result.code}`, "Short link copied.");
+  const reasons = { links: "Links are not allowed in the texts, so only the long link was made.", limit: "Too many short links made for now, so the long link was copied." };
+  copy(long, reasons[result.error] || "The short link is not available right now: the long link was copied.");
+}
 let edMessage = "";
+// A short link names a team stored by the API: it is fetched, and the page draws again once it is here
+async function edLoadShared(code) {
+  const result = await fetch(`/api/share?c=${code}`).then(r => r.ok ? r.json() : null).catch(() => null);
+  if (!result?.team) return edStatus("This team link is broken or has expired. Your saved team is still here.");
+  edDraft = edClean(result.team);
+  edSave();
+  edMessage = "Team loaded from the link.";
+  route();
+}
 function edImport() {
+  const shared = new URLSearchParams(location.search).get("s");
+  if (/^[a-z0-9]{6,12}$/.test(shared || "")) {
+    history.replaceState(null, "", location.pathname);
+    pageUrl = location.href;
+    edMessage = "Loading the team from the link...";
+    edLoadShared(shared);
+    return;
+  }
   const code = location.hash.match(/^#t=([\w-]+)$/)?.[1];
   if (!code) return;
   try {
@@ -163,14 +197,15 @@ function edTurns(text) {
 function edCardView(c, i, team) {
   const ch = edChar(c.char);
   const cub = CATALOG.characters.find(candidate => candidate.construct === c.cub);
-  const kit = ch ? (({ skillArt, element, class: cls, ...rest }) => rest)(ch)
+  const kit = ch ? (({ skillArt, element, class: cls, signature, ...rest }) => rest)(ch)
     : { name: "", symbol: "", portrait: "", weapon: "", construct: "", skills: [] };
   const role = [i === team.captain && "captain", i === team.starter && "starter"].filter(Boolean).join(" ");
   const turns = edTurns(c.rotation);
   return {
     ...kit, construct: cub?.construct || "", skills: cub ? c.cubSkills.map(index => cub.skills[index] || "") : [],
+    skillsOff: cub ? c.cubSkills.map(index => c.cubOff[index]) : [],
     weapon: ch ? edWeaponOptions(ch.name).find(w => w.name === c.weapon && w.rank === c.weaponRank)?.art || "" : "",
-    weaponRank: c.weaponRank, bar: ED_BARS[i], role: ch ? role : "", rank: ch ? `assets/rank/${c.rank}.png` : "",
+    weaponRank: c.weaponRank, bar: ED_BARS[i], role, rank: ch ? `assets/rank/${c.rank}.png` : "",
     memories: c.mem.map((name, slot) => name ? memSet(name)[slot % 3] : ""),
     wh: c.wh, matrix: c.matrix.map(name => name ? WEAPON_RES(name) : ""),
     memoryResonances: c.memRes,
@@ -280,7 +315,7 @@ function edRead(form) {
       return { char: c.char, cub: c.cub, rank: v("rank", c.rank), wh: v("wh", c.wh), res: c.res, core: c.core,
         desc: v("desc", c.desc), rotation: v("rotation", c.rotation),
         mem: c.mem.slice(), memRes: c.memRes.map(pair => pair.slice()), matrix: c.matrix.slice(),
-        cubSkills: c.cubSkills.slice() };
+        cubSkills: c.cubSkills.slice(), cubOff: c.cubOff.slice() };
     })
   });
 }
@@ -290,6 +325,10 @@ const edMemInfo = name => MEMORY_EFFECTS[name] ? memoryInfo(name) : "";
 let edPickerTarget = null;
 let edCubSkillPick = null, edDraggingRole = "";
 
+const ED_RES_SKILL_KEYS = { "Red Orb": "Red Orb", "Yellow Orb": "Yellow Orb", "Blue Orb": "Blue Orb", "Basic Attack": "Basic Attack",
+  "Signature Move": "Signature", "QTE": "QTE", "Core Passive": "Core", "Class Skill": "Class" };
+const edMemResArt = (ch, name) => name === "Any ATK" ? CATALOG.allAtk : ch?.skillArt?.[ED_RES_SKILL_KEYS[name]] || CATALOG.memoryResonances[name]
+  || (!ch && name === "Basic Attack" ? ED_BASIC_ATTACK_ART : ED_BLANK_RESONANCE);
 function edPickerOptions(kind, i, side) {
   const c = edDraft.cards[i];
   const ch = edChar(c.char);
@@ -297,26 +336,36 @@ function edPickerOptions(kind, i, side) {
     value: character.name, label: character.name, art: character.portrait,
     info: [character.element, character.class].filter(Boolean).join(" · ")
   }));
-  if (kind === "mem") return CATALOG.memories.map(name => ({
-    value: name, label: name, art: MEM_INDEX.get(name).ext ? memFile(name, "1-4") : "", info: edMemInfo(name)
-  }));
+  if (kind === "mem") {
+    // Signature memories of the team's frames and the memories already worn come first, so the usual picks are at hand
+    const worn = new Map();
+    edDraft.cards.forEach(card => card.mem.forEach(name => name && worn.set(name, (worn.get(name) || 0) + 1)));
+    const signatures = new Map();
+    [c, ...edDraft.cards.filter(card => card !== c)].forEach(card => {
+      const sig = edChar(card.char)?.signature;
+      if (sig && !signatures.has(sig)) signatures.set(sig, edShortName(card));
+    });
+    const rank = name => signatures.has(name) ? [0, [...signatures.keys()].indexOf(name)] : worn.has(name) ? [1, -worn.get(name)] : [2, 0];
+    return CATALOG.memories.map((name, index) => ({
+      value: name, label: name, art: MEM_INDEX.get(name).ext ? memFile(name, "1-4") : "",
+      info: (signatures.has(name) ? `Signature memory of ${signatures.get(name)}\n\n` : "") + edMemInfo(name),
+      badge: signatures.has(name) ? "Signature" : worn.has(name) ? `In build ×${worn.get(name)}` : "", order: [...rank(name), index]
+    })).sort((a, b) => a.order[0] - b.order[0] || a.order[1] - b.order[1] || a.order[2] - b.order[2]);
+  }
   if (kind === "cub") return CATALOG.characters.filter(character => character.construct).map(character => ({
     value: character.construct, label: iconName(character.construct), art: character.construct, info: `${character.name}'s C.U.B.`
   }));
   if (kind === "rank") return CATALOG.ranks.map(rank => ({ value: rank, label: rank, art: `assets/rank/${rank}.png` }));
   if (kind === "weapon") return edWeaponOptions(c.char).map(option => ({
-    value: `${option.name}::${option.rank}`, label: option.label, art: option.art, info: option.info
+    value: `${option.name}::${option.rank}`, label: option.label, art: option.art, info: option.info, stars: option.rank
   }));
   if (kind === "mx") return edMatrixOptions(ch).map(name => ({ value: name, label: name, art: WEAPON_RES(name) }));
   if (kind === "memres") {
     const options = side === "bottom" ? ED_BOTTOM_RESONANCES : ED_UPPER_RESONANCES;
-    const skillKeys = { "Red Orb": "Red Orb", "Yellow Orb": "Yellow Orb", "Blue Orb": "Blue Orb",
-      "Basic Attack": "Basic Attack", "Signature Move": "Signature", "Core Passive": "Core", "Class Skill": "Class" };
+    // The subtext is what tells apart skills that share an icon, so it is shown under the name, not only in the tooltip
     return options.map(([name, info]) => ({
-      value: name, label: name,
-      art: name === "Any ATK" ? CATALOG.allAtk : ch?.skillArt?.[skillKeys[name]] || CATALOG.memoryResonances[name]
-        || (!ch && name === "Basic Attack" ? ED_BASIC_ATTACK_ART : ED_BLANK_RESONANCE),
-      info
+      value: name, label: name, art: edMemResArt(ch, name), info,
+      sub: info.replace(name, "").replace(/^[\s·]+/, "") || info
     }));
   }
   if (kind === "wh") return CATALOG.harmony.map(name => ({
@@ -377,22 +426,35 @@ function edShowPicker(kind, i, slot, side, anchor) {
     <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="Close">×</button>
     <input id="edPickerSearch" type="search" placeholder="Search ${esc(ED_PICKER_LABELS[kind])}" aria-label="Search ${esc(ED_PICKER_LABELS[kind])}" autocomplete="off">
     <div id="edPickerOptions" class="ed-picker-options" role="group" aria-label="${esc(title)} options">
-      ${choices.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}"
+      ${choices.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}${option.badge ? " hot" : ""}"
         data-ed-picker-value="${esc(option.value)}" data-ed-picker-search="${esc(`${option.label} ${option.info || ""}`.toLowerCase())}"
         aria-pressed="${option.value === current}"${tipAttr(option.label, option.info || "")}>
-        ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}<span>${esc(option.label)}</span></button>`).join("")}
+        ${option.badge ? `<em class="ed-badge">${esc(option.badge)}</em>` : ""}
+        ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}${option.stars ? starOverlay(Number(option.stars)) : ""}<span>${esc(option.label)}</span></button>`).join("")}
     </div><p class="ed-picker-empty" hidden>No options match this search.</p>`;
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
   edPositionPicker(picker, stage, anchor);
   picker.querySelector("#edPickerSearch")?.focus({ preventScroll: true });
 }
+// A resonance as a row button shows it: its icon and its name
+const ED_RES_FAINT = ["Random", "None"]; // resonances that matter little: shown dimmed
+let edApplyAll = { top: false, bottom: false };
+const edResChip = (ch, name) => `<span class="ed-res-chip${ED_RES_FAINT.includes(name) ? " faint" : ""}">${pic(edMemResArt(ch, name))}<span>${esc(name)}</span></span>`;
+// One resonance chosen in the menu. With "apply to all" on for that side, the six memories of the card take it
+function edSetMemRes(card, slot, side, value) {
+  const c = edDraft.cards[card], at = side === "bottom" ? 1 : 0;
+  if (edApplyAll[side === "bottom" ? "bottom" : "top"]) c.memRes.forEach(pair => { pair[at] = value; });
+  else c.memRes[slot][at] = value;
+  c.res = c.memRes[0][0];
+  c.core = c.memRes[0][1];
+}
 function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
   const picker = $("#edPicker"), stage = $("#edStage");
   if (!picker || !stage || !anchor) return;
   clearTimeout(edTimer);
   edTimer = 0;
-  const c = edDraft.cards[i], choosing = selectedSlot >= 0;
+  const c = edDraft.cards[i], ch = edChar(c.char), choosing = selectedSlot >= 0;
   const options = choosing ? edPickerOptions("memres", i, side) : [];
   const current = choosing ? c.memRes[selectedSlot][side === "bottom" ? 1 : 0] : "";
   edPickerTarget = { kind: "memresmenu", card: i, slot: selectedSlot, side };
@@ -403,16 +465,17 @@ function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
     <div class="ed-res-menu-list">${c.memRes.map(([upper, bottom], slot) => `<section class="ed-res-menu-row">
       <strong>Memory ${slot + 1}</strong>
       <button type="button" data-ed-mem-side="top" data-ed-mem-slot="${slot}" aria-pressed="${choosing && selectedSlot === slot && side === "top"}" aria-label="Memory ${slot + 1}, Upper resonance">
-        <small>UPPER</small><span>${esc(upper)}</span></button>
+        <small>UPPER</small>${edResChip(ch, upper)}</button>
       <button type="button" data-ed-mem-side="bottom" data-ed-mem-slot="${slot}" aria-pressed="${choosing && selectedSlot === slot && side === "bottom"}" aria-label="Memory ${slot + 1}, Bottom resonance">
-        <small>BOTTOM</small><span>${esc(bottom)}</span></button>
+        <small>BOTTOM</small>${edResChip(ch, bottom)}</button>
     </section>`).join("")}</div>`;
   if (choosing) picker.insertAdjacentHTML("beforeend", `<div class="ed-res-menu-options">
-    <strong class="ed-res-menu-choice-head">Memory ${selectedSlot + 1} · ${side === "bottom" ? "Bottom" : "Upper"} resonance</strong>
+    <div class="ed-res-menu-choice-head"><strong>Memory ${selectedSlot + 1} · ${side === "bottom" ? "Bottom" : "Upper"} resonance</strong>
+      <label class="ed-res-menu-all"><input type="checkbox" data-ed-apply-all="${side === "bottom" ? "bottom" : "top"}"${edApplyAll[side === "bottom" ? "bottom" : "top"] ? " checked" : ""}> Apply to all 6</label></div>
     <div class="ed-picker-options" role="group" aria-label="Memory ${selectedSlot + 1}, ${side === "bottom" ? "Bottom" : "Upper"} resonance options">
       ${options.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}"
         data-ed-memres-value="${esc(option.value)}" aria-pressed="${option.value === current}"${tipAttr(option.label, option.info || "")}>
-        ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}<span>${esc(option.label)}</span></button>`).join("")}
+        ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}<span>${esc(option.label)}</span>${option.sub ? `<small>${esc(option.sub)}</small>` : ""}</button>`).join("")}
     </div></div>`);
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
@@ -552,7 +615,8 @@ function edWire() {
       skill.dataset.edCubSkillIndex = k;
       skill.setAttribute("aria-pressed", String(edCubSkillPick?.card === i && edCubSkillPick.index === k));
       skill.classList.toggle("ed-cub-skill-selected", edCubSkillPick?.card === i && edCubSkillPick.index === k);
-      skill.title = `C.U.B. skill ${k + 1}. Click another skill on this C.U.B. to swap positions.`;
+      skill.draggable = true;
+      skill.title = `C.U.B. skill ${k + 1}. Drag it onto another skill to swap positions, or click it twice to grey it out (not unlocked).`;
     });
     el.querySelectorAll(".tag.captain,.tag.starter").forEach(tag => {
       const roleName = tag.classList.contains("captain") ? "captain" : "starter";
@@ -623,7 +687,10 @@ function edApply(kind, name, i, slot, rank = "", side = "") {
     }
   } else if (kind === "char") c.char = "";
   else if (kind === "cub") {
-    if (c.cub !== name) c.cubSkills = ED_CUB_SKILL_ORDER.slice();
+    if (c.cub !== name) {
+      c.cubSkills = ED_CUB_SKILL_ORDER.slice();
+      c.cubOff = ED_CUB_SKILL_ORDER.map(() => false);
+    }
     c.cub = name;
   }
   else if (kind === "rank") c.rank = name || "SS";
@@ -768,7 +835,17 @@ addEventListener("input", e => {
   edRefresh(el.tagName === "SELECT");
 });
 addEventListener("submit", e => { if (e.target.id === "edForm") e.preventDefault(); });
+// Dragging a C.U.B. skill onto another one of the same card swaps their positions
+let edDraggingSkill = null;
+const edSkillSlot = e => e.target.closest?.("#edStage [data-ed-cub-skill-index]");
 addEventListener("dragstart", e => {
+  const skill = edSkillSlot(e);
+  if (skill) {
+    edDraggingSkill = { card: Number(skill.closest(".card")?.dataset.edCard), index: Number(skill.dataset.edCubSkillIndex) };
+    e.dataTransfer?.setData("text/plain", "cub-skill");
+    if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+    return;
+  }
   const role = e.target.closest?.("#edStage [data-ed-role]");
   if (!role) {
     if (e.target.closest?.("#edStage")) e.preventDefault();
@@ -779,6 +856,14 @@ addEventListener("dragstart", e => {
   if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
 });
 addEventListener("dragover", e => {
+  if (edDraggingSkill) {
+    const target = edSkillSlot(e);
+    if (target && Number(target.closest(".card")?.dataset.edCard) === edDraggingSkill.card) {
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    }
+    return;
+  }
   if (!edDraggingRole) return;
   const card = e.target.closest?.("#edStage .card");
   if (!card) return;
@@ -792,6 +877,19 @@ addEventListener("dragleave", e => {
   if (card && !card.contains(e.relatedTarget)) card.classList.remove("ed-role-drop-target");
 });
 addEventListener("drop", e => {
+  if (edDraggingSkill) {
+    const from = edDraggingSkill, target = edSkillSlot(e);
+    edDraggingSkill = null;
+    if (!target || Number(target.closest(".card")?.dataset.edCard) !== from.card) return;
+    e.preventDefault();
+    const to = Number(target.dataset.edCubSkillIndex), order = edDraft.cards[from.card].cubSkills;
+    if (to === from.index) return;
+    [order[from.index], order[to]] = [order[to], order[from.index]];
+    edCubSkillPick = null;
+    edSave();
+    edRender();
+    return edStatus("C.U.B. skill positions updated.");
+  }
   const card = e.target.closest?.("#edStage .card");
   if (!card || !edDraggingRole) return;
   e.preventDefault();
@@ -805,6 +903,7 @@ addEventListener("drop", e => {
 });
 addEventListener("dragend", () => {
   edDraggingRole = "";
+  edDraggingSkill = null;
   $("#edStage")?.querySelectorAll(".ed-role-drop-target").forEach(el => el.classList.remove("ed-role-drop-target"));
 });
 addEventListener("contextmenu", e => {
@@ -843,11 +942,20 @@ addEventListener("click", e => {
       $(`#edStage [data-ed-memres-menu="${edPickerTarget.card}"]`),
       Number(resonanceChoice.dataset.edMemSlot), resonanceChoice.dataset.edMemSide);
   }
+  const applyAll = e.target.closest?.("[data-ed-apply-all]");
+  if (edPickerTarget?.kind === "memresmenu" && applyAll) {
+    const { card, slot, side } = edPickerTarget, key = applyAll.dataset.edApplyAll;
+    edApplyAll[key] = applyAll.checked;
+    // Turning it on spreads the value the chosen slot has now, when the open side is the one just ticked
+    if (applyAll.checked && slot >= 0 && (side === "bottom") === (key === "bottom")) edSetMemRes(card, slot, side, edDraft.cards[card].memRes[slot][key === "bottom" ? 1 : 0]);
+    edDraft = edClean(edDraft);
+    edSave();
+    edRender();
+    return edShowResonanceMenu(card, $(`#edStage [data-ed-memres-menu="${card}"]`), slot, side);
+  }
   if (edPickerTarget?.kind === "memresmenu" && e.target.closest?.("[data-ed-memres-value]")) {
     const { card, slot, side } = edPickerTarget;
-    edDraft.cards[card].memRes[slot][side === "bottom" ? 1 : 0] = e.target.closest("[data-ed-memres-value]").dataset.edMemresValue;
-    edDraft.cards[card].res = edDraft.cards[card].memRes[0][0];
-    edDraft.cards[card].core = edDraft.cards[card].memRes[0][1];
+    edSetMemRes(card, slot, side, e.target.closest("[data-ed-memres-value]").dataset.edMemresValue);
     edDraft = edClean(edDraft);
     edSave();
     edStatus("");
@@ -885,14 +993,20 @@ addEventListener("click", e => {
         const order = edDraft.cards[card].cubSkills;
         [order[edCubSkillPick.index], order[index]] = [order[index], order[edCubSkillPick.index]];
         edSave();
+        edStatus("C.U.B. skill positions updated.");
+      } else {
+        // Clicking the chosen skill again (a double click) greys it out, or brings it back
+        const off = edDraft.cards[card].cubOff, skill = edDraft.cards[card].cubSkills[index];
+        off[skill] = !off[skill];
+        edSave();
+        edStatus(off[skill] ? "C.U.B. skill greyed out: not unlocked." : "C.U.B. skill back in use.");
       }
       edCubSkillPick = null;
       edRender();
-      edStatus("C.U.B. skill positions updated.");
     } else {
       edCubSkillPick = { card, index };
       edRender();
-      edStatus("Choose another skill on this C.U.B. to swap positions.");
+      edStatus("Click another skill to swap, the same one again to grey it out, or drag it onto another skill.");
     }
     return;
   }
@@ -921,11 +1035,7 @@ addEventListener("click", e => {
     }
     if (button.dataset.ed === "send") edOpenSend();
     if (button.dataset.ed === "confirm") edSend();
-    if (button.dataset.ed === "link") {
-      const link = `${location.origin}/editor#t=${edEncode(edDraft)}`;
-      navigator.clipboard?.writeText(link).then(() => edStatus("Link copied."), () => edStatus(`Copy this link: ${link}`))
-        ?? edStatus(`Copy this link: ${link}`);
-    }
+    if (button.dataset.ed === "link") edCopyLink();
     return;
   }
   if (!$("#edStage") || e.defaultPrevented) return; // a tap on a card at the side only slides it to the center

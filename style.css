@@ -140,6 +140,10 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 #tip{position:fixed;z-index:30;max-width:340px;padding:6px 10px;background:#000000f0;border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 12px "Quantico";pointer-events:none}
 #tip b{display:block}
 #tip p{margin-top:4px;font-weight:400;line-height:1.45;color:#dcdaf0;white-space:pre-line}
+#tip p>span,#sheet p>span{display:block}
+#tip p>span+span,#sheet p>span+span{margin-top:.9em}
+#tip p>.on,#sheet p>.on{color:#fff;font-weight:700;padding-left:8px;border-left:3px solid var(--red);background:#cf142426}
+#tip p>.on::before,#sheet p>.on::before{content:"ACTIVE · ";color:#ffd34d;font-size:.85em;letter-spacing:.06em}
 .notice{display:flex;align-items:center;margin:calc(-1*var(--pad)) calc(-1*var(--pad)) 20px;padding:8px 14px;background:#eecf22;border-bottom:2px solid #a8901a;color:#1c1602;font-size:15px;line-height:1.4}
 .slot.named{padding:3px;color:#dcdaf0;font-size:10px;line-height:1.2;text-align:center}
 .mem .slot.named{padding:2px 0 0 3px;font-size:8px;writing-mode:vertical-rl;place-items:end start}
@@ -841,8 +845,29 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .ed-res-menu-row>button:hover,.ed-res-menu-row>button:focus-visible{background:#35353d;border-color:#fff;outline:1px solid #ffffff80;outline-offset:-2px}
 .ed-res-menu-row>button small{font-size:9px;color:var(--mute);letter-spacing:.06em}
 .ed-res-menu-options{grid-column:1/-1;display:grid;gap:6px;min-height:0}
-.ed-res-menu-choice-head{font-size:11px}
-.ed-res-menu-options>.ed-picker-options{max-height:min(30vh,220px)}
+.ed-res-menu-choice-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px}
+.ed-res-menu-options>.ed-picker-options{max-height:min(30vh,220px);grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+.ed-res-menu-options .ed-picker-option{font-size:11px}
+.ed-res-menu-options .ed-picker-option>small{color:var(--mute);font:600 10px/1.2 "Quantico"}
+#exportPreview{position:fixed;inset:0;z-index:45;display:grid;place-items:center;padding:16px;background:#000000cc}
+.xp-panel{display:grid;gap:10px;width:min(1100px,100%);max-height:100%;overflow:auto;padding:16px;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--red)}
+.xp-panel h2{font-size:16px}
+.xp-frame{min-height:0;overflow:auto;background:#000}
+.xp-frame canvas{display:block;width:100%;height:auto}
+.xp-meta{color:var(--mute);font-size:12px;overflow-wrap:anywhere}
+.xp-status{min-height:1.4em;font-size:13px;color:var(--txt)}
+.xp-actions{display:flex;flex-wrap:wrap;gap:8px}
+.kit>.cell.off .slot{filter:grayscale(1) brightness(.55);opacity:.7}
+.wh-arrows{position:absolute;top:6%;right:6%;width:13%;height:auto;fill:none;stroke:#2f86ff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px #000c);pointer-events:none}
+.ed-picker-option .stars{position:absolute;left:4px;width:calc(100% - 8px);top:calc(4px + 44px - 7px);height:auto;pointer-events:none}
+.ed-picker-option.hot{border-color:#ffc400;background:#ffc40018}
+.ed-badge{position:absolute;top:0;left:0;right:0;z-index:1;padding:1px 2px;background:#ffc400;color:#000;font:700 8px/1.3 "Quantico";font-style:normal;text-transform:uppercase;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ed-picker-option.hot img{margin-top:9px;height:35px}
+.ed .ed-res-menu .ed-res-menu-all input[type=checkbox],.ed-res-menu .ed-res-menu-all input[type=checkbox]{flex:none;width:14px;height:14px;min-width:14px;padding:0;margin:0;accent-color:var(--red)}
+.ed-res-menu-all{flex:none;white-space:nowrap;display:flex;align-items:center;gap:5px;font:600 11px/1.3 "Quantico";color:var(--txt);cursor:pointer}
+.ed-res-chip.faint{opacity:.55}
+.ed-res-chip{display:flex;align-items:center;gap:6px;min-width:0}
+.ed-res-chip img{flex:none;width:28px;height:28px;object-fit:contain}
 .ed-live .res{grid-template-columns:minmax(0,1fr);grid-template-rows:1fr 1fr;grid-auto-flow:row;align-items:center;gap:4px}
 .ed-live .ed-res-total{display:grid;gap:2px;min-width:0;text-align:center;line-height:1.15}
 .ed-live .ed-res-total small{font-size:calc(9*var(--u));color:var(--mute)}

@@ -26,18 +26,18 @@ const COLUMNS = {
   108: ["Nihil", "Annihilator"], 112: ["Nihil", "Observer"], 116: ["Nihil", "Amplifier"]
 };
 
-// The Global patch of each older release date. The tab shows patches as banners, so this list is written by hand. Dates after it
-// come from calculator-data.js. In 2024 and 2025 several versions became one Global patch, and those dates point to that patch
+// The China patch of each older release date. The tab shows patches as banners, so this list is written by hand. Dates after it
+// come from calculator-data.js. Each CN version keeps its own name, even where Global merged several into one patch
 const PATCH_NAMES = {
   "2019-12-05": "Base Game", "2019-12-24": "Frozen Darkness", "2020-03-19": "Eternal Engine", "2020-06-10": "Kowloong Metropolis",
   "2020-09-03": "Firn Night", "2020-11-26": "Fake Ascension", "2021-04-08": "Imprisoned Sight", "2021-07-01": "The Last Spark",
   "2021-09-30": "The Surviving Lucem", "2021-11-11": "Recitativo di Fantasia", "2022-01-27": "Her Last Bow", "2022-04-21": "A New Divide",
   "2022-07-08": "Across the Ruined Sea", "2022-09-29": "Spiral of Chronos", "2022-11-17": "Renaissance de Fantastique", "2022-12-24": "Wintry Shackles",
   "2023-03-23": "Chaos Unsnarled", "2023-06-08": "Everglowing Justice", "2023-07-20": "Cradle Parade", "2023-09-28": "Aeon Reforged",
-  "2023-11-09": "Polaris Bond", "2024-02-01": "Stars Ensnared", "2024-04-18": "Soaring Beyond", "2024-05-30": "Soaring Beyond",
-  "2024-07-11": "Shaper's Ripples", "2024-08-26": "Shaper's Ripples", "2024-11-07": "Wither to Shine", "2024-12-19": "Wither to Shine",
-  "2025-01-23": "Dream Till the Timeless End", "2025-04-10": "Dream Till the Timeless End", "2025-07-03": "Through the Tide Home",
-  "2025-10-10": "Through the Tide Home", "2025-11-13": "Where Nightmares Dwell", "2025-12-23": "Sightline Breach", "2026-03-16": "A Better Tomorrow"
+  "2023-11-09": "Polaris Bond", "2024-02-01": "Stars Ensnared", "2024-04-18": "Soaring Beyond", "2024-05-30": "The Long Goodbye",
+  "2024-07-11": "Shaper's Ripples", "2024-08-26": "To The Galaxies", "2024-11-07": "Wither to Shine", "2024-12-19": "Deceivers' Rapture",
+  "2025-01-23": "Dream Till the Timeless End", "2025-04-10": "Spark To Wildfire", "2025-07-03": "Through the Tide Home",
+  "2025-10-10": "Ideal Cage", "2025-11-13": "Where Nightmares Dwell", "2025-12-23": "Sightline Breach", "2026-03-16": "A Better Tomorrow"
 };
 
 // Dates of the tab that the other sources correct: the Chinese wiki (战双大事记) and grayravens.com/wiki/Patches. Aegis follows the wiki alone

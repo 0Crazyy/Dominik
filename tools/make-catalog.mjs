@@ -17,7 +17,7 @@ const DATA_END = "const $ = (s, r = document)";
 
 const app = read("app.js"), end = app.indexOf(DATA_END);
 if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/make-catalog.mjs`);
-const names = "COMPS, PAGES, TEAM_LISTS, MEMORY_TABS, MEM_INDEX, memFile, CONSTRUCTS, RESONANCE_EFFECTS, WEAPON_RES, ALL_ATK, MEMORY_RES, MEMORY_RES_NAMES, WEAPONS, CHARS, classIcon";
+const names = "COMPS, PAGES, TEAM_LISTS, MEMORY_TABS, MEM_INDEX, memFile, CONSTRUCTS, RESONANCE_EFFECTS, WEAPON_RES, ALL_ATK, MEMORY_RES, MEMORY_RES_NAMES, WEAPONS, CHARS, classIcon, SIGNATURE_MEMORY";
 const d = vm.runInNewContext(`${read("data/assets-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
@@ -56,7 +56,10 @@ const weapons = d.WEAPONS.filter(([owner]) => owner).map(([owner, name, type, pa
   const stem = normalizeWeaponFile(file);
   const ranks = files(`${d.CHARS}/${dir}`).filter(f => /^Arma - /.test(f) && normalizeWeaponFile(f) === stem)
     .map(art => ({ rank: art.match(/\s\(([456])\)(?=\.[^.]+$)/)?.[1] || "6", art: `${d.CHARS}/${dir}/${art}` }));
-  return { owner, name, type, ranks: ranks.length ? ranks : [{ rank: file.match(/\s\(([456])\)(?=\.[^.]+$)/)?.[1] || "6", art: `${d.CHARS}/${path}` }] };
+  const found = ranks.length ? ranks : [{ rank: file.match(/\s\(([456])\)(?=\.[^.]+$)/)?.[1] || "6", art: `${d.CHARS}/${path}` }];
+  // Every construct weapon can be 5★ or 6★. Where the game has one icon for both, a rank without its own file reuses the other's
+  const withBoth = ["6", "5"].map(rank => found.find(r => r.rank === rank) || { rank, art: found.find(r => r.rank === "6")?.art || found[0].art });
+  return { owner, name, type, ranks: [...withBoth, ...found.filter(r => !["5", "6"].includes(r.rank))] };
 });
 
 // Characters with a build: their kit as the site already shows it. A card can borrow another character's C.U.B.
@@ -82,8 +85,9 @@ for (const name of Object.keys(d.CONSTRUCTS)) {
 }
 
 const catalog = {
-  characters: [...characters.values()].map(({ kit }) => ({ ...kit, element: d.CONSTRUCTS[kit.name]?.[1] || "", class: d.CONSTRUCTS[kit.name]?.[2] || "", skillArt: skillArt(kit.name) }))
-    .filter(c => Object.keys(c.skillArt).length).sort((a, b) => a.name.localeCompare(b.name)),
+  characters: [...characters.values()].map(({ kit }) => ({ ...kit, signature: d.MEM_INDEX.has(d.SIGNATURE_MEMORY[kit.name]) ? d.SIGNATURE_MEMORY[kit.name] : "", element: d.CONSTRUCTS[kit.name]?.[1] || "", class: d.CONSTRUCTS[kit.name]?.[2] || "", skillArt: skillArt(kit.name) }))
+    // In order of launch (the wiki's "release" number), so the pickers list the oldest frames first
+    .filter(c => Object.keys(c.skillArt).length).sort((a, b) => (d.CONSTRUCTS[a.name]?.[0] ?? 1e9) - (d.CONSTRUCTS[b.name]?.[0] ?? 1e9) || a.name.localeCompare(b.name)),
   sharedWeapons,
   weapons,
   // In the game's order: S, S5, SS, SS3, SS6, SSS, SSS3, SSS6, SSS+

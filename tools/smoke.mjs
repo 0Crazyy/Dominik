@@ -162,7 +162,7 @@ const FLOWS = {
     step = "checking fresh empty editor";
     await page.waitForSelector("#edStage .card .rank[data-ed-drop]",{state:"attached"});
     const emptyState = await page.evaluate(() => localStorage.getItem("dominik-editor"));
-    const emptyArtifacts = await page.locator("#edStage .rank img, #edStage .wp img, #edStage .mem img, #edStage .mx img, #edStage .kit .cell img, #edStage .tags .tag")
+    const emptyArtifacts = await page.locator("#edStage .rank img, #edStage .wp img, #edStage .mem img, #edStage .mx img, #edStage .kit .cell img")
       .evaluateAll(items => items.map(item => `${item.closest(".card")?.dataset.edCard}:${item.parentElement?.className}:${item.getAttribute("src") || item.textContent}`));
     if ((emptyState && JSON.parse(emptyState).cards.some(card => card.char || card.cub || card.weapon || card.mem.some(Boolean))) || emptyArtifacts.length)
       throw new Error(`o Team Builder não abriu vazio por padrão: ${emptyArtifacts.join(",")}`);

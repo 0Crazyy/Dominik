@@ -3,15 +3,15 @@
 import { CATALOG } from "./catalog.js";
 
 export const TAGS = ["Budget", "Warzone", "PPC", "General"]; // keep in step with ED_TAGS in editor.js
-export const LIMITS = { name: 60, order: 120, desc: 1500, rotation: 3000, author: 32 };
+export const LIMITS = { name: 60, order: 120, desc: 3000, rotation: 3000, author: 32 };
 const BLANK = { rank: "SS", res: "Any ATK", core: "Signature Move" };
 const UPPER_RESONANCES = [
   "Red Orb", "Yellow Orb", "Blue Orb", "Basic Attack", "Ex- Precision Action", "Ex- Enhanced Power",
-  "Ex- Precision Attack", "Ex- Tactical Adjustment", "Any ATK"
+  "Ex- Precision Attack", "Ex- Tactical Adjustment", "Any ATK", "Random", "None"
 ];
 const BOTTOM_RESONANCES = [
   "Signature Move", "QTE", "Core Passive", "Class Skill", "Ex- Precision Action", "Ex- Enhanced Power",
-  "Ex- Precision Attack", "Ex- Tactical Adjustment", "Any ATK"
+  "Ex- Precision Attack", "Ex- Tactical Adjustment", "Any ATK", "Random", "None"
 ];
 const MATRIX_COMMON = ["Incandescence", "Dead Line Timing", "Matrix Lightning", "Shock Saturation", "Nsec Transmission", "Shock Echo"];
 const MATRIX_TANK = ["Resonant Echo", "Domain Deconstruction", "Boundary's Annihilation", "Gravity Barrier", "Absolute Defense"];
@@ -76,6 +76,7 @@ export function cleanTeam(raw) {
         wh: pick(c.wh, CATALOG.harmony),
         matrix: list(c.matrix, 3, matrixFor(ch)),
         cubSkills,
+        cubOff: CUB_SKILL_ORDER.map(k => Array.isArray(c.cubOff) && c.cubOff[k] === true),
         res: memRes[0][0],
         core: memRes[0][1],
         desc: text(c.desc, LIMITS.desc),
@@ -88,6 +89,9 @@ export const cleanAuthor = raw => typeof raw === "string" ? raw.replace(/\s+/g, 
 
 // Links are what spam is sent for, and nothing in a build needs one
 const LINK = /https?:|www\.|discord\.gg|t\.me\/|\b[\w-]+\.(com|net|org|gg|io|ru|xyz|top|shop|site|online|info|link|ly|app|dev)\b/i;
+// Whether any text of a clean team holds a link
+export const teamLinks = (team, author = "") =>
+  [team.name, team.order, author, ...team.cards.flatMap(c => [c.desc, c.rotation])].some(t => LINK.test(t));
 // Why a clean team can't be sent: a code the Team Builder turns into a message, or "" when it can
 export function teamProblem(team, author = "") {
   if (!team.page) return "page";
@@ -95,7 +99,6 @@ export function teamProblem(team, author = "") {
   const chars = team.cards.map(c => c.char);
   if (chars.some(c => !c) || new Set(chars).size < 3) return "characters";
   if (team.cards.some(c => c.mem.some(m => !m))) return "memories";
-  const texts = [team.name, team.order, author, ...team.cards.flatMap(c => [c.desc, c.rotation])];
-  if (texts.some(t => LINK.test(t))) return "links";
+  if (teamLinks(team, author)) return "links";
   return "";
 }

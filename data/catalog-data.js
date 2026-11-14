@@ -3,219 +3,31 @@
 const CATALOG = {
  "characters": [
   {
-   "name": "Adelyde: Anabasis",
-   "symbol": "assets/characters/adelyde-anabasis/Classe - Adelyde Anabasis.png",
-   "portrait": "assets/characters/adelyde-anabasis/Awaken - Adelyde Anabasis.png",
-   "weapon": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp",
-   "construct": "assets/characters/adelyde-anabasis/CUB - Kelpie.webp",
-   "skills": [
-    "assets/characters/adelyde-anabasis/CUB - Skill 1.webp",
-    "assets/characters/adelyde-anabasis/CUB - Skill 2.webp",
-    "assets/characters/adelyde-anabasis/CUB - Skill 3.webp",
-    "assets/characters/adelyde-anabasis/CUB - Skill 4.webp",
-    "assets/characters/adelyde-anabasis/CUB - Skill 5.webp",
-    "assets/characters/adelyde-anabasis/CUB - Skill 6.webp"
-   ],
-   "element": "Dark",
-   "class": "Overlinker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/adelyde-anabasis/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/adelyde-anabasis/skills/Blue Orb.png",
-    "Class": "assets/characters/adelyde-anabasis/skills/Class.png",
-    "Core": "assets/characters/adelyde-anabasis/skills/Core.png",
-    "QTE": "assets/characters/adelyde-anabasis/skills/QTE.png",
-    "Red Orb": "assets/characters/adelyde-anabasis/skills/Red Orb.png",
-    "Signature": "assets/characters/adelyde-anabasis/skills/Signature.png",
-    "Yellow Orb": "assets/characters/adelyde-anabasis/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Bianca: Crepuscule",
-   "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/bianca-crepuscule/Awaken - Bianca Crepuscule.png",
-   "weapon": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png",
-   "construct": "assets/characters/bianca-crepuscule/CUB - Noctiluca.png",
-   "skills": [
-    "assets/characters/bianca-crepuscule/CUB - Skill 1.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 2.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 3.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 4.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 5.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 6.png"
-   ],
-   "element": "Dark",
-   "class": "Attacker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/bianca-crepuscule/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/bianca-crepuscule/skills/Blue Orb.png",
-    "Class": "assets/characters/bianca-crepuscule/skills/Class.png",
-    "Core": "assets/characters/bianca-crepuscule/skills/Core.png",
-    "QTE": "assets/characters/bianca-crepuscule/skills/QTE.png",
-    "Red Orb": "assets/characters/bianca-crepuscule/skills/Red Orb.png",
-    "Signature": "assets/characters/bianca-crepuscule/skills/Signature.png",
-    "Yellow Orb": "assets/characters/bianca-crepuscule/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Hanying: Solacetune",
+   "name": "Chrome: Glory",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/hanying-solacetune/Awaken - Hanying Solacetune.png",
-   "weapon": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png",
-   "construct": "assets/characters/hanying-solacetune/CUB - Dreamwing.png",
+   "portrait": "assets/characters/chrome-glory/Awaken - Chrome Glory.png",
+   "weapon": "assets/characters/chrome-glory/Arma - Chrome Glory.png",
+   "construct": "assets/characters/chrome-glory/CUB - Boreas.png",
    "skills": [
-    "assets/characters/hanying-solacetune/CUB - Skill 1.png",
-    "assets/characters/hanying-solacetune/CUB - Skill 2.png",
-    "assets/characters/hanying-solacetune/CUB - Skill 3.png",
-    "assets/characters/hanying-solacetune/CUB - Skill 4.png",
-    "assets/characters/hanying-solacetune/CUB - Skill 5.png",
-    "assets/characters/hanying-solacetune/CUB - Skill 6.png"
+    "assets/characters/chrome-glory/CUB - Skill 1.png",
+    "assets/characters/chrome-glory/CUB - Skill 2.png",
+    "assets/characters/chrome-glory/CUB - Skill 3.png",
+    "assets/characters/chrome-glory/CUB - Skill 4.png",
+    "assets/characters/chrome-glory/CUB - Skill 5.png",
+    "assets/characters/chrome-glory/CUB - Skill 6.png"
    ],
-   "element": "Physical",
+   "signature": "",
+   "element": "Ice",
    "class": "Tank",
    "skillArt": {
-    "Basic Attack": "assets/characters/hanying-solacetune/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/hanying-solacetune/skills/Blue Orb.png",
-    "Class": "assets/characters/hanying-solacetune/skills/Class.png",
-    "Core": "assets/characters/hanying-solacetune/skills/Core.png",
-    "QTE": "assets/characters/hanying-solacetune/skills/QTE.png",
-    "Red Orb": "assets/characters/hanying-solacetune/skills/Red Orb.png",
-    "Signature": "assets/characters/hanying-solacetune/skills/Signature.png",
-    "Yellow Orb": "assets/characters/hanying-solacetune/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Helentine: Lacrimosa",
-   "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/helentine-lacrimosa/Awaken - Helentine.png",
-   "weapon": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp",
-   "construct": "assets/characters/helentine-lacrimosa/CUB - Grand Duke.webp",
-   "skills": [
-    "assets/characters/helentine-lacrimosa/CUB - Skill 1.webp",
-    "assets/characters/helentine-lacrimosa/CUB - Skill 2.webp",
-    "assets/characters/helentine-lacrimosa/CUB - Skill 3.webp",
-    "assets/characters/helentine-lacrimosa/CUB - Skill 4.webp",
-    "assets/characters/helentine-lacrimosa/CUB - Skill 5.webp",
-    "assets/characters/helentine-lacrimosa/CUB - Skill 6.webp"
-   ],
-   "element": "Lightning",
-   "class": "Amplifier",
-   "skillArt": {
-    "Basic Attack": "assets/characters/helentine-lacrimosa/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/helentine-lacrimosa/skills/Blue Orb.png",
-    "Class": "assets/characters/helentine-lacrimosa/skills/Class.png",
-    "Core": "assets/characters/helentine-lacrimosa/skills/Core.png",
-    "QTE": "assets/characters/helentine-lacrimosa/skills/QTE.png",
-    "Red Orb": "assets/characters/helentine-lacrimosa/skills/Red Orb.png",
-    "Signature": "assets/characters/helentine-lacrimosa/skills/Signature.png",
-    "Yellow Orb": "assets/characters/helentine-lacrimosa/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Ishmael: Parhelion",
-   "symbol": "assets/classes/Observer.png",
-   "portrait": "assets/characters/ishmael-parhelion/Awaken - Ishmael Parhelion.png",
-   "weapon": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png",
-   "construct": "assets/characters/ishmael-parhelion/CUB - Diamaton.png",
-   "skills": [
-    "assets/characters/ishmael-parhelion/CUB - Skill 1.png",
-    "assets/characters/ishmael-parhelion/CUB - Skill 2.png",
-    "assets/characters/ishmael-parhelion/CUB - Skill 3.png",
-    "assets/characters/ishmael-parhelion/CUB - Skill 4.png",
-    "assets/characters/ishmael-parhelion/CUB - Skill 5.png",
-    "assets/characters/ishmael-parhelion/CUB - Skill 6.png"
-   ],
-   "element": "Nihil",
-   "class": "Observer",
-   "skillArt": {
-    "Basic Attack": "assets/characters/ishmael-parhelion/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/ishmael-parhelion/skills/Blue Orb.png",
-    "Class": "assets/characters/ishmael-parhelion/skills/Class.png",
-    "Core": "assets/characters/ishmael-parhelion/skills/Core.png",
-    "QTE": "assets/characters/ishmael-parhelion/skills/QTE.png",
-    "Red Orb": "assets/characters/ishmael-parhelion/skills/Red Orb.png",
-    "Signature": "assets/characters/ishmael-parhelion/skills/Signature.png",
-    "Yellow Orb": "assets/characters/ishmael-parhelion/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Kamui: Aeternion",
-   "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/kamui-aeternion/Awaken - Kamui.png",
-   "weapon": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png",
-   "construct": "assets/characters/kamui-aeternion/CUB - Ignis.png",
-   "skills": [
-    "assets/characters/kamui-aeternion/CUB - Skill 1.webp",
-    "assets/characters/kamui-aeternion/CUB - Skill 2.webp",
-    "assets/characters/kamui-aeternion/CUB - Skill 3.webp",
-    "assets/characters/kamui-aeternion/CUB - Skill 4.webp",
-    "assets/characters/kamui-aeternion/CUB - Skill 5.webp",
-    "assets/characters/kamui-aeternion/CUB - Skill 6.webp"
-   ],
-   "element": "Fire",
-   "class": "Breaker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/kamui-aeternion/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/kamui-aeternion/skills/Blue Orb.png",
-    "Class": "assets/characters/kamui-aeternion/skills/Class.png",
-    "Core": "assets/characters/kamui-aeternion/skills/Core.png",
-    "QTE": "assets/characters/kamui-aeternion/skills/QTE.png",
-    "Red Orb": "assets/characters/kamui-aeternion/skills/Red Orb.png",
-    "Signature": "assets/characters/kamui-aeternion/skills/Signature.png",
-    "Yellow Orb": "assets/characters/kamui-aeternion/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Karenina: Effulgence",
-   "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/karenina-effulgence/Awaken - Karenina Effulgence.png",
-   "weapon": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp",
-   "construct": "assets/characters/karenina-effulgence/CUB - Patrick.webp",
-   "skills": [
-    "assets/characters/karenina-effulgence/CUB - Skill 1.webp",
-    "assets/characters/karenina-effulgence/CUB - Skill 2.webp",
-    "assets/characters/karenina-effulgence/CUB - Skill 3.webp",
-    "assets/characters/karenina-effulgence/CUB - Skill 4.webp",
-    "assets/characters/karenina-effulgence/CUB - Skill 5.webp",
-    "assets/characters/karenina-effulgence/CUB - Skill 6.webp"
-   ],
-   "element": "Physical",
-   "class": "Breaker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/karenina-effulgence/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/karenina-effulgence/skills/Blue Orb.png",
-    "Class": "assets/characters/karenina-effulgence/skills/Class.png",
-    "Core": "assets/characters/karenina-effulgence/skills/Core.png",
-    "QTE": "assets/characters/karenina-effulgence/skills/QTE.png",
-    "Red Orb": "assets/characters/karenina-effulgence/skills/Red Orb.png",
-    "Signature": "assets/characters/karenina-effulgence/skills/Signature.png",
-    "Yellow Orb": "assets/characters/karenina-effulgence/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Kurumi Tokisaki",
-   "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/kurumi-tokisaki/Awaken - Kurumi Tokisaki.png",
-   "weapon": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp",
-   "construct": "assets/characters/kurumi-tokisaki/CUB - Zafkiel.webp",
-   "skills": [
-    "assets/characters/kurumi-tokisaki/CUB - Skill 1.webp",
-    "assets/characters/kurumi-tokisaki/CUB - Skill 2.webp",
-    "assets/characters/kurumi-tokisaki/CUB - Skill 3.webp",
-    "assets/characters/kurumi-tokisaki/CUB - Skill 4.webp",
-    "assets/characters/kurumi-tokisaki/CUB - Skill 5.webp",
-    "assets/characters/kurumi-tokisaki/CUB - Skill 6.webp"
-   ],
-   "element": "Dark",
-   "class": "Attacker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/kurumi-tokisaki/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/kurumi-tokisaki/skills/Blue Orb.png",
-    "Class": "assets/characters/kurumi-tokisaki/skills/Class.png",
-    "Core": "assets/characters/kurumi-tokisaki/skills/Core.png",
-    "QTE": "assets/characters/kurumi-tokisaki/skills/QTE.png",
-    "Red Orb": "assets/characters/kurumi-tokisaki/skills/Red Orb.png",
-    "Signature": "assets/characters/kurumi-tokisaki/skills/Signature.png",
-    "Yellow Orb": "assets/characters/kurumi-tokisaki/skills/Yellow Orb.png"
+    "Basic Attack": "assets/characters/chrome-glory/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/chrome-glory/skills/Blue Orb.png",
+    "Class": "assets/characters/chrome-glory/skills/Class.png",
+    "Core": "assets/characters/chrome-glory/skills/Core.png",
+    "QTE": "assets/characters/chrome-glory/skills/QTE.png",
+    "Red Orb": "assets/characters/chrome-glory/skills/Red Orb.png",
+    "Signature": "assets/characters/chrome-glory/skills/Signature.png",
+    "Yellow Orb": "assets/characters/chrome-glory/skills/Yellow Orb.png"
    }
   },
   {
@@ -232,6 +44,7 @@ const CATALOG = {
     "assets/characters/lee-hyperreal/CUB - Skill 5.png",
     "assets/characters/lee-hyperreal/CUB - Skill 6.png"
    ],
+   "signature": "Turing",
    "element": "Fire",
    "class": "Attacker",
    "skillArt": {
@@ -246,219 +59,31 @@ const CATALOG = {
    }
   },
   {
-   "name": "Leia: Fortunaster",
-   "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/leia-fortunaster/Awaken - Leia Fortunaster.png",
-   "weapon": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png",
-   "construct": "assets/characters/leia-fortunaster/CUB - Vulpecula.png",
-   "skills": [
-    "assets/characters/leia-fortunaster/CUB - Skill 1.png",
-    "assets/characters/leia-fortunaster/CUB - Skill 2.png",
-    "assets/characters/leia-fortunaster/CUB - Skill 3.png",
-    "assets/characters/leia-fortunaster/CUB - Skill 4.png",
-    "assets/characters/leia-fortunaster/CUB - Skill 5.png",
-    "assets/characters/leia-fortunaster/CUB - Skill 6.png"
-   ],
-   "element": "Ice",
-   "class": "Breaker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/leia-fortunaster/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/leia-fortunaster/skills/Blue Orb.png",
-    "Class": "assets/characters/leia-fortunaster/skills/Class.png",
-    "Core": "assets/characters/leia-fortunaster/skills/Core.png",
-    "QTE": "assets/characters/leia-fortunaster/skills/QTE.png",
-    "Red Orb": "assets/characters/leia-fortunaster/skills/Red Orb.png",
-    "Signature": "assets/characters/leia-fortunaster/skills/Signature.png",
-    "Yellow Orb": "assets/characters/leia-fortunaster/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Lilith: Daemonissa",
-   "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/lilith-daemonissa/Awaken - Lilith Daemonissa.png",
-   "weapon": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png",
-   "construct": "assets/characters/lilith-daemonissa/CUB - Billie.png",
-   "skills": [
-    "assets/characters/lilith-daemonissa/CUB - Skill 1.png",
-    "assets/characters/lilith-daemonissa/CUB - Skill 2.png",
-    "assets/characters/lilith-daemonissa/CUB - Skill 3.png",
-    "assets/characters/lilith-daemonissa/CUB - Skill 4.png",
-    "assets/characters/lilith-daemonissa/CUB - Skill 5.png",
-    "assets/characters/lilith-daemonissa/CUB - Skill 6.png"
-   ],
-   "element": "Dark",
-   "class": "Amplifier",
-   "skillArt": {
-    "Basic Attack": "assets/characters/lilith-daemonissa/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/lilith-daemonissa/skills/Blue Orb.png",
-    "Class": "assets/characters/lilith-daemonissa/skills/Class.png",
-    "Core": "assets/characters/lilith-daemonissa/skills/Core.png",
-    "QTE": "assets/characters/lilith-daemonissa/skills/QTE.png",
-    "Red Orb": "assets/characters/lilith-daemonissa/skills/Red Orb.png",
-    "Signature": "assets/characters/lilith-daemonissa/skills/Signature.png",
-    "Yellow Orb": "assets/characters/lilith-daemonissa/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Liv: Limpidity",
-   "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/liv-limpidity/Awaken - Liv Limpidity.png",
-   "weapon": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png",
-   "construct": "assets/characters/liv-limpidity/CUB - Levvi.png",
-   "skills": [
-    "assets/characters/liv-limpidity/CUB - Skill 1.png",
-    "assets/characters/liv-limpidity/CUB - Skill 2.png",
-    "assets/characters/liv-limpidity/CUB - Skill 3.png",
-    "assets/characters/liv-limpidity/CUB - Skill 4.png",
-    "assets/characters/liv-limpidity/CUB - Skill 5.png",
-    "assets/characters/liv-limpidity/CUB - Skill 6.png"
-   ],
-   "element": "Lightning",
-   "class": "Attacker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/liv-limpidity/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/liv-limpidity/skills/Blue Orb.png",
-    "Class": "assets/characters/liv-limpidity/skills/Class.png",
-    "Core": "assets/characters/liv-limpidity/skills/Core.png",
-    "QTE": "assets/characters/liv-limpidity/skills/QTE.png",
-    "Red Orb": "assets/characters/liv-limpidity/skills/Red Orb.png",
-    "Signature": "assets/characters/liv-limpidity/skills/Signature.png",
-    "Yellow Orb": "assets/characters/liv-limpidity/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Lucia: Inverse Crown",
-   "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-inverse-crown/Awaken - Lucia Inverse Crown.png",
-   "weapon": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp",
-   "construct": "assets/characters/lucia-inverse-crown/CUB - Allos.webp",
-   "skills": [
-    "assets/characters/lucia-inverse-crown/CUB - Skill 1.webp",
-    "assets/characters/lucia-inverse-crown/CUB - Skill 2.webp",
-    "assets/characters/lucia-inverse-crown/CUB - Skill 3.webp",
-    "assets/characters/lucia-inverse-crown/CUB - Skill 4.webp",
-    "assets/characters/lucia-inverse-crown/CUB - Skill 5.webp",
-    "assets/characters/lucia-inverse-crown/CUB - Skill 6.webp"
-   ],
-   "element": "Ice",
-   "class": "Attacker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/lucia-inverse-crown/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/lucia-inverse-crown/skills/Blue Orb.png",
-    "Class": "assets/characters/lucia-inverse-crown/skills/Class.png",
-    "Core": "assets/characters/lucia-inverse-crown/skills/Core.png",
-    "QTE": "assets/characters/lucia-inverse-crown/skills/QTE.png",
-    "Red Orb": "assets/characters/lucia-inverse-crown/skills/Red Orb.png",
-    "Signature": "assets/characters/lucia-inverse-crown/skills/Signature.png",
-    "Yellow Orb": "assets/characters/lucia-inverse-crown/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Lucia: Pyroath",
-   "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-pyroath/Awaken - Lucia Pyroath.png",
-   "weapon": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp",
-   "construct": "assets/characters/lucia-pyroath/CUB - Corvus.webp",
-   "skills": [
-    "assets/characters/lucia-pyroath/CUB - Skill 1.webp",
-    "assets/characters/lucia-pyroath/CUB - Skill 2.webp",
-    "assets/characters/lucia-pyroath/CUB - Skill 3.webp",
-    "assets/characters/lucia-pyroath/CUB - Skill 4.webp",
-    "assets/characters/lucia-pyroath/CUB - Skill 5.webp",
-    "assets/characters/lucia-pyroath/CUB - Skill 6.webp"
-   ],
-   "element": "Fire",
-   "class": "Attacker",
-   "skillArt": {
-    "Basic Attack": "assets/characters/lucia-pyroath/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/lucia-pyroath/skills/Blue Orb.png",
-    "Class": "assets/characters/lucia-pyroath/skills/Class.png",
-    "Core": "assets/characters/lucia-pyroath/skills/Core.png",
-    "QTE": "assets/characters/lucia-pyroath/skills/QTE.png",
-    "Red Orb": "assets/characters/lucia-pyroath/skills/Red Orb.png",
-    "Signature": "assets/characters/lucia-pyroath/skills/Signature.png",
-    "Yellow Orb": "assets/characters/lucia-pyroath/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Luna: Oblivion",
-   "symbol": "assets/classes/Annihilator.png",
-   "portrait": "assets/characters/luna-oblivion/Awaken - Luna Oblivion.png",
-   "weapon": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png",
-   "construct": "assets/characters/luna-oblivion/CUB - Guardrake.png",
-   "skills": [
-    "assets/characters/luna-oblivion/CUB - Skill 1.png",
-    "assets/characters/luna-oblivion/CUB - Skill 2.png",
-    "assets/characters/luna-oblivion/CUB - Skill 3.png",
-    "assets/characters/luna-oblivion/CUB - Skill 4.png",
-    "assets/characters/luna-oblivion/CUB - Skill 5.png",
-    "assets/characters/luna-oblivion/CUB - Skill 6.png"
-   ],
-   "element": "Nihil",
-   "class": "Annihilator",
-   "skillArt": {
-    "Basic Attack": "assets/characters/luna-oblivion/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/luna-oblivion/skills/Blue Orb.png",
-    "Class": "assets/characters/luna-oblivion/skills/Class.png",
-    "Core": "assets/characters/luna-oblivion/skills/Core.png",
-    "QTE": "assets/characters/luna-oblivion/skills/QTE.png",
-    "Red Orb": "assets/characters/luna-oblivion/skills/Red Orb.png",
-    "Signature": "assets/characters/luna-oblivion/skills/Signature.png",
-    "Yellow Orb": "assets/characters/luna-oblivion/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Nanami: Startrail",
+   "name": "Watanabe: Epitaph",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/nanami-startrail/Awaken - Nanami Startrail.png",
-   "weapon": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png",
-   "construct": "assets/characters/nanami-startrail/CUB - Bramble Angler.png",
+   "portrait": "assets/characters/watanabe-epitaph/Awaken - Watanabe Epitaph.png",
+   "weapon": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png",
+   "construct": "assets/characters/watanabe-epitaph/CUB - Shadow Wing.png",
    "skills": [
-    "assets/characters/nanami-startrail/CUB - Skill 1.png",
-    "assets/characters/nanami-startrail/CUB - Skill 2.png",
-    "assets/characters/nanami-startrail/CUB - Skill 3.png",
-    "assets/characters/nanami-startrail/CUB - Skill 4.png",
-    "assets/characters/nanami-startrail/CUB - Skill 5.png",
-    "assets/characters/nanami-startrail/CUB - Skill 6.png"
+    "assets/characters/watanabe-epitaph/CUB - Skill 1.png",
+    "assets/characters/watanabe-epitaph/CUB - Skill 2.png",
+    "assets/characters/watanabe-epitaph/CUB - Skill 3.png",
+    "assets/characters/watanabe-epitaph/CUB - Skill 4.png",
+    "assets/characters/watanabe-epitaph/CUB - Skill 5.png",
+    "assets/characters/watanabe-epitaph/CUB - Skill 6.png"
    ],
-   "element": "Lightning",
+   "signature": "Alphonse",
+   "element": "Fire",
    "class": "Tank",
    "skillArt": {
-    "Basic Attack": "assets/characters/nanami-startrail/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/nanami-startrail/skills/Blue Orb.png",
-    "Class": "assets/characters/nanami-startrail/skills/Class.png",
-    "Core": "assets/characters/nanami-startrail/skills/Core.png",
-    "QTE": "assets/characters/nanami-startrail/skills/QTE.png",
-    "Red Orb": "assets/characters/nanami-startrail/skills/Red Orb.png",
-    "Signature": "assets/characters/nanami-startrail/skills/Signature.png",
-    "Yellow Orb": "assets/characters/nanami-startrail/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Nirvatia: Dirge",
-   "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/nirvatia-dirge/Awaken - Nirvatia Dirge.png",
-   "weapon": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp",
-   "construct": "assets/characters/nirvatia-dirge/CUB - Morigan.webp",
-   "skills": [
-    "assets/characters/nirvatia-dirge/CUB - Skill 1.webp",
-    "assets/characters/nirvatia-dirge/CUB - Skill 2.webp",
-    "assets/characters/nirvatia-dirge/CUB - Skill 3.webp",
-    "assets/characters/nirvatia-dirge/CUB - Skill 4.webp",
-    "assets/characters/nirvatia-dirge/CUB - Skill 5.webp",
-    "assets/characters/nirvatia-dirge/CUB - Skill 6.webp"
-   ],
-   "element": "Nihil",
-   "class": "Amplifier",
-   "skillArt": {
-    "Basic Attack": "assets/characters/nirvatia-dirge/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/nirvatia-dirge/skills/Blue Orb.png",
-    "Class": "assets/characters/nirvatia-dirge/skills/Class.png",
-    "Core": "assets/characters/nirvatia-dirge/skills/Core.png",
-    "QTE": "assets/characters/nirvatia-dirge/skills/QTE.png",
-    "Red Orb": "assets/characters/nirvatia-dirge/skills/Red Orb.png",
-    "Signature": "assets/characters/nirvatia-dirge/skills/Signature.png",
-    "Yellow Orb": "assets/characters/nirvatia-dirge/skills/Yellow Orb.png"
+    "Basic Attack": "assets/characters/watanabe-epitaph/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/watanabe-epitaph/skills/Blue Orb.png",
+    "Class": "assets/characters/watanabe-epitaph/skills/Class.png",
+    "Core": "assets/characters/watanabe-epitaph/skills/Core.png",
+    "QTE": "assets/characters/watanabe-epitaph/skills/QTE.png",
+    "Red Orb": "assets/characters/watanabe-epitaph/skills/Red Orb.png",
+    "Signature": "assets/characters/watanabe-epitaph/skills/Signature.png",
+    "Yellow Orb": "assets/characters/watanabe-epitaph/skills/Yellow Orb.png"
    }
   },
   {
@@ -475,6 +100,7 @@ const CATALOG = {
     "assets/characters/qu-shukra/CUB - Skill 5.png",
     "assets/characters/qu-shukra/CUB - Skill 6.png"
    ],
+   "signature": "Ji Bo'an",
    "element": "Ice",
    "class": "Attacker",
    "skillArt": {
@@ -489,30 +115,199 @@ const CATALOG = {
    }
   },
   {
-   "name": "Rosetta: Arete",
-   "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/rosetta-arete/Awaken - Rosetta Arete.png",
-   "weapon": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp",
-   "construct": "assets/characters/rosetta-arete/CUB - Buzzling.webp",
+   "name": "Luna: Oblivion",
+   "symbol": "assets/classes/Annihilator.png",
+   "portrait": "assets/characters/luna-oblivion/Awaken - Luna Oblivion.png",
+   "weapon": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png",
+   "construct": "assets/characters/luna-oblivion/CUB - Guardrake.png",
    "skills": [
-    "assets/characters/rosetta-arete/CUB - Skill 1.webp",
-    "assets/characters/rosetta-arete/CUB - Skill 2.webp",
-    "assets/characters/rosetta-arete/CUB - Skill 3.webp",
-    "assets/characters/rosetta-arete/CUB - Skill 4.webp",
-    "assets/characters/rosetta-arete/CUB - Skill 5.webp",
-    "assets/characters/rosetta-arete/CUB - Skill 6.webp"
+    "assets/characters/luna-oblivion/CUB - Skill 1.png",
+    "assets/characters/luna-oblivion/CUB - Skill 2.png",
+    "assets/characters/luna-oblivion/CUB - Skill 3.png",
+    "assets/characters/luna-oblivion/CUB - Skill 4.png",
+    "assets/characters/luna-oblivion/CUB - Skill 5.png",
+    "assets/characters/luna-oblivion/CUB - Skill 6.png"
    ],
-   "element": "Dark",
-   "class": "Breaker",
+   "signature": "Cleopatra",
+   "element": "Nihil",
+   "class": "Annihilator",
    "skillArt": {
-    "Basic Attack": "assets/characters/rosetta-arete/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/rosetta-arete/skills/Blue Orb.png",
-    "Class": "assets/characters/rosetta-arete/skills/Class.png",
-    "Core": "assets/characters/rosetta-arete/skills/Core.png",
-    "QTE": "assets/characters/rosetta-arete/skills/QTE.png",
-    "Red Orb": "assets/characters/rosetta-arete/skills/Red Orb.png",
-    "Signature": "assets/characters/rosetta-arete/skills/Signature.png",
-    "Yellow Orb": "assets/characters/rosetta-arete/skills/Yellow Orb.png"
+    "Basic Attack": "assets/characters/luna-oblivion/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/luna-oblivion/skills/Blue Orb.png",
+    "Class": "assets/characters/luna-oblivion/skills/Class.png",
+    "Core": "assets/characters/luna-oblivion/skills/Core.png",
+    "QTE": "assets/characters/luna-oblivion/skills/QTE.png",
+    "Red Orb": "assets/characters/luna-oblivion/skills/Red Orb.png",
+    "Signature": "assets/characters/luna-oblivion/skills/Signature.png",
+    "Yellow Orb": "assets/characters/luna-oblivion/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Hanying: Solacetune",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/hanying-solacetune/Awaken - Hanying Solacetune.png",
+   "weapon": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png",
+   "construct": "assets/characters/hanying-solacetune/CUB - Dreamwing.png",
+   "skills": [
+    "assets/characters/hanying-solacetune/CUB - Skill 1.png",
+    "assets/characters/hanying-solacetune/CUB - Skill 2.png",
+    "assets/characters/hanying-solacetune/CUB - Skill 3.png",
+    "assets/characters/hanying-solacetune/CUB - Skill 4.png",
+    "assets/characters/hanying-solacetune/CUB - Skill 5.png",
+    "assets/characters/hanying-solacetune/CUB - Skill 6.png"
+   ],
+   "signature": "Chang Wuzi",
+   "element": "Physical",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/hanying-solacetune/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/hanying-solacetune/skills/Blue Orb.png",
+    "Class": "assets/characters/hanying-solacetune/skills/Class.png",
+    "Core": "assets/characters/hanying-solacetune/skills/Core.png",
+    "QTE": "assets/characters/hanying-solacetune/skills/QTE.png",
+    "Red Orb": "assets/characters/hanying-solacetune/skills/Red Orb.png",
+    "Signature": "assets/characters/hanying-solacetune/skills/Signature.png",
+    "Yellow Orb": "assets/characters/hanying-solacetune/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Wanshi: Lucid Dreamer",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/roleicon/wanshi_awk.png",
+   "weapon": "assets/weapons/e3revolvermd010011.png",
+   "construct": "assets/characters/wanshi-lucid-dreamer/CUB - Snowveil.png",
+   "skills": [
+    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 1.png",
+    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 2.png",
+    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 3.png",
+    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 4.png",
+    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 5.png",
+    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 6.png"
+   ],
+   "signature": "Liston",
+   "element": "Ice",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/wanshi-lucid-dreamer/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/wanshi-lucid-dreamer/skills/Blue Orb.png",
+    "Class": "assets/characters/wanshi-lucid-dreamer/skills/Class.png",
+    "Core": "assets/characters/wanshi-lucid-dreamer/skills/Core.png",
+    "QTE": "assets/characters/wanshi-lucid-dreamer/skills/QTE.png",
+    "Red Orb": "assets/characters/wanshi-lucid-dreamer/skills/Red Orb.png",
+    "Signature": "assets/characters/wanshi-lucid-dreamer/skills/Signature.png",
+    "Yellow Orb": "assets/characters/wanshi-lucid-dreamer/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lucia: Pyroath",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-pyroath/Awaken - Lucia Pyroath.png",
+   "weapon": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp",
+   "construct": "assets/characters/lucia-pyroath/CUB - Corvus.webp",
+   "skills": [
+    "assets/characters/lucia-pyroath/CUB - Skill 1.webp",
+    "assets/characters/lucia-pyroath/CUB - Skill 2.webp",
+    "assets/characters/lucia-pyroath/CUB - Skill 3.webp",
+    "assets/characters/lucia-pyroath/CUB - Skill 4.webp",
+    "assets/characters/lucia-pyroath/CUB - Skill 5.webp",
+    "assets/characters/lucia-pyroath/CUB - Skill 6.webp"
+   ],
+   "signature": "Heraclitus",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-pyroath/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-pyroath/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-pyroath/skills/Class.png",
+    "Core": "assets/characters/lucia-pyroath/skills/Core.png",
+    "QTE": "assets/characters/lucia-pyroath/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-pyroath/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-pyroath/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-pyroath/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Nanami: Startrail",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/nanami-startrail/Awaken - Nanami Startrail.png",
+   "weapon": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png",
+   "construct": "assets/characters/nanami-startrail/CUB - Bramble Angler.png",
+   "skills": [
+    "assets/characters/nanami-startrail/CUB - Skill 1.png",
+    "assets/characters/nanami-startrail/CUB - Skill 2.png",
+    "assets/characters/nanami-startrail/CUB - Skill 3.png",
+    "assets/characters/nanami-startrail/CUB - Skill 4.png",
+    "assets/characters/nanami-startrail/CUB - Skill 5.png",
+    "assets/characters/nanami-startrail/CUB - Skill 6.png"
+   ],
+   "signature": "Herschell",
+   "element": "Lightning",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/nanami-startrail/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/nanami-startrail/skills/Blue Orb.png",
+    "Class": "assets/characters/nanami-startrail/skills/Class.png",
+    "Core": "assets/characters/nanami-startrail/skills/Core.png",
+    "QTE": "assets/characters/nanami-startrail/skills/QTE.png",
+    "Red Orb": "assets/characters/nanami-startrail/skills/Red Orb.png",
+    "Signature": "assets/characters/nanami-startrail/skills/Signature.png",
+    "Yellow Orb": "assets/characters/nanami-startrail/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Ishmael: Parhelion",
+   "symbol": "assets/classes/Observer.png",
+   "portrait": "assets/characters/ishmael-parhelion/Awaken - Ishmael Parhelion.png",
+   "weapon": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png",
+   "construct": "assets/characters/ishmael-parhelion/CUB - Diamaton.png",
+   "skills": [
+    "assets/characters/ishmael-parhelion/CUB - Skill 1.png",
+    "assets/characters/ishmael-parhelion/CUB - Skill 2.png",
+    "assets/characters/ishmael-parhelion/CUB - Skill 3.png",
+    "assets/characters/ishmael-parhelion/CUB - Skill 4.png",
+    "assets/characters/ishmael-parhelion/CUB - Skill 5.png",
+    "assets/characters/ishmael-parhelion/CUB - Skill 6.png"
+   ],
+   "signature": "Sothoth",
+   "element": "Nihil",
+   "class": "Observer",
+   "skillArt": {
+    "Basic Attack": "assets/characters/ishmael-parhelion/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/ishmael-parhelion/skills/Blue Orb.png",
+    "Class": "assets/characters/ishmael-parhelion/skills/Class.png",
+    "Core": "assets/characters/ishmael-parhelion/skills/Core.png",
+    "QTE": "assets/characters/ishmael-parhelion/skills/QTE.png",
+    "Red Orb": "assets/characters/ishmael-parhelion/skills/Red Orb.png",
+    "Signature": "assets/characters/ishmael-parhelion/skills/Signature.png",
+    "Yellow Orb": "assets/characters/ishmael-parhelion/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lilith: Daemonissa",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/lilith-daemonissa/Awaken - Lilith Daemonissa.png",
+   "weapon": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png",
+   "construct": "assets/characters/lilith-daemonissa/CUB - Billie.png",
+   "skills": [
+    "assets/characters/lilith-daemonissa/CUB - Skill 1.png",
+    "assets/characters/lilith-daemonissa/CUB - Skill 2.png",
+    "assets/characters/lilith-daemonissa/CUB - Skill 3.png",
+    "assets/characters/lilith-daemonissa/CUB - Skill 4.png",
+    "assets/characters/lilith-daemonissa/CUB - Skill 5.png",
+    "assets/characters/lilith-daemonissa/CUB - Skill 6.png"
+   ],
+   "signature": "Barcelo",
+   "element": "Dark",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lilith-daemonissa/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lilith-daemonissa/skills/Blue Orb.png",
+    "Class": "assets/characters/lilith-daemonissa/skills/Class.png",
+    "Core": "assets/characters/lilith-daemonissa/skills/Core.png",
+    "QTE": "assets/characters/lilith-daemonissa/skills/QTE.png",
+    "Red Orb": "assets/characters/lilith-daemonissa/skills/Red Orb.png",
+    "Signature": "assets/characters/lilith-daemonissa/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lilith-daemonissa/skills/Yellow Orb.png"
    }
   },
   {
@@ -529,6 +324,7 @@ const CATALOG = {
     "assets/characters/selena-pianissimo/CUB - Skill 5.png",
     "assets/characters/selena-pianissimo/CUB - Skill 6.png"
    ],
+   "signature": "Burana",
    "element": "Physical",
    "class": "Attacker",
    "skillArt": {
@@ -540,33 +336,6 @@ const CATALOG = {
     "Red Orb": "assets/characters/selena-pianissimo/skills/Red Orb.png",
     "Signature": "assets/characters/selena-pianissimo/skills/Signature.png",
     "Yellow Orb": "assets/characters/selena-pianissimo/skills/Yellow Orb.png"
-   }
-  },
-  {
-   "name": "Teddy: Spectre",
-   "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/teddy-spectre/Awaken - Teddy Spectre.png",
-   "weapon": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png",
-   "construct": "assets/characters/teddy-spectre/CUB - Beep-Boop.png",
-   "skills": [
-    "assets/characters/teddy-spectre/CUB - Skill 1.png",
-    "assets/characters/teddy-spectre/CUB - Skill 2.png",
-    "assets/characters/teddy-spectre/CUB - Skill 3.png",
-    "assets/characters/teddy-spectre/CUB - Skill 4.png",
-    "assets/characters/teddy-spectre/CUB - Skill 6.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 6.png"
-   ],
-   "element": "Ice",
-   "class": "Amplifier",
-   "skillArt": {
-    "Basic Attack": "assets/characters/teddy-spectre/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/teddy-spectre/skills/Blue Orb.png",
-    "Class": "assets/characters/teddy-spectre/skills/Class.png",
-    "Core": "assets/characters/teddy-spectre/skills/Core.png",
-    "QTE": "assets/characters/teddy-spectre/skills/QTE.png",
-    "Red Orb": "assets/characters/teddy-spectre/skills/Red Orb.png",
-    "Signature": "assets/characters/teddy-spectre/skills/Signature.png",
-    "Yellow Orb": "assets/characters/teddy-spectre/skills/Yellow Orb.png"
    }
   },
   {
@@ -583,6 +352,7 @@ const CATALOG = {
     "assets/characters/vera-geiravor/CUB - Skill 5.png",
     "assets/characters/vera-geiravor/CUB - Skill 6.png"
    ],
+   "signature": "Hervor",
    "element": "Fire",
    "class": "Amplifier",
    "skillArt": {
@@ -610,6 +380,7 @@ const CATALOG = {
     "assets/characters/vergil/CUB - Skill 5.png",
     "assets/characters/vergil/CUB - Skill 6.png"
    ],
+   "signature": "",
    "element": "Physical",
    "class": "Attacker",
    "skillArt": {
@@ -621,6 +392,62 @@ const CATALOG = {
     "Red Orb": "assets/characters/vergil/skills/Red Orb.png",
     "Signature": "assets/characters/vergil/skills/Signature.png",
     "Yellow Orb": "assets/characters/vergil/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Dante",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/dante/Awaken - Dante.png",
+   "weapon": "assets/characters/dante/Arma - Dante.png",
+   "construct": "assets/characters/dante/CUB - Cavaliere.png",
+   "skills": [
+    "assets/characters/dante/CUB - Skill 1.png",
+    "assets/characters/dante/CUB - Skill 2.png",
+    "assets/characters/dante/CUB - Skill 3.png",
+    "assets/characters/dante/CUB - Skill 4.png",
+    "assets/characters/dante/CUB - Skill 5.png",
+    "assets/characters/dante/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/dante/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/dante/skills/Blue Orb.png",
+    "Class": "assets/characters/dante/skills/Class.png",
+    "Core": "assets/characters/dante/skills/Core.png",
+    "QTE": "assets/characters/dante/skills/QTE.png",
+    "Red Orb": "assets/characters/dante/skills/Red Orb.png",
+    "Signature": "assets/characters/dante/skills/Signature.png",
+    "Yellow Orb": "assets/characters/dante/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Bianca: Crepuscule",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/bianca-crepuscule/Awaken - Bianca Crepuscule.png",
+   "weapon": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png",
+   "construct": "assets/characters/bianca-crepuscule/CUB - Noctiluca.png",
+   "skills": [
+    "assets/characters/bianca-crepuscule/CUB - Skill 1.png",
+    "assets/characters/bianca-crepuscule/CUB - Skill 2.png",
+    "assets/characters/bianca-crepuscule/CUB - Skill 3.png",
+    "assets/characters/bianca-crepuscule/CUB - Skill 4.png",
+    "assets/characters/bianca-crepuscule/CUB - Skill 5.png",
+    "assets/characters/bianca-crepuscule/CUB - Skill 6.png"
+   ],
+   "signature": "Jeanne",
+   "element": "Dark",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/bianca-crepuscule/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/bianca-crepuscule/skills/Blue Orb.png",
+    "Class": "assets/characters/bianca-crepuscule/skills/Class.png",
+    "Core": "assets/characters/bianca-crepuscule/skills/Core.png",
+    "QTE": "assets/characters/bianca-crepuscule/skills/QTE.png",
+    "Red Orb": "assets/characters/bianca-crepuscule/skills/Red Orb.png",
+    "Signature": "assets/characters/bianca-crepuscule/skills/Signature.png",
+    "Yellow Orb": "assets/characters/bianca-crepuscule/skills/Yellow Orb.png"
    }
   },
   {
@@ -637,6 +464,7 @@ const CATALOG = {
     "assets/characters/veronica-aegis/CUB - Skill 5.png",
     "assets/characters/veronica-aegis/CUB - Skill 6.png"
    ],
+   "signature": "Keats",
    "element": "Physical",
    "class": "Amplifier",
    "skillArt": {
@@ -651,57 +479,311 @@ const CATALOG = {
    }
   },
   {
-   "name": "Wanshi: Lucid Dreamer",
-   "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/roleicon/wanshi_awk.png",
-   "weapon": "assets/weapons/e3revolvermd010011.png",
-   "construct": "assets/characters/wanshi-lucid-dreamer/CUB - Snowveil.png",
+   "name": "Liv: Limpidity",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/liv-limpidity/Awaken - Liv Limpidity.png",
+   "weapon": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png",
+   "construct": "assets/characters/liv-limpidity/CUB - Levvi.png",
    "skills": [
-    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 1.png",
-    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 2.png",
-    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 3.png",
-    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 4.png",
-    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 5.png",
-    "assets/characters/wanshi-lucid-dreamer/CUB - Skill 6.png"
+    "assets/characters/liv-limpidity/CUB - Skill 1.png",
+    "assets/characters/liv-limpidity/CUB - Skill 2.png",
+    "assets/characters/liv-limpidity/CUB - Skill 3.png",
+    "assets/characters/liv-limpidity/CUB - Skill 4.png",
+    "assets/characters/liv-limpidity/CUB - Skill 5.png",
+    "assets/characters/liv-limpidity/CUB - Skill 6.png"
    ],
-   "element": "Ice",
-   "class": "Tank",
+   "signature": "Natasha",
+   "element": "Lightning",
+   "class": "Attacker",
    "skillArt": {
-    "Basic Attack": "assets/characters/wanshi-lucid-dreamer/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/wanshi-lucid-dreamer/skills/Blue Orb.png",
-    "Class": "assets/characters/wanshi-lucid-dreamer/skills/Class.png",
-    "Core": "assets/characters/wanshi-lucid-dreamer/skills/Core.png",
-    "QTE": "assets/characters/wanshi-lucid-dreamer/skills/QTE.png",
-    "Red Orb": "assets/characters/wanshi-lucid-dreamer/skills/Red Orb.png",
-    "Signature": "assets/characters/wanshi-lucid-dreamer/skills/Signature.png",
-    "Yellow Orb": "assets/characters/wanshi-lucid-dreamer/skills/Yellow Orb.png"
+    "Basic Attack": "assets/characters/liv-limpidity/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/liv-limpidity/skills/Blue Orb.png",
+    "Class": "assets/characters/liv-limpidity/skills/Class.png",
+    "Core": "assets/characters/liv-limpidity/skills/Core.png",
+    "QTE": "assets/characters/liv-limpidity/skills/QTE.png",
+    "Red Orb": "assets/characters/liv-limpidity/skills/Red Orb.png",
+    "Signature": "assets/characters/liv-limpidity/skills/Signature.png",
+    "Yellow Orb": "assets/characters/liv-limpidity/skills/Yellow Orb.png"
    }
   },
   {
-   "name": "Watanabe: Epitaph",
-   "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/watanabe-epitaph/Awaken - Watanabe Epitaph.png",
-   "weapon": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png",
-   "construct": "assets/characters/watanabe-epitaph/CUB - Shadow Wing.png",
+   "name": "Teddy: Spectre",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/teddy-spectre/Awaken - Teddy Spectre.png",
+   "weapon": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png",
+   "construct": "assets/characters/teddy-spectre/CUB - Beep-Boop.png",
    "skills": [
-    "assets/characters/watanabe-epitaph/CUB - Skill 1.png",
-    "assets/characters/watanabe-epitaph/CUB - Skill 2.png",
-    "assets/characters/watanabe-epitaph/CUB - Skill 3.png",
-    "assets/characters/watanabe-epitaph/CUB - Skill 4.png",
-    "assets/characters/watanabe-epitaph/CUB - Skill 5.png",
-    "assets/characters/watanabe-epitaph/CUB - Skill 6.png"
+    "assets/characters/teddy-spectre/CUB - Skill 1.png",
+    "assets/characters/teddy-spectre/CUB - Skill 2.png",
+    "assets/characters/teddy-spectre/CUB - Skill 3.png",
+    "assets/characters/teddy-spectre/CUB - Skill 4.png",
+    "assets/characters/teddy-spectre/CUB - Skill 6.png",
+    "assets/characters/bianca-crepuscule/CUB - Skill 6.png"
    ],
-   "element": "Fire",
-   "class": "Tank",
+   "signature": "Joanna",
+   "element": "Ice",
+   "class": "Amplifier",
    "skillArt": {
-    "Basic Attack": "assets/characters/watanabe-epitaph/skills/Basic Attack.png",
-    "Blue Orb": "assets/characters/watanabe-epitaph/skills/Blue Orb.png",
-    "Class": "assets/characters/watanabe-epitaph/skills/Class.png",
-    "Core": "assets/characters/watanabe-epitaph/skills/Core.png",
-    "QTE": "assets/characters/watanabe-epitaph/skills/QTE.png",
-    "Red Orb": "assets/characters/watanabe-epitaph/skills/Red Orb.png",
-    "Signature": "assets/characters/watanabe-epitaph/skills/Signature.png",
-    "Yellow Orb": "assets/characters/watanabe-epitaph/skills/Yellow Orb.png"
+    "Basic Attack": "assets/characters/teddy-spectre/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/teddy-spectre/skills/Blue Orb.png",
+    "Class": "assets/characters/teddy-spectre/skills/Class.png",
+    "Core": "assets/characters/teddy-spectre/skills/Core.png",
+    "QTE": "assets/characters/teddy-spectre/skills/QTE.png",
+    "Red Orb": "assets/characters/teddy-spectre/skills/Red Orb.png",
+    "Signature": "assets/characters/teddy-spectre/skills/Signature.png",
+    "Yellow Orb": "assets/characters/teddy-spectre/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Rosetta: Arete",
+   "symbol": "assets/classes/Breaker.png",
+   "portrait": "assets/characters/rosetta-arete/Awaken - Rosetta Arete.png",
+   "weapon": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp",
+   "construct": "assets/characters/rosetta-arete/CUB - Buzzling.webp",
+   "skills": [
+    "assets/characters/rosetta-arete/CUB - Skill 1.webp",
+    "assets/characters/rosetta-arete/CUB - Skill 2.webp",
+    "assets/characters/rosetta-arete/CUB - Skill 3.webp",
+    "assets/characters/rosetta-arete/CUB - Skill 4.webp",
+    "assets/characters/rosetta-arete/CUB - Skill 5.webp",
+    "assets/characters/rosetta-arete/CUB - Skill 6.webp"
+   ],
+   "signature": "Nimue",
+   "element": "Dark",
+   "class": "Breaker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/rosetta-arete/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/rosetta-arete/skills/Blue Orb.png",
+    "Class": "assets/characters/rosetta-arete/skills/Class.png",
+    "Core": "assets/characters/rosetta-arete/skills/Core.png",
+    "QTE": "assets/characters/rosetta-arete/skills/QTE.png",
+    "Red Orb": "assets/characters/rosetta-arete/skills/Red Orb.png",
+    "Signature": "assets/characters/rosetta-arete/skills/Signature.png",
+    "Yellow Orb": "assets/characters/rosetta-arete/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Nirvatia: Dirge",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/nirvatia-dirge/Awaken - Nirvatia Dirge.png",
+   "weapon": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp",
+   "construct": "assets/characters/nirvatia-dirge/CUB - Morigan.webp",
+   "skills": [
+    "assets/characters/nirvatia-dirge/CUB - Skill 1.webp",
+    "assets/characters/nirvatia-dirge/CUB - Skill 2.webp",
+    "assets/characters/nirvatia-dirge/CUB - Skill 3.webp",
+    "assets/characters/nirvatia-dirge/CUB - Skill 4.webp",
+    "assets/characters/nirvatia-dirge/CUB - Skill 5.webp",
+    "assets/characters/nirvatia-dirge/CUB - Skill 6.webp"
+   ],
+   "signature": "Bulgakov",
+   "element": "Nihil",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/nirvatia-dirge/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/nirvatia-dirge/skills/Blue Orb.png",
+    "Class": "assets/characters/nirvatia-dirge/skills/Class.png",
+    "Core": "assets/characters/nirvatia-dirge/skills/Core.png",
+    "QTE": "assets/characters/nirvatia-dirge/skills/QTE.png",
+    "Red Orb": "assets/characters/nirvatia-dirge/skills/Red Orb.png",
+    "Signature": "assets/characters/nirvatia-dirge/skills/Signature.png",
+    "Yellow Orb": "assets/characters/nirvatia-dirge/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Kamui: Aeternion",
+   "symbol": "assets/classes/Breaker.png",
+   "portrait": "assets/characters/kamui-aeternion/Awaken - Kamui.png",
+   "weapon": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png",
+   "construct": "assets/characters/kamui-aeternion/CUB - Ignis.png",
+   "skills": [
+    "assets/characters/kamui-aeternion/CUB - Skill 1.png",
+    "assets/characters/kamui-aeternion/CUB - Skill 2.png",
+    "assets/characters/kamui-aeternion/CUB - Skill 3.png",
+    "assets/characters/kamui-aeternion/CUB - Skill 4.png",
+    "assets/characters/kamui-aeternion/CUB - Skill 5.png",
+    "assets/characters/kamui-aeternion/CUB - Skill 6.png"
+   ],
+   "signature": "Feynman",
+   "element": "Fire",
+   "class": "Breaker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/kamui-aeternion/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/kamui-aeternion/skills/Blue Orb.png",
+    "Class": "assets/characters/kamui-aeternion/skills/Class.png",
+    "Core": "assets/characters/kamui-aeternion/skills/Core.png",
+    "QTE": "assets/characters/kamui-aeternion/skills/QTE.png",
+    "Red Orb": "assets/characters/kamui-aeternion/skills/Red Orb.png",
+    "Signature": "assets/characters/kamui-aeternion/skills/Signature.png",
+    "Yellow Orb": "assets/characters/kamui-aeternion/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lucia: Inverse Crown",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-inverse-crown/Awaken - Lucia Inverse Crown.png",
+   "weapon": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp",
+   "construct": "assets/characters/lucia-inverse-crown/CUB - Allos.webp",
+   "skills": [
+    "assets/characters/lucia-inverse-crown/CUB - Skill 1.webp",
+    "assets/characters/lucia-inverse-crown/CUB - Skill 2.webp",
+    "assets/characters/lucia-inverse-crown/CUB - Skill 3.webp",
+    "assets/characters/lucia-inverse-crown/CUB - Skill 4.webp",
+    "assets/characters/lucia-inverse-crown/CUB - Skill 5.webp",
+    "assets/characters/lucia-inverse-crown/CUB - Skill 6.webp"
+   ],
+   "signature": "Pavlichenko",
+   "element": "Ice",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-inverse-crown/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-inverse-crown/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-inverse-crown/skills/Class.png",
+    "Core": "assets/characters/lucia-inverse-crown/skills/Core.png",
+    "QTE": "assets/characters/lucia-inverse-crown/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-inverse-crown/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-inverse-crown/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-inverse-crown/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Helentine: Lacrimosa",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/helentine-lacrimosa/Awaken - Helentine.png",
+   "weapon": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp",
+   "construct": "assets/characters/helentine-lacrimosa/CUB - Grand Duke.webp",
+   "skills": [
+    "assets/characters/helentine-lacrimosa/CUB - Skill 1.webp",
+    "assets/characters/helentine-lacrimosa/CUB - Skill 2.webp",
+    "assets/characters/helentine-lacrimosa/CUB - Skill 3.webp",
+    "assets/characters/helentine-lacrimosa/CUB - Skill 4.webp",
+    "assets/characters/helentine-lacrimosa/CUB - Skill 5.webp",
+    "assets/characters/helentine-lacrimosa/CUB - Skill 6.webp"
+   ],
+   "signature": "Cogito",
+   "element": "Lightning",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/helentine-lacrimosa/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/helentine-lacrimosa/skills/Blue Orb.png",
+    "Class": "assets/characters/helentine-lacrimosa/skills/Class.png",
+    "Core": "assets/characters/helentine-lacrimosa/skills/Core.png",
+    "QTE": "assets/characters/helentine-lacrimosa/skills/QTE.png",
+    "Red Orb": "assets/characters/helentine-lacrimosa/skills/Red Orb.png",
+    "Signature": "assets/characters/helentine-lacrimosa/skills/Signature.png",
+    "Yellow Orb": "assets/characters/helentine-lacrimosa/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Karenina: Effulgence",
+   "symbol": "assets/classes/Breaker.png",
+   "portrait": "assets/characters/karenina-effulgence/Awaken - Karenina Effulgence.png",
+   "weapon": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp",
+   "construct": "assets/characters/karenina-effulgence/CUB - Patrick.webp",
+   "skills": [
+    "assets/characters/karenina-effulgence/CUB - Skill 1.webp",
+    "assets/characters/karenina-effulgence/CUB - Skill 2.webp",
+    "assets/characters/karenina-effulgence/CUB - Skill 3.webp",
+    "assets/characters/karenina-effulgence/CUB - Skill 4.webp",
+    "assets/characters/karenina-effulgence/CUB - Skill 5.webp",
+    "assets/characters/karenina-effulgence/CUB - Skill 6.webp"
+   ],
+   "signature": "Santiago",
+   "element": "Physical",
+   "class": "Breaker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/karenina-effulgence/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/karenina-effulgence/skills/Blue Orb.png",
+    "Class": "assets/characters/karenina-effulgence/skills/Class.png",
+    "Core": "assets/characters/karenina-effulgence/skills/Core.png",
+    "QTE": "assets/characters/karenina-effulgence/skills/QTE.png",
+    "Red Orb": "assets/characters/karenina-effulgence/skills/Red Orb.png",
+    "Signature": "assets/characters/karenina-effulgence/skills/Signature.png",
+    "Yellow Orb": "assets/characters/karenina-effulgence/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Kurumi Tokisaki",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/kurumi-tokisaki/Awaken - Kurumi Tokisaki.png",
+   "weapon": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp",
+   "construct": "assets/characters/kurumi-tokisaki/CUB - Zafkiel.webp",
+   "skills": [
+    "assets/characters/kurumi-tokisaki/CUB - Skill 1.webp",
+    "assets/characters/kurumi-tokisaki/CUB - Skill 2.webp",
+    "assets/characters/kurumi-tokisaki/CUB - Skill 3.webp",
+    "assets/characters/kurumi-tokisaki/CUB - Skill 4.webp",
+    "assets/characters/kurumi-tokisaki/CUB - Skill 5.webp",
+    "assets/characters/kurumi-tokisaki/CUB - Skill 6.webp"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/kurumi-tokisaki/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/kurumi-tokisaki/skills/Blue Orb.png",
+    "Class": "assets/characters/kurumi-tokisaki/skills/Class.png",
+    "Core": "assets/characters/kurumi-tokisaki/skills/Core.png",
+    "QTE": "assets/characters/kurumi-tokisaki/skills/QTE.png",
+    "Red Orb": "assets/characters/kurumi-tokisaki/skills/Red Orb.png",
+    "Signature": "assets/characters/kurumi-tokisaki/skills/Signature.png",
+    "Yellow Orb": "assets/characters/kurumi-tokisaki/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Adelyde: Anabasis",
+   "symbol": "assets/characters/adelyde-anabasis/Classe - Adelyde Anabasis.png",
+   "portrait": "assets/characters/adelyde-anabasis/Awaken - Adelyde Anabasis.png",
+   "weapon": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp",
+   "construct": "assets/characters/adelyde-anabasis/CUB - Kelpie.webp",
+   "skills": [
+    "assets/characters/adelyde-anabasis/CUB - Skill 1.webp",
+    "assets/characters/adelyde-anabasis/CUB - Skill 2.webp",
+    "assets/characters/adelyde-anabasis/CUB - Skill 3.webp",
+    "assets/characters/adelyde-anabasis/CUB - Skill 4.webp",
+    "assets/characters/adelyde-anabasis/CUB - Skill 5.webp",
+    "assets/characters/adelyde-anabasis/CUB - Skill 6.webp"
+   ],
+   "signature": "Pesanteur",
+   "element": "Dark",
+   "class": "Overlinker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/adelyde-anabasis/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/adelyde-anabasis/skills/Blue Orb.png",
+    "Class": "assets/characters/adelyde-anabasis/skills/Class.png",
+    "Core": "assets/characters/adelyde-anabasis/skills/Core.png",
+    "QTE": "assets/characters/adelyde-anabasis/skills/QTE.png",
+    "Red Orb": "assets/characters/adelyde-anabasis/skills/Red Orb.png",
+    "Signature": "assets/characters/adelyde-anabasis/skills/Signature.png",
+    "Yellow Orb": "assets/characters/adelyde-anabasis/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Leia: Fortunaster",
+   "symbol": "assets/classes/Breaker.png",
+   "portrait": "assets/characters/leia-fortunaster/Awaken - Leia Fortunaster.png",
+   "weapon": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png",
+   "construct": "assets/characters/leia-fortunaster/CUB - Vulpecula.png",
+   "skills": [
+    "assets/characters/leia-fortunaster/CUB - Skill 1.png",
+    "assets/characters/leia-fortunaster/CUB - Skill 2.png",
+    "assets/characters/leia-fortunaster/CUB - Skill 3.png",
+    "assets/characters/leia-fortunaster/CUB - Skill 4.png",
+    "assets/characters/leia-fortunaster/CUB - Skill 5.png",
+    "assets/characters/leia-fortunaster/CUB - Skill 6.png"
+   ],
+   "signature": "Mousme",
+   "element": "Ice",
+   "class": "Breaker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/leia-fortunaster/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/leia-fortunaster/skills/Blue Orb.png",
+    "Class": "assets/characters/leia-fortunaster/skills/Class.png",
+    "Core": "assets/characters/leia-fortunaster/skills/Core.png",
+    "QTE": "assets/characters/leia-fortunaster/skills/QTE.png",
+    "Red Orb": "assets/characters/leia-fortunaster/skills/Red Orb.png",
+    "Signature": "assets/characters/leia-fortunaster/skills/Signature.png",
+    "Yellow Orb": "assets/characters/leia-fortunaster/skills/Yellow Orb.png"
    }
   }
  ],
@@ -759,6 +841,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp"
     }
    ]
   },
@@ -770,6 +856,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/alisa-echo/Arma - Alisa Echo.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/alisa-echo/Arma - Alisa Echo.png"
     }
    ]
   },
@@ -778,6 +868,10 @@ const CATALOG = {
    "name": "Faded Color",
    "type": "Scythe",
    "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/characters/ayla-brilliance/Arma - Ayla Brilliance (5).png"
+    },
     {
      "rank": "5",
      "art": "assets/characters/ayla-brilliance/Arma - Ayla Brilliance (5).png"
@@ -792,6 +886,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png"
     }
    ]
   },
@@ -801,8 +899,42 @@ const CATALOG = {
    "type": "Tactical Tonfas",
    "ranks": [
     {
+     "rank": "6",
+     "art": "assets/characters/bridget-ardeo/Arma - Bridget (5).png"
+    },
+    {
      "rank": "5",
      "art": "assets/characters/bridget-ardeo/Arma - Bridget (5).png"
+    }
+   ]
+  },
+  {
+   "owner": "Chrome: Glory",
+   "name": "Apollo",
+   "type": "Gunblade",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/characters/chrome-glory/Arma - Chrome Glory.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/chrome-glory/Arma - Chrome Glory.png"
+    }
+   ]
+  },
+  {
+   "owner": "Dante",
+   "name": "Devil Sword Dante",
+   "type": "Devil Sword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/characters/dante/Arma - Dante.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/dante/Arma - Dante.png"
     }
    ]
   },
@@ -811,6 +943,10 @@ const CATALOG = {
    "name": "Spinebreaker",
    "type": "Scissors",
    "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/characters/discord-secator/Arma - Discord (5).png"
+    },
     {
      "rank": "5",
      "art": "assets/characters/discord-secator/Arma - Discord (5).png"
@@ -825,6 +961,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png"
     }
    ]
   },
@@ -835,6 +975,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/hanying-zitherwoe/Arma - Hanying Zitherwoe.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/hanying-zitherwoe/Arma - Hanying Zitherwoe.png"
     }
    ]
@@ -847,6 +991,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp"
     }
    ]
   },
@@ -857,6 +1005,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png"
     }
    ]
@@ -869,6 +1021,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png"
     }
    ]
   },
@@ -879,6 +1035,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp"
     }
    ]
@@ -891,6 +1051,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp"
     }
    ]
   },
@@ -902,6 +1066,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/lee-hyperreal/Arma - Lee Hyperreal.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/lee-hyperreal/Arma - Lee Hyperreal.png"
     }
    ]
   },
@@ -910,6 +1078,10 @@ const CATALOG = {
    "name": "Gloomlight",
    "type": "Dual Guns",
    "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/characters/lee-palefire/Arma - Lee Palefire (5).png"
+    },
     {
      "rank": "5",
      "art": "assets/characters/lee-palefire/Arma - Lee Palefire (5).png"
@@ -924,6 +1096,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png"
     }
    ]
   },
@@ -934,6 +1110,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png"
     }
    ]
@@ -946,6 +1126,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png"
     }
    ]
   },
@@ -956,6 +1140,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp"
     }
    ]
@@ -968,6 +1156,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp"
     }
    ]
   },
@@ -978,6 +1170,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png"
     }
    ]
@@ -990,6 +1186,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png"
     }
    ]
   },
@@ -1000,6 +1200,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp"
     }
    ]
@@ -1012,6 +1216,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/no21-feral/Arma No.21 Feral.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/no21-feral/Arma No.21 Feral.png"
     }
    ]
   },
@@ -1022,6 +1230,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/qu-shukra/Arma - Qu Shukra.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/qu-shukra/Arma - Qu Shukra.png"
     }
    ]
@@ -1034,6 +1246,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp"
     }
    ]
   },
@@ -1044,6 +1260,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/selena-pianissimo/Arma - Selena Pianissimo.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/selena-pianissimo/Arma - Selena Pianissimo.png"
     }
    ]
@@ -1056,6 +1276,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png"
     }
    ]
   },
@@ -1066,6 +1290,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/vera-geiravor/Arma - Vera Geiravor.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/vera-geiravor/Arma - Vera Geiravor.png"
     }
    ]
@@ -1078,6 +1306,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/vergil/Arma - Vergil.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/vergil/Arma - Vergil.png"
     }
    ]
   },
@@ -1088,6 +1320,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/veronica-aegis/Arma - Veronica Aegis.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/veronica-aegis/Arma - Veronica Aegis.png"
     }
    ]
@@ -1100,6 +1336,10 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/characters/wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png"
     }
    ]
   },
@@ -1110,6 +1350,10 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
+     "art": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png"
+    },
+    {
+     "rank": "5",
      "art": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png"
     }
    ]

@@ -193,7 +193,7 @@ const VERA_KIT = {
 const KAMUI_KIT = {
   name: "Kamui: Aeternion", symbol: classIcon("Breaker"), portrait: `${KAMUI}/Awaken - Kamui.png`,
   weapon: `${KAMUI}/Arma - Kamui Aeternion.png`, wh: "Darwin", memories: memBuild(FEYNMAN, COTTIE),
-  resonance: ALL_ATK, core: `${KAMUI}/Skill - Signature 2.png`, construct: `${KAMUI}/CUB - Ignis.png`, skills: cubSkills(KAMUI, "webp")
+  resonance: ALL_ATK, core: `${KAMUI}/Skill - Signature 2.png`, construct: `${KAMUI}/CUB - Ignis.png`, skills: cubSkills(KAMUI, "png")
 };
 const TEDDY_KIT = {
   rank: "assets/rank/SSS.png",
@@ -588,7 +588,8 @@ function iconName(src = "") {
   return skill ? cubSkill(src, skill[1])?.[0] || `CUB ${name}` : name;
 }
 const cubSkill = (src, n) => CUB_SKILLS[src.split("/").at(-2)]?.[n - 1];
-const memoryInfo = name => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2} pcs: ${text}`).join("\n\n");
+// "active" is how many pieces of this set a card wears: the bonuses it reaches start with a check mark, which the tooltip draws highlighted
+const memoryInfo = (name, active = 0) => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2 <= active ? "✓ " : ""}${(i + 1) * 2} pcs: ${text}`).join("\n\n");
 // What an icon does, when known: shown under its name
 function iconInfo(src = "") {
   const memory = src.match(/Memoria - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
@@ -623,7 +624,12 @@ const STAR_BARS = {
 const STARS_BAR = STAR_BARS[6], WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", BAR_RATIO = 230 / 2048;
 const starOverlay = rank => pic(STAR_BARS[rank] || STARS_BAR, `class="stars" alt="${rank || 6} stars"`);
 const STARS = starOverlay(6);
-const numbered = (src, i, href = "") => `<div class="cell">${slot(src, "", "", undefined, href)}<span>${i}</span></div>`;
+// The weapon icon gets one blue down chevron per weapon resonance filled in (0-3), filled from the top down. Each entry is the chevron's start point, [x, y]; the same shape is drawn in the exported image
+const HARMONY_CHEVRONS = [[2, 2], [2, 10], [2, 18]];
+const harmonyChevrons = count => HARMONY_CHEVRONS.slice(0, count);
+const harmonyArrows = count => count > 0 ? `<svg class="wh-arrows" viewBox="0 0 24 30" aria-hidden="true"><path d="${harmonyChevrons(count).map(([x, y]) => `M${x} ${y}l10 8 10-8`).join("")}"/></svg>` : "";
+const resonanceCount = c => (c.matrix || []).filter(Boolean).length;
+const numbered = (src, i, href = "", off = false) => `<div class="cell${off ? " off" : ""}">${slot(src, "", "", undefined, href)}<span>${i}</span></div>`;
 const n = (k, f) => Array.from({ length: k }, (_, i) => f(i));
 
 /* ---------- sidebar ---------- */
@@ -789,10 +795,12 @@ function showNote(tab) {
 }
 function card(c) {
   const [, weapon = "", weaponType = "weapon", , weaponEffect = ""] = WEAPONS.find(w => w[0] === c.name) || [];
+  const memoryName = piece => piece.startsWith("assets/") ? iconName(piece) : piece;
+  const worn = (c.memories || []).filter(Boolean).map(memoryName);
   const memory = (piece, i) => {
     if (!piece) return slot("", i + 1);
-    const art = piece.startsWith("assets/") ? piece : "", name = art ? iconName(art) : piece;
-    return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name));
+    const art = piece.startsWith("assets/") ? piece : "", name = memoryName(piece);
+    return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name, worn.filter(other => other === name).length));
   };
   const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}"${t === "captain" ? tipAttr(...(LEADER_SKILLS[c.name] || [])) : ""}>${t.toUpperCase()}</span>`).join("");
   const cub = c.construct ? cubHref(iconName(c.construct)) : "";
@@ -806,13 +814,13 @@ function card(c) {
       <div class="rank"${tipAttr(c.name && iconName(rankArt(c)))}>${c.name ? pic(rankArt(c), 'alt="rank"') : ""}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
-      <div class="wp">${slot(c.weapon, weaponType, c.weapon ? starOverlay(weaponRank(weapon, c.weapon, c.weaponRank)) : "", weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
+      <div class="wp">${slot(c.weapon, weaponType, c.weapon ? starOverlay(weaponRank(weapon, c.weapon, c.weaponRank)) + harmonyArrows(resonanceCount(c)) : "", weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
       <div class="mxw">
         <div class="mx">${n(3, i => numbered((c.matrix || [])[i], i + 1, resonance((c.matrix || [])[i]))).join("")}</div>
         <div class="res"><span>6×</span>${skillSlot(c.resonance)}<span>6×</span>${skillSlot(c.core)}</div>
       </div>
     </div>
-    <div class="box kit">${slot(c.construct, "C.U.B.", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub)).join("")}</div>
+    <div class="box kit">${slot(c.construct, "C.U.B.", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub, (c.skillsOff || [])[i])).join("")}</div>
     ${cardNotes(c)}
     </div><i class="bar bar-top"></i><i class="bar bar-bot"></i><div class="tags">${tags}</div>
   </article>`;
@@ -1262,13 +1270,15 @@ const memoryStats = name => { const [ATK, DEF, CRIT, HP] = MEMORY_STATS[name]; r
 const memoryRow = ([name, boost, ext]) => `<tr>
     <td><div class="mt-name"><div class="mt-art">${thumb(ext && memFile(name, "1-4"), starsOf(name))}</div>
       <div><a href="${memoryHref(name)}">${esc(name)}</a><small>${esc(boost)}</small></div></div></td>
-    ${MEMORY_STATS[name].map(value => `<td>${value}</td>`).join("")}</tr>`;
+    ${MEMORY_STATS[name].map(value => `<td>${value}</td>`).join("")}${MEMORY_PATCH[name] ? `<td class="txt rel">${esc(MEMORY_PATCH[name])}</td>` : patchCell(SIGNATURE_OWNER[name])}</tr>`;
 const weaponFile = file => file && (file.startsWith("assets/") ? file : `${CHARS}/${file}`);
 const weaponThumb = (file, name, rank = "") => thumb(weaponFile(file), file ? starsOf(name, file, rank) : "");
 // A character without a build has no page to link to
 const ownerLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name);
 // The patch a frame came with: FRAME_PATCH first, then the Meta Timeline data. A frame in neither shows a dash
 const patchOf = frame => FRAME_PATCH[frame] || TIMELINE.find(c => c.name === frame)?.patch || "";
+// The frame each signature memory belongs to. Memories with no frame (Liliana, Wilde, Klenova, Poincare and the early generic ones) show a dash
+const SIGNATURE_OWNER = Object.fromEntries(Object.entries(SIGNATURE_MEMORY).map(([frame, memory]) => [memory, frame]));
 const patchCell = frame => `<td class="txt rel">${esc(patchOf(frame)) || "—"}</td>`;
 const weaponRow = ([owner, name, type, file, , rank]) => {
   const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
@@ -1281,7 +1291,7 @@ const weaponRow = ([owner, name, type, file, , rank]) => {
     ${WEAPON_STATS[name].map(value => `<td>${value}</td>`).join("")}${patchCell(listedOwner)}</tr>`;
 };
 const SORT_TABLES = {
-  memories: { columns: STAT_NAMES, row: set => memoryRow(set), name: ([name]) => name,
+  memories: { columns: STAT_NAMES, release: true, row: set => memoryRow(set), name: ([name]) => name,
     value: ([name], column) => column === "Release" ? MEMORY_RELEASE[name] : MEMORY_STATS[name][STAT_NAMES.indexOf(column)] },
   // Character-bound weapons follow their frame's release; standalone weapons sort after them
   weapons: { columns: ["ATK", "CRIT"], release: true, row: weapon => weaponRow(weapon), name: ([, name]) => name,
@@ -1431,7 +1441,7 @@ function resonancePage([name, effect]) {
 const cubRow = cub => `<tr>
     <td><div class="mt-name"><div class="mt-art cub-art">${thumb(cub.art, cub.rank === "A" ? starOverlay(5) : STARS)}</div>
       <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small><span class="desk">Rank ${cub.rank}</span><span class="mob">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank}`} · ${esc(cub.element)}</span></small></div></div></td>
-    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${patchCell(cub.owner)}</tr>`;
+    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${CUB_PATCH[cub.name] ? `<td class="txt rel">${esc(CUB_PATCH[cub.name])}</td>` : patchCell(cub.owner)}</tr>`;
 function cubPage(cub) {
   const folder = cub.art.split("/").at(-2), skills = CUB_SKILLS[folder] || [];
   // Some builds show their CUB skills in another order, so each icon is found by its file number
@@ -2415,6 +2425,23 @@ function drawCard(g, c, art, cardColor, x, y, flare) {
   const barH = wpW * BAR_RATIO;
   const weaponBar = art.get(STAR_BARS[weaponRank(WEAPONS.find(w => w[0] === c.name)?.[1], c.weapon, c.weaponRank)]);
   if (weaponBar) drawArt(g, weaponBar, wpX, boxY + pad + weaponH - barH, wpW, barH, { fit: "contain" });
+  if (c.weapon && resonanceCount(c)) {
+    const s = 12 / 30, ax = wpX + wpW - 18, ay = boxY + pad + 6;
+    g.save();
+    g.strokeStyle = "#2f86ff";
+    g.lineWidth = 2;
+    g.lineJoin = g.lineCap = "round";
+    g.shadowColor = "#000000b3";
+    g.shadowBlur = 3;
+    g.beginPath();
+    harmonyChevrons(resonanceCount(c)).forEach(([x, y]) => {
+      g.moveTo(ax + x * s, ay + y * s);
+      g.lineTo(ax + (x + 10) * s, ay + (y + 8) * s);
+      g.lineTo(ax + (x + 20) * s, ay + y * s);
+    });
+    g.stroke();
+    g.restore();
+  }
   const whY = boxY + pad + weaponH + gap, whH = boxH - pad * 2 - weaponH - gap;
   drawSlot(g, wpX, whY, wpW, whH);
   if (c.wh) {
@@ -2450,6 +2477,10 @@ function drawCard(g, c, art, cardColor, x, y, flare) {
     const cx = left + pad + cubW + gap + i * (unit + gap);
     drawSlot(g, cx, kitY + pad, unit, unit);
     drawArt(g, art.get((c.skills || [])[i]), cx, kitY + pad, unit, unit);
+    if ((c.skillsOff || [])[i]) {
+      g.fillStyle = "#000000b8";
+      g.fillRect(cx, kitY + pad, unit, unit);
+    }
     drawText(g, i + 1, cx + unit / 2, kitY + pad + unit + 14, exportFont(11));
   }
   // Role tags
@@ -2483,6 +2514,65 @@ async function renderBuild(cards, { id, title, theme = COMPS[id] }) {
   drawText(g, "dominiko.pages.dev", width - EXPORT_PAD, height - 14, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
+// The image opens in a preview first. Nothing is downloaded until the visitor chooses Save: the browser's file dialog then lets them
+// pick the folder and the name, and the image can be copied instead of saved
+function exportPreview(canvas, blob, fileName, opener) {
+  $("#exportPreview")?.remove();
+  const box = document.createElement("div");
+  box.id = "exportPreview";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-modal", "true");
+  box.setAttribute("aria-label", "Image preview");
+  const size = blob.size > 1048576 ? `${(blob.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(blob.size / 1024))} KB`;
+  box.innerHTML = `<div class="xp-panel"><h2>Image preview</h2><div class="xp-frame"></div>
+    <p class="xp-meta">${esc(fileName)} · PNG · ${canvas.width}×${canvas.height} px · ${size}</p><p class="xp-status" role="status"></p>
+    <div class="xp-actions"><button type="button" class="tool ed-primary" data-xp="save">Save as…</button>
+      <button type="button" class="tool" data-xp="copy">Copy image</button><button type="button" class="tool" data-xp="close">Close</button></div></div>`;
+  $(".xp-frame", box).append(canvas);
+  const status = text => { $(".xp-status", box).textContent = text; };
+  const close = () => {
+    box.remove();
+    removeEventListener("keydown", onKey, true);
+    opener?.focus({ preventScroll: true });
+  };
+  const onKey = e => { if (e.key === "Escape") { e.stopPropagation(); close(); } };
+  const download = () => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+    status("Download started.");
+  };
+  box.addEventListener("click", async e => {
+    if (e.target === box) return close();
+    const action = e.target.closest("[data-xp]")?.dataset.xp;
+    if (action === "close") return close();
+    if (action === "save") {
+      if (!window.showSaveFilePicker) return download(); // browsers without the file dialog fall back to a plain download
+      try {
+        const handle = await window.showSaveFilePicker({ suggestedName: fileName, types: [{ description: "PNG image", accept: { "image/png": [".png"] } }] });
+        const file = await handle.createWritable();
+        await file.write(blob);
+        await file.close();
+        status("Saved.");
+      } catch (error) {
+        status(error?.name === "AbortError" ? "Save cancelled. Nothing was downloaded." : "The file could not be saved.");
+      }
+    }
+    if (action === "copy") {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        status("Image copied. Paste it where you want it.");
+      } catch {
+        status("This browser cannot copy images. Use Save as instead.");
+      }
+    }
+  });
+  addEventListener("keydown", onKey, true);
+  document.body.append(box);
+  $("[data-xp=save]", box).focus({ preventScroll: true });
+}
 async function exportBuild(button, cards) {
   const label = button.textContent, team = shownTeam;
   button.disabled = true;
@@ -2490,11 +2580,8 @@ async function exportBuild(button, cards) {
   try {
     const canvas = await renderBuild(cards, team);
     const blob = await new Promise(done => canvas.toBlob(done, "image/png"));
-    const link = document.createElement("a"), name = cards.length > 1 ? team.title : `${cards[0].name} ${team.title}`;
-    link.href = URL.createObjectURL(blob);
-    link.download = `${linkId(name.replace(/ · /g, " ").replace(":", ""))}.png`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+    const name = cards.length > 1 ? team.title : `${cards[0].name} ${team.title}`;
+    exportPreview(canvas, blob, `${linkId(name.replace(/ · /g, " ").replace(":", ""))}.png`, button);
     button.textContent = label;
   } catch {
     button.textContent = "Export failed";
@@ -2564,6 +2651,13 @@ function route() {
     $(".empty", picker).hidden = rows.some(row => !row.hidden);
   };
 }
+// Tooltip text, one block per paragraph. A paragraph that starts with a check mark is an active set bonus and is drawn highlighted
+const setTipInfo = (node, text) => node.replaceChildren(...text.split("\n\n").map(part => {
+  const block = document.createElement("span"), active = part.startsWith("✓ ");
+  block.textContent = active ? part.slice(2) : part;
+  if (active) block.className = "on";
+  return block;
+}));
 // Icon names on hover: one shared box on <body>, because .slot and .comp clip anything inside them
 if (matchMedia("(hover:hover)").matches) {
   const tip = document.createElement("div");
@@ -2577,7 +2671,7 @@ if (matchMedia("(hover:hover)").matches) {
     tip.hidden = !el;
     if (!el) return;
     title.textContent = el.dataset.tip;
-    info.textContent = el.dataset.info || "";
+    setTipInfo(info, el.dataset.info || "");
     info.hidden = !el.dataset.info;
     const r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
     tip.style.left = `${Math.max(6, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 6))}px`;
@@ -2609,7 +2703,7 @@ if (matchMedia("(hover:hover)").matches) {
     e.stopPropagation();
     const href = el.getAttribute("href");
     title.textContent = el.dataset.tip;
-    info.textContent = el.dataset.info || "";
+    setTipInfo(info, el.dataset.info || "");
     info.hidden = !el.dataset.info;
     link.hidden = !href;
     if (href) link.href = href;
