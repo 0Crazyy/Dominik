@@ -51,6 +51,7 @@ function show(row, position) {
   const team = JSON.parse(row.team);
   const sets = mem => [...new Set(mem)].map(name => `${mem.filter(m => m === name).length}x ${name}`).join(", ");
   console.log(`\n${"=".repeat(70)}\n${position}  #${row.id}  "${team.name}"  em ${row.page}\nEnviado em ${day(row.created)}${row.author ? ` por ${row.author}` : " sem nome"}`);
+  if (team.tags?.length) console.log(`Tags: ${team.tags.join(", ")}`);
   if (team.order) console.log(`Rotação do time: ${team.order}`);
   team.cards.forEach((c, i) => {
     const role = [i === team.captain && "capitão", i === team.starter && "inicia"].filter(Boolean).join(", ");

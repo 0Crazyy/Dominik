@@ -2,6 +2,7 @@
 // Everything in a team is a name from the catalog or a short text, so a stored team can never carry an image path or markup.
 import { CATALOG } from "./catalog.js";
 
+export const TAGS = ["Budget", "Warzone", "PPC", "General"]; // keep in step with ED_TAGS in editor.js
 export const LIMITS = { name: 60, order: 120, desc: 1500, rotation: 3000, author: 32 };
 const BLANK = { rank: "SS", res: "Any ATK", core: "Signature Move" };
 const UPPER_RESONANCES = [
@@ -45,6 +46,7 @@ export function cleanTeam(raw) {
     order: text(r.order, LIMITS.order),
     captain: pick(r.captain, [0, 1, 2], 1),
     starter: pick(r.starter, [0, 1, 2], 0),
+    tags: TAGS.filter(tag => Array.isArray(r.tags) && r.tags.includes(tag)),
     cards: [0, 1, 2].map(i => {
       const c = cards[i] && typeof cards[i] === "object" ? cards[i] : {};
       const ch = CATALOG.characters.find(x => x.name === c.char);

@@ -751,11 +751,37 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .ed .ed-gold{border-top-color:#ffc400}
 .ed-grid{clear:both;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .ed .ed-team{border-radius:8px;box-shadow:0 10px 24px #0003}
-.ed-team-layout{clear:both;display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:16px;align-items:stretch}
+.ed-team-layout{clear:both;display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,320px);gap:16px;align-items:start}
 .ed-team-info{min-width:0;padding:2px 0}
+.ed-team-info{display:grid;gap:16px}
+.ed-team-name{display:grid;gap:5px;min-width:0}
+.ed-team-name>span{color:var(--mute);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.ed .ed-team-name input{height:46px;font-size:20px;font-weight:700}
+.ed-team-block{display:grid;gap:8px;min-width:0}
+.ed-team-block>.ed-team-heading{margin:0}
+.ed-tags,.ed-page-options,.ed-order-adds,.ed-order-line,.ed-order-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ed-tag,.ed-order-tool{padding:7px 14px;background:var(--bg);border:1px solid var(--line);border-radius:999px;color:#dcdce0;font:600 12px "Quantico";cursor:pointer}
+.ed-tag:hover,.ed-order-tool:hover:not(:disabled),.ed-page-option:hover,.ed-order-add:hover:not(:disabled){border-color:#fff;color:#fff}
+.ed-tag.on,.ed-page-option.on{background:#cf142433;border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red);color:#fff}
+.ed-order-tool:disabled,.ed-order-add:disabled{opacity:.4;cursor:default}
+.ed-page-groups{display:flex;flex-wrap:wrap;gap:12px 22px}
+.ed-page-group{display:grid;gap:5px;min-width:0}
+.ed-page-group>small{color:var(--mute);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.ed-page-option,.ed-order-add{display:grid;justify-items:center;gap:3px;width:68px;padding:6px 4px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:#dcdce0;font:600 10px/1.2 "Quantico";cursor:pointer}
+.ed-page-option img{width:34px;height:34px;object-fit:contain}
+.ed-order-add img{width:44px;height:44px;object-fit:cover;object-position:top;border-radius:50%}
+.ed-order-empty{display:grid;place-items:center;width:44px;height:44px;border:1px dashed var(--line);border-radius:50%;font-size:20px;color:var(--mute)}
+.ed-order-line{min-height:62px;padding:8px;background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.ed-order-hint{color:var(--mute);font-size:12px}
+.ed-order-arrow{color:var(--mute);font-style:normal}
+.ed-order-chip{position:relative;display:grid;justify-items:center;gap:2px;width:60px;padding:4px;background:#0000004b;border:1px solid var(--line);border-radius:6px;color:#fff;font:600 10px "Quantico";cursor:pointer}
+.ed-order-chip:hover{border-color:var(--red)}
+.ed-order-chip img{width:40px;height:40px;object-fit:cover;object-position:top;border-radius:50%}
+.ed-order-chip b{position:absolute;top:2px;left:4px;font-size:10px;color:var(--mute)}
+.ed-order-chip span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ed-team-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .ed-team-fields>.ed-field.wide{grid-column:1/-1}
-.ed-team-roles{min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--line);border-left:2px solid var(--red);border-radius:6px}
+.ed-team-roles{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--line);border-left:2px solid var(--red);border-radius:6px}
 .ed-team-heading{grid-column:1/-1;margin:0 0 2px;color:var(--mute);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .ed-field{display:grid;align-content:start;gap:5px;min-width:0;font-size:13px;color:#dcdce0}
 .ed-field.wide,.ed-grid>.wide,.ed-hint{grid-column:1/-1}
@@ -938,3 +964,5 @@ input[type=search]::-webkit-search-cancel-button:hover{opacity:1;background:line
 .ed-help{display:grid;gap:6px;max-width:900px;margin:6px 0 22px;padding:0;list-style:none;color:var(--mute);line-height:1.5}
 .ed-help li{padding-left:14px;text-indent:-14px}
 .ed-help li::before{content:"- ";color:var(--red)}
+.ed-page-option{grid-template-rows:34px 2.4em;align-content:start;height:76px}
+.ed-page-option>span{display:grid;align-items:center;overflow:hidden}

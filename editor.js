@@ -6,6 +6,7 @@
 const EDITOR_KEY = "dominik-editor";
 const ED_BARS = ["blue", "red", "gold"];
 const ED_SLOTS = ["Blue", "Red", "Yellow"];
+const ED_TAGS = ["Budget", "Warzone", "PPC", "General"]; // keep in step with TAGS in server/team.js
 const ED_LIMITS = { name: 60, order: 120, desc: 1500, rotation: 3000 };
 const ED_MAIN = [0, 1, 2, 4], ED_SUB = [3, 5]; // 4 pieces of the main set and 2 of the sub set, as memBuild() lays them out
 const ED_CUB_SKILL_ORDER = [0, 1, 2, 3, 4, 5];
@@ -61,7 +62,7 @@ const edBlankCard = () => ({
   wh: "", matrix: ["", "", ""], cubSkills: ED_CUB_SKILL_ORDER.slice(),
   res: "Any ATK", core: "Signature Move", desc: "", rotation: ""
 });
-const edBlank = () => ({ v: 1, page: "", name: "", order: "", captain: 1, starter: 0, cards: ED_BARS.map(edBlankCard) });
+const edBlank = () => ({ v: 1, page: "", name: "", order: "", captain: 1, starter: 0, tags: [], cards: ED_BARS.map(edBlankCard) });
 
 // Whatever comes from a link, from storage or from the API passes through here: unknown names are dropped and text is
 // cut to size. cleanTeam() of server/team.js does the same to teams sent for review: keep the two alike
@@ -79,6 +80,7 @@ function edClean(raw) {
     order: text(r.order, ED_LIMITS.order),
     captain: pick(r.captain, [0, 1, 2], team.captain),
     starter: pick(r.starter, [0, 1, 2], team.starter),
+    tags: ED_TAGS.filter(tag => Array.isArray(r.tags) && r.tags.includes(tag)),
     cards: team.cards.map((blank, i) => {
       const c = cards[i] && typeof cards[i] === "object" ? cards[i] : {};
       let ch = edChar(c.char);
@@ -194,25 +196,53 @@ const edOptions = (list, value, blank) => (blank === undefined ? "" : `<option v
   const [v, label] = Array.isArray(item) ? item : [item, item];
   return `<option value="${esc(v)}"${v === value ? " selected" : ""}>${esc(label)}</option>`;
 }).join("");
-const edGroups = (groups, value, blank) => `<option value="">${esc(blank)}</option>` + Object.entries(groups)
-  .map(([label, list]) => `<optgroup label="${esc(label)}">${edOptions(list, value)}</optgroup>`).join("");
 const edGroupBy = (list, key) => list.reduce((out, item) => ((out[key(item)] ||= []).push(item), out), {});
 const edField = (label, control, wide) => `<label class="ed-field${wide ? " wide" : ""}"><span>${label}</span>${control}</label>`;
 const edSelect = (name, options) => `<select name="${name}">${options}</select>`;
 
+const edShortName = card => card.char ? card.char.split(":")[0] : "";
+const ED_ORDER_SEP = " → ";
+// The rotation order is kept as text ("Teddy → Lucia → Teddy"), the same text the site shows; the chips just edit it
+const edOrderTokens = order => order.split("→").map(t => t.trim()).filter(Boolean);
+function edOrderBody(team) {
+  const tokens = edOrderTokens(team.order);
+  const slotOf = token => team.cards.findIndex(c => edShortName(c) === token);
+  const chips = tokens.map((token, n) => {
+    const i = slotOf(token), ch = i >= 0 ? edChar(team.cards[i].char) : null;
+    return `<button type="button" class="ed-order-chip ed-${ED_BARS[Math.max(i, 0)]}" data-ed-order-remove="${n}" aria-label="Remove ${esc(token)} (step ${n + 1})"${tipAttr(token, "Click to remove")}>
+      <b>${n + 1}</b>${ch ? pic(ch.portrait) : ""}<span>${esc(token)}</span></button>`;
+  }).join(`<i class="ed-order-arrow" aria-hidden="true">→</i>`);
+  const adds = team.cards.map((c, i) => {
+    const ch = edChar(c.char);
+    return `<button type="button" class="ed-order-add ed-${ED_BARS[i]}" data-ed-order-add="${i}"${ch ? "" : " disabled"}
+      aria-label="Add ${esc(ch ? edShortName(c) : `${ED_SLOTS[i]} slot`)} to the rotation"${tipAttr(ch ? edShortName(c) : "", "Add to the rotation")}>
+      ${ch ? pic(ch.portrait) : `<span class="ed-order-empty" aria-hidden="true">+</span>`}<span>${esc(ch ? edShortName(c) : ED_SLOTS[i])}</span></button>`;
+  }).join("");
+  return `<div class="ed-order-line" aria-live="polite">${chips || `<span class="ed-order-hint">Tap a character below to build the order they swap in.</span>`}</div>
+    <div class="ed-order-bar"><div class="ed-order-adds">${adds}</div>
+    <button type="button" class="ed-order-tool" data-ed-order-undo${tokens.length ? "" : " disabled"}>↶ Undo</button>
+    <button type="button" class="ed-order-tool" data-ed-order-clear${tokens.length ? "" : " disabled"}>Clear</button></div>`;
+}
+function edPageBody(team) {
+  const dir = kind => kind === "Energy" ? "energy-type" : "effects";
+  return Object.entries(edGroupBy(CATALOG.pages, p => p.kind)).map(([kind, list]) => `<div class="ed-page-group">
+    <small>${esc(kind)}</small><div class="ed-page-options">${list.map(p => `<button type="button" class="ed-page-option${p.path === team.page ? " on" : ""}"
+      data-ed-page="${esc(p.path)}" aria-pressed="${p.path === team.page}"${tipAttr(p.name, kind)}>${menuIcon(dir(kind), p.name)}<span>${esc(p.name)}</span></button>`).join("")}</div></div>`).join("");
+}
+const edTagsBody = team => ED_TAGS.map(tag => `<button type="button" class="ed-tag${team.tags.includes(tag) ? " on" : ""}"
+  data-ed-tag="${tag}" aria-pressed="${team.tags.includes(tag)}">${tag}</button>`).join("");
 function edTeamBody(team) {
-  const pages = edGroupBy(CATALOG.pages, p => p.kind);
-  const pageGroups = Object.fromEntries(Object.entries(pages).map(([kind, list]) => [kind, list.map(p => [p.path, p.name])]));
-  const who = i => team.cards[i].char ? team.cards[i].char.split(":")[0] : `${ED_SLOTS[i]} slot`;
+  const who = i => edShortName(team.cards[i]) || `${ED_SLOTS[i]} slot`;
   const picks = [0, 1, 2].map(i => [String(i), who(i)]);
   return `<legend>Team</legend><div class="ed-team-layout">
     <section class="ed-team-info" aria-label="Team details">
-      <h2 class="ed-team-heading">Team details</h2>
-      <div class="ed-team-fields">
-        ${edField("Page", edSelect("page", edGroups(pageGroups, team.page, "Pick a page")))}
-        ${edField("Team name", `<input name="name" maxlength="${ED_LIMITS.name}" value="${esc(team.name)}" placeholder="Rosetta Darkflow">`)}
-        ${edField("Team rotation", `<input name="order" maxlength="${ED_LIMITS.order}" value="${esc(team.order)}" placeholder="Teddy → Lucia → Leia → Teddy">`, true)}
-      </div>
+      <label class="ed-team-name"><span>Team name</span>
+        <input name="name" maxlength="${ED_LIMITS.name}" value="${esc(team.name)}" placeholder="Rosetta Darkflow" autocomplete="off"></label>
+      <div class="ed-team-block"><h2 class="ed-team-heading">Tags</h2><div id="edTags" class="ed-tags">${edTagsBody(team)}</div></div>
+      <div class="ed-team-block"><h2 class="ed-team-heading">Page</h2>
+        <input type="hidden" name="page" value="${esc(team.page)}"><div id="edPageChoice" class="ed-page-groups">${edPageBody(team)}</div></div>
+      <div class="ed-team-block"><h2 class="ed-team-heading">Team rotation</h2>
+        <input type="hidden" name="order" value="${esc(team.order)}"><div id="edOrder">${edOrderBody(team)}</div></div>
     </section>
     <section class="ed-team-roles" aria-label="Battle positions">
       <h2 class="ed-team-heading">Battle positions</h2>
@@ -227,7 +257,7 @@ function edRead(form) {
   const radio = (key, old) => form.elements[key]?.value === "" ? old : Number(form.elements[key]?.value ?? old);
   return edClean({
     page: value("page", edDraft.page), name: value("name", edDraft.name), order: value("order", edDraft.order),
-    captain: radio("captain", edDraft.captain), starter: radio("starter", edDraft.starter),
+    captain: radio("captain", edDraft.captain), starter: radio("starter", edDraft.starter), tags: edDraft.tags,
     cards: edDraft.cards.map((c, i) => {
       const v = (key, old) => value(`c${i}.${key}`, old);
       return { char: c.char, cub: c.cub, rank: v("rank", c.rank), wh: v("wh", c.wh), res: c.res, core: c.core,
@@ -692,8 +722,6 @@ function teamBuilder() {
             <button type="button" class="tool" data-export>Export image</button>
             <button type="button" class="tool" data-ed="send">Submit for review</button>
             <button type="button" class="tool" data-ed="reset">Start over</button></div>
-          <div id="edStage">${edStageBody()}</div>
-          <div id="edDetail">${edDetailBody()}</div>
           <div id="edSend" class="ed-send" hidden>
             <p class="ed-hint">Your team goes to a review queue. Once approved, it shows up on its page as a community build.</p>
             <label class="ed-field"><span>Your name · optional</span><input id="edAuthor" maxlength="32" autocomplete="off"></label>
@@ -701,6 +729,8 @@ function teamBuilder() {
             <div id="edCaptcha"></div>
             <button type="button" class="tool" data-ed="confirm" disabled>Send team</button>
           </div>
+          <div id="edStage">${edStageBody()}</div>
+          <div id="edDetail">${edDetailBody()}</div>
         </div>
       </div>
     </form>`;
@@ -899,4 +929,41 @@ addEventListener("click", e => {
     const type = drop.dataset.edDrop, s = Number(drop.dataset.edSlot);
     return edShowPicker(type, i, s, drop.dataset.edSide, drop);
   }
+});
+
+/* Team box controls: page icons, rotation chips and tags */
+addEventListener("click", e => {
+  const form = $("#edForm");
+  if (!form || !e.target.closest) return;
+  const set = (name, value) => {
+    form.elements[name].value = value;
+    form.elements[name].dispatchEvent(new Event("input", { bubbles: true }));
+  };
+  const page = e.target.closest("[data-ed-page]");
+  if (page) {
+    set("page", page.dataset.edPage === edDraft.page ? "" : page.dataset.edPage); // a second tap clears it
+    $("#edPageChoice").innerHTML = edPageBody(edDraft);
+    return;
+  }
+  const tag = e.target.closest("[data-ed-tag]");
+  if (tag) {
+    const tags = edDraft.tags.includes(tag.dataset.edTag) ? edDraft.tags.filter(t => t !== tag.dataset.edTag) : [...edDraft.tags, tag.dataset.edTag];
+    edDraft = edClean({ ...edDraft, tags });
+    edSave();
+    edStatus("");
+    $("#edTags").innerHTML = edTagsBody(edDraft);
+    return;
+  }
+  const add = e.target.closest("[data-ed-order-add]"), remove = e.target.closest("[data-ed-order-remove]");
+  const undo = e.target.closest("[data-ed-order-undo]"), clear = e.target.closest("[data-ed-order-clear]");
+  if (!add && !remove && !undo && !clear) return;
+  const tokens = edOrderTokens(edDraft.order);
+  if (add) tokens.push(edShortName(edDraft.cards[Number(add.dataset.edOrderAdd)]));
+  else if (remove) tokens.splice(Number(remove.dataset.edOrderRemove), 1);
+  else if (undo) tokens.pop();
+  else tokens.length = 0;
+  let order = tokens.join(ED_ORDER_SEP);
+  while (order.length > ED_LIMITS.order && tokens.length) { tokens.pop(); order = tokens.join(ED_ORDER_SEP); }
+  set("order", order);
+  $("#edOrder").innerHTML = edOrderBody(edDraft);
 });
