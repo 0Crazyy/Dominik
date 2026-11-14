@@ -807,6 +807,9 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .ed-picker>input{grid-column:1/-1}
 .ed-picker-options{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;min-height:0;max-height:min(52vh,360px);overflow:auto;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
 .ed-picker-option[hidden]{display:none}
+.ed-picker-more{grid-column:1/-1;padding:7px;background:#0000004b;border:1px dashed #ffffff40;color:var(--txt);font:600 11px/1.2 "Quantico";cursor:pointer}
+.ed-picker-more[hidden]{display:none}
+.ed-picker-more:hover,.ed-picker-more:focus-visible{border-color:#fff;outline:1px solid #ffffff80;outline-offset:-2px}
 .ed-picker-option{position:relative;min-width:0;display:grid;grid-template-rows:44px minmax(24px,auto);align-content:start;justify-items:center;gap:4px;padding:4px;background:#0000004b;border:1px solid var(--line);color:#dcdce0;font:600 9px/1.2 "Quantico";text-align:center;cursor:pointer}
 .ed-picker-option:hover,.ed-picker-option:focus-visible{border-color:#fff;outline:2px solid #ffffff80;outline-offset:-2px;color:#fff}
 .ed-picker-option.on{background:#cf142433;border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red);color:#fff}

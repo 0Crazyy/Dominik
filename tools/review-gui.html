@@ -33,11 +33,13 @@ main{max-width:1320px;margin:0 auto;padding:20px}#msg{min-height:22px;margin:0 0
 .wres{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 2px 54px}.wres small{color:var(--mute);font-size:12px}.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:3px 10px 3px 4px}
 .card pre{margin:0 14px;white-space:pre-wrap;font:inherit;font-size:13px;overflow-wrap:anywhere;background:var(--bg);padding:8px 10px;border-radius:8px}
 .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 18px}.acts input{flex:1;min-width:160px;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+.grp{display:flex;align-items:baseline;gap:10px;margin:22px 0 10px;font-size:15px;letter-spacing:.02em}.grp:first-child{margin-top:0}.grp small{color:var(--mute);font-weight:400;font-size:12px}.grp .n{margin-left:auto;color:var(--mute);font-size:13px;font-weight:400}
+.off{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:0 8px;color:var(--mute)}
 .empty{color:var(--mute);text-align:center;padding:40px 0}
 @media(max-width:640px){.faces{display:none}.team .row{grid-template-columns:20px 1fr}}
 </style></head><body>
 <header><h1>Team review</h1><span id="local" class="tag" hidden>local database</span>
-<span class="tabs"><button data-tab="pending" class="on">Pending <span id="nP">0</span></button> <button data-tab="approved">On the site <span id="nA">0</span></button></span>
+<span class="tabs"><button data-tab="pending" class="on">Pending <span id="nP">0</span></button> <button data-tab="approved">On the site <span id="nA">0</span></button> <button data-tab="hidden">Hidden <span id="nH">0</span></button></span>
 <button id="reload">Refresh</button></header>
 <main><p id="msg" role="status"></p><div id="out"></div></main>
 <script>
@@ -75,10 +77,21 @@ function card(c, i, team) {
     + '<div class="sec">Memories and resonances</div><div class="mems">' + c.mem.map((n, k) => memTile(n, k, pairs[k] || pairs[0])).join("") + "</div>"
     + (c.desc ? '<div class="sec">Notes</div><pre>' + esc(c.desc) + "</pre>" : "") + (c.rotation ? '<div class="sec">Rotation</div><pre>' + esc(c.rotation) + "</pre>" : "") + "</div>";
 }
+// An official build: written in app.js, not sent by anyone. Hiding it takes it off the site (on the next visit of each reader) and can be undone
+function viewOfficial(o) {
+  const isOpen = open === o.id, names = o.cards.map(c => esc(c.char)).join(" · ");
+  const head = '<button class="row" data-toggle="' + esc(o.id) + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="id">Official</span><span class="nm">' + esc(o.name) + '</span><span class="meta">'
+    + esc(o.page) + (o.group ? " · " + esc(o.group) : "") + '</span></span><span class="names">' + names + '</span></span><span class="faces">' + o.cards.map(c => pic(c.portrait, "face", c.char)).join("") + "</span></button>";
+  if (!isOpen) return '<section class="team" data-oid="' + esc(o.id) + '">' + head + "</section>";
+  return '<section class="team open" data-oid="' + esc(o.id) + '">' + head + '<div class="detail"><div class="dtop"><span>Official build, written in app.js</span>'
+    + '<a class="btn grow" target="_blank" rel="noopener" href="' + esc(data.site + "/" + o.page + "/" + o.id) + '">Open on the site</a></div>'
+    + '<div class="acts">' + (o.isHidden ? '<button class="ok" data-act="show">Show on the site again</button>' : '<button class="bad" data-act="hide">Hide from the site</button>') + "</div></div></section>";
+}
 function view(row, pending) {
-  const t = row.team, isOpen = open === row.id;
+  if (row.official) return viewOfficial(row);
+  const t = row.team, isOpen = open === String(row.id);
   const link = data.site + "/editor#t=" + btoa(unescape(encodeURIComponent(JSON.stringify(t)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  const head = '<button class="row" data-toggle="' + row.id + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="id">#' + row.id + '</span><span class="nm">' + esc(t.name) + '</span><span class="meta">'
+  const head = '<button class="row" data-toggle="' + String(row.id) + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="id">#' + row.id + '</span><span class="nm">' + esc(t.name) + '</span><span class="meta">'
     + esc(row.page) + " · " + (row.author ? "by " + esc(row.author) : "no name") + " · " + when(row.created) + '</span></span><span class="names">' + t.cards.map(c => esc(c.char)).join(" · ")
     + '</span></span><span class="faces">' + t.cards.map(c => pic(data.art?.chars?.[c.char]?.portrait, "face", c.char)).join("") + "</span></button>";
   if (!isOpen) return '<section class="team" data-id="' + row.id + '">' + head + "</section>";
@@ -88,12 +101,21 @@ function view(row, pending) {
     + '<div class="acts">' + (pending ? '<input placeholder="Rejection reason (only you see it)" maxlength="200"><button class="bad" data-act="reject">Reject</button><button class="ok" data-act="approve">Approve</button>'
       : '<button class="bad" data-act="remove">Take down from the site</button>') + "</div></div></section>";
 }
+// "On the site": one heading per element or Effect page, in the order the site lists them
+function grouped(rows) {
+  const pages = data.art?.pages || [], order = [...pages.map(p => p.path), ...rows.map(r => r.page).filter(path => !pages.some(p => p.path === path))];
+  return [...new Set(order)].map(path => ({ path, rows: rows.filter(r => r.page === path) })).filter(g => g.rows.length).map(g => {
+    const page = pages.find(p => p.path === g.path);
+    return '<h2 class="grp">' + esc(page?.name || g.path) + "<small>" + esc(page?.kind || "") + '</small><span class="n">' + g.rows.length + "</span></h2>" + g.rows.map(r => view(r, false)).join("");
+  }).join("");
+}
 function render() {
-  const rows = data[tab];
-  if (!rows.some(r => r.id === open)) open = null;
-  $("#nP").textContent = data.pending.length; $("#nA").textContent = data.approved.length; $("#local").hidden = !data.local;
+  const official = data.official.map(o => ({ ...o, official: true })), hidden = data.hidden.map(o => ({ ...o, official: true, isHidden: true }));
+  const rows = tab === "pending" ? data.pending : tab === "hidden" ? hidden : [...data.approved, ...official];
+  if (!rows.some(r => String(r.id) === open)) open = null;
+  $("#nP").textContent = data.pending.length; $("#nA").textContent = data.approved.length + official.length; $("#nH").textContent = hidden.length; $("#local").hidden = !data.local;
   document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
-  $("#out").innerHTML = rows.length ? rows.map(r => view(r, tab === "pending")).join("") : '<p class="empty">' + (tab === "pending" ? "No teams waiting for review." : "No approved teams on the site.") + "</p>";
+  $("#out").innerHTML = rows.length ? (tab === "pending" ? rows.map(r => view(r, true)).join("") : grouped(rows)) : '<p class="empty">' + (tab === "pending" ? "No teams waiting for review." : tab === "hidden" ? "No official builds are hidden." : "No teams on the site.") + "</p>";
 }
 async function call(path, body) {
   const r = await fetch(path, { method: body ? "POST" : "GET", headers: { "content-type": "application/json", "x-token": TOKEN }, body: body && JSON.stringify(body) });
@@ -111,15 +133,16 @@ document.addEventListener("click", async e => {
   const b = e.target.closest("button"); if (!b || b.disabled) return;
   if (b.id === "reload") return load();
   if (b.dataset.tab) { tab = b.dataset.tab; open = null; return render(); }
-  if (b.dataset.toggle) { const id = Number(b.dataset.toggle); open = open === id ? null : id; render(); return $(".team.open")?.scrollIntoView({ block: "nearest" }); }
+  if (b.dataset.toggle) { const id = b.dataset.toggle; open = open === id ? null : id; render(); return $(".team.open")?.scrollIntoView({ block: "nearest" }); }
   if (!b.dataset.act || busy) return;
-  const box = b.closest(".team"), id = Number(box.dataset.id), name = "#" + id + " " + box.querySelector(".nm").textContent;
+  const box = b.closest(".team"), id = box.dataset.oid ?? Number(box.dataset.id), name = (box.dataset.oid ? "" : "#" + id + " ") + box.querySelector(".nm").textContent;
   if (b.dataset.act === "remove" && !confirm("Take " + name + " down from the site?")) return;
+  if (b.dataset.act === "hide" && !confirm("Hide " + name + " from the site? You can show it again from the Hidden tab.")) return;
   busy = true; say("Working..."); lock(true);
   try {
     const r = await call("/act", { id, action: b.dataset.act, reason: box.querySelector("input")?.value || "" });
     busy = false; open = null;
-    await load(name + ": done." + (r.published != null ? " " + r.published + " team(s) on the site, live within 1 minute." : ""));
+    await load(name + ": done." + (r.published != null ? " " + r.published + " team(s) on the site, live within 1 minute." : r.hidden != null ? " " + r.hidden + " official build(s) hidden, live within 1 minute." : ""));
   } catch (err) { busy = false; await load(); say(err.message, true); }
 });
 load();

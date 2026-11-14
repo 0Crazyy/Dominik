@@ -195,6 +195,8 @@ const FLOWS = {
       if (!(await page.locator(".ed-res-menu-choice-head").innerText()).includes("Bottom")
         || await page.locator(".ed-res-menu-row").count() !== 6)
         throw new Error("o menu de ressonâncias fechou ao escolher Bottom no celular");
+      // QTE e Red Orb ficam atrás do botão "Others"
+      await page.locator(".ed-res-menu-options [data-ed-more]").tap();
       await page.locator('.ed-res-menu-options [data-ed-memres-value="QTE"]').tap();
       if (await page.evaluate(() => JSON.parse(localStorage.getItem("dominik-editor")).cards[0].memRes[0][1]) !== "QTE")
         throw new Error("a ressonância não foi salva por toque no celular");
@@ -289,6 +291,8 @@ const FLOWS = {
     if (!(await page.locator(".ed-res-menu-choice-head").innerText()).includes("Bottom")
       || await page.locator(".ed-res-menu-row").count() !== 6)
       throw new Error("o menu de ressonâncias fechou ao escolher Bottom");
+    // QTE e Red Orb ficam atrás do botão "Others"
+    await page.locator(".ed-res-menu-options [data-ed-more]").click();
     if (await page.locator('.ed-res-menu-options [data-ed-memres-value="QTE"] img').count() !== 1)
       throw new Error("as opções de ressonância não exibiram ícones");
     await page.locator('.ed-res-menu-options [data-ed-memres-value="QTE"]').click();
@@ -300,6 +304,7 @@ const FLOWS = {
     if (!(await page.locator(".ed-res-menu-choice-head").innerText()).includes("Upper")
       || await page.locator(".ed-res-menu-row").count() !== 6)
       throw new Error("o menu de ressonâncias fechou ao escolher Upper");
+    await page.locator(".ed-res-menu-options [data-ed-more]").click();
     await page.locator('.ed-res-menu-options [data-ed-memres-value="Red Orb"]').click();
     if ((await state()).cards[0].memRes[0][0] !== "Red Orb") throw new Error("a ressonância upper da memória não foi salva");
     if (await page.locator('.ed-res-menu-options [data-ed-memres-value="Red Orb"].on').count() !== 1)

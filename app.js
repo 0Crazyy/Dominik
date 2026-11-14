@@ -2008,18 +2008,35 @@ function addCommunity(list) {
   }
   return added;
 }
+// Official builds the review panel hid (/api/hidden holds the ids: a variant id, or the id of a composition that has no variants).
+// They leave COMPS and PAGES, like a build that was never written. Returns how many went
+function hideOfficial(ids) {
+  let hidden = 0;
+  const drop = id => { for (const path in PAGES) PAGES[path] = PAGES[path].filter(x => x !== id); delete COMPS[id]; };
+  for (const id of Object.keys(COMPS)) {
+    const comp = COMPS[id];
+    if (!comp.variants) { if (ids.includes(id)) { drop(id); hidden++; } continue; }
+    const kept = comp.variants.filter(v => !ids.includes(v.id));
+    hidden += comp.variants.length - kept.length;
+    comp.variants = kept;
+    if (!kept.length) drop(id);
+  }
+  return hidden;
+}
 function loadCommunity() {
-  fetch("/api/teams").then(r => r.ok ? r.json() : []).then(list => {
-    if (!Array.isArray(list) || !list.length) return;
-    return loadEditor().then(() => {
-      if (!addCommunity(list)) return;
-      characterList = null;
-      searchItems = null;
-      // Only pages that list builds are drawn again: the others have nothing new to show
-      const kind = location.pathname.split("/")[1];
-      if (!kind || TEAM_LISTS[kind] || kind === "constructs") route();
-    });
-  }).catch(() => { /* no API here (a local copy) or a bad answer: official builds only */ });
+  const get = url => fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
+  Promise.all([get("/api/hidden"), get("/api/teams")]).then(async ([hidden, list]) => {
+    let changed = Array.isArray(hidden) && hideOfficial(hidden.filter(id => typeof id === "string")) > 0;
+    if (Array.isArray(list) && list.length) {
+      try { await loadEditor(); if (addCommunity(list)) changed = true; } catch { /* the editor did not load: official builds only */ }
+    }
+    if (!changed) return;
+    characterList = null;
+    searchItems = null;
+    // Only pages that list builds are drawn again: the others have nothing new to show
+    const kind = location.pathname.split("/")[1];
+    if (!kind || TEAM_LISTS[kind] || kind === "constructs") route();
+  });
 }
 
 /* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */

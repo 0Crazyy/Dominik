@@ -25,6 +25,52 @@ const ED_MATRIX_CLASS = {
 };
 const edMatrixOptions = ch => CATALOG.matrix.filter(name =>
   ED_MATRIX_COMMON.includes(name) || (ED_MATRIX_CLASS[ch?.class] || []).includes(name));
+// How often each weapon resonance appears in the site's own builds, overall and per class: the most used lead the menu
+let edMatrixUse = null, edMemUse = null;
+const edSiteCards = () => Object.values(COMPS).flatMap(comp => [...(comp.cards || []), ...(comp.variants || []).flatMap(v => v.cards || [])]);
+const edBump = (map, key) => map.set(key, (map.get(key) || 0) + 1);
+// In how many builds of the site this character wears each memory (once per card, whichever slots it fills)
+function edMemoryUse(char) {
+  if (!char) return new Map();
+  if (!edMemUse) {
+    const byArt = new Map(CATALOG.memories.flatMap(name => memSet(name).map(art => [art, name])));
+    edMemUse = new Map();
+    edSiteCards().forEach(card => new Set((card.memories || []).map(art => byArt.get(art)).filter(Boolean))
+      .forEach(name => edBump(edMemUse, `${card.name}|${name}`)));
+  }
+  const use = new Map();
+  CATALOG.memories.forEach(name => { const n = edMemUse.get(`${char}|${name}`); if (n) use.set(name, n); });
+  return use;
+}
+function edMatrixCounts() {
+  if (edMatrixUse) return edMatrixUse;
+  const byArt = new Map(CATALOG.matrix.map(name => [WEAPON_RES(name), name]));
+  const use = edMatrixUse = { all: new Map(), cls: new Map() };
+  edSiteCards().forEach(card => {
+    const cls = edChar(card.name)?.class || "";
+    (card.matrix || []).forEach(art => {
+      const name = byArt.get(art);
+      if (!name) return;
+      edBump(use.all, name);
+      edBump(use.cls, `${cls}|${name}`);
+    });
+  });
+  return use;
+}
+// Options for the weapon resonance menu: most used first (class of the character, then overall), the first few up front
+function edMatrixChoices(ch) {
+  const use = edMatrixCounts(), cls = ch?.class || "";
+  return edMatrixOptions(ch).map((name, index) => ({ name, index, own: use.cls.get(`${cls}|${name}`) || 0, all: use.all.get(name) || 0 }))
+    .sort((a, b) => b.own - a.own || b.all - a.all || a.index - b.index)
+    .map(({ name }, rank) => ({ value: name, label: name, art: WEAPON_RES(name), more: rank >= ED_MATRIX_MAIN }));
+}
+// Options flagged "more" sit behind an "Others" button, unless the current choice is one of them
+function edMoreSplit(options, current) {
+  const extra = options.filter(option => option.more);
+  return { ordered: [...options.filter(option => !option.more), ...extra], open: extra.some(option => option.value === current), count: extra.length };
+}
+const edMoreButton = (count, open) => count
+  ? `<button type="button" class="ed-picker-more" data-ed-more aria-expanded="${open}">${open ? "Show fewer" : `Others (${count})`}</button>` : "";
 const edSkillOrder = value => Array.isArray(value) && value.length === ED_CUB_SKILL_ORDER.length
   && value.every(index => Number.isInteger(index) && index >= 0 && index < ED_CUB_SKILL_ORDER.length)
   && new Set(value).size === ED_CUB_SKILL_ORDER.length ? value.slice() : ED_CUB_SKILL_ORDER.slice();
@@ -46,6 +92,10 @@ const ED_BOTTOM_RESONANCES = [
   ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"],
   ["Random", "Random · Left as rolled, to save materials"], ["None", "None · No resonance"]
 ];
+// Memory resonances shown up front; the rest sit behind the "Others" button
+const ED_UPPER_MAIN = ["Any ATK", "Ex- Enhanced Power", "Ex- Precision Attack", "Ex- Tactical Adjustment"];
+const ED_BOTTOM_MAIN = ["Signature Move", "Core Passive", "Class Skill"];
+const ED_MATRIX_MAIN = 4, ED_MEMORY_MAIN = 6;
 const ED_NEUTRAL = { c1: "#8a8f98", c2: "#101114", cp: "#26282d" };
 const ED_ROTATION_HINT = "# Turn 1: Start\nSwap in\nTap Signature\n# Turn 4\nTap Yellow Orb ASAP";
 const ED_LEGACY_RESONANCE = { "ALL ATK": "Any ATK", Signature: "Signature Move", Core: "Core Passive", Class: "Class Skill" };
@@ -337,34 +387,41 @@ function edPickerOptions(kind, i, side) {
     info: [character.element, character.class].filter(Boolean).join(" · ")
   }));
   if (kind === "mem") {
-    // Signature memories of the team's frames and the memories already worn come first, so the usual picks are at hand
-    const worn = new Map();
-    edDraft.cards.forEach(card => card.mem.forEach(name => name && worn.set(name, (worn.get(name) || 0) + 1)));
+    // This character's signature memory comes first, then the memories the site's builds of this character use most
+    const worn = edMemoryUse(c.char);
     const signatures = new Map();
-    [c, ...edDraft.cards.filter(card => card !== c)].forEach(card => {
-      const sig = edChar(card.char)?.signature;
-      if (sig && !signatures.has(sig)) signatures.set(sig, edShortName(card));
-    });
+    if (ch?.signature) signatures.set(ch.signature, edShortName(c));
     const rank = name => signatures.has(name) ? [0, [...signatures.keys()].indexOf(name)] : worn.has(name) ? [1, -worn.get(name)] : [2, 0];
-    return CATALOG.memories.map((name, index) => ({
+    const list = CATALOG.memories.map((name, index) => ({
       value: name, label: name, art: MEM_INDEX.get(name).ext ? memFile(name, "1-4") : "",
       info: (signatures.has(name) ? `Signature memory of ${signatures.get(name)}\n\n` : "") + edMemInfo(name),
-      badge: signatures.has(name) ? "Signature" : worn.has(name) ? `In build ×${worn.get(name)}` : "", order: [...rank(name), index]
+      badge: signatures.has(name) ? "Signature" : worn.has(name) ? `In ${worn.get(name)} build${worn.get(name) > 1 ? "s" : ""}` : "", order: [...rank(name), index]
     })).sort((a, b) => a.order[0] - b.order[0] || a.order[1] - b.order[1] || a.order[2] - b.order[2]);
+    // Up front: this character's signature, memories already in this team, and the few the site's builds of this character use most
+    const inDraft = new Set(edDraft.cards.flatMap(card => card.mem.filter(Boolean)));
+    let shown = 0;
+    list.forEach(option => {
+      const keep = signatures.has(option.value) || inDraft.has(option.value) || shown < ED_MEMORY_MAIN;
+      if (keep && !signatures.has(option.value) && !inDraft.has(option.value)) shown++;
+      option.more = !keep;
+    });
+    return list;
   }
-  if (kind === "cub") return CATALOG.characters.filter(character => character.construct).map(character => ({
+  // The catalog lists frames oldest first; C.U.B.s are picked newest first
+  if (kind === "cub") return CATALOG.characters.filter(character => character.construct).reverse().map(character => ({
     value: character.construct, label: iconName(character.construct), art: character.construct, info: `${character.name}'s C.U.B.`
   }));
   if (kind === "rank") return CATALOG.ranks.map(rank => ({ value: rank, label: rank, art: `assets/rank/${rank}.png` }));
   if (kind === "weapon") return edWeaponOptions(c.char).map(option => ({
     value: `${option.name}::${option.rank}`, label: option.label, art: option.art, info: option.info, stars: option.rank
   }));
-  if (kind === "mx") return edMatrixOptions(ch).map(name => ({ value: name, label: name, art: WEAPON_RES(name) }));
+  if (kind === "mx") return edMatrixChoices(ch);
   if (kind === "memres") {
     const options = side === "bottom" ? ED_BOTTOM_RESONANCES : ED_UPPER_RESONANCES;
+    const main = side === "bottom" ? ED_BOTTOM_MAIN : ED_UPPER_MAIN;
     // The subtext is what tells apart skills that share an icon, so it is shown under the name, not only in the tooltip
     return options.map(([name, info]) => ({
-      value: name, label: name, art: edMemResArt(ch, name), info,
+      value: name, label: name, art: edMemResArt(ch, name), info, more: !main.includes(name),
       sub: info.replace(name, "").replace(/^[\s·]+/, "") || info
     }));
   }
@@ -422,15 +479,17 @@ function edShowPicker(kind, i, slot, side, anchor) {
     ...options
   ];
   edPickerTarget = { kind, card: i, slot, side };
+  const split = edMoreSplit(choices, current);
   picker.innerHTML = `<div class="ed-picker-head"><strong>${esc(title)}</strong><small>Choose an icon</small></div>
     <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="Close">×</button>
     <input id="edPickerSearch" type="search" placeholder="Search ${esc(ED_PICKER_LABELS[kind])}" aria-label="Search ${esc(ED_PICKER_LABELS[kind])}" autocomplete="off">
     <div id="edPickerOptions" class="ed-picker-options" role="group" aria-label="${esc(title)} options">
-      ${choices.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}${option.badge ? " hot" : ""}"
+      ${split.ordered.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}${option.badge ? " hot" : ""}${option.more ? " more" : ""}"${option.more && !split.open ? " hidden" : ""}
         data-ed-picker-value="${esc(option.value)}" data-ed-picker-search="${esc(`${option.label} ${option.info || ""}`.toLowerCase())}"
         aria-pressed="${option.value === current}"${tipAttr(option.label, option.info || "")}>
         ${option.badge ? `<em class="ed-badge">${esc(option.badge)}</em>` : ""}
         ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}${option.stars ? starOverlay(Number(option.stars)) : ""}<span>${esc(option.label)}</span></button>`).join("")}
+      ${edMoreButton(split.count, split.open)}
     </div><p class="ed-picker-empty" hidden>No options match this search.</p>`;
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
@@ -457,6 +516,7 @@ function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
   const c = edDraft.cards[i], ch = edChar(c.char), choosing = selectedSlot >= 0;
   const options = choosing ? edPickerOptions("memres", i, side) : [];
   const current = choosing ? c.memRes[selectedSlot][side === "bottom" ? 1 : 0] : "";
+  const split = edMoreSplit(options, current);
   edPickerTarget = { kind: "memresmenu", card: i, slot: selectedSlot, side };
   anchor.setAttribute("aria-expanded", "true");
   picker.className = `ed-picker ed-res-menu${choosing ? " has-options" : ""}`;
@@ -473,9 +533,10 @@ function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
     <div class="ed-res-menu-choice-head"><strong>Memory ${selectedSlot + 1} · ${side === "bottom" ? "Bottom" : "Upper"} resonance</strong>
       <label class="ed-res-menu-all"><input type="checkbox" data-ed-apply-all="${side === "bottom" ? "bottom" : "top"}"${edApplyAll[side === "bottom" ? "bottom" : "top"] ? " checked" : ""}> Apply to all 6</label></div>
     <div class="ed-picker-options" role="group" aria-label="Memory ${selectedSlot + 1}, ${side === "bottom" ? "Bottom" : "Upper"} resonance options">
-      ${options.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}"
+      ${split.ordered.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}${option.more ? " more" : ""}"${option.more && !split.open ? " hidden" : ""}
         data-ed-memres-value="${esc(option.value)}" aria-pressed="${option.value === current}"${tipAttr(option.label, option.info || "")}>
         ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}<span>${esc(option.label)}</span>${option.sub ? `<small>${esc(option.sub)}</small>` : ""}</button>`).join("")}
+      ${edMoreButton(split.count, split.open)}
     </div></div>`);
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
@@ -484,11 +545,14 @@ function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
 function edFilterPicker(query) {
   const term = query.trim().toLowerCase();
   let visible = 0;
+  const more = $("#edPickerOptions [data-ed-more]"), expanded = more?.getAttribute("aria-expanded") === "true";
+  // Searching looks through every option; with no search, the "Others" ones follow the button
   $("#edPickerOptions")?.querySelectorAll(".ed-picker-option").forEach(option => {
     const matches = option.dataset.edPickerSearch.includes(term);
-    option.hidden = !matches;
+    option.hidden = term ? !matches : option.classList.contains("more") && !expanded;
     if (matches) visible++;
   });
+  if (more) more.hidden = !!term;
   const empty = $(".ed-picker-empty");
   if (empty) empty.hidden = visible > 0;
 }
@@ -1008,6 +1072,14 @@ addEventListener("click", e => {
       edRender();
       edStatus("Click another skill to swap, the same one again to grey it out, or drag it onto another skill.");
     }
+    return;
+  }
+  const moreButton = e.target.closest?.("[data-ed-more]");
+  if (moreButton) {
+    const open = moreButton.getAttribute("aria-expanded") !== "true", extra = moreButton.parentElement.querySelectorAll(".ed-picker-option.more");
+    extra.forEach(option => { option.hidden = !open; });
+    moreButton.setAttribute("aria-expanded", String(open));
+    moreButton.textContent = open ? "Show fewer" : `Others (${extra.length})`;
     return;
   }
   const pickerChoice = e.target.closest?.("[data-ed-picker-value]");

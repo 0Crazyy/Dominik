@@ -5,10 +5,12 @@
 //           node tools/review-gui.mjs --porta 9000
 // Usa o login do wrangler (npx wrangler@4 login), como tools/review-teams.mjs. Só escuta em 127.0.0.1: nada fica publicado.
 // Aprovar ou tirar do ar regrava a chave "teams" do KV, então o site muda em até 1 minuto, sem deploy.
+// As builds oficiais (escritas no app.js) também aparecem: ocultar uma grava o id dela na chave "hidden" do KV, e o site a esconde sem deploy.
 import { spawn, spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
+import vm from "node:vm";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -54,17 +56,56 @@ function artIndex() {
     const { MEM_INDEX } = new Function(app.slice(a, b) + ";return { MEM_INDEX }")();
     return { chars: Object.fromEntries(catalog.characters.map(c => [c.name, { portrait: c.portrait, symbol: c.symbol, weapon: c.weapon, construct: c.construct, element: c.element, class: c.class }])),
       weapons: Object.fromEntries(catalog.weapons.map(w => [w.owner, { name: w.name, type: w.type, ranks: Object.fromEntries(w.ranks.map(r => [r.rank, r.art])) }])),
-      mem: Object.fromEntries(MEM_INDEX), res: catalog.memoryResonances, allAtk: catalog.allAtk };
+      pages: catalog.pages, mem: Object.fromEntries(MEM_INDEX), res: catalog.memoryResonances, allAtk: catalog.allAtk };
   } catch { return null; } // sem imagens o painel continua mostrando os textos
+}
+// As builds oficiais, lidas do app.js como o make-catalog faz. O id é o de uma variante, ou o da composição quando ela não tem variantes
+function officials() {
+  const app = readFileSync(join(ROOT, "app.js"), "utf8"), end = app.indexOf("const $ = (s, r = document)");
+  if (end < 0) throw new Error('não achei a linha "const $ = (s, r = document)" no app.js');
+  const { COMPS, PAGES } = vm.runInNewContext(`${readFileSync(join(ROOT, "data/assets-data.js"), "utf8")}
+${app.slice(0, end)}
+;({ COMPS, PAGES })`);
+  const rows = [];
+  for (const [comp, c] of Object.entries(COMPS)) {
+    const page = Object.keys(PAGES).find(path => PAGES[path].includes(comp));
+    if (!page) continue;
+    for (const t of c.variants || [{ id: comp, name: "", cards: c.cards }]) {
+      rows.push({ id: t.id, page, name: [c.name, t.name].filter(Boolean).join(" · "), group: t.group || "", cards: t.cards.map(card => ({ char: card.name, portrait: card.portrait })) });
+    }
+  }
+  return rows;
+}
+function readHidden() {
+  try {
+    const list = JSON.parse(wrangler(["kv", "key", "get", "hidden", `--namespace-id=${kvId}`, "--text", where]));
+    return Array.isArray(list) ? list.filter(id => typeof id === "string") : [];
+  } catch (e) {
+    if (/404|not found/i.test(e.message)) return []; // ainda não existe: nada foi ocultado
+    throw e;
+  }
+}
+function writeHidden(ids) {
+  writeFileSync(join(ROOT, TEMP, "hidden.json"), JSON.stringify(ids));
+  wrangler(["kv", "key", "put", "hidden", `--namespace-id=${kvId}`, `--path=${TEMP}/hidden.json`, where]);
 }
 const list = () => {
   const rows = read("SELECT id, page, status, team, author, created, reviewed, reason FROM teams WHERE status IN ('pending', 'approved') ORDER BY created");
   const parse = row => ({ ...row, team: JSON.parse(row.team) });
-  return { pending: rows.filter(r => r.status === "pending").map(parse), approved: rows.filter(r => r.status === "approved").map(parse), site: SITE, local: where === "--local", art: artIndex() };
+  const hidden = readHidden(), all = officials();
+  return { pending: rows.filter(r => r.status === "pending").map(parse), approved: rows.filter(r => r.status === "approved").map(parse),
+    official: all.filter(o => !hidden.includes(o.id)), hidden: all.filter(o => hidden.includes(o.id)), site: SITE, local: where === "--local", art: artIndex() };
 };
 // Cada ação só vale para o estado certo; se outra pessoa decidiu antes, nada muda
 const ACTIONS = { approve: ["pending", "approved"], reject: ["pending", "rejected"], remove: ["approved", "rejected"] };
 function act({ id, action, reason }) {
+  if (action === "hide" || action === "show") {
+    if (!officials().some(o => o.id === id)) throw new Error(`Official build "${id}" does not exist`);
+    const hidden = readHidden().filter(x => x !== id);
+    if (action === "hide") hidden.push(id);
+    writeHidden(hidden);
+    return { published: null, hidden: hidden.length };
+  }
   id = Number(id);
   const step = ACTIONS[action];
   if (!Number.isInteger(id) || !step) throw new Error("Invalid request");

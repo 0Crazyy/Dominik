@@ -26,10 +26,10 @@ Na primeira sessão em um computador, confira estes itens antes de qualquer tare
 | `data/calculator-data.js` | Renda por patch. `tools/update-calculator.mjs` atualiza a planilha; `frame` e as linhas de collab são escritos à mão |
 | `editor.js` | Team Builder (`/editor`). Só carrega nessa página, junto com o catálogo |
 | `data/catalog-data.js` | Gerado por `tools/make-catalog.mjs` (o deploy roda): o que um time do Team Builder pode ter. Não edite à mão |
-| `functions/api/` | API no Cloudflare Pages: `submit.js` recebe um time do Team Builder (Turnstile, limites por IP, fila), `teams.js` devolve os aprovados, `admin.js` é por onde o bot do Discord aprova (segredo `ADMIN_KEY`; o bot fica em `../Dominik - bot/`). Só `/api/*` passa por aqui |
+| `functions/api/` | API no Cloudflare Pages: `submit.js` recebe um time do Team Builder (Turnstile, limites por IP, fila), `teams.js` devolve os aprovados, `hidden.js` devolve os ids das builds oficiais que o painel ocultou (chave `hidden` do KV; o `loadCommunity()` do `app.js` as tira de `COMPS`/`PAGES` ao carregar), `admin.js` é por onde o bot do Discord aprova (segredo `ADMIN_KEY`; o bot fica em `../Dominik - bot/`). Só `/api/*` passa por aqui |
 | `server/` | O que a API importa: `team.js` (validação, igual ao `edClean` do `editor.js`), `schema.sql` (tabelas do D1) e `catalog.js` (gerado por `make-catalog`) |
 | `tools/review-teams.mjs` | Aprova ou rejeita os times enviados, no terminal, e regrava a chave `teams` do KV que o site lê. `--aprovados` lista e remove; `--local` usa o banco do `wrangler pages dev` |
-| `tools/review-gui.mjs` + `review-gui.html` | O mesmo que `review-teams.mjs`, mas em um painel no navegador (`127.0.0.1:8799`, só local; a página é o `.html`, em inglês). Aprova, rejeita e tira times do ar. `--local` usa o banco do `wrangler pages dev` |
+| `tools/review-gui.mjs` + `review-gui.html` | O mesmo que `review-teams.mjs`, mas em um painel no navegador (`127.0.0.1:8799`, só local; a página é o `.html`, em inglês). Aprova, rejeita e tira times do ar; a aba "On the site" agrupa por página e inclui as builds oficiais do `app.js`, que ele só oculta (aba "Hidden" para reexibir), sem mexer no `app.js`. `--local` usa o banco do `wrangler pages dev` |
 | `wrangler.toml` | Ligações da API (D1 `DB`, KV `CACHE`). Segredos nunca entram aqui: `npx wrangler@4 pages secret put NOME --project-name dominiko` |
 | `data/timeline-data.js` | Gerado por `tools/update-timeline.mjs`; não edite à mão |
 | `assets/` | Artes originais, e é para onde os caminhos do código apontam |
