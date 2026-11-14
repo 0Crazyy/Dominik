@@ -15,8 +15,8 @@ const read = file => readFileSync(join(ROOT, file), "utf8");
 // app.js touches the page right after its data, so only the part before this line can run outside a browser
 const app = read("app.js"), dataEnd = app.indexOf("const $ = (s, r = document)");
 if (dataEnd < 0) throw new Error("não achei o fim dos dados no app.js; atualize dataEnd em tools/make-embeds.mjs");
-const names = "COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RELEASE, MEMORY_STATS, WEAPONS, WEAPON_STATS, RESONANCE_EFFECTS, CUB_SKILLS, CONSTRUCTS, CHARACTER_SKILLS, TIMELINE, CHARS, WEAPON_RES, memFile";
-const { COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RELEASE, MEMORY_STATS, WEAPONS, WEAPON_STATS, RESONANCE_EFFECTS, CUB_SKILLS, CONSTRUCTS, CHARACTER_SKILLS, TIMELINE, CHARS, WEAPON_RES, memFile } =
+const names = "COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RELEASE, MEMORY_STATS, WEAPONS, WEAPON_STATS, RESONANCE_EFFECTS, CUB_SKILLS, EXTRA_CUBS, CONSTRUCTS, CHARACTER_SKILLS, TIMELINE, CHARS, WEAPON_RES, memFile";
+const { COMPS, PAGES, TEAM_LISTS, ENERGY, MEMORY_TABS, MEMORY_EFFECTS, MEMORY_RELEASE, MEMORY_STATS, WEAPONS, WEAPON_STATS, RESONANCE_EFFECTS, CUB_SKILLS, EXTRA_CUBS, CONSTRUCTS, CHARACTER_SKILLS, TIMELINE, CHARS, WEAPON_RES, memFile } =
   vm.runInNewContext(`${["data/assets-data.js", "data/skills-data.js", "data/timeline-data.js"].map(read).join("\n")}\n${app.slice(0, dataEnd)}\n;({ ${names} })`);
 
 // Same as in app.js
@@ -24,7 +24,7 @@ const slug = s => s.toLowerCase().replace(/\s+/g, "-");
 const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
 const charId = name => linkId(name.replace(":", ""));
 const constructId = name => linkId(name.split(":").at(-1).trim());
-const fileName = src => src.split("/").pop().replace(/\.\w+$/, "").replace(/^(Memória|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
+const fileName = src => src.split("/").pop().replace(/\.\w+$/, "").replace(/^(Memoria|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
 const memoryName = piece => piece.startsWith("assets/") ? fileName(piece) : piece;
 function memorySummary(memories) {
   const count = new Map();
@@ -42,7 +42,9 @@ const characters = [...new Map(builds.map(({ card }) => [card.name, card])).valu
 const usedIn = test => plural(builds.filter(b => test(b.card)).length, "build");
 // A card can borrow another character's CUB as a placeholder, so the owner is the character named after the folder of the art
 const cubs = [...new Map(builds.filter(({ card }) => card.construct?.split("/").at(-2) === charId(card.name)).map(({ card }) =>
-  [fileName(card.construct), { name: fileName(card.construct), owner: card.name, art: card.construct }])).values()];
+  [fileName(card.construct), { name: fileName(card.construct), owner: card.name, rank: "S", element: CONSTRUCTS[card.name]?.[1] || "", art: card.construct }])).values()];
+// The CUBs no build uses yet
+for (const [name, owner, rank, element, dir] of EXTRA_CUBS) if (!cubs.some(c => c.name === name)) cubs.push({ name, owner, rank, element, art: `${dir}/CUB - ${name}.png` });
 
 // The file has to exist, or the card would show a broken picture. Discord keeps a preview picture per URL, so new art needs a new file name
 const DEFAULT_IMAGE = "assets/embed-icon-4.png";
@@ -67,7 +69,7 @@ for (const [kind, { items, label }] of Object.entries(TEAM_LISTS)) for (const it
   const path = `${kind}/${slug(item)}`, ids = PAGES[path] || [];
   const what = kind === "energy" ? `${item} energy` : `the ${item} ${label.toLowerCase()}`;
   if (!ids.length) {
-    add(path, `${item} Teams`, `No teams for ${what} yet.`, image(`assets/${kind === "energy" ? "energy type" : "effects"}/${item}.png`));
+    add(path, `${item} Teams`, `No teams for ${what} yet.`, image(`assets/${kind === "energy" ? "energy-type" : "effects"}/${item}.png`));
     continue;
   }
   // The page lists every build; the newest composition comes first
@@ -96,7 +98,6 @@ for (const ch of constructRoster) {
   const builds = ch.builds.length ? `${plural(ch.builds.length, "build")}: ${teams.join(" · ")}` : "No builds available yet.";
   const description = [[`${rank}-Rank ${type}`, element, effect].filter(Boolean).join(" · "), builds, gear].filter(Boolean).join("\n");
   add(`constructs/${constructId(ch.name)}`, ch.name, description, portrait(ch));
-  if (!ch.builds.length) continue;
   add(`character/${charId(ch.name)}`, ch.name, description, portrait(ch));
   add(`character/${constructId(ch.name)}`, ch.name, description, portrait(ch));
   const skills = CHARACTER_SKILLS[ch.name] || [];
@@ -139,10 +140,10 @@ for (const [name, effect] of resonances) {
   add(`assets/resonance/${linkId(name)}`, name, `Weapon Resonance · Used in ${usedIn(c => (c.matrix || []).includes(WEAPON_RES(name)))}\n${effect}`, image(WEAPON_RES(name)));
 }
 
-listPages("cubs", "C.U.B.s", elementTabs(cubs, cub => cub.owner), count => `${count} C.U.B.${count === 1 ? "" : "s"}, each with its skills and the builds that use it.`, cub => releaseOf(cub.owner), cub => cub.name, cub => cub.art);
+listPages("cubs", "C.U.B.s", [["All", cubs], ...ENERGY.map(e => [e, cubs.filter(cub => cub.element === e)])], count => `${count} C.U.B.${count === 1 ? "" : "s"}, each with its skills and the builds that use it.`, cub => releaseOf(cub.owner), cub => cub.name, cub => cub.art);
 for (const cub of cubs) {
   const skills = CUB_SKILLS[cub.art.split("/").at(-2)] || [];
-  add(`assets/cub/${linkId(cub.name)}`, `${cub.name} C.U.B.`, [`C.U.B. of ${cub.owner} · ${CONSTRUCTS[cub.owner][1]}`, skills.map(([name]) => name).join(" · ")].filter(Boolean).join("\n"), image(cub.art));
+  add(`assets/cub/${linkId(cub.name)}`, `${cub.name} C.U.B.`, [`${cub.owner ? `C.U.B. of ${cub.owner}` : `Rank ${cub.rank} C.U.B.`} · ${cub.element}`, skills.map(([name]) => name).join(" · ")].filter(Boolean).join("\n"), image(cub.art));
 }
 
 /* ---------- tools ---------- */

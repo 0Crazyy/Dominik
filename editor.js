@@ -9,6 +9,8 @@ const ED_SLOTS = ["Blue", "Red", "Yellow"];
 const ED_LIMITS = { name: 60, order: 120, desc: 1500, rotation: 3000 };
 const ED_MAIN = [0, 1, 2, 4], ED_SUB = [3, 5]; // 4 pieces of the main set and 2 of the sub set, as memBuild() lays them out
 const ED_CUB_SKILL_ORDER = [0, 1, 2, 3, 4, 5];
+// Resonance picker art when no character is picked: Lucia: Lotus's Basic Attack, and a plain white card for the rest
+const ED_BASIC_ATTACK_ART = "assets/characters/lucia-lotus/skills/Basic Attack.png", ED_BLANK_RESONANCE = "assets/icons/resonance-blank.png";
 const ED_MATRIX_COMMON = ["Incandescence", "Dead Line Timing", "Matrix Lightning", "Shock Saturation", "Nsec Transmission", "Shock Echo"];
 const ED_MATRIX_TANK = ["Resonant Echo", "Domain Deconstruction", "Boundary's Annihilation", "Gravity Barrier", "Absolute Defense"];
 const ED_MATRIX_SUPPORT = ["Glorious Spear", "Superconducting Axial Ray", "Honed Gel", "Stellar Magnetic Rail", "Peaceful Radiant"];
@@ -29,7 +31,7 @@ const ED_UPPER_RESONANCES = [
   ["Red Orb", "Red Orb Level +1"], ["Yellow Orb", "Yellow Orb Level +1"], ["Blue Orb", "Blue Orb Level +1"],
   ["Basic Attack", "Basic Attack Level +1"], ["Ex- Precision Action", "Ex- Precision Action · HP +75, CRIT +15"],
   ["Ex- Enhanced Power", "Ex- Enhanced Power · ATK +15, DEF +23"],
-  ["Ex- Precision Attack", "Ex- Precision Attack · ATK +15, CRIT +23"],
+  ["Ex- Precision Attack", "Ex- Precision Attack · ATK +15, CRIT +15"],
   ["Ex- Tactical Adjustment", "Ex- Tactical Adjustment · HP +75, ATK +15"],
   ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"]
 ];
@@ -37,7 +39,7 @@ const ED_BOTTOM_RESONANCES = [
   ["Signature Move", "Signature Move Level +1"], ["QTE", "QTE Level +1"], ["Core Passive", "Core Passive +1"],
   ["Class Skill", "Class Skill Level +1"], ["Ex- Precision Action", "Ex- Precision Action · HP +75, CRIT +15"],
   ["Ex- Enhanced Power", "Ex- Enhanced Power · ATK +15, DEF +23"],
-  ["Ex- Precision Attack", "Ex- Precision Attack · ATK +15, CRIT +23"],
+  ["Ex- Precision Attack", "Ex- Precision Attack · ATK +15, CRIT +15"],
   ["Ex- Tactical Adjustment", "Ex- Tactical Adjustment · HP +75, ATK +15"],
   ["Any ATK", "Any ATK · Any of the 3 ATK Resonance"]
 ];
@@ -179,7 +181,7 @@ function edCardView(c, i, team) {
 }
 function edResonanceArt(ch, name) {
   const skill = { "Signature Move": "Signature", "Core Passive": "Core", "Class Skill": "Class" }[name] || name;
-  return name === "Any ATK" ? CATALOG.allAtk : ch.skillArt[skill] || "";
+  return name === "Any ATK" ? CATALOG.allAtk : ch.skillArt[skill] || CATALOG.memoryResonances[name] || "";
 }
 // The team as the cards the rest of the site draws. Slots without a character are left out
 function edCards(team) {
@@ -265,7 +267,8 @@ function edPickerOptions(kind, i, side) {
       "Basic Attack": "Basic Attack", "Signature Move": "Signature", "Core Passive": "Core", "Class Skill": "Class" };
     return options.map(([name, info]) => ({
       value: name, label: name,
-      art: name === "Any ATK" ? CATALOG.allAtk : ch?.skillArt?.[skillKeys[name]] || "assets/icons/resonance.png",
+      art: name === "Any ATK" ? CATALOG.allAtk : ch?.skillArt?.[skillKeys[name]] || CATALOG.memoryResonances[name]
+        || (!ch && name === "Basic Attack" ? ED_BASIC_ATTACK_ART : ED_BLANK_RESONANCE),
       info
     }));
   }
@@ -493,7 +496,8 @@ function edWire() {
     const res = $(".res", el);
     res.innerHTML = `<div class="ed-res-total"><small>Upper · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[0])))}</span></div>
       <div class="ed-res-total"><small>Bottom · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[1])))}</span></div>`;
-    mark($(".kit > .slot", el), "cub");
+    const cubSlot = $(".kit > .slot", el);
+    mark(cubSlot, "cub");
     const cub = CATALOG.characters.find(candidate => candidate.construct === c.cub);
     el.querySelectorAll(".kit > .cell > .slot").forEach((skill, k) => {
       if (!cub?.skills.length) return;
@@ -670,7 +674,15 @@ function teamBuilder() {
   // The cards go out as plain HTML with the page; editable slots are marked once they are in the document
   queueMicrotask(() => { edWire(); edPaint(); });
   return `<h1>Team Builder</h1>
-    <p class="sub">Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it. Click one C.U.B. skill and then another to swap their positions, or drag Captain and Starter to another position. Use the RES button on the memory box to set each memory's Upper and Bottom resonance. Notes and Rotation stay visible below the cards for each team position. Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot. The team stays saved in this browser, and you can share it as a link or an image. You can also send it to the site: after a review, it shows up on its page with the other builds.</p>
+    <ul class="ed-help">
+      <li>Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it.</li>
+      <li>Click one C.U.B. skill and then another to swap their positions, or drag Captain and Starter to another position.</li>
+      <li>Use the RES button on the memory box to set each memory's Upper and Bottom resonance.</li>
+      <li>Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot.</li>
+      <li>Notes and Rotation stay visible below the cards for each team position.</li>
+      <li>The team stays saved in this browser, and you can share it as a link or an image.</li>
+      <li>You can also send it to the site: after a review, it shows up on its page with the other builds.</li>
+    </ul>
     <form id="edForm" class="ed" autocomplete="off">
       <fieldset id="edTeam" class="ed-team">${edTeamBody(edDraft)}</fieldset>
       <div class="ed-studio">

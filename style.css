@@ -33,7 +33,7 @@ nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#ff
 .ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
 .ico-constructs{--art:url(assets-web/icons/constructs.png.webp?v=3)}
 /* The Teams art is tall and narrow, so it is enlarged to match the visual weight of the others */
-.ico-teams{--art:url(assets-web/icons/teams.png.webp);width:24px;height:24px;margin:-2px}
+.ico-teams{--art:url(assets-web/icons/teams.png.webp);width:24px;height:24px}
 .ico-cubs{--art:url(assets-web/icons/cubs.png.webp?v=2)}
 .ico-resonance{--art:url(assets-web/icons/resonance.png.webp?v=2)}
 .ico-memories{--art:url(assets-web/icons/memories.png.webp?v=2)}
@@ -283,22 +283,39 @@ html.locked{overflow:hidden}
 .assets{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:start}
 .atabs{display:grid;gap:6px;position:sticky;top:20px}
 .atabs a{padding:9px 14px;background:var(--panel);border:1px solid var(--line);border-radius:4px;font-size:14px;font-weight:600}
+.atabs a{display:flex;align-items:center;gap:8px}
+.atabs a .chip-icon{width:22px;height:22px}.atabs a .chip-icon img{width:22px;height:22px}
+.atabs a.on .chip-icon img{filter:invert(1)}
+.sortbar.star-filter{flex-wrap:wrap}
+.sortbar.star-filter .tool{min-width:64px;padding:6px 14px;font-size:13px}
+.star-filter .tool .star{margin-left:3px;color:var(--s,#ffc400);font-weight:400}
+.star-filter .star.s2{--s:#70b771}.star-filter .star.s3{--s:#0a8ed0}.star-filter .star.s4{--s:#ff68ca}.star-filter .star.s5{--s:#ff8b00}.star-filter .star.s6{--s:#ff5719}
+.star-filter .tool.on .star{filter:brightness(.8) saturate(1.4)}
+.star-filter .tool.on{background:#d8d8dc;border-color:#d8d8dc;color:#0b0b0c}
 .atabs a:hover{background:#4a4a4f}
 .atabs a.on{background:#d8d8dc;border-color:#d8d8dc;color:#0b0b0c}
 .mtable{width:100%;table-layout:fixed;border-collapse:collapse;background:var(--panel)}
 .mtable th{position:sticky;top:0;z-index:1;width:92px;padding:0;background:#222224;border-bottom:1px solid #5a5a60}
 .mtable th:first-child{width:auto}
-.mtable th button{display:flex;align-items:center;justify-content:flex-end;gap:4px;width:100%;min-height:44px;padding:0 14px;border:0;background:none;color:var(--txt);font:700 13px "Quantico";cursor:pointer}
+.mtable th button{position:relative;display:flex;align-items:center;justify-content:flex-end;width:100%;min-height:44px;padding:0 14px;border:0;background:none;color:var(--txt);font:700 13px "Quantico";cursor:pointer}
 .mtable th:first-child button{justify-content:flex-start}
 .mtable th button:hover{background:#4a4a4f}
 .mtable th button:focus-visible{outline-offset:-2px}
-.mtable th i{width:10px;font-size:10px;font-style:normal}
+.mtable th button i{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:10px;font-size:10px;font-style:normal;text-align:center;line-height:1}
 .mtable tbody tr{position:relative;border-bottom:1px solid var(--line)}
 .mtable tbody tr:hover{background:#222224}
 .mtable td{padding:6px 14px;font-size:15px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .mtable td:first-child{padding-left:10px;text-align:left}
 .mt-name{display:flex;align-items:center;gap:12px;min-width:0}
 .mt-name>div:last-child{min-width:0}
+.mtable th.txt,.mtable td.txt{width:150px;text-align:left}
+.mtable th.txt:not(:has(button)){padding:0 14px;font:700 13px "Quantico"}
+.mtable th.txt button{justify-content:flex-start}
+.mtable th.txt button i{position:static;transform:none;margin-left:6px}
+.mtable th.rel,.mtable td.rel{width:190px}
+.mtable td.txt{font-size:14px;font-weight:600}
+.mtable td a{position:relative;z-index:1;text-decoration:underline}
+.mt-name .mob{display:none}
 .mt-art{flex:none;width:50px}
 .mt-art .slot{aspect-ratio:5/7;border:2px solid #000}
 .mt-art.wpn-art,.mt-art.cub-art{width:84px}
@@ -310,21 +327,33 @@ html.locked{overflow:hidden}
 .mt-art.wpn-art .stars{height:auto}
 .mt-art.cub-art .slot{aspect-ratio:5/6}
 .mt-art.cub-art img{transform:none}
-.sortbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:8px;font-size:13px;color:var(--mute)}
+.sortbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 14px;background:var(--panel);border:1px solid var(--line);border-radius:4px;font-size:13px;color:var(--mute)}
+.sortbar span{font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.sortbar .tool{flex:0 0 auto;padding:5px 12px;font-size:12px}
+.sortbar .tool i{display:inline-block;min-width:1em;margin-left:5px;font-size:10px;font-style:normal;opacity:.7}
 .tool.on{background:#d8d8dc;border-color:#d8d8dc;color:#0b0b0c}
 .tool.on:hover{background:#d8d8dc}
-.filters{display:grid;gap:8px;margin-bottom:18px}
-.filter-bar{display:flex;flex-wrap:wrap;gap:8px}
-.filter-bar .tool{margin-bottom:10px}
-.filter-toggle{display:none}
-.filter{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
-.filter>span{align-self:center;width:64px;font-size:13px;color:var(--mute)}
-.tool.chip{display:grid;justify-items:center;align-content:center;gap:5px;min-width:78px;padding:8px 10px;font-size:12px}
-/* The icons are white, so a selected button stays dark */
-.tool.chip.on,.tool.chip.on:hover{background:#3a3a40;border-color:#d8d8dc;color:#fff}
-.chip-icon{display:grid;place-items:center;width:32px;height:32px}
-.chip-icon img{width:32px;height:32px;object-fit:contain}
-.chip-icon b{font-size:26px;line-height:1}
+.filters{display:grid;margin-bottom:22px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.filter-bar .tool{margin-bottom:0}
+.filter-toggle{display:none;padding:8px 14px;background:#1c1c1e;border:1px solid var(--line);border-radius:999px;color:var(--txt);font:600 13px "Quantico"}
+.filter-toggle:hover{background:#2a2a2e;border-color:#5a5a62}
+.filter-toggle[aria-expanded="true"]{background:#2a2a2e;border-color:var(--red);color:var(--red)}
+.filter-bar .tool[data-empty]{opacity:0;pointer-events:none;user-select:none}
+.filter{display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;gap:12px;padding:10px 14px}
+.filter+.filter{border-top:1px solid var(--line)}
+.filter>span{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.filter-bar-tools{display:flex;flex-wrap:wrap;gap:7px}
+.tool.chip{--c:#0000;border-left:3px solid var(--c);display:inline-flex;align-items:center;gap:7px;padding:6px 11px 6px 12px;font-size:12.5px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--txt);font:600 12px "Quantico"}
+.tool.chip:hover{background:#222224;border-color:#5a5a62}
+.tool.chip.on{background:#26262a;border-color:#d8d8dc;color:#fff}
+.tool.chip.on[style*="--c"]{background:color-mix(in srgb, var(--c) 22%, #000);border-color:var(--c);color:#fff}
+.tool.chip.on[style*="--c"]:hover{background:color-mix(in srgb, var(--c) 30%, #000)}
+.chip-n{margin-left:2px;padding:0 6px;background:#ffffff14;border-radius:999px;font-size:10.5px;font-weight:600;color:var(--mute)}
+.tool.chip.on .chip-n{background:#ffffff26;color:#fff}
+.chip-icon{display:grid;place-items:center;width:24px;height:24px;flex:0 0 auto}
+.chip-icon img{width:24px;height:24px;object-fit:contain}
+.chip-icon b{font-size:18px;line-height:1}
 .mt-name a{display:block;overflow-wrap:anywhere}
 .mt-name small a{display:inline;position:relative;z-index:1;text-decoration:underline}
 .mt-name small a::after{content:none}
@@ -483,12 +512,14 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 @media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-belt-wrap{grid-template-columns:minmax(0,1fr)}.calc-nav{display:none}.calc-track{gap:10px}.calc-stop{width:136px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
 .mt-name a::after{content:"";position:absolute;inset:0}
 .mt-name small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--mute)}
-.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
-.acard{padding:12px;background:var(--panel);border:1px solid var(--line)}
-.acard h3{margin-top:10px;font-size:16px;font-weight:700}
-.acard p{margin-top:2px;font-size:12px;color:var(--mute)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+.acard{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;transition:transform .2s,border-color .2s,box-shadow .2s}
+.acard:hover{transform:translateY(-2px);border-color:#5a5a62;box-shadow:0 10px 28px #000a}
+.acard .slot{flex:none;width:56px;height:56px;border-radius:8px;border:1px solid #ffffff30;overflow:hidden;background:#00000033}
+.acard .slot img{width:100%;height:100%;object-fit:cover;display:block}
+.acard h3{margin:0 0 3px;font-size:16px;font-weight:700;letter-spacing:.02em}
+.acard p{margin:0;font-size:12.5px;color:var(--mute);line-height:1.4}
 a.acard{display:block}
-a.acard:hover{background:#222224;border-color:#5a5a60}
 a.slot:hover{border-color:#fff}
 .backs{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:12px}
 .back-build{padding:7px 12px;background:#d8d8dc;border-radius:4px;color:#0b0b0c;font-size:13px;font-weight:700}
@@ -571,9 +602,11 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 #side.wide:not(.pinned){width:280px;margin-right:-216px;box-shadow:16px 0 40px #000a}
 /* Only the closed rail hides its bar. Any other scrollbar-width here would make Chrome drop the themed ::-webkit-scrollbar */
 #side:not(.pinned,.wide){scrollbar-width:none}
-#side .logo{justify-content:flex-start;gap:12px;padding:0 0 24px;overflow:hidden}
+/* Room around the wordmark so its hover glow is not cut by the logo box */
+#side .logo{justify-content:flex-start;gap:12px;padding:16px 16px 40px;margin:-16px -16px -16px;overflow:visible}
 #side .logo .logo-icon{width:44px;height:44px;margin:0;object-fit:contain}
-#side .logo .logo-wordmark{max-width:none;transition:opacity .15s ease;transition-delay:0s}
+#side .logo .logo-wordmark{max-width:none;width:168px;filter:drop-shadow(0 0 10px #ff35354d);transition:opacity .15s ease,filter .2s ease;transition-delay:0s}
+#side .logo:hover .logo-wordmark{filter:drop-shadow(0 0 14px #ff353590)}
 #side:not(.wide,.pinned) .logo .logo-wordmark{opacity:0}
 #side.wide:not(.pinned) .logo .logo-wordmark{transition-delay:.14s}
 #side nav :is(a:not(.sr),button){gap:12px;overflow:hidden;white-space:nowrap}
@@ -606,6 +639,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .filter-toggle{display:block}
 .filters{display:none}
 .filters.open{display:grid}
+.filter{grid-template-columns:minmax(0,1fr);gap:6px}
 .mtable th{top:61px}
 .brow-art{width:72px;height:72px}
 .brow-tx b{font-size:15px;white-space:normal}
@@ -617,7 +651,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .wp{width:30%}
 .hero{grid-template-columns:minmax(0,1fr);grid-template-rows:210px 150px;height:auto;min-height:0;gap:10px}.hero-tx{padding:10px 20px}.hero-mark{width:86px}.hero-splash{max-width:430px;height:7.75em;-webkit-line-clamp:5;line-clamp:5}.hero-art{grid-column:1;grid-row:2}.hero-track a{width:130px}h1{font-size:28px}}
 @media(max-width:1000px){.home-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;grid-auto-flow:row;gap:8px}.home-label{justify-content:center;font-size:11px;letter-spacing:.04em;text-align:center}.tile-gap{min-height:0}.home-links.tools{grid-template-columns:minmax(0,1fr)}.home-links.data{grid-template-columns:repeat(2,minmax(0,1fr))}.home-links.data a:first-child{grid-column:1/-1}.home-links.data .home-link{flex-direction:row;gap:12px;text-align:left}}
-@media(max-width:560px){.mtable th{width:50px}.mtable th button{justify-content:center;gap:1px;padding:0 2px;font-size:12px}.mtable th i{width:8px;font-size:8px}.mtable td{padding:5px 2px;font-size:13px;text-align:center}.mtable td:first-child{padding-left:6px}.mt-name{gap:8px}.mt-art{width:38px}.mt-name small{font-size:11px}}
+@media(max-width:560px){.mt-name .mob{display:inline}.mt-name .desk,.mtable .wide{display:none}.mtable th.rel,.mtable td.rel{width:84px;padding:5px 6px;font-size:11px;line-height:1.25;text-align:left}.mtable th.rel button{justify-content:flex-start;padding:0 6px;font-size:12px}.mtable th{width:50px}.mtable th button{justify-content:center;gap:1px;padding:0 2px;font-size:12px}.mtable th i{width:8px;font-size:8px}.mtable td{padding:5px 2px;font-size:13px;text-align:center}.mtable td:first-child{padding-left:6px}.mt-name{gap:8px}.mt-art{width:38px}.mt-name small{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.hero-track,.hero-mark img,.hero-splash span,.fcard .bar{animation:none!important}.hero-splash span{opacity:1}.hero-art{overflow-x:auto}}
 /* From this width the notice fits on one line, inside the empty space at the top of #main, so it moves nothing below it */
 @media(min-width:1440px){#main{position:relative}#noticeBox{position:absolute;inset:0 0 auto}.notice{height:30px;margin:0;padding:0 14px;font-size:13px}}
@@ -636,7 +670,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .tl-rank li::before{content:counter(rank);font-weight:700;color:var(--mute)}
 .tl-rank li:first-child::before{color:var(--red)}
 .tl-rank li img{display:block;width:34px;height:34px;padding:0;object-fit:cover;background:#0f0f10;border:1px solid var(--line)}
-.tl-rank li img[data-full*="energy type"],.tl-rank li img[data-full*="effects"]{padding:6px;object-fit:contain}
+.tl-rank li img[data-full*="energy-type"],.tl-rank li img[data-full*="effects"]{padding:6px;object-fit:contain}
 .tl-rank b{overflow:hidden;font-weight:700;text-overflow:ellipsis;white-space:nowrap}
 .tl-rank em{font-style:normal;font-weight:700;white-space:nowrap}
 .tl-rank li:first-child em{color:#fff}
@@ -787,10 +821,10 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .ed-live .ed-res-total{display:grid;gap:2px;min-width:0;text-align:center;line-height:1.15}
 .ed-live .ed-res-total small{font-size:calc(9*var(--u));color:var(--mute)}
 .ed-live .ed-res-total span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:calc(9*var(--u))}
-#edDetail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+#edDetail{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
 .ed-detail-fields{clear:both;display:grid;gap:12px}
 @media(min-width:981px){.ed-studio #edStage{--pad:0px}}
-@media(max-width:980px){#edDetail{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:981px){#edDetail{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .ed-tools{flex-wrap:wrap;align-items:center;gap:8px}
 .ed-status{margin-right:auto;color:var(--mute);font-size:13px;overflow-wrap:anywhere}
 .ed-tools .tool:disabled{cursor:default}
@@ -802,4 +836,105 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .ed-trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 @media(max-width:760px){.ed-team-layout{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.ed fieldset{padding:12px 12px 14px}.ed-team-fields,.ed-team-roles{grid-template-columns:minmax(0,1fr)}.ed-team-fields>.ed-field.wide{grid-column:auto}.ed-team-roles{padding:12px}.ed :is(select,input:not([type=radio]),textarea){font-size:16px}}
-@media(max-width:600px){#edDetail{display:flex;gap:12px;padding-inline:max(0px,calc((100% - var(--ed-slide-width,84%))/2));overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none}#edDetail::-webkit-scrollbar{display:none}.ed-detail{flex:0 0 var(--ed-slide-width,84%);scroll-snap-align:center;scroll-snap-stop:always}.ed-live .ed-memory-group{flex:0 0 min(100%,222px);margin-inline:max(0px,calc(50% - 111px))}.ed-res-menu-row{grid-template-columns:minmax(58px,.55fr) repeat(2,minmax(0,1fr));gap:4px}.ed-res-menu-row>button{min-height:42px;padding:4px;font-size:10px}}
+@media(max-width:600px){#edDetail{display:flex;grid-template-columns:1fr;gap:12px;padding-inline:max(0px,calc((100% - var(--ed-slide-width,84%))/2));overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none}#edDetail::-webkit-scrollbar{display:none}.ed-detail{flex:0 0 var(--ed-slide-width,84%);scroll-snap-align:center;scroll-snap-stop:always}.ed-live .ed-memory-group{flex:0 0 min(100%,222px);margin-inline:max(0px,calc(50% - 111px))}.ed-res-menu-row{grid-template-columns:minmax(58px,.55fr) repeat(2,minmax(0,1fr));gap:4px}.ed-res-menu-row>button{min-height:42px;padding:4px;font-size:10px}}
+
+/* ---------- construct page ---------- */
+/* .acard .slot img is taller than .slot .stars, so the star bar covered the weapon art of the cards */
+.acard .slot .stars{height:auto}
+.cx-page{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:28px;align-items:start;margin-top:14px}
+.cx-side{display:grid;gap:12px;min-width:0;position:sticky;top:20px}
+.cx-side>.slot{aspect-ratio:1}
+.cx-main{min-width:0}
+.cx-main>h2.grp:first-child{margin-top:0}
+.cx-attrs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cx-attr{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:6px;min-width:0}
+.cx-attr .chip-icon{width:34px;height:34px}
+.cx-attr .chip-icon img{width:34px;height:34px}
+.cx-attr .chip-icon b{font-size:26px}
+.cx-attr small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.cx-attr span{font-weight:700}
+.cx-gear{display:grid;gap:10px}
+.cx-tabs{display:flex;flex-wrap:wrap;gap:8px}
+/* Columns and not a grid: the cards have very different heights, and this way they stack with no holes between them */
+.cx-skills{columns:420px;column-gap:12px;margin-top:12px}
+.cx-skill{break-inside:avoid;margin-bottom:12px;padding:14px 16px;background:var(--panel);border:1px solid var(--line)}
+.cx-sk-top{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center}
+.cx-sk-top.plain{grid-template-columns:minmax(0,1fr) auto}
+.cx-sk-top .slot{aspect-ratio:1}
+.cx-level{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute)}
+.cx-level b{min-width:2ch;color:var(--txt);text-align:right}
+.cx-level input{width:110px;accent-color:var(--red)}
+.cx-skill .kind{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.cx-skill h3{font-size:16px}
+.cx-sk-body{margin-top:10px;font-size:14px;line-height:1.55;color:#dcdaf0}
+.cx-sk-body h4{margin-top:10px;font-size:14px;color:#fff}
+.cx-sk-body h4:first-child{margin-top:0}
+.cx-sk-body .cond{display:inline-block;margin-left:8px;padding:1px 7px;border:1px solid var(--line);border-radius:3px;font-size:12px;font-weight:600;color:var(--mute)}
+.cx-sk-body p,.cx-sk-body ul{margin-top:3px}
+.cx-sk-body ul{padding-left:18px}
+.cx-sk-body .sv{color:#ff6b6b;font-weight:700}
+.cx-builds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:20px;align-items:start}
+.cx-builds h3{margin-bottom:10px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.cx-builds .builds{max-width:none}
+.cx-more{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;color:var(--txt)}
+.cx-more:hover{text-decoration:underline}
+@media(max-width:900px){.cx-page{grid-template-columns:minmax(0,1fr)}.cx-side{position:static;grid-template-columns:minmax(0,160px) minmax(0,1fr);align-items:start}.cx-side>.slot{grid-row:span 2}.cx-gear{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}
+@media(max-width:560px){.cx-side{grid-template-columns:minmax(0,1fr)}.cx-side>.slot{grid-row:auto;max-width:220px}.cx-skills{columns:1}}
+
+/* skill text like the game: values and terms in red, the condition of a skill name in blue, "- " lines without bullets */
+.cx-sk-body .hl{color:#ff6549;font-weight:600}
+.cx-sk-body h4{font-weight:700}
+.cx-sk-body .cond{display:inline;margin:0;padding:0;border:0;font-size:inherit;font-weight:700;color:#4aa3ff}
+.cx-sk-body .sep{color:#fff}
+.cx-sk-body ul{padding-left:0;list-style:none}
+.cx-sk-body li{padding-left:12px;text-indent:-12px}
+.cx-sk-body li::before{content:"- ";color:var(--mute)}
+
+/* /constructs: search, count and richer cards */
+.cx-search{flex:1 1 200px;max-width:320px;min-height:34px;padding:6px 12px;background:var(--panel);border:1px solid var(--line);border-radius:999px;color:var(--txt);font:600 13px "Quantico"}
+.cx-search:focus{outline:none;border-color:#d8d8dc}
+.cx-count{margin:0 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.cgrid{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
+a.ccard{display:flex;border-left:3px solid var(--c)}
+.ccard .slot{width:84px;height:84px}
+.ccard>div{min-width:0}
+.ccard h3{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-tags{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 6px}
+.cc-tag{display:inline-flex;align-items:center;gap:4px;padding:1px 7px 1px 3px;background:#0f0f10;border:1px solid var(--line);border-radius:999px;font-size:11px}
+.cc-tag .chip-icon,.cc-tag .chip-icon img{width:16px;height:16px}
+.cc-tag .chip-icon b{font-size:13px}
+.cc-tag em{font-style:normal;color:var(--txt)}
+.cc-rank{font-weight:700;color:var(--c)}
+
+.tl-role{align-items:flex-start;padding-top:2px}
+.tl-role img{margin-top:2px}
+.tl-rname{display:grid;gap:1px;line-height:1.25}
+.tl-next{display:block;font-size:10px;color:#e6bd52;white-space:nowrap}
+.tl-next.late{color:var(--red)}
+.tl-lane .tl-next{margin-left:auto;font-size:11px;letter-spacing:0;text-transform:none}
+.cub-skill:not(:has(.slot)){grid-template-columns:minmax(0,1fr)}
+
+/* Search boxes: the browser's blue clear button becomes a thin cross in the site's colors */
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:14px;height:14px;margin:0 0 0 8px;cursor:pointer;opacity:.65;
+  background:linear-gradient(45deg,#0000 43%,var(--mute) 43% 57%,#0000 57%),linear-gradient(-45deg,#0000 43%,var(--mute) 43% 57%,#0000 57%)}
+input[type=search]::-webkit-search-cancel-button:hover{opacity:1;background:linear-gradient(45deg,#0000 43%,var(--red) 43% 57%,#0000 57%),linear-gradient(-45deg,#0000 43%,var(--red) 43% 57%,#0000 57%)}
+
+/* Constructs filters: every chip is the same size, so each group lines up in columns */
+.filter-bar-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:8px}
+.filter-bar-tools .tool.chip{display:flex;justify-content:flex-start;width:100%;min-width:0;margin:0;padding-inline:10px;text-align:left;white-space:nowrap}
+.filter-bar-tools .chip-n{margin-left:auto}
+@media(max-width:560px){.filter-bar-tools{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
+
+/* Effect texts on the Assets detail pages: a line per sentence, values and game terms in red like the skills */
+.effect{display:grid;gap:8px;margin-top:6px}
+.detail .fx .effect p{margin:0}
+.effect ul{display:grid;gap:6px;margin:0;padding:0 0 0 14px;list-style:none;font-size:14px;line-height:1.6;color:#dcdaf0}
+.effect li{padding-left:12px;text-indent:-12px}
+.effect li::before{content:"- ";color:var(--mute)}
+.effect .hl{color:#ff6549;font-weight:600}
+.cub-skill .effect{margin-top:4px}
+
+/* Team Builder intro: one tip per line */
+.ed-help{display:grid;gap:6px;max-width:900px;margin:6px 0 22px;padding:0;list-style:none;color:var(--mute);line-height:1.5}
+.ed-help li{padding-left:14px;text-indent:-14px}
+.ed-help li::before{content:"- ";color:var(--red)}

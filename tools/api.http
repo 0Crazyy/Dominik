@@ -1,0 +1,84 @@
+# Testes manuais da API (extensão REST Client, humao.rest-client).
+# Clique em "Send Request" acima de cada bloco. Os blocos são separados por ###.
+#
+# Local: node tools/deploy.mjs --stage-only, depois
+#   npx wrangler@4 d1 execute dominik --local --file server/schema.sql
+#   npx wrangler@4 pages dev .deploy --port 8788
+# O .dev.vars usa as chaves de teste do Turnstile, que sempre passam.
+#
+# A chave do admin NÃO fica neste arquivo (ele vai para o git). Guarde-a nas configurações do
+# VS Code do usuário (settings.json), assim:
+#   "rest-client.environmentVariables": {
+#     "local": { "host": "http://localhost:8788", "adminKey": "<ADMIN_KEY do .dev.vars>" },
+#     "producao": { "host": "https://dominiko.pages.dev", "adminKey": "<ADMIN_KEY de produção>" }
+#   }
+# Escolha o ambiente em "Rest Client: Switch Environment" (ctrl+alt+e).
+
+### Times aprovados (o que o site lê). Vem do KV, então fica [] até alguém aprovar.
+GET {{host}}/api/teams
+
+### 1/2: abre o formulário. A resposta traz a "stamp" assinada, usada no próximo bloco.
+# @name form
+GET {{host}}/api/submit
+
+### 2/2: envia um time válido. Espere 10 s depois do bloco anterior ou volta {"error":"early"}.
+# Repetir o mesmo time dá "duplicate"; mais de 3 por hora ou 5 por dia dá "limit".
+# O token é qualquer texto: com as chaves de teste do Turnstile ele sempre passa.
+POST {{host}}/api/submit
+Content-Type: application/json
+
+{
+  "stamp": "{{form.response.body.$.stamp}}",
+  "token": "XXXX.DUMMY.TOKEN.XXXX",
+  "author": "tester",
+  "team": {
+    "page": "energy/fire",
+    "name": "Teste REST Client",
+    "order": "A > B > C",
+    "cards": [
+      { "char": "Adelyde: Anabasis", "mem": ["Frederick", "Cottie", "Darwin", "Frederick", "Cottie", "Darwin"] },
+      { "char": "Bianca: Crepuscule", "mem": ["Frederick", "Cottie", "Darwin", "Frederick", "Cottie", "Darwin"] },
+      { "char": "Hanying: Solacetune", "mem": ["Frederick", "Cottie", "Darwin", "Frederick", "Cottie", "Darwin"] }
+    ]
+  }
+}
+
+### Erro esperado: stamp inválida -> 400 {"error":"stale"}
+POST {{host}}/api/submit
+Content-Type: application/json
+
+{ "stamp": "1.abc", "token": "x", "team": {} }
+
+### Erro esperado: campo escondido preenchido (bot) -> 200 {"ok":true}, mas nada é gravado
+POST {{host}}/api/submit
+Content-Type: application/json
+
+{ "website": "spam" }
+
+### Admin: lista os times pendentes que o bot ainda não postou
+GET {{host}}/api/admin
+Authorization: Bearer {{adminKey}}
+
+### Admin: aprova o time de id 1 (regrava a chave "teams" do KV)
+POST {{host}}/api/admin
+Authorization: Bearer {{adminKey}}
+Content-Type: application/json
+
+{ "id": 1, "action": "approve" }
+
+### Admin: rejeita o time de id 1, com motivo
+POST {{host}}/api/admin
+Authorization: Bearer {{adminKey}}
+Content-Type: application/json
+
+{ "id": 1, "action": "reject", "reason": "Teste de rejeição" }
+
+### Admin: tira do site um time já aprovado
+POST {{host}}/api/admin
+Authorization: Bearer {{adminKey}}
+Content-Type: application/json
+
+{ "id": 1, "action": "remove" }
+
+### Erro esperado: sem chave -> 401 {"error":"denied"}
+GET {{host}}/api/admin

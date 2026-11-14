@@ -13,10 +13,14 @@
    rank (badge beside the portrait; levels have their own file, like SS3.png. Left out, it is SSS on free frames and SS on the rest).
    ===================================================== */
 const CHARS = "assets/characters", MEM = "assets/memories", RES = "assets/resonances";
-const WEAPON_RES = n => `${RES}/Ressonância de Arma - ${n} HD.png`;
-const ALL_ATK = `${RES}/Ressonância - ALL ATK.png`;
+const WEAPON_RES = n => `${RES}/Ressonancia de Arma - ${n} HD.png`;
+const ALL_ATK = `${RES}/Ressonancia - ALL ATK.png`;
+// Memory resonances of the Team Builder that have their own icon: the four "Ex-" ones and the three orbs.
+/* exported MEMORY_RES, MEMORY_RES_NAMES */ // tools/make-catalog.mjs reads them
+const MEMORY_RES = n => `${RES}/Ressonancia - ${n}.png`;
+const MEMORY_RES_NAMES = ["Ex- Enhanced Power", "Ex- Precision Action", "Ex- Precision Attack", "Ex- Tactical Adjustment", "Red Orb", "Yellow Orb", "Blue Orb"];
 // Memory sets, in the tabs and order of the game's Select Memory Set screen, plus Nihil and Uniframe.
-// Each tab is a folder in assets/memories, and files are named "Memória - <name> <1-4|2-5|3-6|WH>.<ext>".
+// Each tab is a folder in assets/memories, and files are named "Memoria - <name> <1-4|2-5|3-6|WH>.<ext>".
 // Entry: [name, boost, art extension]. No extension = no art yet: its Assets card shows empty slots
 // and a build shows its name instead. When the art arrives, just add the extension here.
 const MEMORY_TABS = {
@@ -44,7 +48,7 @@ const MEMORY_TABS = {
     ["Jack", "Fire Boost", "png"], ["Lucrezia", "Lightning Boost", "png"], ["Wu'an", "ATK Boost", "png"], ["Koya", "ATK Boost", "png"]]
 };
 const MEM_INDEX = new Map(Object.entries(MEMORY_TABS).flatMap(([tab, sets]) => sets.map(([name, , ext]) => [name, { tab, ext }])));
-const memFile = (name, piece, ext = MEM_INDEX.get(name).ext) => `${MEM}/${MEM_INDEX.get(name).tab}/Memória - ${name} ${piece}.${ext}`;
+const memFile = (name, piece, ext = MEM_INDEX.get(name).ext) => `${MEM}/${MEM_INDEX.get(name).tab.toLowerCase()}/Memoria - ${name} ${piece}.${ext}`;
 // The three arts of a memory set, in slot order: 1-4, 2-5, 3-6
 const memSet = name => ["1-4", "2-5", "3-6"].map(p => MEM_INDEX.get(name).ext ? memFile(name, p) : name);
 // 4 pieces of "main" (slots 1, 2, 3, 5) + 2 pieces of "sub" (slots 4, 6)
@@ -347,7 +351,7 @@ const COMPS = {
         skills: cubSkills(LUNA),
         desc: "\"The\" set for every Nihil occasion; not much to change.\n• Cottie: she still needs it to run smoothly.\n• DLT: not needed for the basics since her leap." },
       { bar: "red", role: "starter", ...ROSETTA_KIT, wh: "Bathlon", memories: memBuild(rotated(NIMUE), BATHLON), matrix: matrix(DD, ML, GA),
-        resonance: `${ROSETTA}/Skill - Ataque Básico.webp`,
+        resonance: `${ROSETTA}/Skill - Ataque Basico.webp`,
         desc: "Made for the Nihil team: one Signature per entrance.\n• SS3 and above: still play her as at SS0. Awkward, but every help counts.\n• Bathlon over Cottie: she deals some damage and, with Luna's class skill effect, debuffs enemies, while Cottie would only help herself. A good fit given the lack of Ishmael." },
       { bar: "gold", name: "Nirvatia: Dirge", role: "",
         symbol: classIcon("Amplifier"),
@@ -568,18 +572,18 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 // ?v=4: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
 const web = src => src.replace("assets/", "assets-web/") + ".webp" + (src.startsWith("assets/rank/") ? "?v=4" : "");
 const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
-// Name shown when hovering an icon, read from its file name ("Memória - Cottie 1-4.png" is "Cottie")
+// Name shown when hovering an icon, read from its file name ("Memoria - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {
   const file = src.split("/").pop().replace(/\.\w+$/, "");
   if (file === "Tanque") return "Tank";
   if (file === "Skill - Orb Vermelho") return "Red Orb";
-  if (file === "Skill - Ataque Básico") return "Basic Attack";
-  if (file === "Ressonância - ALL ATK") return "Any ATK";
+  if (file === "Skill - Ataque Basico") return "Basic Attack";
+  if (file === "Ressonancia - ALL ATK") return "Any ATK";
   if (file === "Classe - Adelyde Anabasis") return "Overlinker";
   if (file.startsWith("Skill - Signature")) return "Signature";
   if (file.startsWith("Skill - Core")) return "Core Passive";
   if (file.startsWith("Skill - Class")) return "Class Skill";
-  const name = file.replace(/^(Memória|Ressonância de Arma|Ressonância|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
+  const name = file.replace(/^(Memoria|Ressonancia de Arma|Ressonancia|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
   const skill = name.match(/^Skill (\d)$/);
   return skill ? cubSkill(src, skill[1])?.[0] || `CUB ${name}` : name;
 }
@@ -587,10 +591,10 @@ const cubSkill = (src, n) => CUB_SKILLS[src.split("/").at(-2)]?.[n - 1];
 const memoryInfo = name => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2} pcs: ${text}`).join("\n\n");
 // What an icon does, when known: shown under its name
 function iconInfo(src = "") {
-  const memory = src.match(/Memória - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
+  const memory = src.match(/Memoria - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
   if (memory) return memoryInfo(memory);
   if (skill) return cubSkill(src, skill)?.[1] || "";
-  return RESONANCE_EFFECTS[iconName(src)] || "";
+  return RESONANCE_EFFECTS[iconName(src)] || MEMORY_RESONANCE_EFFECTS[iconName(src)] || "";
 }
 const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(info)}"` : "");
 // Detail pages: /assets/<memory|weapon|resonance|cub|skill>/<id> and /constructs/<id>
@@ -610,6 +614,8 @@ const slot = (src, label = "", overlay = "", tip = iconName(src), href = "", inf
 };
 // Both bars are 2048x230 and span the whole slot
 const STAR_BARS = {
+  2: "assets/overlay/UI-Supply-2Star.png",
+  3: "assets/overlay/UI-Supply-3Star.png",
   4: "assets/overlay/UI-Supply-4Star.png",
   5: "assets/overlay/UI-Supply-5Star.png",
   6: "assets/overlay/UI-Supply-6Star.png"
@@ -634,7 +640,7 @@ const menuIcon = (dir, e) => pic(`assets/${dir}/${e}.png`, `alt=""${ICON_FIT[e] 
 const group = (label, key, arr, iconDir) =>
   `<button class="sub" data-grp="${key}" aria-expanded="false"><svg class="ico" aria-hidden="true"><use href="#i-${key}"/></svg>${label} <i>▾</i></button>` +
   `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">Nothing here yet</p>`}</div>`;
-menu.innerHTML = group(TEAM_LISTS.energy.label, "energy", ENERGY, "energy type") + group(TEAM_LISTS.effect.label, "effect", EFFECT, "effects") +
+menu.innerHTML = group(TEAM_LISTS.energy.label, "energy", ENERGY, "energy-type") + group(TEAM_LISTS.effect.label, "effect", EFFECT, "effects") +
   group(TEAM_LISTS.special.label, "special", SPECIAL_EFFECT, "effects");
 // A list of the side menu glides open and shut at one pace, so the group closing and the one opening balance out. Only clicks animate: a page opening its own group doesn't
 const MENU_SLIDE = { duration: 280, easing: "cubic-bezier(.4,0,.2,1)" };
@@ -974,6 +980,17 @@ $("#main").addEventListener("click", e => {
     });
     return;
   }
+  const stars = e.target.closest("[data-stars]");
+  if (stars) {
+    weaponStars = stars.dataset.stars;
+    const tab = location.pathname.split("/").filter(Boolean).at(2) || "all";
+    shownRows.weapons = weaponRows(["All", ...ENERGY].find(t => slug(t) === tab) || "All");
+    $("#starFilter").outerHTML = weaponStarBar();
+    $("#sortTable").innerHTML = sortTable("weapons");
+    setQuery(sortQuery("weapons"));
+    $(`[data-stars="${weaponStars}"]`).focus();
+    return;
+  }
   const column = e.target.closest("[data-sort]")?.dataset.sort;
   if (!column) return;
   const box = $("#sortTable"), { table } = box.dataset;
@@ -1059,7 +1076,11 @@ function cubList() {
   for (const ch of characters()) for (const { card } of ch.builds) {
     if (!card.construct || card.construct.split("/").at(-2) !== charId(ch.name)) continue;
     const name = iconName(card.construct);
-    if (!found.has(name)) found.set(name, { name, owner: ch.name, art: card.construct, skills: card.skills || [] });
+    if (!found.has(name)) found.set(name, { name, owner: ch.name, rank: "S", element: CONSTRUCTS[ch.name][1], art: card.construct, skills: card.skills || [] });
+  }
+  // The CUBs no build uses yet, from EXTRA_CUBS
+  for (const [name, owner, rank, element, dir, icons] of EXTRA_CUBS) {
+    if (!found.has(name)) found.set(name, { name, owner, rank, element, art: `${dir}/CUB - ${name}.png`, skills: icons ? cubSkills(dir) : [] });
   }
   return [...found.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -1127,7 +1148,7 @@ function home() {
   };
   // Cells go column by column: the row names, then each energy with its effects
   const labels = Object.values(TEAM_LISTS).map(l => `<h2 class="home-label">${l.label}</h2>`).join("");
-  const columns = ENERGY.map(e => tile(e, "energy", "energy type") + tile(ENERGY_EFFECT[e], "effect", "effects", TILE_COLOR[e]) + tile(ENERGY_SPECIAL[e], "special", "effects", TILE_COLOR[e])).join("");
+  const columns = ENERGY.map(e => tile(e, "energy", "energy-type") + tile(ENERGY_EFFECT[e], "effect", "effects", TILE_COLOR[e]) + tile(ENERGY_SPECIAL[e], "special", "effects", TILE_COLOR[e])).join("");
   const splash = HOME_SPLASHES[Math.floor(Math.random() * HOME_SPLASHES.length)];
   return `<section class="hero">
       <div class="hero-tx">
@@ -1214,7 +1235,14 @@ const STAT_NAMES = ["ATK", "DEF", "CRIT", "HP"];
 const SORT_DEFAULT = { memories: "Release-high", weapons: "Release-high", cubs: "Release-high", resonances: "" };
 const tableSort = { ...SORT_DEFAULT }, shownRows = { memories: [], weapons: [], cubs: [], resonances: [] };
 // The default order stays out of the address
-const sortQuery = table => ({ sort: tableSort[table] === SORT_DEFAULT[table] ? "" : tableSort[table] });
+const sortQuery = table => ({ sort: tableSort[table] === SORT_DEFAULT[table] ? "" : tableSort[table], ...(table === "weapons" && { stars: weaponStars }) });
+// Weapons page: filter by rank (4, 5 or 6 stars). It goes in the address (?stars=6) next to the element tab and the sort
+let weaponStars = "";
+const weaponStarList = () => [...new Set(WEAPONS.map(w => weaponRank(w[1], w[3], w[5])))].sort((a, b) => b - a);
+const weaponRows = tab => WEAPONS.filter(w => (tab === "All" || CONSTRUCTS[w[0]]?.[1] === tab)
+  && (!weaponStars || weaponRank(w[1], w[3], w[5]) === Number(weaponStars)));
+const weaponStarBar = () => `<div class="sortbar star-filter" id="starFilter" role="group" aria-label="Weapon rank"><span>Rank</span>${["", ...weaponStarList()].map(n =>
+  `<button class="tool${String(n) === weaponStars ? " on" : ""}" data-stars="${n}" aria-pressed="${String(n) === weaponStars}">${n ? `${n}<b class="star s${n}">★︎</b>` : "All"}</button>`).join("")}</div>`;
 // The two orders of a column: Name goes A to Z first, the others start from the highest value
 const columnSorts = column => column === "Name" ? ["az", "za"] : [`${column}-high`, `${column}-low`];
 function nextSort(table, column) {
@@ -1239,6 +1267,9 @@ const weaponFile = file => file && (file.startsWith("assets/") ? file : `${CHARS
 const weaponThumb = (file, name, rank = "") => thumb(weaponFile(file), file ? starsOf(name, file, rank) : "");
 // A character without a build has no page to link to
 const ownerLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name);
+// The patch a frame came with: FRAME_PATCH first, then the Meta Timeline data. A frame in neither shows a dash
+const patchOf = frame => FRAME_PATCH[frame] || TIMELINE.find(c => c.name === frame)?.patch || "";
+const patchCell = frame => `<td class="txt rel">${esc(patchOf(frame)) || "—"}</td>`;
 const weaponRow = ([owner, name, type, file, , rank]) => {
   const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
   const subtitle = owner
@@ -1247,16 +1278,17 @@ const weaponRow = ([owner, name, type, file, , rank]) => {
   return `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${weaponThumb(file, name, rank)}</div>
       <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${subtitle}</small></div></div></td>
-    ${WEAPON_STATS[name].map(value => `<td>${value}</td>`).join("")}</tr>`;
+    ${WEAPON_STATS[name].map(value => `<td>${value}</td>`).join("")}${patchCell(listedOwner)}</tr>`;
 };
 const SORT_TABLES = {
   memories: { columns: STAT_NAMES, row: set => memoryRow(set), name: ([name]) => name,
     value: ([name], column) => column === "Release" ? MEMORY_RELEASE[name] : MEMORY_STATS[name][STAT_NAMES.indexOf(column)] },
   // Character-bound weapons follow their frame's release; standalone weapons sort after them
-  weapons: { columns: ["ATK", "CRIT"], row: weapon => weaponRow(weapon), name: ([, name]) => name,
-    value: ([owner, name], column) => column === "Release" ? CONSTRUCTS[owner]?.[0] ?? 0 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
+  weapons: { columns: ["ATK", "CRIT"], release: true, row: weapon => weaponRow(weapon), name: ([, name]) => name,
+    // A weapon with no frame comes after them, the higher stars first
+    value: ([owner, name, , file, , rank], column) => column === "Release" ? CONSTRUCTS[owner]?.[0] ?? weaponRank(name, file, rank) / 100 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
   // Same for a CUB. They all have the same ATK, so no stat column
-  cubs: { columns: [], row: cub => cubRow(cub), name: cub => cub.name, value: cub => CONSTRUCTS[cub.owner][0] },
+  cubs: { columns: [], plain: ["Recommended user", "Element"], release: true, row: cub => cubRow(cub), name: cub => cub.name, value: cub => CONSTRUCTS[cub.owner]?.[0] ?? 0 },
   resonances: { columns: [], row: resonance => resonanceRow(resonance), name: ([name]) => name, noRelease: true }
 };
 // Replaces the query of the address without adding a history entry. Empty values are left out
@@ -1276,20 +1308,24 @@ function openTable(table, rows) {
   return `<div id="sortTable" data-table="${table}">${sortTable(table)}</div>`;
 }
 function sortTable(table) {
-  const sort = tableSort[table], { columns, row, noRelease } = SORT_TABLES[table];
+  const sort = tableSort[table], { columns, plain = [], release: releaseColumn, row, noRelease } = SORT_TABLES[table];
   const state = column => { const [first, second] = columnSorts(column); return sort === first ? 1 : sort === second ? 2 : 0; };
-  const head = ["Name", ...columns].map(column => {
+  const sortHead = column => {
     const on = state(column), arrow = ["", "▼", "▲"][on];
     const aria = !on ? "none" : (on === 1) === (column === "Name") ? "ascending" : "descending";
-    return `<th scope="col" aria-sort="${aria}"><button data-sort="${column}">${column}<i>${arrow}</i></button></th>`;
-  }).join("");
+    return `<th scope="col" aria-sort="${aria}"${column === "Release" ? ` class="txt rel"` : ""}><button data-sort="${column}">${column}<i>${arrow}</i></button></th>`;
+  };
+  // Text columns (who uses it, element) leave the phone layout, where the subtitle under the name says the same
+  const head = [sortHead("Name"), ...plain.map(label => `<th scope="col" class="txt wide">${label}</th>`), ...columns.map(sortHead), ...(releaseColumn ? [sortHead("Release")] : [])].join("");
   const release = state("Release");
-  const bar = noRelease ? "" : `<div class="sortbar"><span>Sort by</span><button class="tool${release ? " on" : ""}" data-sort="Release" aria-pressed="${!!release}">Release order${["", ": newest first", ": oldest first"][release]}</button></div>`;
+  const bar = noRelease || releaseColumn ? "" : `<div class="sortbar"><span>Sort by</span><button class="tool${release ? " on" : ""}" data-sort="Release" aria-pressed="${!!release}" title="${["Sort by release order", "Newest first", "Oldest first"][release]}">Release<i>${["", "▼", "▲"][release]}</i></button></div>`;
   return `${bar}
     <table class="mtable"><thead><tr>${head}</tr></thead><tbody>${sortedRows(table).map(row).join("")}</tbody></table>`;
 }
+// Element tabs get the element's icon, and Support the icon of the Support class
+const tabIcon = t => ENERGY.includes(t) ? menuIcon("energy-type", t) : t === "Support" ? pic(classIcon("Support")) : "";
 const assetTabs = (base, tabs, tab, label) => `<div class="atabs" role="navigation" aria-label="${label}">${tabs.map(t =>
-  `<a href="/assets/${base}/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${t}</a>`).join("")}</div>`;
+  `<a href="/assets/${base}/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${tabIcon(t) ? `<span class="chip-icon">${tabIcon(t)}</span>` : ""}${t}</a>`).join("")}</div>`;
 // Constructs page: newest first. The filters stay while browsing and go in the address (?element=Ice), so a link keeps them
 const CONSTRUCT_FILTERS = ["Element", "Class", "Rank", "Effect"];
 const constructFilter = {};
@@ -1302,32 +1338,50 @@ function readFilters() {
 }
 const constructValue = (c, group) => CONSTRUCTS[c.name][CONSTRUCT_FILTERS.indexOf(group) + 1];
 // Class files that are not named after the class. Only rank S has art: any other rank shows its letter
-const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${ADELYDE}/Classe - Adelyde Anabasis.png` };
-const filterIcon = (group, value) => group === "Element" ? menuIcon("energy type", value) : group === "Effect" ? menuIcon("effects", value)
-  : group === "Class" ? value === "Vanguard" ? `<b>V</b>` : pic(CLASS_ART[value] || classIcon(value))
+const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${ADELYDE}/Classe - Adelyde Anabasis.png`, Vanguard: classIcon("Vanguard") };
+const filterIcon = (group, value) => group === "Element" ? menuIcon("energy-type", value) : group === "Effect" ? menuIcon("effects", value)
+  : group === "Class" ? pic(CLASS_ART[value] || classIcon(value))
     : value === "S" ? pic("assets/rank/S.png") : `<b>${esc(value)}</b>`;
 function constructFilters() {
   const active = CONSTRUCT_FILTERS.filter(group => constructFilter[group]).length;
-  const bar = `<div class="filter-bar"><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">Filters${active ? ` (${active})` : ""}</button>${active ? `<button class="tool" data-clear-filters>Clear filters</button>` : ""}</div>`;
+  const bar = `<div class="filter-bar"><input class="cx-search" type="search" placeholder="Search constructs" aria-label="Search constructs" value="${esc(constructSearch)}" data-construct-search><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">Filters${active ? ` (${active})` : ""}</button><button class="tool" data-clear-filters${active ? "" : " data-empty"} aria-disabled="${!active}">Clear filters</button></div>`;
   return `${bar}<div class="filters${filtersOpen ? " open" : ""}">${CONSTRUCT_FILTERS.map(group => {
-    const found = new Set(constructRoster().map(c => constructValue(c, group)).filter(Boolean));
-    const values = group === "Element" ? ENERGY.filter(e => found.has(e)) : group === "Rank" ? [...found].sort().reverse() : [...found].sort();
-    const chip = (label, value) => `<button class="tool chip${(constructFilter[group] || "") === value ? " on" : ""}" data-filter="${group}" data-value="${esc(value)}" aria-pressed="${(constructFilter[group] || "") === value}">${value ? `<span class="chip-icon">${filterIcon(group, value)}</span>` : ""}${esc(label)}</button>`;
-    return `<div class="filter" role="group" aria-label="${group}"><span>${group}</span>${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div>`;
+    const tally = new Map();
+    for (const c of constructRoster()) { const v = constructValue(c, group); if (v) tally.set(v, (tally.get(v) || 0) + 1); }
+    const found = new Set(tally.keys());
+    const values = group === "Element" ? ENERGY.filter(e => found.has(e)) : group === "Rank" ? ["S", "A", "B"].filter(r => found.has(r)) : [...found].sort();
+    const chip = (label, value) => {
+      const on = (constructFilter[group] || "") === value;
+      const style = group === "Element" && value ? ` style="--c:${TILE_COLOR[value] || ""}"` : "";
+      const icon = value ? `<span class="chip-icon">${filterIcon(group, value)}</span>` : "";
+      return `<button class="tool chip${on ? " on" : ""}"${style} data-filter="${group}" data-value="${esc(value)}" aria-pressed="${on}"${group === "Rank" && value ? ` aria-label="Rank ${esc(value)}"` : ""}>${icon}${group === "Rank" && value ? "" : esc(label)}${value ? `<small class="chip-n">${tally.get(value)}</small>` : ""}</button>`;
+    };
+    return `<div class="filter" role="group" aria-label="${group}"><span>${group}</span><div class="filter-bar-tools">${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div></div>`;
   }).join("")}</div>`;
 }
+// A card per construct: portrait, rank, and the class, element and Effect as icons, tinted by the element
+let constructSearch = "";
 function constructCards() {
-  const list = constructRoster().filter(c => CONSTRUCT_FILTERS.every(group => !constructFilter[group] || constructValue(c, group) === constructFilter[group]))
+  const term = constructSearch.trim().toLowerCase();
+  const list = constructRoster().filter(c => CONSTRUCT_FILTERS.every(group => !constructFilter[group] || constructValue(c, group) === constructFilter[group]) && (!term || c.name.toLowerCase().includes(term)))
     .sort((a, b) => CONSTRUCTS[b.name][0] - CONSTRUCTS[a.name][0]);
-  if (!list.length) return `<p class="sub">No constructs match these filters.</p>`;
-  return `<div class="agrid">${list.map(c => {
+  const count = `<p class="cx-count">${list.length} construct${list.length === 1 ? "" : "s"}, newest first</p>`;
+  if (!list.length) return `${count}<p class="sub">No constructs match these filters.</p>`;
+  return `${count}<div class="agrid cgrid">${list.map(c => {
     const [, element, type, rank, effect] = CONSTRUCTS[c.name];
-    const count = c.builds.length;
-    const builds = count ? `${count} build${count === 1 ? "" : "s"}` : "No builds yet";
-    return charCard(c, characterHref(c.name), [rank, type, element, effect, builds].filter(Boolean).join(" · "));
+    const builds = c.builds.length ? `${c.builds.length} build${c.builds.length === 1 ? "" : "s"}` : "No builds yet";
+    const tag = (group, value) => value ? `<span class="cc-tag" title="${esc(value)}"><span class="chip-icon">${filterIcon(group, value)}</span><em>${esc(value)}</em></span>` : "";
+    return `<a class="acard ccard" href="${characterHref(c.name)}" style="--c:${TILE_COLOR[element] || "#5a5a62"}">${thumb(c.portrait)}
+      <div><h3>${esc(c.name)}</h3><div class="cc-tags">${tag("Class", type)}${tag("Element", element)}${tag("Effect", effect)}</div>
+      <p><span class="cc-rank">${esc(rank)}</span> · ${builds}</p></div></a>`;
   }).join("")}</div>`;
 }
-const constructsView = () => `${constructFilters()}${constructCards()}`;
+const constructsView = () => `${constructFilters()}<div id="constructGrid">${constructCards()}</div>`;
+$("#main").addEventListener("input", e => {
+  if (!e.target.matches("[data-construct-search]")) return;
+  constructSearch = e.target.value;
+  $("#constructGrid").innerHTML = constructCards();
+});
 function showFilters(focus) {
   $("#constructs").innerHTML = constructsView();
   setQuery(filterQuery());
@@ -1345,7 +1399,7 @@ function usedIn(test) {
 }
 function memoryPage([name, boost, ext]) {
   const { tab } = MEM_INDEX.get(name);
-  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2><p>${esc(text)}</p>`).join("");
+  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2>${describe(text)}`).join("");
   return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
       <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>
@@ -1363,7 +1417,7 @@ function weaponPage([owner, name, type, file, effect, rank]) {
     : "";
   const buildUsage = owner ? usedIn(c => c.name === owner) : "";
   return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
-    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}<h2>Effect</h2><p>${esc(effect)}</p></div></div>
+    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2>Effect</h2>${describe(effect)}` : ""}</div></div>
     ${usableBy}${buildUsage}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
@@ -1371,23 +1425,22 @@ const resonanceRow = ([name, effect]) => `<tr>
       <div><a href="${resonanceHref(name)}">${esc(name)}</a><small>${esc(effect)}</small></div></div></td></tr>`;
 function resonancePage([name, effect]) {
   return `${backLink("/assets/resonances", "Weapon Resonance")}<h1>${esc(name)}</h1><p class="sub">Weapon Resonance</p>
-    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>Effect</h2><p>${esc(effect)}</p></div></div>
+    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>Effect</h2>${describe(effect)}</div></div>
     ${usedIn(c => (c.matrix || []).includes(WEAPON_RES(name)))}`;
 }
 const cubRow = cub => `<tr>
-    <td><div class="mt-name"><div class="mt-art cub-art">${thumb(cub.art, STARS)}</div>
-      <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small>${ownerLink(cub.owner)} · ${esc(CONSTRUCTS[cub.owner][1])}</small></div></div></td></tr>`;
+    <td><div class="mt-name"><div class="mt-art cub-art">${thumb(cub.art, cub.rank === "A" ? starOverlay(5) : STARS)}</div>
+      <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small><span class="desk">Rank ${cub.rank}</span><span class="mob">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank}`} · ${esc(cub.element)}</span></small></div></div></td>
+    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${patchCell(cub.owner)}</tr>`;
 function cubPage(cub) {
   const folder = cub.art.split("/").at(-2), skills = CUB_SKILLS[folder] || [];
   // Some builds show their CUB skills in another order, so each icon is found by its file number
   const icon = i => cub.skills.find(src => src.includes(`${folder}/CUB - Skill ${i + 1}.`));
-  return `${backLink("/assets/cubs", "C.U.B.s")}<h1>${esc(cub.name)}</h1><p class="sub"><a href="${characterHref(cub.owner)}">${esc(cub.owner)}</a></p>
+  return `${backLink("/assets/cubs", "C.U.B.s")}<h1>${esc(cub.name)}</h1><p class="sub">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank} C.U.B.`} · ${esc(cub.element)}</p>
     <div class="detail wpn-detail">${thumb(cub.art)}<div class="fx">${skills.map(([name, effect], i) =>
-      `<div class="cub-skill">${thumb(icon(i))}<div><h2>${esc(name)}</h2><p>${esc(effect)}</p></div></div>`).join("") || "<p>No skill text yet.</p>"}</div></div>
+      `<div class="cub-skill">${icon(i) ? thumb(icon(i)) : ""}<div><h2>${esc(name)}</h2>${describe(effect)}</div></div>`).join("") || "<p>No skill text yet.</p>"}</div></div>
     ${usedIn(c => c.construct === cub.art)}`;
 }
-// Character art in a grid, for /constructs
-const charCard = (c, href, line) => `<a class="acard wpn" href="${href}">${thumb(c.portrait)}<div><h3>${esc(c.name)}</h3><p>${esc(line)}</p></div></a>`;
 // skills-data.js is long, so it only loads when a skill page opens
 let skillsState = "";
 function loadSkills() {
@@ -1401,17 +1454,18 @@ function loadSkills() {
 }
 // Each skill's icon is named after its type, in the character's skills folder
 const skillIcon = (name, type) => `${CHARS}/${charId(name)}/skills/${type}.png`;
-function skillPage(ch) {
-  const head = `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">Construct page</a></p>`;
+// The skills of a character with their icons and texts, for the Skills page and for the character page
+function skillList(ch) {
   if (skillsState !== "ready") {
     loadSkills();
-    return head + `<p class="empty">${skillsState === "failed" ? "Could not load the skills. Reload the page to try again." : "Loading skills..."}</p>`;
+    return `<p class="empty">${skillsState === "failed" ? "Could not load the skills. Reload the page to try again." : "Loading skills..."}</p>`;
   }
   const skills = CHARACTER_SKILLS[ch.name];
-  if (!skills) return head + `<p class="empty">No skill text for this character yet.</p>`;
-  return head + `<div class="skills">${skills.map(([type, name, effect]) =>
+  if (!skills) return `<p class="empty">No skill text for this character yet.</p>`;
+  return `<div class="skills">${skills.map(([type, name, effect]) =>
     `<section class="fx">${thumb(skillIcon(ch.name, type))}<div><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(effect)}</p></div></section>`).join("")}</div>`;
 }
+const skillPage = ch => `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">Construct page</a></p>${skillList(ch)}`;
 function assetsPage(key, pick = "all") {
   const notFound = `<p class="empty">Page not found.</p>`;
   if (key === "memory") {
@@ -1431,14 +1485,14 @@ function assetsPage(key, pick = "all") {
     return cub ? cubPage(cub) : notFound;
   }
   if (key === "skill") {
-    const ch = characters().find(c => charId(c.name) === pick);
+    const ch = constructRoster().find(c => charId(c.name) === pick);
     return ch ? skillPage(ch) : notFound;
   }
   if (key === "resonances") return `<h1>Weapon Resonance</h1><p class="sub">Assets</p>${openTable("resonances", Object.entries(RESONANCE_EFFECTS))}`;
   if (key === "cubs") {
     const tabs = ["All", ...ENERGY], tab = tabs.find(t => slug(t) === pick);
     if (!tab) return notFound;
-    shownRows.cubs = tab === "All" ? cubList() : cubList().filter(c => CONSTRUCTS[c.owner][1] === tab);
+    shownRows.cubs = tab === "All" ? cubList() : cubList().filter(c => c.element === tab);
     return `<h1>C.U.B.s</h1><p class="sub">Assets</p>
     <div class="assets">${assetTabs("cubs", tabs, tab, "C.U.B. element")}
       ${openTable("cubs", shownRows.cubs)}</div>`;
@@ -1446,10 +1500,11 @@ function assetsPage(key, pick = "all") {
   if (key === "weapons") {
     const tabs = ["All", ...ENERGY], tab = tabs.find(t => slug(t) === pick);
     if (!tab) return notFound;
-    shownRows.weapons = tab === "All" ? WEAPONS : WEAPONS.filter(([owner]) => CONSTRUCTS[owner]?.[1] === tab);
+    const stars = new URLSearchParams(location.search).get("stars");
+    weaponStars = weaponStarList().map(String).includes(stars) ? stars : "";
     return `<h1>Weapons</h1><p class="sub">Assets</p>
     <div class="assets">${assetTabs("weapons", tabs, tab, "Weapon element")}
-      ${openTable("weapons", shownRows.weapons)}</div>`;
+      <div>${weaponStarBar()}${openTable("weapons", weaponRows(tab))}</div></div>`;
   }
   if (key !== "memories") return notFound;
   const tabs = ["All", ...Object.keys(MEMORY_TABS)], tab = tabs.find(t => slug(t) === pick);
@@ -1701,7 +1756,7 @@ function patchCard(patch, today, picked) {
     : `<p class="calc-label">Patch income</p>`;
   return `<section class="calc-card calc-patch" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
     <div class="calc-head"><div>${head}</div>${patch.collab ? "" : `<label class="calc-rank">Rank <select data-plan="rank" aria-label="Frame rank">${["S", "A"].map(r => `<option${r === rank ? " selected" : ""}>${r}</option>`).join("")}</select></label>`}</div>
-    ${patch.collab ? "" : `${income}${currencyGrid(patch.gains, (c, value) => `<b>${amount(value)}</b>`)}
+    ${patch.collab ? "" : `${income}${currencyGrid(patch.gains, (_, value) => `<b>${amount(value)}</b>`)}
     <p class="calc-label">Passes</p><div class="calc-passes">${passes}</div>
     <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
     <p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div>
@@ -1963,7 +2018,7 @@ const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overli
 const TL_LINES = [["Tank", "Breaker"], ["Support", "Amplifier", "Overlinker"]];
 const roleLine = role => TL_LINES.find(line => line.includes(role)) || [role];
 const TL_VIEWS = {
-  element: { field: "element", name: "Class & Element", groups: () => ENERGY, dir: "energy type", rule: "class and element", plural: "elements" },
+  element: { field: "element", name: "Class & Element", groups: () => ENERGY, dir: "energy-type", rule: "class and element", plural: "elements" },
   effect: { field: "effect", name: "Class & Effect", groups: () => [...EFFECT, ...SPECIAL_EFFECT], dir: "effects", rule: "class and Effect", plural: "Effects" }
 };
 // Effects with no color of their own on the home page
@@ -1998,6 +2053,16 @@ function timelineLanes(field, group) {
   }) })).filter(lane => lane.reigns.length);
 }
 const reignInfo = r => `Released in ${r.patch} · ${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"} · ${amount(r.days)} days${r.next ? ` · replaced by ${r.next.name}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : " · still in place"}${TL_FREE[r.name] ? ` · free from ${TL_FREE[r.name]}` : ""}`;
+// Expected replacement of whoever holds a class now, by "group|class", filled by timelineBody (see the forecast there)
+let tlForecast = new Map();
+function forecastNote(group, role) {
+  const r = tlForecast.get(group + "|" + role);
+  if (!r) return "";
+  const today = dayNumber(calcToday()), left = r.expected - today;
+  const text = left > 0 ? "Next ≈ " + monthYear(new Date(r.expected * 864e5).toISOString().slice(0, 10)) : "Replacement overdue";
+  const tip = left > 0 ? "in about " + amount(left) + " days" : amount(-left) + " days past the class average";
+  return `<small class="tl-next${left > 0 ? "" : " late"}" title="Estimate: ${esc(r.name)} released + average ${esc(role)} line life (${amount(Math.round(r.average))} days), ${tip}">${text}</small>`;
+}
 const reignHref = name => CONSTRUCTS[name] ? ` href="${characterHref(name)}"` : "";
 // What the page shows after the filters. The numbers at the top always use every character
 function timelineShown(view) {
@@ -2022,18 +2087,18 @@ function timelineChart(view) {
     const rows = lanes.findIndex(lane => lane.role === r.next?.role) - row;
     return r.next && r.next.role !== r.role && rows > 0 ? `<b class="tl-link" style="left:${at(dayNumber(r.next.date))}%;height:${rows * TL_ROW - 36}px"></b>` : "";
   };
-  const lane = ({ role, reigns }, row, lanes) => `<div class="tl-row"><span class="tl-role">${row && roleLine(role).includes(lanes[row - 1].role) ? "<em>↳</em>" : ""}${pic(roleArt(role))}${esc(role)}</span><div class="tl-track">${lines}${reigns.map(r => link(r, row, lanes)).join("")}${reigns.map(reign).join("")}</div></div>`;
+  const lane = ({ role, reigns }, row, lanes, group) => `<div class="tl-row"><span class="tl-role">${row && roleLine(role).includes(lanes[row - 1].role) ? "<em>↳</em>" : ""}<span>${pic(roleArt(role))}</span><span class="tl-rname">${esc(role)}${forecastNote(group, role)}</span></span><div class="tl-track">${lines}${reigns.map(r => link(r, row, lanes)).join("")}${reigns.map(reign).join("")}</div></div>`;
   return `<div class="tl-chart">
     <div class="tl-row tl-years"><span></span><div class="tl-track">${years.map(year => `<b style="left:${at(dayNumber(`${year}-01-01`))}%">${year}</b>`).join("")}</div></div>
     <div class="tl-row tl-marks"><span></span><div class="tl-track">${marks.map((mark, i) => `<b class="${i % 2 ? "low" : ""}" style="left:${at(dayNumber(mark.date))}%"${tipAttr(mark.text, monthYear(mark.date))}>${esc(mark.text)}</b>`).join("")}</div></div>
-    ${timelineShown(view).map(({ group, lanes }) => `<section class="tl-group" style="--c:${tlColor(group)}"><h2>${menuIcon(view.dir, group)}${esc(group)}</h2>${lanes.map(lane).join("")}</section>`).join("")}
+    ${timelineShown(view).map(({ group, lanes }) => `<section class="tl-group" style="--c:${tlColor(group)}"><h2>${menuIcon(view.dir, group)}${esc(group)}</h2>${lanes.map((l, i, all) => lane(l, i, all, group)).join("")}</section>`).join("")}
   </div>`;
 }
 function timelineList(view) {
   const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}</b><small>${esc(r.patch)}</small><small>${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${amount(r.days)} days</em></a>`;
   return `<div class="tl-list"><p class="tl-chips">${timelineMarks().map(mark => `<span>${monthYear(mark.date)} · ${esc(mark.text)}</span>`).join("")}</p>
     ${timelineShown(view).map(({ group, lanes }, i) => `<details class="tl-fold" style="--c:${tlColor(group)}"${i ? "" : " open"}><summary>${menuIcon(view.dir, group)}${esc(group)}</summary>
-      ${lanes.map(({ role, reigns }) => `<p class="tl-lane">${pic(roleArt(role))}${esc(role)}</p>${[...reigns].reverse().map(item).join("")}`).join("")}</details>`).join("")}</div>`;
+      ${lanes.map(({ role, reigns }) => `<p class="tl-lane">${pic(roleArt(role))}${esc(role)}${forecastNote(group, role)}</p>${[...reigns].reverse().map(item).join("")}`).join("")}</details>`).join("")}</div>`;
 }
 function timelineBody() {
   const view = TL_VIEWS[timelineView];
@@ -2057,6 +2122,14 @@ function timelineBody() {
     const line = done.filter(other => roleLine(r.role).includes(other.role));
     return { ...r, average: line.length ? mean(line) : 0 };
   }).filter(r => r.average).sort((x, y) => y.days / y.average - x.days / x.average);
+  // Forecast: a character is expected to be replaced after the average life of their class line, counted from their release.
+  // It is an estimate from past patches, not an announcement, so a character past the average shows as overdue
+  const today = dayNumber(calcToday());
+  const dayDate = day => new Date(day * 864e5).toISOString().slice(0, 10);
+  const forecast = watch.map(r => ({ ...r, expected: r.start + Math.round(r.average) })).sort((x, y) => x.expected - y.expected);
+  tlForecast = new Map(forecast.map(r => [r.group + "|" + r.role, r]));
+  const nextOf = role => forecast.filter(r => r.role === role)[0];
+  const when = r => r.expected > today ? `about ${monthYear(dayDate(r.expected))}, in ${amount(r.expected - today)} days` : `overdue by ${amount(today - r.expected)} days`;
   // Phones open only the first one, so the timeline itself is not far down the page
   const ranking = (title, rows, kind = "") => `<details class="tl-rank ${kind}"${calcPhone.matches && kind !== "first" ? "" : " open"}><summary>${esc(title)}</summary><ol>${rows.slice(0, TL_RANKED).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol></details>`;
   const people = list => list.map(r => [pic(r.head), r.name, days(r.days)]);
@@ -2067,10 +2140,9 @@ function timelineBody() {
       ${ranking("Lasted the longest", people(byLength))}
       ${ranking("Lasted the shortest", people([...byLength].reverse()))}
       ${ranking("Longest in place, not replaced yet", people(inPlace))}
-      ${ranking("Replacement watch: days in place against the class average", watch.map(r => [pic(r.head), r.name, `${amount(r.days)} of ${amount(Math.round(r.average))} · ${Math.round(r.days / r.average * 100)}%`]), "tl-watch")}
     </div>
     <details class="tl-averages"${calcPhone.matches ? "" : " open"}><summary>Average time until replaced, by class</summary>
-      ${averages.map(row => `<div class="tl-average">${pic(roleArt(row.name))}<span>${esc(row.name)}<small>Since ${monthYear(row.first)} · ${row.replaced} replaced</small></span><b>${row.days ? days(row.days) : "None yet"}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
+      ${averages.map(row => `<div class="tl-average">${pic(roleArt(row.name))}<span>${esc(row.name)}<small>Since ${monthYear(row.first)} · ${row.replaced} replaced${nextOf(row.name) ? ` · next: ${when(nextOf(row.name))}` : ""}</small></span><b>${row.days ? days(row.days) : "None yet"}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
     </details>
   </div>
   ${calcMore("How replacement works", `<p class="tl-rule">A character counts as replaced when a new S-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too. The numbers above leave out the ${TL_SKIP_NOTE}. The watch is a guide, not a release date.${timelineView === "effect" ? " Frames with no Effect are left out." : ""}</p>`)}
@@ -2108,27 +2180,134 @@ const buildRow = ({ href, page, team, variant, card, mates }) => `<a class="acar
       <p class="b-mem">${esc(memorySummary(card.memories))}</p></div>
     <div class="b-mates">${mates.map(m => `<div class="slot" title="${esc(m.name)}">${pic(m.portrait, `alt="${esc(m.name)}"`)}</div>`).join("")}</div>
   </a>`;
+// The skills of a construct on its page, grouped like the game does. Damage values scale with the skill level
+const SKILL_GROUPS = [
+  ["Basic", ["Red Orb", "Yellow Orb", "Blue Orb", "Basic Attack"]],
+  ["Special", ["Core", "Signature", "QTE"]],
+  ["Common", ["Leader", "Class", "Awakening"]],
+  ["Evolution", ["SS-Rank", "SSS-Rank", "SSS+ Rank"]],
+  ["Harmony", ["Harmony Skill"]],
+  ["Leap", ["Leap Skill"]]
+];
+const SKILL_SCALES = new Set(["Red Orb", "Yellow Orb", "Blue Orb", "Basic Attack", "Core", "Signature", "QTE"]);
+// The texts come at level 18 (the Huaxu default). Checked against the game: +1 level on Veil Pierce gives 164.71% from 160%
+// and +3 on Heavenly Flash gives 2938.24% from 2700%, so each level adds 1/34 of the level-18 value, from level 1 to 35
+const SKILL_BASE = 18, SKILL_MAX = 35;
+let skillTab = "Basic", skillChar = null;
+const skillLevels = new Map();
+const scaledValue = (n, level) => level === SKILL_BASE ? n : String(parseFloat((n * (1 + (level - SKILL_BASE) / 34)).toFixed(2)));
+// Only the damage a skill deals scales. Reductions, energy, stacks and the Darkflow table stay as they are
+function scaleLine(safe, level) {
+  if (/stacks?:/i.test(safe)) return safe;
+  return safe.replace(/(\b[Dd]eal(?:s|ing)(?: a total of| an additional| additional)? )(\d+(?:\.\d+)?%(?:\s*\/\s*\d+(?:\.\d+)?%)*)/g,
+    (_, lead, list) => lead + list.replace(/\d+(?:\.\d+)?(?=%)/g, n => `<b class="sv">${scaledValue(+n, level)}</b>`));
+}
+// Like the game: values and game terms (forms, modes, orbs, stacks) in red, the condition of a skill name in blue
+const SK_LEAD = "In|The|When|While|During|Upon|After|Before|If|On|At|Each|Every|Tap|Press|Hold|Then|And|Or|Gains?|Deals?|Switch(?:es|ing)?|Casting|Tapping|Pressing|Entering|Exiting|Triggers?|Consumes?|Grants?|Enters?|Exits?|Uses?|Leaving";
+const SK_TERM = new RegExp(String.raw`(?:\d+\s)?(?:(?!(?:${SK_LEAD})\b)[A-Z][\w'’-]*\s){0,2}(?:Form|Mode|Orbs?|Stacks?)\b`, "g");
+const SK_VALUE = /\d+(?:\.\d+)?(?:\s?\/\s?\d+(?:\.\d+)?)*(?:%|s\b)/g;
+function highlight(safe) {
+  // Values already scaled (<b class="sv">) stay as they are, and the tags of the rest are never touched
+  return safe.split(/(<b class="sv">.*?<\/b>%?)/).map((part, i) => i % 2 ? part
+    : part.replace(SK_VALUE, m => `<b class="hl">${m}</b>`).split(/(<[^>]+>)/).map((chunk, j) => j % 2 ? chunk : chunk.replace(SK_TERM, m => `<b class="hl">${m}</b>`)).join("")).join("");
+}
+// "Move: how to cast it" lines become a heading with the condition beside it, "- " lines a list, the rest paragraphs
+function skillBody(text, scale, level) {
+  const out = [];
+  let list = [];
+  const flush = () => { if (list.length) out.push(`<ul>${list.join("")}</ul>`); list = []; };
+  const fmt = line => highlight(scale ? scaleLine(esc(line), level) : esc(line));
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^[-•]\s*/.test(line)) { list.push(`<li>${fmt(line.replace(/^[-•]\s*/, ""))}</li>`); continue; }
+    flush();
+    // A heading is a short line with no full stop: "Move: Tap Basic Attack", "Move — Tap Basic Attack", "Move - Form + Tap" or a bare name
+    const split = line.match(/^(.+?)(?::\s+|\s?[—–]\s+)(.+)$/) || line.match(/^(.+?)\s-\s((?:Tap|Press|During|In|Upon|Not|Successful)b.*|.*\s\+\s.*)$/);
+    if (line.length <= 110 && !/[.!:,)]$/.test(line) && !/\.\s/.test(line.replace(/^Lv\.\s*\d+/, "")) && !/^[a-z]/.test(line) && (split || line.split(" ").length <= 6)) {
+      const [, name, cond] = split || [null, line, ""];
+      out.push(`<h4>${esc(name)}${cond ? `<span class="sep">: </span><span class="cond">${esc(cond)}</span>` : ""}</h4>`);
+    } else out.push(`<p>${fmt(line)}</p>`);
+  }
+  flush();
+  return out.join("");
+}
+// Plain effect texts (memories, weapons, resonances, C.U.B.s): several sentences become a bulleted list, values and game terms highlighted like the skills
+function describe(text) {
+  const items = [];
+  for (const raw of String(text).split("\n")) {
+    const line = raw.trim().replace(/^[-•]\s*/, "");
+    if (line) items.push(...line.split(/(?<=[.!?])\s+(?=[A-Z])/));
+  }
+  const html = items.map(item => highlight(esc(item)));
+  return `<div class="effect">${html.length > 1 ? `<ul>${html.map(item => `<li>${item}</li>`).join("")}</ul>` : `<p>${html[0] || ""}</p>`}</div>`;
+}
+function skillGroups(ch) {
+  const skills = CHARACTER_SKILLS[ch.name] || [];
+  const known = new Set(SKILL_GROUPS.flatMap(([, types]) => types));
+  return SKILL_GROUPS.map(([name, types]) => [name, skills.filter(s => types.includes(s[0]) || (name === "Common" && !known.has(s[0])))]).filter(([, list]) => list.length);
+}
+// Each skill that scales has its own level, kept while browsing. Harmony and Leap skills have no icon art yet
+const skillKey = (ch, type) => `${ch.name}|${type}`;
+const skillLevelOf = (ch, type) => skillLevels.get(skillKey(ch, type)) ?? SKILL_BASE;
+const SKILL_NO_ICON = new Set(["Harmony Skill", "Leap Skill"]);
+function skillCard(ch, [type, name, effect]) {
+  const scales = SKILL_SCALES.has(type), level = skillLevelOf(ch, type);
+  const slider = scales ? `<label class="cx-level">Lv <b>${level}</b><input type="range" min="1" max="${SKILL_MAX}" value="${level}" data-sk-level="${esc(type)}" aria-label="${esc(name)} level"></label>` : "";
+  return `<section class="cx-skill" data-sk-type="${esc(type)}"><div class="cx-sk-top${SKILL_NO_ICON.has(type) ? " plain" : ""}">${SKILL_NO_ICON.has(type) ? "" : thumb(skillIcon(ch.name, type))}<div><p class="kind">${esc(type)}</p><h3>${esc(name)}</h3></div>${slider}</div><div class="cx-sk-body">${skillBody(effect, scales, level)}</div></section>`;
+}
+const skillCards = ch => (skillGroups(ch).find(([name]) => name === skillTab) || ["", []])[1].map(skill => skillCard(ch, skill)).join("");
+function skillsPanel(ch) {
+  if (skillsState !== "ready") return skillList(ch);
+  const groups = skillGroups(ch);
+  if (!groups.length) return `<p class="empty">No skill text for this character yet.</p>`;
+  if (!groups.some(([name]) => name === skillTab)) skillTab = groups[0][0];
+  return `<div class="cx-tabs">${groups.map(([name]) => `<button class="tool${name === skillTab ? " on" : ""}" type="button" data-sk-tab="${name}">${name}</button>`).join("")}</div>
+    <div class="cx-skills" id="cxSkillBody">${skillCards(ch)}</div>`;
+}
+$("#main").addEventListener("click", e => {
+  const tab = e.target.closest("[data-sk-tab]");
+  if (!tab || !skillChar) return;
+  skillTab = tab.dataset.skTab;
+  document.querySelectorAll("[data-sk-tab]").forEach(b => b.classList.toggle("on", b === tab));
+  $("#cxSkillBody").innerHTML = skillCards(skillChar);
+});
+// Only the card that moved is redrawn, so the slider keeps the focus while it is dragged
+$("#main").addEventListener("input", e => {
+  if (!e.target.matches("[data-sk-level]") || !skillChar) return;
+  const type = e.target.dataset.skLevel, level = +e.target.value, card = e.target.closest(".cx-skill");
+  skillLevels.set(skillKey(skillChar, type), level);
+  $("b", e.target.parentNode).textContent = level;
+  const skill = CHARACTER_SKILLS[skillChar.name].find(s => s[0] === type);
+  $(".cx-sk-body", card).innerHTML = skillBody(skill[2], true, level);
+});
+// Up to three builds of one kind, newest first (the order of PAGES), with a link to the page that has them all
+const buildGroup = (title, builds, href) => builds.length
+  ? `<div><h3>${title}</h3><div class="builds">${builds.slice(0, 3).map(buildRow).join("")}</div><a class="cx-more" href="${esc(href)}">See more builds ›</a></div>` : "";
 function characterPage(ch) {
-  const count = ch.builds.length, card = ch.builds.find(b => b.card.construct)?.card;
+  skillChar = ch;
   const [, element, type, rank, effect] = CONSTRUCTS[ch.name];
-  const details = [rank && `${rank}-Rank`, type, element, effect].filter(Boolean).join(" · ");
   const weapon = WEAPONS.find(w => w[0] === ch.name), cub = cubList().find(c => c.owner === ch.name);
-  const links = [
+  const attr = (group, value) => value ? `<div class="cx-attr"><span class="chip-icon">${filterIcon(group, value)}</span><div><small>${group}</small><span>${esc(group === "Rank" ? `${value}-Rank` : value)}</span></div></div>` : "";
+  const gear = [
     weapon && `<a class="acard wpn" href="${weaponHref(weapon[1])}">${weaponThumb(weapon[3], weapon[1])}<div><h3>${esc(weapon[1])}</h3><p>Weapon</p></div></a>`,
-    cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`,
-    count && `<a class="acard wpn" href="${skillHref(ch.name)}">${thumb(card?.core)}<div><h3>Skills</h3><p>All skills and passives</p></div></a>`
+    cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`
   ].filter(Boolean).join("");
-  const buildCount = `${count} build${count === 1 ? "" : "s"}`;
-  const summary = count ? `${iconName(ch.symbol)} · ${buildCount}` : details;
-  const content = count
-    ? links
-    : `<div class="fx"><h2>Construct details</h2><p>${esc(details)}</p></div>`;
-  const builds = count
-    ? `<h2 class="grp">Builds</h2><div class="builds">${ch.builds.map(buildRow).join("")}</div>`
+  const pagePath = href => href.split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
+  const ofKind = kind => ch.builds.filter(b => b.href.startsWith(`/${kind}/`));
+  const elementBuilds = ofKind("energy"), effectBuilds = ofKind("effect");
+  const listPage = (kind, value, builds) => PAGES[`${kind}/${slug(value || "")}`] ? `/${kind}/${slug(value)}` : `/${builds[0] ? pagePath(builds[0].href) : kind}`;
+  const builds = elementBuilds.length || effectBuilds.length
+    ? `<h2 class="grp">Builds</h2><div class="cx-builds">${buildGroup(`${esc(element)} builds`, elementBuilds, listPage("energy", element, elementBuilds))}${buildGroup(`${esc(effect)} builds`, effectBuilds, listPage("effect", effect, effectBuilds))}</div>`
     : `<section class="used"><h2>Builds</h2><p>No builds available yet.</p></section>`;
-  return `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub">${esc(summary)}</p>
-    <div class="detail char-detail"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div><div class="char-links">${content}</div></div>
-    ${builds}`;
+  // Wide screens: the portrait and the details stay on the left while the skills and builds use the rest of the width
+  return `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1>
+    <div class="cx-page">
+      <aside class="cx-side"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div>
+        <div class="cx-attrs">${attr("Rank", rank)}${attr("Class", type)}${attr("Element", element)}${attr("Effect", effect)}</div>
+        <div class="cx-gear">${gear}</div></aside>
+      <div class="cx-main"><h2 class="grp">Skills</h2>${skillsPanel(ch)}${builds}</div>
+    </div>`;
 }
 
 /* ---------- export a build as an image ---------- */
@@ -2190,7 +2369,7 @@ function drawFramed(g, points, fill, edge) {
   g.stroke();
   g.restore();
 }
-function drawCard(g, c, art, cardColor, stars, x, y, flare) {
+function drawCard(g, c, art, cardColor, x, y, flare) {
   const w = EXPORT_W, h = EXPORT_H, inner = w - 32, left = x + 16;
   g.fillStyle = cardColor;
   g.fillRect(x, y, w, h);
@@ -2300,7 +2479,7 @@ async function renderBuild(cards, { id, title, theme = COMPS[id] }) {
   g.fillStyle = background;
   g.fillRect(0, 0, width, height);
   drawText(g, cards.length > 1 ? title : `${cards[0].name} · ${title}`, EXPORT_PAD, 44, exportFont(cards.length > 1 ? 26 : 16), "#fff", "left");
-  cards.forEach((c, i) => drawCard(g, c, art, theme.cp, art.get(STARS_BAR), EXPORT_PAD + i * EXPORT_W, EXPORT_HEAD, cards.length > 1));
+  cards.forEach((c, i) => drawCard(g, c, art, theme.cp, EXPORT_PAD + i * EXPORT_W, EXPORT_HEAD, cards.length > 1));
   drawText(g, "dominiko.pages.dev", width - EXPORT_PAD, height - 14, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
@@ -2504,9 +2683,9 @@ function searchData() {
     ...constructRoster().map(c => ({ label: c.name, kind: "Construct", href: characterHref(c.name), art: c.portrait })),
     ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `Memory · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4") })),
     ...WEAPONS.map(([owner, name, , file, , rank]) => ({ label: name, kind: owner ? `Weapon · ${owner}` : `${rank || weaponRank(name, file)}-star weapon`, href: weaponHref(name), art: file && weaponFile(file) })),
-    ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner}`, href: cubHref(c.name), art: c.art })),
+    ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner || `Rank ${c.rank}`}`, href: cubHref(c.name), art: c.art })),
     ...Object.keys(RESONANCE_EFFECTS).map(name => ({ label: name, kind: "Weapon Resonance", href: resonanceHref(name), art: WEAPON_RES(name) })),
-    ...ENERGY.map(e => ({ label: e, kind: "Energy teams", href: `/energy/${slug(e)}`, art: `assets/energy type/${e}.png` })),
+    ...ENERGY.map(e => ({ label: e, kind: "Energy teams", href: `/energy/${slug(e)}`, art: `assets/energy-type/${e}.png` })),
     ...EFFECT.map(e => ({ label: e, kind: "Effect teams", href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...SPECIAL_EFFECT.map(e => ({ label: e, kind: "Special Effect teams", href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),

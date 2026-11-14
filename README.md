@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://dominiko.pages.dev/">
-    <img src="assets/embed-icon.png" alt="Dominik logo" width="180">
+    <img src="assets/embed-icon-4.png" alt="Dominik logo" width="180">
   </a>
 </p>
 

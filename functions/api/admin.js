@@ -27,7 +27,11 @@ const ACTIONS = { approve: ["pending", "approved"], reject: ["pending", "rejecte
 export async function onRequestPost({ request, env }) {
   const no = await denied(request, env);
   if (no) return no;
-  const body = await request.json().catch(() => null), id = Number(body?.id);
+  const text = await request.text();
+  if (text.length > 30000) return json({ error: "bad" }, 413);
+  let body = null;
+  try { body = JSON.parse(text); } catch { /* answered as bad below */ }
+  const id = Number(body?.id);
   if (!Number.isInteger(id)) return json({ error: "bad" }, 400);
   // The bot tells which message shows the team, so it is posted only once
   if (body.action === "posted") {
@@ -42,7 +46,15 @@ export async function onRequestPost({ request, env }) {
   const row = await env.DB.prepare("SELECT page, status FROM teams WHERE id = ?").bind(id).first();
   if (!row) return json({ error: "gone" }, 404);
   // Someone decided first (the terminal tool, or a second click): the answer says how the team stands
-  if (!done.meta.changes) return json({ error: "state", status: row.status, page: row.page }, 409);
-  if (step.includes("approved")) await publish(env);
+  if (!done.meta.changes) {
+    // An approved team whose KV write failed earlier is published again on retry
+    if (body.action === "approve" && row.status === "approved") await publish(env).catch(() => null);
+    return json({ error: "state", status: row.status, page: row.page }, 409);
+  }
+  if (step.includes("approved")) {
+    try { await publish(env); } catch {
+      return json({ error: "publish_failed", status: row.status, page: row.page }, 500);
+    }
+  }
   return json({ ok: true, status: row.status, page: row.page });
 }

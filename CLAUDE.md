@@ -50,7 +50,7 @@ Depois de editar, rode o que couber na mudança e diga o resultado:
 3. `npm run smoke`: abre todas as páginas do `sitemap.xml` no Edge, em desktop e celular, e testa busca, troca de time, detalhe de arma, página de skills e menu do celular. Pega erro de JS, bloqueio de CSP, 404, página vazia e rolagem lateral. Leva cerca de 20 s. Na primeira vez em um computador, rode `npm install`.
 4. `node tools/smoke.mjs timeline energy/fire`: só essas páginas, sem a barra inicial (o Git Bash a reescreve). `home` é a página inicial. Use também para páginas ainda fora do `sitemap.xml`, que só é refeito no deploy.
 
-5. API e times da comunidade: o smoke não tem API. Rode `node tools/deploy.mjs --stage-only`, depois `npx wrangler@4 d1 execute dominik --local --file server/schema.sql` e `npx wrangler@4 pages dev .deploy --port 8788`. O `.dev.vars` (fora do git) guarda as chaves de teste do Turnstile, que sempre passam.
+5. API e times da comunidade: o smoke não tem API. Rode `node tools/deploy.mjs --stage-only`, depois `npx wrangler@4 d1 execute dominik --local --file server/schema.sql` e `npx wrangler@4 pages dev .deploy --port 8788`. O `.dev.vars` (fora do git) guarda as chaves de teste do Turnstile, que sempre passam. Com o servidor no ar, `tools/api.http` (extensão REST Client) tem as requisições de `/api/submit`, `/api/teams` e `/api/admin`; as instruções de `host` e `adminKey` estão no topo do arquivo.
 
 O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints em `.smoke/desktop/` e `.smoke/mobile/`, e diga ao usuário o que você realmente viu.
 
@@ -61,7 +61,7 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 - **Páginas novas:** cada endereço é um arquivo escrito por `tools/make-embeds.mjs`. Um tipo de página fora da lista desse script dá 404 no site publicado, mesmo funcionando no smoke, que serve `index.html` para qualquer endereço.
 - **`_headers`:** o CSP não permite scripts inline nem imagens de outros sites. Tudo precisa estar no próprio site.
 - **Cache de imagens:** `/assets-web/*` fica 7 dias no navegador. Arte trocada com o mesmo nome parece deploy com falha.
-- **Ícone do embed:** o Discord guarda a imagem do preview pelo endereço dela, e `?v=` no link da página não muda isso. Arte nova do embed precisa de nome de arquivo novo (hoje `assets/embed-icon-3.png`).
+- **Ícone do embed:** o Discord guarda a imagem do preview pelo endereço dela, e `?v=` no link da página não muda isso. Arte nova do embed precisa de nome de arquivo novo (hoje `assets/embed-icon-4.png`).
 - **`const $ = (s, r = document)`:** `check-assets`, `make-sitemap` e `make-embeds` usam essa linha para achar o fim dos dados. Se ela mudar, atualize esses scripts.
 - **Times da comunidade:** entram em `PAGES` e `COMPS` depois que a página carrega (`loadCommunity()` no `app.js`), com endereço `/energy/fire?team=c-12`, porque só os endereços escritos pelo `make-embeds` existem como arquivo. Mudou `edClean` no `editor.js`? Mude `cleanTeam` em `server/team.js` igual.
 - **`SITE_FILES` em `tools/deploy.mjs`:** um arquivo novo do site só é publicado se estiver nessa lista.

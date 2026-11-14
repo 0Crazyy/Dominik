@@ -84,6 +84,7 @@ function check() {
   for (const [owner, name] of d.WEAPONS) if (owner && !d.CONSTRUCTS[owner]) errors.push(`dono da arma "${name}" sem dados em CONSTRUCTS (a página Weapons quebra): ${owner}`);
   for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
   for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type] of skills) {
+    if (type === "Harmony Skill" || type === "Leap Skill") continue; // sem arte ainda: a página mostra só o texto
     use(`${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${type}.png`, `skill de ${name}`);
   }
   for (const [name, [title, text]] of Object.entries(d.LEADER_SKILLS)) {
@@ -94,7 +95,7 @@ function check() {
     use(head, `linha do tempo: ${name}`);
     if (role !== "Overlinker") use(`assets/classes/${role === "Tank" ? "Tanque" : role}.png`, `linha do tempo: ${name}`);
   }
-  for (const e of d.ENERGY) use(`assets/energy type/${e}.png`, "ícones de Energy Type");
+  for (const e of d.ENERGY) use(`assets/energy-type/${e}.png`, "ícones de Energy Type");
   for (const e of [...d.EFFECT, ...d.SPECIAL_EFFECT]) use(`assets/effects/${e}.png`, "ícones de Effect");
   for (const file of ["app.js", "index.html", "style.css"]) literalPaths(file).forEach(path => use(path, file));
 

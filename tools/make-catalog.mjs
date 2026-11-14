@@ -17,7 +17,7 @@ const DATA_END = "const $ = (s, r = document)";
 
 const app = read("app.js"), end = app.indexOf(DATA_END);
 if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/make-catalog.mjs`);
-const names = "COMPS, PAGES, TEAM_LISTS, MEMORY_TABS, MEM_INDEX, memFile, CONSTRUCTS, RESONANCE_EFFECTS, WEAPON_RES, ALL_ATK, WEAPONS, CHARS, classIcon";
+const names = "COMPS, PAGES, TEAM_LISTS, MEMORY_TABS, MEM_INDEX, memFile, CONSTRUCTS, RESONANCE_EFFECTS, WEAPON_RES, ALL_ATK, MEMORY_RES, MEMORY_RES_NAMES, WEAPONS, CHARS, classIcon";
 const d = vm.runInNewContext(`${read("data/assets-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
@@ -32,7 +32,7 @@ const skillArt = name => {
   return Object.fromEntries(files(dir).filter(f => !NOT_SLOT.test(f)).sort().map(f => [f.replace(/\.[^.]+$/, ""), `${dir}/${f}`]));
 };
 const rankStep = rank => rank.match(/S/g).length * 100 + (rank.endsWith("+") ? 50 : Number(rank.replace(/\D/g, "") || 0));
-const CLASS_FILE = { Tank: "Tanque" };
+const CLASS_FILE = { Tank: "Tanque", Vanguard: "Vanguard" };
 const symbolOf = name => {
   const cls = d.CONSTRUCTS[name]?.[2];
   if (cls === "Overlinker") return `${d.CHARS}/adelyde-anabasis/Classe - Adelyde Anabasis.png`;
@@ -93,6 +93,7 @@ const catalog = {
   harmony: [...d.MEM_INDEX.keys()].filter(name => exists(d.memFile(name, "WH", "png"))),
   matrix: Object.keys(d.RESONANCE_EFFECTS).filter(name => exists(d.WEAPON_RES(name))),
   allAtk: d.ALL_ATK,
+  memoryResonances: Object.fromEntries(d.MEMORY_RES_NAMES.filter(name => exists(d.MEMORY_RES(name))).map(name => [name, d.MEMORY_RES(name)])),
   pages: Object.entries(d.TEAM_LISTS).flatMap(([kind, list]) => list.items.map(item => ({ path: `${kind}/${slug(item)}`, name: item, kind: list.label })))
 };
 

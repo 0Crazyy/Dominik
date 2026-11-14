@@ -70,6 +70,17 @@ export async function onRequestPost({ request, env, waitUntil }) {
     env.DB.prepare("INSERT INTO teams (page, team, author, hash, ip_hash, created) VALUES (?, ?, ?, ?, ?, ?)")
       .bind(team.page, JSON.stringify(team), author, hash, ipHash, now)
   ]);
+  // Check the limits again after the insert to close the concurrency window:
+  // D1 serializes the INSERT, so the new row already counts in the queries below.
+  const after = await env.DB.prepare(`SELECT
+      (SELECT COUNT(*) FROM teams WHERE status = 'pending') AS pending,
+      (SELECT COUNT(*) FROM teams WHERE ip_hash = ?1 AND created > ?2) AS hour,
+      (SELECT COUNT(*) FROM teams WHERE ip_hash = ?1 AND created > ?3) AS day`)
+    .bind(ipHash, now - HOUR, now - DAY).first();
+  if (after.pending > MAX_PENDING || after.hour > PER_HOUR || after.day > PER_DAY) {
+    await env.DB.prepare("DELETE FROM teams WHERE hash = ?").bind(hash).run();
+    return json({ error: after.pending > MAX_PENDING ? "full" : "limit" }, 503);
+  }
   if (env.DISCORD_WEBHOOK_URL) {
     const content = `New team to review (#${added.meta.last_row_id}): **${team.name.replace(/[*_`~|\\@#<>]/g, "")}** on ${team.page}, ${seen.pending + 1} waiting.`;
     waitUntil(fetch(env.DISCORD_WEBHOOK_URL, { method: "POST", headers: { "content-type": "application/json" },

@@ -105,13 +105,13 @@ const FLOWS = {
     if (!href?.startsWith("/constructs/")) throw new Error("o ícone da esteira não aponta para a página do personagem");
     await icon.evaluate(anchor => anchor.click());
     await page.waitForURL(/\/constructs\/[^/]+$/);
-    await page.waitForSelector("#main .char-detail");
+    await page.waitForSelector("#main .cx-page");
     await page.goto(href.replace("/constructs/", "/character/"));
     await page.waitForURL(/\/constructs\/[^/]+$/);
-    await page.waitForSelector("#main .char-detail");
+    await page.waitForSelector("#main .cx-page");
     await page.goto("/character/leia-fortunaster");
     await page.waitForURL(/\/constructs\/fortunaster$/);
-    await page.waitForSelector("#main .char-detail");
+    await page.waitForSelector("#main .cx-page");
   },
   "frase do ícone": async page => {
     await page.goto("/");
