@@ -24,6 +24,7 @@ Na primeira sessão em um computador, confira estes itens antes de qualquer tare
 | `data/assets-data.js` | Textos das páginas Assets: memórias, armas, ressonâncias, CUBs, `CONSTRUCTS` |
 | `data/skills-data.js` | Textos das skills. Só carrega quando uma página precisa, via `loadSkills()` |
 | `data/calculator-data.js` | Renda por patch. `tools/update-calculator.mjs` atualiza a planilha; `frame` e as linhas de collab são escritos à mão |
+| `data/updates-data.js` | Posts da página Updates, em Markdown, do mais novo para o mais antigo. Só carrega em `/updates`. Escrito à mão e só quando o usuário pedir um post (sem rotina nem script); o formato está no topo do arquivo |
 | `editor.js` | Team Builder (`/editor`). Só carrega nessa página, junto com o catálogo |
 | `data/catalog-data.js` | Gerado por `tools/make-catalog.mjs` (o deploy roda): o que um time do Team Builder pode ter. Não edite à mão |
 | `functions/api/` | API no Cloudflare Pages: `submit.js` recebe um time do Team Builder (Turnstile, limites por IP, fila), `teams.js` devolve os aprovados, `hidden.js` devolve os ids das builds oficiais que o painel ocultou (chave `hidden` do KV; o `loadCommunity()` do `app.js` as tira de `COMPS`/`PAGES` ao carregar), `admin.js` é por onde o bot do Discord aprova (segredo `ADMIN_KEY`; o bot fica em `../Dominik - bot/`). Só `/api/*` passa por aqui |
@@ -72,3 +73,10 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 - Para adicionar personagem, build, time ou arma, use a skill `add-character`.
 - Nunca invente dados do jogo. Quando o nome da wiki diferir do texto do site, vale o da wiki.
 - Não faça commit, push ou deploy sem o usuário pedir. O deploy (`node tools/deploy.mjs`) é o usuário quem roda.
+
+## Pendências
+
+- **Tradução para português (pt-BR): pausada em 2026-11-15, fora do site.** O site está em inglês, como antes. A única sobra é o botão "EN | PT" no rodapé do menu (`#langBtn` no `index.html`), que está desativado (`disabled`, com dica "Portuguese version coming soon"). Ao retomar, o botão passa a funcionar quando o patch for aplicado.
+  - Onde está: `drafts/traducao-pt/` (`README.md` com o passo a passo, `traducao-pt.patch`, `i18n.js` e `data-pt/ui.js`). A pasta não entra no deploy e não está no `.gitignore`: se for guardá-la no git, faça isso de propósito.
+  - Já feito lá: detecção do idioma do navegador, botão, menu, busca, contadores, títulos, datas. Falta o resto da interface, o Team Builder, as descrições dos times e os dados (`assets-data`, `skills-data`, `calculator-data`, `updates-data`, `home-splashes`).
+  - Antes de qualquer deploy com a tradução ligada, termine ou desligue a detecção automática: um navegador em português cairia em uma versão misturada.

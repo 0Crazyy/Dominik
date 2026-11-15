@@ -5,13 +5,13 @@
 <!-- Pages have addresses like /energy/dark: this keeps file paths starting at the site root on all of them -->
 <base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dominik - Punishing Gray Raven Builds</title>
+<title>Dominik - Punishing: Gray Raven Builds e Plans</title>
 <meta name="description" content="Punishing: Gray Raven team builds, organized by energy type and effect.">
 <meta name="theme-color" content="#cf1424">
 <!-- Link preview on Discord and similar apps, which don't run app.js. This is the card of the home page: tools/make-embeds.mjs publishes a copy of this file with its own card for each of the other pages -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Dominik">
-<meta property="og:title" content="Dominik - Punishing: Gray Raven Builds">
+<meta property="og:title" content="Dominik - Punishing: Gray Raven Builds e Plans">
 <meta property="og:description" content="Team builds for every energy type and derivative effect, game data on memories, weapons and C.U.B.s, and tools for planning your pulls.">
 <meta property="og:url" content="https://dominiko.pages.dev/">
 <meta property="og:image" content="https://dominiko.pages.dev/assets/embed-icon-4.png">
@@ -39,6 +39,8 @@
   <symbol id="i-editor" viewBox="0 0 24 24"><path d="M4 20v-4.5L15 4.5 19.5 9 8.5 20ZM12.5 7l4.5 4.5M13.5 20h7"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><path d="M10.5 3.5l6 3.5v7l-6 3.5-6-3.5V7ZM15.5 15.5l5 5"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M4 4.5h16v15H4ZM9.5 4.5v15"/></symbol>
+  <symbol id="i-updates" viewBox="0 0 24 24"><path d="M4.5 3.5h11l4 4v13h-15ZM8 9.5h8M8 13h8M8 16.5h5"/></symbol>
+  <symbol id="i-lang" viewBox="0 0 24 24"><path d="M12 3.5 19 7.5v9l-7 4-7-4v-9ZM5 7.5l7 4 7-4M12 11.5v9"/></symbol>
   <symbol id="i-contact" viewBox="0 0 24 24"><path d="M4 4.5h16v12h-9l-4 3.5v-3.5H4ZM8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></symbol>
 </svg>
 <aside id="side">
@@ -64,7 +66,7 @@
     <a href="/calculator"><svg class="ico" aria-hidden="true"><use href="#i-calculator"/></svg>Planner</a>
     <a href="/timeline"><svg class="ico" aria-hidden="true"><use href="#i-timeline"/></svg>Meta Timeline</a>
     <a href="/editor"><svg class="ico" aria-hidden="true"><use href="#i-editor"/></svg>Team Builder</a>
-    <div class="nav-foot"><a href="/contact"><svg class="ico" aria-hidden="true"><use href="#i-contact"/></svg>Contact</a><button id="pinBtn" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Keep menu open</button></div>
+    <div class="nav-foot"><a href="/updates"><svg class="ico" aria-hidden="true"><use href="#i-updates"/></svg>Updates</a><a href="/contact"><svg class="ico" aria-hidden="true"><use href="#i-contact"/></svg>Contact</a><button id="pinBtn" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Keep menu open</button><button id="langBtn" disabled aria-label="Language: Portuguese version coming soon" title="Portuguese version coming soon"><svg class="ico" aria-hidden="true"><use href="#i-lang"/></svg><span><b class="on">EN</b> | <b>PT</b></span></button></div>
   </nav>
 </aside>
 <main id="main"></main>

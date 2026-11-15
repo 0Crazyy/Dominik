@@ -400,8 +400,7 @@ const COMPS = {
         portrait: `${LUCIA_P}/Awaken - Lucia Pyroath.png`,
         weapon: `${LUCIA_P}/Arma - Lucia Pyroath.webp`,
         wh: "Da Vinci",
-        // As in the reference image: slot 5 is Shakespeare, not Heraclitus
-        memories: [HERACLITUS[0], HERACLITUS[1], HERACLITUS[2], DA_VINCI[0], SHAKESPEARE[1], DA_VINCI[2]],
+        memories: [HERACLITUS[0], HERACLITUS[1], HERACLITUS[2], DA_VINCI[0], HERACLITUS[1], DA_VINCI[2]],
         matrix: matrix(GA, INC, DLT),
         resonance: ALL_ATK,
         core: `${LUCIA_P}/Skill - Signature 2X.webp`,
@@ -802,7 +801,7 @@ function card(c) {
   const memory = (piece, i) => {
     if (!piece) return slot("", i + 1);
     const art = piece.startsWith("assets/") ? piece : "", name = memoryName(piece);
-    return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name, worn.filter(other => other === name).length));
+    return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name, worn.filter(other => other === name).length + (c.wh === name ? 2 : 0)));
   };
   const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}"${t === "captain" ? tipAttr(...(LEADER_SKILLS[c.name] || [])) : ""}>${TAG_LABEL[t] || t.toUpperCase()}</span>`).join("");
   const cub = c.construct ? cubHref(iconName(c.construct)) : "";
@@ -1556,6 +1555,75 @@ const contactPage = () => `<h1>Contact</h1><p class="sub">Found a wrong build, o
     </section>
   </div>
   <p class="legal">Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.</p>`;
+
+/* ---------- Updates: posts written in Markdown (data/updates-data.js), which only loads when the page opens ---------- */
+let updatesState = "";
+function loadUpdates() {
+  if (updatesState) return;
+  updatesState = "loading";
+  loadScript("data/updates-data.js").then(() => { updatesState = "ready"; }, () => { updatesState = "failed"; }).then(route);
+}
+// The text is escaped first, so a post can never add HTML. Only https links and links inside the site are kept
+const mdInline = s => esc(s)
+  .replace(/`([^`]+)`/g, "<code>$1</code>")
+  .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+  .replace(/\*([^*]+)\*/g, "<i>$1</i>")
+  .replace(/\[([^\]]+)\]\((https:\/\/[^\s)]+|\/(?!\/)[^\s)]*)\)/g, (_, text, url) =>
+    `<a href="${url}"${url[0] === "/" ? "" : ' target="_blank" rel="noopener noreferrer"'}>${text}</a>`);
+// Blocks: ### subtitles, "- " lists (two spaces of indent make a sub-item), --- and paragraphs
+function mdBlocks(src) {
+  let html = "", para = [], ul = false, sub = false, li = false;
+  const closeList = () => { html += (sub ? "</ul>" : "") + (li ? "</li>" : "") + (ul ? "</ul>" : ""); ul = sub = li = false; };
+  const flush = () => { if (para.length) html += `<p>${mdInline(para.join(" "))}</p>`; para = []; };
+  for (const line of src.split("\n")) {
+    const item = line.match(/^( *)- (.*)$/);
+    if (item) {
+      flush();
+      if (item[1].length >= 2 && li) {
+        if (!sub) { html += "<ul>"; sub = true; }
+        html += `<li>${mdInline(item[2])}</li>`;
+      } else {
+        html += (sub ? "</ul>" : "") + (li ? "</li>" : "") + (ul ? "" : "<ul>");
+        sub = false; ul = li = true;
+        html += `<li>${mdInline(item[2])}`;
+      }
+      continue;
+    }
+    flush();
+    closeList();
+    if (/^### /.test(line)) html += `<h4>${mdInline(line.slice(4))}</h4>`;
+    else if (/^---+\s*$/.test(line)) html += "<hr>";
+    else if (line.trim()) para.push(line.trim());
+  }
+  flush();
+  closeList();
+  return html;
+}
+// Each "## Title" becomes a section the reader can collapse. They all start closed
+function mdPost(body) {
+  const [intro, ...sections] = body.split(/^## /m);
+  return mdBlocks(intro) + sections.map(section => {
+    const [title, ...rest] = section.split("\n");
+    return `<details class="upd-sec"><summary>${mdInline(title)}</summary><div class="upd-sec-body">${mdBlocks(rest.join("\n"))}</div></details>`;
+  }).join("");
+}
+const updateDate = date => new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+function updatesPage() {
+  const head = `<h1>Updates</h1><p class="sub">Changes made to the site.</p>`;
+  loadUpdates();
+  if (updatesState !== "ready") return `${head}<p class="empty">${updatesState === "failed" ? "Could not load the updates. Reload the page to try again." : "Loading..."}</p>`;
+  const target = decodeURIComponent(location.hash.slice(1));
+  return `${head}<div class="upd-list">${UPDATES.map((post, i) => `<article class="upd" id="${esc(post.id)}">
+    <details class="upd-post"${i === 0 || post.id === target ? " open" : ""}>
+      <summary>
+        <div class="upd-meta"><span class="upd-type">${esc(post.type)}</span><time datetime="${esc(post.date)}">${updateDate(post.date)}</time><span class="upd-toggle"><span class="upd-more">Expand</span><span class="upd-less">Collapse</span></span></div>
+        <h2>${esc(post.title)}</h2>
+        <p class="upd-sum">${esc(post.summary)}</p>
+      </summary>
+      <div class="upd-body">${mdPost(post.body)}</div>
+    </details>
+  </article>`).join("")}</div>`;
+}
 
 /* ---------- BC calculator: the BC Planner tab of the spreadsheet, with patch income from calculator-data.js ---------- */
 const CALC_SHEET = "https://docs.google.com/spreadsheets/d/1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw/edit";
@@ -2923,12 +2991,62 @@ async function exportBuild(button, cards) {
 
 /* ---------- export the planner as an image ---------- */
 // The plan in short: what you start with, then each patch with what it spends and what it leaves. Same canvas route as the builds
-const CALC_IMG = { w: 940, pad: 32, head: 96, row: 50, name: 200 };
+const CALC_RED = "#ff6b6b", CALC_GREEN = "#5fd68a";
+const CALC_IMG = { w: 940, pad: 32, head: 96, row: 50, name: 200, line: 22, note: 18, cols: 3 };
+// Cuts text with an ellipsis until it fits "max" pixels, in the font already set on g
+function fitText(g, text, max) {
+  if (g.measureText(text).width <= max) return text;
+  let cut = text.length;
+  while (cut > 1 && g.measureText(`${text.slice(0, cut)}…`).width > max) cut--;
+  return `${text.slice(0, cut)}…`;
+}
+// What went into one patch's numbers. "spend" is a list of cells, each a few segments: an icon with its amount (red, with a minus) and a dim caption for
+// what it bought. "notes" are plain lines. Passes cost RC. The rest is paid in tickets first, and BC covers what they can't
+function patchUsed({ patch, plan }, now, today) {
+  const count = key => plan[key] || 0, art = key => CURRENCIES.find(c => c.key === key).art;
+  const out = [], notes = [], pay = (icon, value, caption) => out.push([{ icon, text: `-${amount(value)}`, neg: true }, { text: caption, dim: true }]);
+  for (const { key, rc, art: passArt } of CALC_PASSES) if (count(key)) out.push([{ icon: passArt, text: `×${count(key)}` }, { icon: RC_ART, text: `-${amount(count(key) * rc)} RC`, neg: true }]);
+  const weapon = COST.weapon * (calc.calibration ? 2 : 1), collab = patch.collab, copies = count("copies"), weapons = count("weapons");
+  const frameCost = collab ? COLLAB_COST.firstFrame + (copies - 1) * COLLAB_COST[patch.rank] : copies * COST[patch.rank];
+  const weaponCost = collab ? COLLAB_COST.firstWeapon + (weapons - 1) * weapon : weapons * weapon;
+  if (copies) pay(collab ? art("bc") : art(patch.rank === "A" ? "construct" : "limited"), frameCost, `×${copies} Frame copies`);
+  if (weapons) pay(collab ? art("bc") : art("weapon"), weaponCost, `×${weapons} Weapons${calc.calibration ? " (calibration)" : ""}`);
+  if (count("cubs")) pay(collab ? art("bc") : art("cub"), count("cubs") * COST.cub, `×${count("cubs")} C.U.B.s`);
+  if (count("custom")) pay(art("bc"), count("custom"), "Other BC spend");
+  if (count("resonance")) pay(art("shard"), count("resonance") * COST.resonance, `×${count("resonance")} 6★ Resonance`);
+  if (count("shards")) pay(art("voucher"), count("shards") * COST.frameShard, `×${count("shards")} Frame shards`);
+  const note = text => notes.push(text);
+  if (!collab && levelOf(patch)) note(`Tactical Assessment level ${levelOf(patch)}`);
+  const marks = collab ? [] : patchEvents(patch).map(event => calc.doneEvents[event.id]).filter(Boolean), skipped = marks.filter(mark => mark === "skip").length;
+  if (marks.length) note(`Events: ${marks.length - skipped} done, ${skipped} skipped (rewards left out)`);
+  // Only the patch running now can hold what was bought or done before today
+  if (patch === now) {
+    const owned = ownedIn(now), isoDate = date => /^\d{4}-\d{2}-\d{2}$/.test(date || "");
+    const bought = [
+      ...DAILY_PASSES.filter(({ key }) => isoDate(calc.owned[key])).map(({ key, name: label }) => `${label} (${shortDate(calc.owned[key])})`),
+      ...INTEL_PASSES.filter(({ key }) => owned[key]).map(({ name: label }) => label)
+    ];
+    if (bought.length) note(`Already bought: ${bought.join(", ")}`);
+    const rounds = ROUND_MODES.filter(({ key }) => calc.owned.done?.[key] && calc.owned.done[key] === roundDay(key, dayNumber(today))).map(({ name: label }) => label);
+    if (rounds.length) note(`Rounds done: ${rounds.join(", ")}`);
+  }
+  return { spend: out, notes };
+}
 async function renderCalc() {
   await Promise.all([document.fonts.load(exportFont(16)), document.fonts.load(exportFont(13, 400))]);
   const run = calcRun(), start = CURRENCIES.map(({ key }) => calc.balance[key] || 0);
   const icons = await Promise.all(CURRENCIES.map(({ art }) => loadImage(art)));
-  const { w, pad, head, row, name } = CALC_IMG, height = head + 36 + row * (run.length + 1) + 70;
+  // Every icon the spending cells can show, loaded once
+  const arts = [...new Set([RC_ART, ...CALC_PASSES.map(pass => pass.art), ...CURRENCIES.map(c => c.art)])];
+  const pics = Object.fromEntries(await Promise.all(arts.map(async src => [src, await loadImage(src)])));
+  const { w, pad, head, row, name, line: lineH, note: noteH } = CALC_IMG, cellW = (w - pad * 2 - 24) / CALC_IMG.cols;
+  // Each patch row grows with what it used, wrapped to the row width
+  const today = calcToday(), now = run[0] && patchTime(run[0].patch, today) ? run[0].patch : null;
+  const rows = run.map(entry => {
+    const { spend, notes } = patchUsed(entry, now, today), spendRows = Math.ceil(spend.length / CALC_IMG.cols);
+    return { entry, spend, notes, spendRows, h: row + (spend.length || notes.length ? 14 + spendRows * lineH + notes.length * noteH : 0) };
+  });
+  const tableEnd = head + 36 + row + rows.reduce((total, { h }) => total + h, 0), height = tableEnd + 70;
   const canvas = document.createElement("canvas");
   canvas.width = w * EXPORT_SCALE;
   canvas.height = height * EXPORT_SCALE;
@@ -2939,24 +3057,53 @@ async function renderCalc() {
   drawText(g, "BC Planner", pad, 46, exportFont(26), "#fff", "left");
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0), lastBc = run.at(-1).left.bc;
   drawText(g, `${amount(totalRc)} RC on passes · ${amount(lastBc)} BC left after the last patch`, pad, 72, exportFont(13, 400), "#c4c4ca", "left");
+  // Key for the colours: balances show what each patch added or took, costs are always taken
+  drawText(g, "- spent", w - pad, 72, exportFont(13), CALC_RED, "right");
+  drawText(g, "+ gained", w - pad - 74, 72, exportFont(13), CALC_GREEN, "right");
   const colX = i => pad + name + 20 + i * ((w - pad * 2 - name - 20) / CURRENCIES.length) + (w - pad * 2 - name - 20) / CURRENCIES.length / 2;
   // Currency icons over the columns
   const top = head;
   CURRENCIES.forEach((c, i) => { if (icons[i]) g.drawImage(icons[i], colX(i) - 14, top - 4, 28, 28); });
-  const line = (y, title, note, values, colors = []) => {
+  const line = (y, title, before, values, { spend = [], notes = [], spendRows = 0, h = row } = {}) => {
     g.fillStyle = "#ffffff10";
-    g.fillRect(pad, y, w - pad * 2, row - 4);
-    drawText(g, title, pad + 12, y + 21, exportFont(15), "#fff", "left");
-    if (note) drawText(g, note, pad + 12, y + 38, exportFont(11, 400), "#a4a4aa", "left");
-    values.forEach((value, i) => drawText(g, amount(value), colX(i), y + 29, exportFont(15), value < 0 ? "#ff6b6b" : colors[i] || "#ececee"));
+    g.fillRect(pad, y, w - pad * 2, h - 4);
+    drawText(g, title, pad + 12, y + 24, exportFont(15), "#fff", "left");
+    // The balance, and under it what this patch added (green +) or took (red -)
+    values.forEach((value, i) => {
+      drawText(g, amount(value), colX(i), y + 24, exportFont(15), value < 0 ? CALC_RED : "#ececee");
+      const change = before ? value - before[i] : 0;
+      if (change) drawText(g, `${change > 0 ? "+" : "-"}${amount(Math.abs(change))}`, colX(i), y + 40, exportFont(11), change > 0 ? CALC_GREEN : CALC_RED);
+    });
+    if (!spend.length && !notes.length) return;
+    g.fillStyle = "#ffffff18";
+    g.fillRect(pad + 12, y + row - 4, w - pad * 2 - 24, 1);
+    // One cell per cost, so each amount sits with its own icon and name
+    spend.forEach((segments, i) => {
+      let x = pad + 12 + (i % CALC_IMG.cols) * cellW;
+      const base = y + row + 14 + Math.floor(i / CALC_IMG.cols) * lineH;
+      for (const { icon, text, dim, neg } of segments) {
+        if (icon && pics[icon]) { g.drawImage(pics[icon], x, base - 14, 18, 18); x += 22; }
+        g.font = exportFont(12, dim ? 400 : 700);
+        drawText(g, text, x, base, g.font, dim ? "#a4a4aa" : neg ? CALC_RED : "#ececee", "left");
+        x += g.measureText(text).width + 8;
+      }
+    });
+    notes.forEach((text, i) => {
+      g.font = exportFont(11, 400);
+      drawText(g, fitText(g, text, w - pad * 2 - 24), pad + 12, y + row + (spendRows ? 10 : 14) + spendRows * lineH + i * noteH, g.font, "#c4c4ca", "left");
+    });
   };
-  line(top + 36, "Starting balance", "", start);
-  run.forEach(({ patch, plan, left }, i) => {
-    const spend = CALC_SPENDING.filter(({ key }) => plan[key]).map(({ key, name: label }) => `${plan[key]}× ${label}`);
-    const rc = passCost(plan), note = [...(rc ? [`${rc} RC passes`] : []), ...spend].join(" · ");
-    const title = patch.collab ? patch.frame || "Collab" : patch.patch;
-    line(top + 36 + row * (i + 1), title.length > 22 ? `${title.slice(0, 21)}…` : title, note.length > 34 ? `${note.slice(0, 33)}…` : note, CURRENCIES.map(({ key }) => left[key]));
-  });
+  line(top + 36, "Starting balance", null, start);
+  let y = top + 36 + row, before = start;
+  for (const { entry: { patch, left }, h, ...used } of rows) {
+    const title = patch.collab ? patch.frame || "Collab" : patch.patch, values = CURRENCIES.map(({ key }) => left[key]);
+    line(y, title.length > 22 ? `${title.slice(0, 21)}…` : title, before, values, { ...used, h });
+    before = values;
+    y += h;
+  }
+  // How the plan was counted, which the rows above can't say
+  drawText(g, `Calibration mode ${calc.calibration ? "on" : "off"} · Missing Shards bought with Vouchers ${calc.useVouchers ? "yes" : "no"} · Tickets are spent first and BC covers any shortfall`, pad, tableEnd + 18, exportFont(11, 400), "#a4a4aa", "left");
+  drawText(g, `Plan made on ${shortDate(today)}`, pad, tableEnd + 36, exportFont(11, 400), "#a4a4aa", "left");
   drawText(g, "dominiko.pages.dev/calculator", w - pad, height - 18, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
@@ -2987,7 +3134,7 @@ function swap(update) {
   else update();
 }
 // Written here because each address has its own title in the HTML, from tools/make-embeds.mjs
-const SITE_TITLE = "Dominik - Punishing Gray Raven Builds";
+const SITE_TITLE = "Dominik - Punishing: Gray Raven Builds e Plans";
 function route() {
   // Older addresses of the Constructs page
   if (/^\/(characters|assets\/skills)\/?$/.test(location.pathname)) {
@@ -3017,7 +3164,7 @@ function route() {
     history.replaceState(null, "", `${characterHref(character.name)}${location.search}`);
     pageUrl = location.href;
   }
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : charactersPage()) : kind === "contact" ? contactPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : charactersPage()) : kind === "contact" ? contactPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
     : path ? team(path, pick) : home();
   theme(shown || null);
   if (kind === "editor" && editorState === "ready") edPaint();
@@ -3169,7 +3316,7 @@ function searchData() {
     ...EFFECT.map(e => ({ label: e, kind: "Effect teams", href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...SPECIAL_EFFECT.map(e => ({ label: e, kind: "Special Effect teams", href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),
-    ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Contact", "/contact"]]
+    ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Updates", "/updates"], ["Contact", "/contact"]]
       .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
     { label: "Planner", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
     { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },

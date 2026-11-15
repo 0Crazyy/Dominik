@@ -151,6 +151,7 @@ add("calculator", "Planner", "Plan your Black Cards across upcoming patches, add
 const newestFrame = TIMELINE.at(-1);
 add("timeline", "Meta Timeline", `How long each of ${TIMELINE.length} S-Rank frames held its place in the meta before a newer one replaced it, with rankings, class averages and a replacement watch.\nNewest: ${newestFrame.name}`, image(newestFrame.head));
 add("editor", "Team Builder", "Put a full team together from the site's characters, memories and resonances, see its cards as the site shows them, and share it as a link or an image.", DEFAULT_IMAGE);
+add("updates", "Updates", "Changes made to Dominik, post by post: new pages, tools, builds and fixes.", DEFAULT_IMAGE);
 add("contact", "Contact", "Found a wrong build, or have a question or suggestion? Message crazy117 on Discord. Also the credits of the people behind the site's data and art.", image("assets/credits/crazy117.png"));
 
 /* ---------- writing ---------- */
