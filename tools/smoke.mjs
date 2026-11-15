@@ -154,6 +154,28 @@ const FLOWS = {
     await page.goto("/assets/skill/leia-fortunaster");
     await page.waitForFunction(() => /Skills|Passive/i.test(document.querySelector("#main")?.textContent) && !/Loading|Could not load/.test(document.querySelector("#main").textContent));
   },
+  // Ticking an event in the Events List takes its rewards out of the patch, and unticking brings them back
+  "planner: lista de eventos": async page => {
+    await page.goto("/calculator");
+    await page.waitForSelector("[data-events-open]");
+    await page.evaluate(() => localStorage.removeItem("dominik-calculator"));
+    await page.reload();
+    const totals = () => page.locator("[data-gain]").allInnerTexts().then(list => list.join("|"));
+    const before = await totals();
+    await page.click("[data-events-open]");
+    await page.waitForSelector("#calcEvents[open]");
+    const box = page.locator("#calcEvents [data-event]").first();
+    await box.check();
+    await page.click("[data-events-close]");
+    if (await totals() === before) throw new Error("marcar um evento não mudou o ganho do patch");
+    if (!(await page.locator("#calcEventsCount").innerText()).includes("1")) throw new Error("o botão Events List não mostrou a contagem");
+    await page.reload();
+    await page.click("[data-events-open]");
+    if (!(await page.locator("#calcEvents [data-event]").first().isChecked())) throw new Error("o evento marcado não ficou salvo");
+    await page.locator("#calcEvents [data-event]").first().uncheck();
+    await page.click("[data-events-close]");
+    if (await totals() !== before) throw new Error("desmarcar o evento não devolveu o ganho");
+  },
   "team builder": async (page, size) => {
     let step = "opening page";
     try {
@@ -383,6 +405,7 @@ const FLOWS = {
 
     step = "removing equipped items with right-click";
     await cards.nth(0).locator(".mem .slot").nth(1).click();
+    await page.fill("#edPickerSearch", "Darwin");
     await page.locator('.ed-picker-option[data-ed-picker-value="Darwin"]').click();
     await cards.nth(0).locator(".mem .slot").nth(1).click({ button: "right" });
     const rightClickRemovedMemory = (await state()).cards[0];

@@ -1569,24 +1569,46 @@ const CURRENCIES = [
   { key: "voucher", name: "Vouchers", art: `${CALC_ART}/voucher.png` },
   { key: "shard", name: "Shards", art: `${CALC_ART}/shard.png` }
 ];
+// Tactical Assessment pays by level, from the in-game manual. "repeat" pays again at every level from "from" to "to".
+// Basic Intel is free and the spreadsheet already counts all of it in each patch: basicIntel() keeps only the part still to come
+const intelLevels = (gains, ...levels) => levels.map(level => [level, gains]);
+const INTEL = {
+  basic: { levels: intelLevels({ voucher: 280 }, 8, 19, 28, 39, 48), repeat: { from: 51, to: 70, gains: { voucher: 80 } } },
+  encrypted: { levels: [...intelLevels({ voucher: 550 }, 4, 8, 14, 18, 24, 28, 34, 38, 44, 48), ...intelLevels({ cub: 500 }, 10, 20, 30, 40, 50)],
+    repeat: { from: 51, to: 80, gains: { voucher: 150 } } },
+  topSecret: { levels: [...intelLevels({ voucher: 1780 }, 5, 15, 25, 34, 44), [10, { limited: 1000 }], ...intelLevels({ limited: 500 }, 20, 30, 50)],
+    repeat: { from: 51, to: 80, gains: { voucher: 320 } } }
+};
+const INTEL_TOP = 80;
+// What a tier pays for the levels after "above"
+function intelGains(tier, above = 0) {
+  const { levels, repeat } = INTEL[tier], out = {};
+  const add = gains => { for (const c in gains) out[c] = (out[c] || 0) + gains[c]; };
+  for (const [level, gains] of levels) if (level > above) add(gains);
+  for (let level = Math.max(repeat.from, above + 1); level <= repeat.to; level++) add(repeat.gains);
+  return out;
+}
 // What each pass pays when bought ("upfront") and then once a day for "days" days, in the currencies above.
+// The two paid tiers of Tactical Assessment ("intel") pay by level instead, all of it once the levels are done.
 // Rewards the calculator doesn't track, like Serum, are left out. Monthly bundles from huaxu.app/na/shops/rc/2
 const CALC_PASSES = [
   { key: "bcPass", name: "Monthly Pass A", rc: 30, max: 2, art: `${CALC_ART}/bc-pass.png`, upfront: { bc: 300 }, daily: { bc: 100 }, days: 30 },
   { key: "passC", name: "Monthly Pass C", rc: 28, max: 2, art: `${CALC_ART}/monthly-pass-c.png`, upfront: { bc: 300 }, daily: { bc: 90 }, days: 30 },
-  { key: "serumPass", name: "Advanced Character Serum Monthly Pass Bundle", rc: 30, max: 1, art: `${CALC_ART}/serum-pass.png`, upfront: { bc: 300 } },
-  { key: "weaponPass", name: "Weapon Resonance Monthly Pass Bundle", rc: 98, max: 1, art: `${CALC_ART}/weapon-pass.png`, upfront: { bc: 980, shard: 30 }, daily: { weapon: 50, shard: 4 }, days: 30 },
-  { key: "encrypted", name: "Encrypted Pass", rc: 30, max: 1, art: `${CALC_ART}/encrypted-pass.png`, upfront: { cub: 2500, voucher: 10000 } },
-  { key: "topSecret", name: "Top-Secret Pass", rc: 68, max: 1, art: `${CALC_ART}/top-secret-pass.png`, upfront: { limited: 2500, voucher: 18500 } }
+  { key: "weaponPass", name: "Weapon Resonance Monthly Pass Bundle", short: "Weapon Resonance Bundle", rc: 98, max: 1, art: `${CALC_ART}/weapon-pass.png`, upfront: { bc: 980, shard: 30 }, daily: { weapon: 50, shard: 4 }, days: 30 },
+  { key: "serumPass", name: "Advanced Character Serum Monthly Pass Bundle", short: "Serum Monthly Pass Bundle", rc: 30, max: 1, art: `${CALC_ART}/serum-pass.png`, upfront: { bc: 300 } },
+  { key: "encrypted", name: "Encrypted Pass", rc: 30, max: 1, art: `${CALC_ART}/encrypted-pass.png`, intel: "encrypted" },
+  { key: "topSecret", name: "Top-Secret Pass", rc: 68, max: 1, art: `${CALC_ART}/top-secret-pass.png`, intel: "topSecret" }
 ];
+for (const pass of CALC_PASSES) if (pass.intel) pass.upfront = intelGains(pass.intel);
 const DAILY_PASSES = CALC_PASSES.filter(pass => pass.daily);
+const INTEL_PASSES = CALC_PASSES.filter(pass => pass.intel);
 const CALC_SPENDING = [
   { key: "copies", name: "Frame copies" },
-  { key: "shards", name: "Frame shards", note: "804 Vouchers each" },
   { key: "weapons", name: "Weapons" },
-  { key: "resonance", name: "6★ Resonance", note: "150 Shards each" },
   { key: "cubs", name: "C.U.B.s" },
-  { key: "custom", name: "Other BC spend", note: "Skins, special banners...", step: 1000 }
+  { key: "custom", name: "Other BC spend", note: "Skins, special banners...", step: 1000 },
+  { key: "resonance", name: "6★ Resonance", note: "150 Shards each" },
+  { key: "shards", name: "Frame shards", note: "804 Vouchers each" }
 ];
 // Eneba prices before checkout fees: [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
 const RC_PRICES_DATE = "8 Nov 2026";
@@ -1598,11 +1620,12 @@ const COLLAB_COST = { S: 10500, A: 2500, firstFrame: 6300, firstWeapon: 4000 };
 // Base rates from each banner's in-game Drop Details. The first key is the banner the page opens on
 const FRAME_ODDS = { rate: 0.005, pity: 60, cost: COST.S };
 const PULL_ODDS = { "Themed Construct": FRAME_ODDS, "Arrival Construct": FRAME_ODDS, "Target Weapon": { rate: 0.04, pity: 30, cost: COST.weapon }, "C.U.B. Target": { rate: 0.0582, pity: 20, cost: COST.cub } };
-// What's left after one patch. "start" is the balance going in, "plan" what was typed in that patch's card
-// "passDays" holds how many days of each daily pass fall in this patch
-function patchResult(patch, start, plan, { calibration, useVouchers }, passDays = {}) {
+// What's left after one patch. "start" is the balance going in, "plan" what was typed in that patch's card.
+// "passDays" holds how many days of each daily pass fall in this patch, and "extra" what passes bought before today still pay in it.
+// The frame's rank comes from the spreadsheet, or from the forecast for patches it doesn't have yet
+function patchResult(patch, start, plan, { calibration, useVouchers }, passDays = {}, extra = {}) {
   const count = key => plan[key] || 0;
-  const rank = plan.rank || patch.rank;
+  const rank = patch.rank;
   const weaponCost = COST.weapon * (calibration ? 2 : 1);
   const left = { ...start };
   let bcSpent = count("custom");
@@ -1611,7 +1634,7 @@ function patchResult(patch, start, plan, { calibration, useVouchers }, passDays 
     if (count("weapons")) bcSpent += COLLAB_COST.firstWeapon + (count("weapons") - 1) * weaponCost;
     bcSpent += count("cubs") * COST.cub;
   } else {
-    for (const { key } of CURRENCIES) left[key] += patch.gains[key];
+    for (const { key } of CURRENCIES) left[key] += patch.gains[key] + (extra[key] || 0);
     for (const { key, upfront, daily = {} } of CALC_PASSES) {
       for (const c in upfront) left[c] += count(key) * upfront[c];
       for (const c in daily) left[c] += (passDays[key] || 0) * daily[c];
@@ -1655,12 +1678,17 @@ function saveCalc() {
   try { localStorage.setItem(CALC_KEY, JSON.stringify(calc)); }
   catch { /* Private windows can refuse storage: the page still works, it just won't remember */ }
 }
-const newCalc = () => ({ balance: {}, plans: {}, pick: "", tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0 });
+// "owned" is what was bought before today: the day each daily pass was bought, and for the patch running now ("patch"),
+// the Tactical Assessment level and the paid tiers already bought
+const newCalc = () => ({ balance: {}, plans: {}, owned: {}, pick: "", tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0, doneEvents: {} });
 let calc = { ...newCalc(), ...readCalc() };
 // Plans saved while patches were folding cards still carry which ones were open
 delete calc.open;
 // A plan saved before a banner was renamed still holds the old name
 if (!PULL_ODDS[calc.pullKind]) calc.pullKind = newCalc().pullKind;
+calc.owned ||= {};
+// Events marked as done, by eventId(): an id the sheet no longer lists is simply never matched
+calc.doneEvents ||= {};
 const calcId = patch => patch.patch || patch.frame;
 // The game day turns at the daily reset, 05:00 UTC, wherever the player is
 const calcToday = () => new Date(Date.now() - 5 * 36e5).toISOString().slice(0, 10);
@@ -1682,44 +1710,113 @@ function patchTime(patch, today) {
   return { day: now - start + 1, days: end - start + 1, daysLeft: end - now + 1, weeks: mondays(start, end), weeksLeft: mondays(now, end),
     cycles: FORTNIGHTLY.map(mode => ({ ...mode, total: fortnights(start, end, mode.reset), left: fortnights(now, end, mode.reset) })) };
 }
+// Weeklies of the sheet that are kept apart, so one can be marked as done. The rest of the weekly income stays together
+const WEEKLY_MODES = [{ key: "ppc", name: "Phantom Pain Cage" }, { key: "warzone", name: "Warzone" }];
+const ROUND_MODES = [...WEEKLY_MODES.map(mode => ({ ...mode, weekly: true })), ...FORTNIGHTLY];
+// The day the round running on day "today" of a mode began: the last Monday, or the last reset of a fortnightly mode
+const roundDay = (key, today) => {
+  const mode = ROUND_MODES.find(m => m.key === key);
+  if (mode.weekly) return today - (today + 3) % 7;
+  const first = dayNumber(mode.reset);
+  return first + Math.floor((today - first) / 14) * 14;
+};
+// What one round of a mode pays in a patch, or nothing when the data doesn't have it
+function roundPay(patch, mode, time) {
+  const pay = mode.weekly ? patch.weeklyModes?.[mode.key] : patch.fortnightly?.[mode.key];
+  const rounds = mode.weekly ? time.weeks : time.cycles.find(cycle => cycle.key === mode.key).total;
+  return pay && rounds ? Object.fromEntries(Object.entries(pay).map(([c, n]) => [c, n / rounds])) : null;
+}
+// The round running now began before today, so "left" no longer counts it, but it can still be played: unticked, it is added back.
+// A round that began today is already in "left": ticked, it is taken out. A round from before the patch is not in it at all
+function roundShift(patch, today) {
+  const time = patchTime(patch, today), now = dayNumber(today), shift = {};
+  for (const mode of ROUND_MODES) {
+    const day = roundDay(mode.key, now), pay = time && day >= dayNumber(patch.start) && roundPay(patch, mode, time);
+    if (!pay) continue;
+    const times = calc.owned.done?.[mode.key] === day ? (day === now ? -1 : 0) : (day < now ? 1 : 0);
+    for (const [c, n] of Object.entries(pay)) shift[c] = (shift[c] || 0) + Math.round(n * times);
+  }
+  return shift;
+}
 // The part of a patch's income that can still be earned: dailies and weeklies shrink as the patch goes on, and events leave once they end
 function incomeLeft(patch, today) {
-  const time = patchTime(patch, today);
-  if (!time || !patch.daily) return patch.gains;
+  const time = patchTime(patch, today), ticked = patchEvents(patch).filter(event => calc.doneEvents[event.id]);
+  const paid = (events, key) => events.reduce((total, event) => total + (event.gains[key] || 0), 0);
+  // Events ticked as done leave the income of any patch, running or not
+  if (!time || !patch.daily) return Object.fromEntries(CURRENCIES.map(({ key }) => [key, Math.max(0, (patch.gains[key] || 0) - paid(ticked, key))]));
   // A part with no reset in the patch counts in full
   const missed = (part = {}, key, left, total) => total ? Math.round((part[key] || 0) * (1 - left / total)) : 0;
-  const ended = patch.events.filter(event => event.end < today);
+  // An event that ended and was also ticked leaves once
+  const ended = patchEvents(patch).filter(event => event.end < today || calc.doneEvents[event.id]), shift = roundShift(patch, today);
   return Object.fromEntries(CURRENCIES.map(({ key }) => [key, Math.max(0, patch.gains[key]
     - missed(patch.daily, key, time.daysLeft, time.days) - missed(patch.weekly, key, time.weeksLeft, time.weeks)
     - time.cycles.reduce((total, cycle) => total + missed(patch.fortnightly?.[cycle.key], key, cycle.left, cycle.total), 0)
-    - ended.reduce((total, event) => total + (event.gains[key] || 0), 0))]));
+    - paid(ended, key) + (shift[key] || 0))]));
+}
+// The timed events of a patch, each with an id that survives a refresh of the data and a type. tools/update-calculator.mjs
+// keeps only the ones that end before the patch does, so permanent content is never listed. The sheet has no type column,
+// so "recurring" is any event whose name (before " - " or ": ") shows up in more than one patch
+const eventName = event => event.name.split(/ - |: /)[0].trim().toLowerCase();
+let recurringNames;
+function patchEvents(patch) {
+  recurringNames ||= (() => {
+    const seen = new Map();
+    for (const p of CALC_PATCHES) for (const name of new Set((p.events || []).map(eventName))) seen.set(name, (seen.get(name) || 0) + 1);
+    return new Set([...seen].filter(([, count]) => count > 1).map(([name]) => name));
+  })();
+  const used = {};
+  return (patch.events || []).map(event => {
+    const name = event.name.trim().toLowerCase(), n = used[name] = (used[name] || 0) + 1;
+    return { ...event, id: `${calcId(patch)}|${name}${n > 1 ? `#${n}` : ""}`, recurring: recurringNames.has(eventName(event)) };
+  });
+}
+// What was typed in "Already bought" for the patch running now. Typed in an earlier patch, it no longer applies
+const ownedIn = patch => patch && calc.owned.patch === calcId(patch) ? calc.owned : {};
+// The spreadsheet counts all of Basic Intel in each patch. In the patch running now, only the levels above the one typed in are still to come
+function basicIntel(gains, level) {
+  const all = intelGains("basic"), left = intelGains("basic", level);
+  return { ...gains, ...Object.fromEntries(Object.keys(all).map(c => [c, Math.max(0, gains[c] - all[c]) + (left[c] || 0)])) };
 }
 // The patch running today and the ones after it. Patches that already ended don't matter for a plan
 function calcPlan() {
   const today = calcToday();
   const current = CALC_PATCHES.findIndex(p => p.patch && today <= p.end);
   const first = current >= 0 ? current : CALC_PATCHES.findLastIndex(p => p.patch);
-  return CALC_PATCHES.slice(first).map(p => p.collab ? p : { ...p, gains: incomeLeft(p, today) });
+  return CALC_PATCHES.slice(first).map(p => p.collab ? p
+    : { ...p, gains: basicIntel(incomeLeft(p, today), patchTime(p, today) ? ownedIn(p).level || 0 : 0) });
 }
+// The first patch of the plan, when it is the one running today
+const runningPatch = (patches, today) => patches[0] && patchTime(patches[0], today) ? patches[0] : null;
 // Days a plan can use in a patch: from today in the one running now, all of them later on, and none in a collab, which has no dates
 function planDays(patch, today) {
   if (patch.collab) return 0;
   return patchTime(patch, today)?.daysLeft ?? dayNumber(patch.end) - dayNumber(patch.start) + 1;
 }
-// Each patch starts with what the one before it left. Copies of the same daily pass run one after the other, and what doesn't fit moves on
+// A daily pass bought before today: its days still to come, counting today, as the rest of the plan does
+function boughtDaysLeft(date, days, today) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return 0;
+  return Math.max(0, Math.min(dayNumber(date), dayNumber(today)) + days - dayNumber(today));
+}
+// Each patch starts with what the one before it left. Copies of the same daily pass run one after the other, and what doesn't fit moves on.
+// A daily pass bought before today runs first. A paid tier already bought in the patch running now pays only its levels still to come
 function calcRun() {
-  const today = calcToday();
+  const today = calcToday(), patches = calcPlan(), now = runningPatch(patches, today), owned = ownedIn(now);
   let balance = Object.fromEntries(CURRENCIES.map(({ key }) => [key, calc.balance[key] || 0]));
-  const queued = {};
-  return calcPlan().map(patch => {
-    const plan = calc.plans[calcId(patch)] || {}, passDays = {}, passLeft = {};
+  const queued = Object.fromEntries(DAILY_PASSES.map(({ key, days }) => [key, boughtDaysLeft(calc.owned[key], days, today)]));
+  return patches.map(patch => {
+    const plan = { ...calc.plans[calcId(patch)] }, passDays = {}, passLeft = {}, extra = {};
+    if (patch === now) for (const { key, intel } of INTEL_PASSES) {
+      if (!owned[key]) continue;
+      plan[key] = 0;
+      for (const [c, n] of Object.entries(intelGains(intel, owned.level || 0))) extra[c] = (extra[c] || 0) + n;
+    }
     for (const { key, days } of DAILY_PASSES) {
       const total = (queued[key] || 0) + (patch.collab ? 0 : plan[key] || 0) * days;
       passDays[key] = Math.min(total, planDays(patch, today));
       queued[key] = passLeft[key] = total - passDays[key];
     }
-    balance = patchResult(patch, balance, plan, calc, passDays);
-    return { plan, left: balance, passDays, passLeft };
+    balance = patchResult(patch, balance, plan, calc, passDays, extra);
+    return { patch, plan, left: balance, passDays, passLeft };
   });
 }
 const whole = value => Math.max(0, Math.floor(Number(value)) || 0);
@@ -1737,6 +1834,13 @@ const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
 const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
 const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(c.name)}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
 const frameLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
+// What a pass gives, as small currency icons with amounts: on purchase, once a day, or over the Tactical Assessment levels
+const coinIcon = key => { const { name, art } = CURRENCIES.find(c => c.key === key); return `<span class="calc-mini" title="${esc(name)}">${pic(art, `alt="${esc(name)}"`)}</span>`; };
+const rewardList = gains => Object.entries(gains).filter(([, n]) => n).map(([c, n]) => `<span class="calc-reward">${coinIcon(c)}${amount(n)}</span>`).join("");
+function passLegend({ upfront, daily, days, intel }) {
+  const part = (when, gains) => `<span class="calc-legend-part"><i>${when}</i>${rewardList(gains)}</span>`;
+  return `<span class="calc-legend">${intel ? part(`Lv 1–${INTEL_TOP}`, upfront) : part("Now", upfront) + (daily ? part(`Daily ×${days}`, daily) : "")}</span>`;
+}
 // The belt: one stop per patch, in order, with the BC it leaves and the RC spent in it. Picking a stop shows that patch's card
 const dayMonth = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 function patchStop(patch, today, picked) {
@@ -1750,56 +1854,78 @@ function patchStop(patch, today, picked) {
   </button>`;
 }
 function patchCard(patch, today, picked) {
-  const plan = calc.plans[calcId(patch)] || {};
+  const plan = calc.plans[calcId(patch)] || {}, time = patchTime(patch, today), owned = time ? ownedIn(patch) : {};
   const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(name)}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="Less: ${esc(name)}">−</button>${numberBox(`data-plan="${key}"`, plan[key], name)}<button type="button" data-step="${step}" aria-label="More: ${esc(name)}">+</button></span>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
-  const passes = CALC_PASSES.map(({ key, name, art, rc, max }) => `<label class="calc-pass">${calcIcon(art)}<span>${esc(name)}<small>${rc} RC${max > 1 ? " each" : ""}</small></span>
-    ${max > 1
-      ? `<select data-plan="${key}" aria-label="${esc(name)}">${Array.from({ length: max + 1 }, (_, n) => `<option${n === (plan[key] || 0) ? " selected" : ""}>${n}</option>`).join("")}</select>`
-      : `<input type="checkbox" data-plan="${key}"${plan[key] ? " checked" : ""} aria-label="${esc(name)}">`}</label>`).join("");
-  const rank = plan.rank || patch.rank, time = patchTime(patch, today);
+  // A paid tier already bought in this patch can't be bought again: it shows as owned, and pays only its levels still to come
+  const passes = CALC_PASSES.map(pass => {
+    const { key, name, art, rc, max } = pass;
+    // A Tactical Assessment pass is one checkbox: in the patch running now it means already bought, in the others, to buy
+    const intel = INTEL_PASSES.some(p => p.key === key);
+    const control = intel ? `<input type="checkbox" data-state="${key}"${(time ? owned[key] : plan[key]) ? " checked" : ""} aria-label="${esc(name)}${time ? ": already bought" : ""}">`
+      : max > 1 ? `<select data-plan="${key}" aria-label="${esc(name)}">${Array.from({ length: max + 1 }, (_, n) => `<option${n === (plan[key] || 0) ? " selected" : ""}>${n}</option>`).join("")}</select>`
+        : `<input type="checkbox" data-plan="${key}"${plan[key] ? " checked" : ""} aria-label="${esc(name)}">`;
+    // A daily pass bought before today: its day is the same in every card, since its remaining days run before any copy planned
+    const bought = DAILY_PASSES.some(p => p.key === key)
+      ? `<span class="calc-pass-own">Already bought on<input type="date" data-own="${key}" max="${today}" value="${esc(calc.owned[key] || "")}" aria-label="${esc(name)}: day it was bought"></span>` : "";
+    return `<label class="calc-pass${intel ? " intel" : ""}">${calcIcon(art)}<span class="calc-pass-tx"><b>${esc(name)} <small>${rc} RC${max > 1 ? " each" : ""}</small></b>${passLegend(pass)}</span>${control}${bought}</label>`;
+  }).join("");
   const head = patch.collab
     ? `<h3>${frameLink(patch.frame)}</h3><p>Collab banner · no income of its own, and tickets don't apply</p>`
     : `<h3>${esc(patch.patch)}${time ? `<span class="calc-tag">Day ${time.day} of ${time.days}</span>` : ""}${patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : ""}</h3>
       <p class="calc-meta"><span>${shortDate(patch.start)} to ${shortDate(patch.end)}</span><span>${time?.days ?? planDays(patch, today)} days</span><span>${patch.patch === patch.frame ? "" : frameLink(patch.frame)}</span></p>`;
   const income = time && patch.daily
-    ? `<p class="calc-label">Income left</p><p class="calc-hint">Still to come: ${time.daysLeft} of ${time.days} days of dailies, ${time.weeksLeft} of ${time.weeks} weekly resets, ${time.cycles.map(cycle => `${cycle.left} of ${cycle.total} ${cycle.name} resets`).join(", ")} and ${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</p>`
-    : `<p class="calc-label">Patch income</p>`;
-  return `<section class="calc-card calc-patch" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
-    <div class="calc-head"><div>${head}</div>${patch.collab ? "" : `<label class="calc-rank">Rank <select data-plan="rank" aria-label="Frame rank">${["S", "A"].map(r => `<option${r === rank ? " selected" : ""}>${r}</option>`).join("")}</select></label>`}</div>
-    ${patch.collab ? "" : `${income}${currencyGrid(patch.gains, (_, value) => `<b>${amount(value)}</b>`)}
-    <p class="calc-label">Passes</p><div class="calc-passes">${passes}</div>
-    <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
-    <p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div>
-    ${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>Repeat this plan in later patches</button>`}
-    <p class="calc-label">Final balance</p>${currencyGrid({}, c => `<output data-left="${c.key}"></output>`)}
+    ? `<p class="calc-label">Income left</p><ul class="calc-hint calc-left"><li>${time.daysLeft} of ${time.days} days of dailies</li><li>${time.weeksLeft} of ${time.weeks} weekly resets</li>${time.cycles.map(cycle => `<li>${cycle.left} of ${cycle.total} ${cycle.name} resets</li>`).join("")}<li>${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</li></ul>`
+    : "";
+  return `<section class="calc-patch${patch.collab ? " collab" : ""}" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
+    ${patch.collab ? "" : `<div class="calc-income" role="group" aria-label="${time ? "Income left" : "Patch income"}"><small>${time ? "Left" : "Income"}</small>${CURRENCIES.map(c => `<div class="calc-gain" title="${esc(c.name)}">${calcIcon(c.art)}<output data-gain="${c.key}" aria-label="${esc(c.name)}"></output></div>`).join("")}</div>`}
+    <div class="calc-patch-main">
+      <div class="calc-head"><div>${head}</div>${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>Repeat this plan in later patches</button>`}</div>
+      ${income}
+      <div class="calc-cols">
+        ${patch.collab ? "" : `<div><p class="calc-label">Passes</p><div class="calc-passes">${passes}</div></div>`}
+        <div><p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div></div>
+      </div>
+      ${patch.collab ? "" : `<div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
+    </div>
   </section>`;
 }
+// One row of the final balance column: what each patch leaves. Picking a row picks that patch
+const finalRow = (patch, picked) => `<button class="calc-final-row" type="button" data-pick="${esc(calcId(patch))}" aria-current="${picked}">
+  <b>${esc(patch.collab ? patch.frame || "Collab" : patch.patch)}</b>
+  <span class="calc-final-coins">${CURRENCIES.map(c => `<span class="calc-final-coin" title="${esc(c.name)}">${calcIcon(c.art)}<output data-left="${c.key}" aria-label="${esc(c.name)}"></output></span>`).join("")}</span>
+</button>`;
 // The stop picked last time, or the first one when that patch has already left the plan
 const pickedId = patches => patches.some(p => calcId(p) === calc.pick) ? calc.pick : calcId(patches[0]);
-// Keeps the picked stop in the middle of the belt, without moving the page
-function centerStop() {
-  const belt = $(".calc-belt"), stop = $('.calc-stop[aria-selected="true"]');
-  if (belt && stop) belt.scrollTo({ left: stop.offsetLeft - (belt.clientWidth - stop.offsetWidth) / 2, behavior: "smooth" });
+// Keeps the picked stop in the middle of the belt, and its row in view in the final balance, without moving the page
+function centerStop(smooth = true) {
+  const belt = $(".calc-belt"), stop = $('.calc-stop[aria-selected="true"]'), list = $(".calc-final-list"), row = $('.calc-final-row[aria-current="true"]');
+  const behavior = smooth && !matchMedia("(prefers-reduced-motion:reduce)").matches ? "smooth" : "auto";
+  if (belt && stop) belt.scrollTo({ left: stop.offsetLeft - (belt.clientWidth - stop.offsetWidth) / 2, behavior });
+  if (list && row && list.scrollHeight > list.clientHeight) list.scrollTo({ top: row.offsetTop - list.offsetTop - (list.clientHeight - row.offsetHeight) / 2, behavior });
 }
 function pickPatch(id, focus) {
   calc.pick = id;
   saveCalc();
   const stops = [...document.querySelectorAll(".calc-stop")], at = stops.findIndex(s => s.dataset.pick === id);
   stops.forEach((stop, i) => { stop.setAttribute("aria-selected", i === at); stop.tabIndex = i === at ? 0 : -1; });
+  document.querySelectorAll(".calc-final-row").forEach(row => row.setAttribute("aria-current", row.dataset.pick === id));
   document.querySelectorAll(".calc-patch").forEach(card => { card.hidden = card.dataset.id !== id; });
-  $("[data-belt=prev]").disabled = at === 0;
-  $("[data-belt=next]").disabled = at === stops.length - 1;
+  document.querySelectorAll("[data-belt=prev]").forEach(b => { b.disabled = at === 0; });
+  document.querySelectorAll("[data-belt=next]").forEach(b => { b.disabled = at === stops.length - 1; });
   if (focus) stops[at].focus({ preventScroll: true });
   centerStop();
 }
 const calcStat = (label, value, note) => `<div class="calc-stat"><small>${esc(label)}</small><b>${esc(value)}</b><small>${esc(note)}</small></div>`;
 function showCalc() {
-  const cards = document.querySelectorAll(".calc-patch"), stops = document.querySelectorAll(".calc-stop"), run = calcRun();
-  run.forEach(({ plan, left, passDays, passLeft }, i) => {
+  syncEvents();
+  const cards = document.querySelectorAll(".calc-patch"), stops = document.querySelectorAll(".calc-stop"), rows = document.querySelectorAll(".calc-final-row"), run = calcRun();
+  run.forEach(({ patch, plan, left, passDays, passLeft }, i) => {
     for (const { key } of CURRENCIES) {
-      const out = $(`[data-left="${key}"]`, cards[i]);
+      const out = $(`[data-left="${key}"]`, rows[i]);
       out.textContent = amount(left[key]);
       out.classList.toggle("short", left[key] < 0);
+      const gain = $(`[data-gain="${key}"]`, cards[i]);
+      if (gain) gain.textContent = amount(patch.gains[key]);
     }
     const bc = $("[data-stop-bc]", stops[i]);
     bc.textContent = amount(left.bc);
@@ -1815,75 +1941,138 @@ function showCalc() {
   });
   const bought = CALC_PASSES.map(({ key, name }) => [name, run.reduce((total, { plan }) => total + (plan[key] || 0), 0)]).filter(([, count]) => count);
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0);
-  $("#calcRc").textContent = `${amount(totalRc)} RC`;
-  $("#calcRcPrice").textContent = rcPrice(totalRc);
   $("#calcBarRc").textContent = `${amount(totalRc)} RC`;
   $("#calcBarPrice").textContent = rcPrice(totalRc) || "No passes picked yet";
+  $("#calcBarPrice").title = bought.map(([name, count]) => `${count}× ${name}`).join("\n");
   const lastBc = run.at(-1).left.bc;
   $("#calcBarBc").textContent = `${amount(lastBc)} BC`;
   $("#calcBarBc").classList.toggle("short", lastBc < 0);
-  $("#calcRcList").textContent = bought.map(([name, count]) => `${count}× ${name}`).join(" · ") || "No passes picked yet";
   const { rate, pity, average, averageCost, early, noPity } = pullStats(calc.pullKind, calc.pulls);
   $("#calcOdds").innerHTML = calcStat("Chance before pity", `${(early * 100).toFixed(2)}%`, calc.pulls >= pity ? `Pity reached: guaranteed by pull ${pity}` : `${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}% per pull`)
     + calcStat("Pity hits", `${Math.floor(calc.pulls / pity)}×`, `Every ${pity} pulls · ${pity - calc.pulls % pity} to the next`)
     + calcStat("Expected", `${Math.round(average)} pulls`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
     + calcStat("Nearly Guaranteed", `${noPity} pulls`, `${NEARLY_SURE * 100}% chance without pity`);
 }
+// The rail above the belt: its thumb follows the belt, and dragging it or clicking its track scrolls the belt
+function syncRail() {
+  const belt = $(".calc-belt"), thumb = $(".calc-rail-thumb");
+  if (!belt || !thumb) return;
+  const share = Math.min(1, belt.clientWidth / belt.scrollWidth);
+  thumb.style.width = `${share * 100}%`;
+  thumb.style.left = `${belt.scrollWidth > belt.clientWidth ? belt.scrollLeft / belt.scrollWidth * 100 : 0}%`;
+  $(".calc-rail").classList.toggle("full", share >= 1);
+  document.querySelectorAll("[data-rail]").forEach(b => {
+    b.disabled = b.dataset.rail < 0 ? belt.scrollLeft <= 1 : belt.scrollLeft >= belt.scrollWidth - belt.clientWidth - 1;
+  });
+}
 // Phones keep the explanations closed, and only one patch open, so the page stays short
 const calcPhone = matchMedia("(max-width:760px)");
 const calcMore = (title, content) => `<details class="calc-more"${calcPhone.matches ? "" : " open"}><summary>${title}</summary>${content}</details>`;
 const calcNotes = notes => `<dl class="calc-info">${notes.map(([title, text]) => `<div><dt>${title}</dt><dd>${text}</dd></div>`).join("")}</dl>`;
+function ownedBox(now) {
+  if (!now) return "";
+  const owned = ownedIn(now);
+  const today = calcToday(), day = dayNumber(today);
+  const round = ({ key, name }) => `<label class="calc-check"><input type="checkbox" data-round="${key}"${calc.owned.done?.[key] === roundDay(key, day) ? " checked" : ""}><span>${esc(name)}</span></label>`;
+  const modes = ROUND_MODES.filter(mode => roundPay(now, mode, patchTime(now, today)));
+  return `<p class="calc-label">Already bought</p><p class="calc-hint">Only what these still pay from today on is added, in ${esc(now.patch)}. Set the passes and the day each was bought in the patch card.</p>
+    <div class="calc-owned"><label class="calc-own level"><span>Tactical Assessment level<small>In the patch running now</small></span>${numberBox(`data-own="level" max="${INTEL_TOP}"`, owned.level, "Tactical Assessment level")}</label>
+    ${modes.length ? `<small class="calc-own-head">Already done this round</small><div class="calc-own-checks">${modes.map(round).join("")}</div>` : ""}</div>`;
+}
+// The menu behind the "Events List" button: the timed events of each patch, to tick the ones already done
+function eventsMenu(patches) {
+  const gainChips = gains => CURRENCIES.filter(c => gains[c.key]).map(c => `<span class="calc-ev-gain" title="${c.name}">${calcIcon(c.art)}${amount(gains[c.key])}</span>`).join("");
+  const row = event => `<label class="calc-check calc-ev"><input type="checkbox" data-event="${esc(event.id)}"${calc.doneEvents[event.id] ? " checked" : ""}><span>${esc(event.name)}<small>Ends ${esc(event.end)}</small></span><span class="calc-ev-gains">${gainChips(event.gains)}</span></label>`;
+  const group = (title, events) => events.length ? `<p class="calc-ev-group">${title}</p>${events.map(row).join("")}` : "";
+  const sections = patches.filter(p => !p.collab && !p.forecast).map(p => ({ patch: p, events: patchEvents(p) })).filter(s => s.events.length);
+  return `<dialog class="calc-events" id="calcEvents" aria-label="Events List">
+    <div class="calc-ev-head"><h2>Events List</h2><button class="tool" type="button" data-events-close aria-label="Close">✕</button></div>
+    <p class="calc-hint">Tick the timed events you already did. Their rewards are taken out of that patch, so they aren't counted twice. The list follows the spreadsheet, so new, changed and removed events show up after each update.</p>
+    ${sections.map(({ patch, events }) => `<section class="calc-ev-patch" data-ev-patch="${esc(calcId(patch))}">
+      <h3>${esc(calcId(patch))}<small data-ev-count></small></h3>
+      ${group("Recurring", events.filter(e => e.recurring))}${group("Limited", events.filter(e => !e.recurring))}
+    </section>`).join("") || `<p class="calc-hint">No events in the coming patches yet.</p>`}
+  </dialog>`;
+}
+// "Done: X of N" for each patch in the menu, and the total on the button
+function syncEvents() {
+  let total = 0;
+  document.querySelectorAll("#calcEvents [data-ev-patch]").forEach(section => {
+    const boxes = [...section.querySelectorAll("[data-event]")], done = boxes.filter(box => box.checked).length;
+    total += done;
+    section.querySelector("[data-ev-count]").textContent = ` · ${done} of ${boxes.length} done`;
+  });
+  const count = $("#calcEventsCount");
+  if (count) count.textContent = total ? ` (${total})` : "";
+}
 function calculatorPage() {
   const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(name)}<small>${esc(note)}</small></span></label>`;
   const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${name}</button>`;
   const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${what}</span></div>`;
+  const sideNav = (to, label) => `<button class="calc-side-nav" type="button" data-belt="${to}" aria-label="${label}"${picked === calcId(to === "prev" ? patches[0] : patches.at(-1)) ? " disabled" : ""}><span aria-hidden="true">${to === "prev" ? "‹" : "›"}</span><small>${label}</small></button>`;
   const today = calcToday(), patches = calcPlan(), picked = calc.pick = pickedId(patches);
-  return `<h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p>
-  <div id="calc">
-    <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
-    <div data-calc-panel="plan"${calc.tab === "plan" ? "" : " hidden"}>
-      <div class="calc-bar">
-        <span class="calc-bar-item">${calcIcon(RC_ART)}<span><output id="calcBarRc"></output><small id="calcBarPrice"></small></span></span>
-        <span class="calc-bar-item">${calcIcon(CURRENCIES[0].art)}<span><output id="calcBarBc"></output><small>BC left after the last patch</small></span></span>
-      </div>
-      <div class="calc-layout">
-        <div class="calc-main">
-          <section class="calc-card">
-            <div class="calc-head"><div><h3>Starting balance</h3><p>What you have right now</p></div><button class="tool" type="button" data-calc-clear>Clear all</button></div>
-            <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, c.name))}</div>
-            <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
-          </section>
-          <h2 class="grp">Patches</h2>
-          <p class="calc-hint">Each stop shows the BC left after that patch. Pick one to plan it.</p>
-          <div class="calc-belt-wrap">
-            <button class="calc-nav" type="button" data-belt="prev" aria-label="Previous patch"${picked === calcId(patches[0]) ? " disabled" : ""}>‹</button>
-            <div class="calc-belt"><div class="calc-track" role="tablist" aria-label="Patches">${patches.map(p => patchStop(p, today, calcId(p) === picked)).join("")}</div></div>
-            <button class="calc-nav" type="button" data-belt="next" aria-label="Next patch"${picked === calcId(patches.at(-1)) ? " disabled" : ""}>›</button>
-          </div>
-          ${patches.map(p => patchCard(p, today, calcId(p) === picked)).join("")}
+  return `<div id="calc">
+    <div class="calc-title">
+      <div><h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p></div>
+      <div class="calc-top">
+        <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
+        <div class="calc-bar"${calc.tab === "plan" ? "" : " hidden"}>
+          <span class="calc-bar-item">${calcIcon(RC_ART)}<span><output id="calcBarRc"></output><small id="calcBarPrice"></small></span></span>
+          <span class="calc-bar-item">${calcIcon(CURRENCIES[0].art)}<span><output id="calcBarBc"></output><small>BC left after the last patch</small></span></span>
         </div>
-        <aside class="calc-side">
-          <h2 class="grp">Passes total</h2>
-          <section class="calc-card calc-total">${calcIcon(RC_ART)}<output id="calcRc"></output><b id="calcRcPrice"></b><small id="calcRcList"></small>
-            <small>RC prices come from <a href="${RC_STORE}" target="_blank" rel="noopener noreferrer">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.</small></section>
-          ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
-            ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500)."],
-            ["Current patch", "Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC."],
-            ["Daily passes", `Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`],
-            ["Patch income", "Only the highest difficulty of each mode counts."]
-          ])}</section>`)}
-          ${calcMore("Predicted patches", `<section class="calc-card">
-            <p class="calc-text">The calculator always looks 9 patches past the last one in the spreadsheet. Each of them repeats the same period of the year before, with no collabs and no one-off compensation. Expect this much variation per patch:</p>
-            <div class="calc-margins">
-              ${margin("low", "±5%", "Black Cards (±510) and C.U.B. Tickets")}
-              ${margin("mid", "±20-30%", "Vouchers, Construct Tickets and Shards")}
-              ${margin("high", "±50%+", "Limited and Weapon Tickets, which depend on each year's events")}
-            </div>
-            <p class="calc-text">Over a full year, Black Cards stay within about ±3.5% (±3,200). Based on how far 8 real patches landed from the same period a year before.</p>
-          </section>`)}
-        </aside>
       </div>
     </div>
+    <div data-calc-panel="plan"${calc.tab === "plan" ? "" : " hidden"}>
+      <div class="calc-board">
+        <section class="calc-card calc-balance">
+          <div class="calc-head"><div><h3>Starting balance</h3><p>What you have right now</p></div></div>
+          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, c.name))}</div>
+          ${ownedBox(runningPatch(patches, today))}
+          <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
+          <button class="tool calc-events-open" type="button" data-events-open>Events List<span id="calcEventsCount"></span></button>
+          <button class="tool calc-clear" type="button" data-calc-clear>Clear all</button>
+        </section>
+        <div class="calc-center">
+          ${sideNav("prev", "Previous patch")}
+          <section class="calc-card calc-stage">
+            <div class="calc-rail">
+              <p class="calc-label" title="Each stop shows the BC left after that patch. Pick one to plan it.">Patches</p>
+              <button class="calc-rail-step" type="button" data-rail="-1" aria-label="Scroll the patches back">‹</button>
+              <div class="calc-rail-track"><span class="calc-rail-thumb"></span></div>
+              <button class="calc-rail-step" type="button" data-rail="1" aria-label="Scroll the patches forward">›</button>
+            </div>
+            <div class="calc-belt"><div class="calc-track" role="tablist" aria-label="Patches">${patches.map(p => patchStop(p, today, calcId(p) === picked)).join("")}</div></div>
+            ${patches.map(p => patchCard(p, today, calcId(p) === picked)).join("")}
+          </section>
+          ${sideNav("next", "Next patch")}
+        </div>
+        <section class="calc-card calc-final">
+          <h3>Final balance</h3>
+          <div class="calc-final-list">${patches.map(p => finalRow(p, calcId(p) === picked)).join("")}</div>
+        </section>
+      </div>
+      <div class="calc-notes">
+        ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
+          ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500). Its rank, S or A, comes from the spreadsheet, or from the forecast for later patches."],
+          ["Current patch", "Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC."],
+          ["Daily passes", `Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`],
+          ["Tactical Assessment", `Basic Intel is free and counts in every patch. Encrypted and Top-Secret Pass pay their rewards over levels 1 to ${INTEL_TOP}, counted in full in the patch you buy them, since buying also pays the levels you already reached.`],
+          ["Already bought", "A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. In the patch running now, Basic Intel and a Tactical Assessment pass marked as already bought pay only the levels above yours, and that pass can't be planned again. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done."],
+          ["Patch income", "Only the highest difficulty of each mode counts."],
+          ["RC prices", `From <a href="${RC_STORE}" target="_blank" rel="noopener noreferrer">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.`]
+        ])}</section>`)}
+        ${calcMore("Predicted patches", `<section class="calc-card">
+          <p class="calc-text">The calculator always looks 9 patches past the last one in the spreadsheet. Each of them repeats the same period of the year before, with no collabs and no one-off compensation. Expect this much variation per patch:</p>
+          <div class="calc-margins">
+            ${margin("low", "±5%", "Black Cards (±510) and C.U.B. Tickets")}
+            ${margin("mid", "±20-30%", "Vouchers, Construct Tickets and Shards")}
+            ${margin("high", "±50%+", "Limited and Weapon Tickets, which depend on each year's events")}
+          </div>
+          <p class="calc-text">Over a full year, Black Cards stay within about ±3.5% (±3,200). Based on how far 8 real patches landed from the same period a year before.</p>
+        </section>`)}
+      </div>
+    </div>
+    ${eventsMenu(patches)}
     <div class="calc-pull-page" data-calc-panel="pull"${calc.tab === "pull" ? "" : " hidden"}>
       <section class="calc-card">
         <div class="calc-fields calc-pull">
@@ -1902,14 +2091,53 @@ function calculatorPage() {
     </div>
   </div>`;
 }
+// Redraws the planner where it was: the page, the belt and the final balance keep their scroll
+function redrawCalc() {
+  const top = scrollY;
+  route();
+  scrollTo(0, top);
+}
 $("#main").addEventListener("input", e => {
   const el = e.target;
   if (!el.closest("#calc")) return;
-  const { balance, plan, option } = el.dataset;
+  const { balance, plan, option, own, state, round, event } = el.dataset;
   if (balance) calc.balance[balance] = whole(el.value);
+  else if (event) {
+    if (el.checked) calc.doneEvents[event] = true;
+    else delete calc.doneEvents[event];
+    syncEvents();
+  }
+  else if (state) {
+    // One checkbox per paid tier: ticked, it is bought before today in the patch running now, and to be bought in any other
+    const id = el.closest(".calc-patch").dataset.id, now = runningPatch(calcPlan(), calcToday());
+    if (now && calcId(now) === id) {
+      if (calc.owned.patch !== id) Object.assign(calc.owned, { patch: id, level: 0 }, ...INTEL_PASSES.map(({ key }) => ({ [key]: 0 })));
+      calc.owned[state] = Number(el.checked);
+    }
+    (calc.plans[id] ||= {})[state] = now && calcId(now) === id ? 0 : Number(el.checked);
+    saveCalc();
+    return redrawCalc();
+  }
   else if (plan) {
     const id = el.closest(".calc-patch").dataset.id;
-    (calc.plans[id] ||= {})[plan] = plan === "rank" ? el.value : el.type === "checkbox" ? Number(el.checked) : whole(el.value);
+    (calc.plans[id] ||= {})[plan] = el.type === "checkbox" ? Number(el.checked) : whole(el.value);
+  }
+  else if (own && el.type === "date") {
+    calc.owned[own] = el.value && el.value <= calcToday() ? el.value : "";
+    document.querySelectorAll(`#calc input[type=date][data-own="${own}"]`).forEach(box => { if (box !== el) box.value = calc.owned[own]; });
+  }
+  else if (round) {
+    // Ticked for this round only: the day its reset fell on is what is kept, so the next round starts unticked
+    (calc.owned.done ||= {})[round] = el.checked ? roundDay(round, dayNumber(calcToday())) : 0;
+    saveCalc();
+    return redrawCalc();
+  }
+  else if (own) {
+    // Level and paid tiers belong to the patch running now: typed in a new patch, last patch's ones are dropped
+    const now = runningPatch(calcPlan(), calcToday());
+    if (!now) return;
+    if (calc.owned.patch !== calcId(now)) Object.assign(calc.owned, { patch: calcId(now), level: 0 }, ...INTEL_PASSES.map(({ key }) => ({ [key]: 0 })));
+    if (own === "level") calc.owned.level = Math.min(whole(el.value), INTEL_TOP);
   }
   else if (option) calc[option] = el.checked;
   else if ("pullKind" in el.dataset) calc.pullKind = el.value;
@@ -1917,39 +2145,58 @@ $("#main").addEventListener("input", e => {
   saveCalc();
   showCalc();
 });
+// A level over the top shows as the top once the box is left
+$("#main").addEventListener("change", e => {
+  if (e.target.matches?.('#calc [data-own="level"]') && Number(e.target.value) > INTEL_TOP) e.target.value = INTEL_TOP;
+});
 // Moves the pick one stop along the belt: -1 back, 1 forward
 function stepBelt(by, focus) {
   const stops = [...document.querySelectorAll(".calc-stop")], at = stops.findIndex(s => s.dataset.pick === calc.pick);
   const next = stops[Math.min(Math.max((at < 0 ? 0 : at) + by, 0), stops.length - 1)];
   if (next) pickPatch(next.dataset.pick, focus);
 }
+// A drag on the belt that just ended: the click that follows it is not a pick
+let beltDragged = false;
 $("#main").addEventListener("click", e => {
+  if (beltDragged && e.target.closest(".calc-belt")) {
+    beltDragged = false;
+    return;
+  }
   const tab = e.target.closest("[data-calc-tab]"), stop = e.target.closest("[data-pick]"), nav = e.target.closest("[data-belt]");
-  const step = e.target.closest("[data-step]"), copy = e.target.closest("[data-calc-copy]");
+  const step = e.target.closest("[data-step]"), copy = e.target.closest("[data-calc-copy]"), rail = e.target.closest("[data-rail]");
+  if (e.target.closest("[data-events-open]")) {
+    const menu = $("#calcEvents");
+    if (menu && !menu.open) menu.showModal();
+  }
+  // The close button, or a click on the backdrop (which lands on the dialog itself)
+  if (e.target.closest("[data-events-close]") || e.target.id === "calcEvents") $("#calcEvents").close();
   if (stop) pickPatch(stop.dataset.pick);
   if (nav) stepBelt(nav.dataset.belt === "next" ? 1 : -1);
+  if (rail) {
+    const belt = $(".calc-belt");
+    belt.scrollBy({ left: Number(rail.dataset.rail) * belt.clientWidth * 0.8, behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth" });
+  }
   if (step) {
     const box = step.parentElement.querySelector("input");
     box.value = Math.max(0, whole(box.value) + Number(step.dataset.step)) || "";
     box.dispatchEvent(new Event("input", { bubbles: true }));
   }
-  // Rank stays with each patch: the frame of one patch says nothing about the next
   if (copy) {
-    const id = copy.closest(".calc-patch").dataset.id, { rank, ...plan } = calc.plans[id] || {};
-    const patches = calcPlan().filter(p => !p.collab), top = scrollY;
-    for (const patch of patches.slice(patches.findIndex(p => calcId(p) === id) + 1)) {
-      const own = calc.plans[calcId(patch)]?.rank;
-      calc.plans[calcId(patch)] = { ...plan, ...(own && { rank: own }) };
-    }
+    const id = copy.closest(".calc-patch").dataset.id, plan = { ...calc.plans[id] };
+    // Plans saved while the rank could still be picked by hand carry it
+    delete plan.rank;
+    const patches = calcPlan().filter(p => !p.collab);
+    for (const patch of patches.slice(patches.findIndex(p => calcId(p) === id) + 1)) calc.plans[calcId(patch)] = { ...plan };
     saveCalc();
-    route();
-    scrollTo(0, top);
+    redrawCalc();
   }
   if (tab) {
     calc.tab = tab.dataset.calcTab;
     saveCalc();
     document.querySelectorAll("[data-calc-tab]").forEach(b => b.classList.toggle("on", b === tab));
     document.querySelectorAll("[data-calc-panel]").forEach(panel => { panel.hidden = panel.dataset.calcPanel !== calc.tab; });
+    $(".calc-bar").hidden = calc.tab !== "plan";
+    if (calc.tab === "plan") { centerStop(false); syncRail(); }
   }
   if (!e.target.closest("[data-calc-clear]")) return;
   calc = newCalc();
@@ -1963,6 +2210,46 @@ $("#main").addEventListener("keydown", e => {
   if (!by) return;
   e.preventDefault();
   stepBelt(by, true);
+});
+$("#main").addEventListener("scroll", e => { if (e.target.matches?.(".calc-belt")) syncRail(); }, true);
+addEventListener("resize", syncRail);
+// The mouse wheel scrolls the belt sideways while the pointer is on it
+$("#main").addEventListener("wheel", e => {
+  const belt = e.target.closest?.(".calc-belt");
+  if (!belt || belt.scrollWidth <= belt.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  const max = belt.scrollWidth - belt.clientWidth;
+  if ((e.deltaY < 0 && belt.scrollLeft <= 0) || (e.deltaY > 0 && belt.scrollLeft >= max)) return;
+  e.preventDefault();
+  belt.scrollLeft += e.deltaY * (e.deltaMode === 1 ? 40 : 1);
+}, { passive: false });
+// A mouse can drag the belt sideways, and drag the rail's thumb or click its track. Touch keeps the browser's own swipe
+let beltDrag = null;
+$("#main").addEventListener("pointerdown", e => {
+  if (e.pointerType !== "mouse" || e.button !== 0) return;
+  const belt = $(".calc-belt"), track = e.target.closest?.(".calc-rail-track");
+  if (track) {
+    const thumb = $(".calc-rail-thumb"), rect = track.getBoundingClientRect();
+    if (e.target !== thumb) belt.scrollLeft = ((e.clientX - rect.left) / rect.width) * belt.scrollWidth - belt.clientWidth / 2;
+    beltDrag = { belt, x: e.clientX, left: belt.scrollLeft, scale: -belt.scrollWidth / rect.width, moved: true, rail: true };
+  } else if (e.target.closest?.(".calc-belt")) beltDrag = { belt, x: e.clientX, left: belt.scrollLeft, scale: 1, moved: false };
+  else return;
+  beltDrag.belt.classList.add("dragging");
+  e.preventDefault();
+});
+addEventListener("pointermove", e => {
+  if (!beltDrag) return;
+  const dx = e.clientX - beltDrag.x;
+  if (!beltDrag.moved && Math.abs(dx) < 6) return;
+  beltDrag.moved = true;
+  beltDrag.belt.scrollLeft = beltDrag.left - dx * beltDrag.scale;
+});
+addEventListener("pointerup", () => {
+  if (!beltDrag) return;
+  beltDragged = beltDrag.moved && !beltDrag.rail;
+  beltDrag.belt.classList.remove("dragging");
+  beltDrag = null;
+  // Nothing was under the pointer to click (it left the belt): the flag must not eat the next real click
+  setTimeout(() => { beltDragged = false; }, 0);
 });
 /* ---------- Team Builder: its code (editor.js) and catalog load only when the page opens ---------- */
 let editorState = "", editorLoad = null;
@@ -2652,7 +2939,7 @@ function route() {
     : path ? team(path, pick) : home();
   theme(shown || null);
   if (kind === "editor" && editorState === "ready") edPaint();
-  if (kind === "calculator") { showCalc(); centerStop(); }
+  if (kind === "calculator") { showCalc(); centerStop(false); syncRail(); }
   const heading = kind && $("h1", main)?.textContent;
   document.title = heading ? `${heading} - Dominik` : SITE_TITLE;
   const navPath = { "assets/memory": "assets/memories", "assets/weapon": "assets/weapons", "assets/resonance": "assets/resonances", "assets/cub": "assets/cubs", "assets/skill": "constructs" }[path] || path;

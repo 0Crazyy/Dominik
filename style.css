@@ -72,9 +72,12 @@ h1{font-size:34px;font-weight:800}
 .hero-track:hover,.hero-track:focus-within{animation-play-state:paused}
 @keyframes belt{to{transform:translateX(-50%)}}
 .hero-track a{position:relative;flex:none;width:170px;margin-right:6px;overflow:hidden;transform:skewX(-12deg)}
-.hero-track img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%;transform:skewX(12deg) scale(1.3);filter:brightness(.7);transition:transform .25s,filter .25s}
-.hero-track a:hover img,.hero-track a:focus-visible img{transform:skewX(12deg) scale(1.4);filter:brightness(1)}
-.hero-name{position:absolute;left:-30px;right:-30px;bottom:0;padding:26px 34px 10px;background:linear-gradient(0deg,#000d,#0000);font-size:12px;font-weight:700;text-align:center;transform:skewX(12deg);opacity:0;transition:opacity .2s}
+/* Dimmed by a dark layer, not by filter: Firefox draws a filter on these moving, skewed images as a dark box cut off at its own edges */
+.hero-track a::after{content:"";position:absolute;inset:0;background:#000;opacity:.3;transition:opacity .25s;pointer-events:none}
+.hero-track a:hover::after,.hero-track a:focus-visible::after{opacity:0}
+.hero-track img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%;transform:skewX(12deg) scale(1.3);transition:transform .25s}
+.hero-track a:hover img,.hero-track a:focus-visible img{transform:skewX(12deg) scale(1.4)}
+.hero-name{position:absolute;z-index:1;left:-30px;right:-30px;bottom:0;padding:26px 34px 10px;background:linear-gradient(0deg,#000d,#0000);font-size:12px;font-weight:700;text-align:center;transform:skewX(12deg);opacity:0;transition:opacity .2s}
 .hero-track a:hover .hero-name,.hero-track a:focus-visible .hero-name{opacity:1}
 .hero-mark{position:relative;display:block;flex:none;width:104px;aspect-ratio:1;margin:0 0 8px;padding:0;border:0;background:none;filter:drop-shadow(0 0 12px #ec384b57);cursor:pointer}
 .hero-mark img{display:block;width:100%;height:100%;object-fit:contain;animation:hero-float 5s ease-in-out infinite}
@@ -398,97 +401,184 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .contact-card a.contact-kofi{display:block;margin-top:16px;text-align:center;text-decoration:none}
 /* BC calculator */
 #calc{max-width:1640px}
-.calc-layout{display:grid;gap:0 24px}
-.calc-main{container:calc-main/inline-size;min-width:0}
-.calc-side{min-width:0}
-#calc input[type=number],#calc select{width:100%;min-width:0;height:38px;padding:0 10px;background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 15px "Quantico"}
+#calc input[type=number],#calc input[type=date],#calc select{width:100%;min-width:0;height:36px;padding:0 10px;background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 15px "Quantico";color-scheme:dark}
 #calc select{cursor:pointer}
-.calc-card{padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
-.calc-patch .calc-head{align-items:flex-start}
-/* Fixed columns, so dates and days start at the same point on every row. The frame goes last because not every patch has one */
-.calc-meta{display:grid;grid-template-columns:186px 56px;gap:0 10px}
-.calc-meta span:last-child{grid-column:1/-1}
-.calc-meta span:empty{display:none}
-@container calc-main (min-width:480px){.calc-meta{grid-template-columns:186px 56px auto}.calc-meta span:last-child{grid-column:auto}}
-/* The patch belt: stops ride a striped rail, and the picked one drops its card below */
-.calc-belt-wrap{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:6px;margin-bottom:6px}
-.calc-nav{padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 22px "Quantico";cursor:pointer}
-.calc-nav:hover:not(:disabled){background:#4a4a4f}
-.calc-nav:disabled{opacity:.3;cursor:default}
-.calc-belt{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
-.calc-track{position:relative;display:flex;gap:12px;width:max-content;padding:16px 6px 18px}
+.calc-card{padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
+.calc-title{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:16px}
+.calc-title .sub{margin-bottom:0}
+.calc-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+.calc-tabs{display:flex;gap:8px}
+.calc-bar{display:flex;flex-wrap:wrap;gap:6px 28px;padding:6px 14px;background:#0f0f10;border:1px solid var(--line);border-bottom:2px solid var(--red)}
+.calc-bar[hidden]{display:none}
+.calc-bar-item{display:flex;align-items:center;gap:10px;min-width:0}
+.calc-bar-item .calc-icon{width:30px;height:30px}
+.calc-bar-item output{display:block;font-size:16px;font-weight:700}
+.calc-bar-item output.short{color:#ff6b6b}
+.calc-bar-item small{display:block;font-size:11px;color:var(--mute)}
+.calc-icon{display:block;flex:none;width:44px;height:44px}
+.calc-icon img{display:block;width:100%;height:100%;object-fit:contain}
+.calc-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.calc-head>div{flex:1 1 260px;min-width:0}
+.calc-head h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:20px}
+.calc-head p{margin-top:3px;font-size:13px;color:var(--mute)}
+.calc-head a{color:var(--txt);text-decoration:underline}
+.calc-tag{padding:2px 7px;background:var(--side-on);border-radius:3px;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.calc-tag.guess{background:#3a3a40}
+.calc-label{margin:14px 0 6px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.calc-hint{margin:-2px 0 8px;font-size:12px;line-height:1.4;color:var(--mute)}
+.calc-left{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.calc-left li::before{content:"- "}
+.calc-check{display:flex;align-items:flex-start;gap:9px;font-size:14px;cursor:pointer}
+.calc-check input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--red)}
+.calc-check small{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
+/* The board: starting balance, the patches in the middle with a step button at each side, and what every patch leaves.
+   Wide screens fit it in one view; the final balance column scrolls inside itself */
+.calc-board{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.calc-center{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}
+.calc-side-nav{display:none;position:sticky;top:calc(50vh - 130px);flex-direction:column;align-items:center;justify-content:center;gap:12px;align-self:start;height:260px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);cursor:pointer}
+.calc-side-nav span{font:700 24px/1 "Quantico"}
+.calc-side-nav small{writing-mode:vertical-rl;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.calc-side-nav[data-belt=prev] small{transform:rotate(180deg)}
+.calc-side-nav:hover:not(:disabled){background:#2a2a2e}
+.calc-side-nav:disabled{opacity:.3;cursor:default}
+/* Starting balance: Black Cards across the top, the other six in pairs */
+.calc-money{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
+.calc-coin{display:grid;grid-template-columns:26px minmax(0,1fr);align-items:center;gap:3px 6px;min-width:0;padding:5px 7px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
+.calc-coin:first-child{grid-column:1/-1}
+.calc-coin .calc-icon{grid-row:2;width:26px;height:26px}
+.calc-coin small{grid-column:1/-1;overflow:hidden;font-size:11px;line-height:1.2;color:var(--mute);white-space:nowrap;text-overflow:ellipsis}
+#calc .calc-coin input{height:30px;padding:0 6px;font-size:14px}
+.calc-owned{display:grid;gap:6px}
+.calc-own{display:grid;grid-template-columns:minmax(0,1fr) 122px;align-items:center;gap:6px;font-size:12px;color:#dcdce0}
+.calc-own small{display:block;font-size:11px;color:var(--mute)}
+#calc .calc-own input{height:32px;padding:0 6px;font-size:13px}
+.calc-own-head{margin-top:4px;font-size:11px;color:var(--mute)}
+.calc-own.level{grid-template-columns:minmax(0,1fr) 76px}
+.calc-own-checks{display:flex;flex-wrap:wrap;gap:6px 16px;padding:2px 0}
+.calc-own-checks .calc-check{font-size:13px}
+.calc-checks{display:grid;gap:8px;margin-top:14px}
+.calc-clear,.calc-events-open{width:100%;margin-top:14px}
+.calc-events-open+.calc-clear{margin-top:8px}
+/* Events List: a modal on wide screens, a full-width sheet on phones */
+.calc-events{margin:auto;width:min(620px,calc(100vw - 32px));max-height:min(80dvh,720px);padding:18px 16px;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-top:2px solid var(--red);border-radius:6px;overflow-y:auto}
+.calc-events::backdrop{background:rgba(0,0,0,.65)}
+.calc-ev-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.calc-ev-head h2{font-size:18px;font-weight:700}
+.calc-ev-patch{margin-top:16px}
+.calc-ev-patch h3{font-size:14px}
+.calc-ev-patch h3 small{font-size:12px;font-weight:400;color:var(--mute)}
+.calc-ev-group{margin:10px 0 6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.calc-ev{align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.calc-ev>span:first-of-type{flex:1;min-width:0}
+.calc-ev-gains{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px 10px}
+.calc-ev-gain{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#dcdce0}
+.calc-ev-gain .calc-icon{width:18px;height:18px}
+@media (max-width:760px){
+  .calc-events{width:100%;max-width:none;margin:auto 0 0;max-height:85dvh;border-radius:12px 12px 0 0}
+  .calc-ev{flex-wrap:wrap}
+  .calc-ev-gains{flex-basis:100%;justify-content:flex-start;padding-left:27px}
+}
+/* The patch belt: a rail with a draggable thumb on top, and stops riding a striped track. The mouse can also drag or wheel it */
+.calc-stage{container:calc-stage/inline-size;min-width:0}
+.calc-rail{display:grid;grid-template-columns:auto 24px minmax(0,1fr) 24px;align-items:center;gap:6px}
+.calc-rail .calc-label{margin:0 8px 0 0}
+.calc-rail.full :not(.calc-label){visibility:hidden}
+.calc-rail-step{height:24px;padding:0;background:none;border:0;color:var(--red);font:700 22px/1 "Quantico";cursor:pointer}
+.calc-rail-step:disabled{opacity:.25;cursor:default}
+.calc-rail-track{position:relative;height:14px;cursor:pointer}
+.calc-rail-track::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:#2a2a2e}
+.calc-rail-thumb{position:absolute;top:4px;height:6px;border-radius:3px;background:var(--red);cursor:grab}
+.calc-belt{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;touch-action:pan-x pan-y;cursor:grab}
+.calc-belt::-webkit-scrollbar{display:none}
+.calc-belt.dragging{scroll-snap-type:none;cursor:grabbing}
+.calc-belt.dragging,.calc-rail{user-select:none;-webkit-user-select:none}
+.calc-track{position:relative;display:flex;gap:10px;width:max-content;padding:14px 4px 16px}
 .calc-track::before{content:"";position:absolute;left:0;right:0;top:calc(50% - 4px);height:10px;background:repeating-linear-gradient(115deg,#26262a 0 8px,#141416 8px 16px);border-block:1px solid var(--line)}
-.calc-stop{position:relative;flex:none;display:grid;align-content:start;gap:4px;width:150px;padding:9px 11px;background:var(--panel);border:1px solid var(--line);border-top:3px solid #4a4a4f;border-radius:4px;color:var(--txt);font:inherit;text-align:left;cursor:pointer;scroll-snap-align:center;transition:transform .15s,border-color .15s,background .15s}
+.calc-stop{position:relative;flex:none;display:grid;align-content:start;gap:3px;width:138px;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-top:3px solid #4a4a4f;border-radius:4px;color:var(--txt);font:inherit;text-align:left;cursor:pointer;scroll-snap-align:center;transition:transform .15s,border-color .15s,background .15s}
+.calc-belt.dragging .calc-stop{cursor:grabbing}
 .calc-stop:hover{border-top-color:var(--mute)}
 .calc-stop.guess{border-style:dashed;border-top-style:solid}
 .calc-stop.collab{border-top-color:var(--side-on)}
 .calc-stop[aria-selected=true]{background:#1c1c1e;border-color:var(--red);transform:translateY(-4px)}
 .calc-stop[aria-selected=true]::after{content:"";position:absolute;left:50%;top:100%;margin:1px 0 0 -8px;border:8px solid #0000;border-bottom:0;border-top-color:var(--red)}
 .calc-stop-top{min-width:0}
-.calc-stop-top b{display:-webkit-box;min-height:2.5em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:15px;line-height:1.25}
+.calc-stop-top b{display:-webkit-box;min-height:2.5em;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:14px;line-height:1.25}
 .calc-stop-top .calc-tag{position:absolute;top:-10px;right:8px;padding:1px 5px;font-size:9px}
 .calc-stop small{font-size:11px;color:var(--mute)}
 .calc-stop-bc{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
 .calc-stop-bc .calc-icon{width:22px;height:22px}
 .calc-stop-bc .short{color:#ff6b6b}
-.calc-tabs{display:flex;gap:8px;margin-bottom:14px}
-.calc-bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;margin-bottom:14px;padding:8px 14px;background:#0f0f10;border:1px solid var(--line);border-bottom:2px solid var(--red)}
-.calc-bar-item{display:flex;align-items:center;gap:10px;min-width:0}
-.calc-bar-item .calc-icon{width:32px;height:32px}
-.calc-bar-item output{display:block;font-size:17px;font-weight:700}
-.calc-bar-item output.short{color:#ff6b6b}
-.calc-bar-item small{display:block;font-size:11px;color:var(--mute)}
-.calc-step{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:4px}
-.calc-step button{height:38px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 18px "Quantico";cursor:pointer}
+/* The picked patch: its income down the left, then passes and spending side by side when there is room */
+.calc-patch{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:4px;padding-top:12px;border-top:1px solid var(--line)}
+.calc-patch[hidden]{display:none}
+.calc-income{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-content:start;gap:6px}
+.calc-income>small{grid-column:1/-1;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.calc-gain{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;padding:5px 4px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.calc-gain .calc-icon{width:24px;height:24px}
+.calc-patch-main{min-width:0}
+.calc-patch .calc-head{align-items:flex-start}
+.calc-meta{display:flex;flex-wrap:wrap;gap:0 12px}
+.calc-meta span:empty{display:none}
+.calc-copy{padding:7px 12px;font-size:12px}
+.calc-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
+.calc-passes{display:grid;gap:6px}
+.calc-pass{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0;padding:5px 8px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;color:#dcdce0;cursor:pointer}
+.calc-pass .calc-icon{width:34px;height:34px}
+.calc-pass-tx{min-width:0}
+.calc-pass-tx b{display:block;font-size:13px;line-height:1.2}
+.calc-pass-tx b small{font-size:11px;font-weight:400;color:var(--mute);white-space:nowrap}
+.calc-legend{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;margin-top:4px;font-size:11px;font-weight:700;color:#cfcfd4}
+.calc-legend-part{display:inline-flex;align-items:center;gap:0 8px;white-space:nowrap}
+.calc-legend-part:first-child{min-width:138px}
+.calc-legend i{flex:none;min-width:34px;font-style:normal;font-weight:400;color:var(--mute)}
+.calc-reward{display:inline-flex;align-items:center;gap:3px;line-height:16px;font-variant-numeric:tabular-nums}
+.calc-mini{display:block;width:16px;height:16px}
+.calc-mini img{display:block;width:100%;height:100%;object-fit:contain}
+#calc .calc-pass select{width:52px;height:32px;padding:0 6px}
+.calc-pass input[type=checkbox]{justify-self:end;width:20px;height:20px;margin:0 8px;accent-color:var(--red)}
+.calc-pass-own{grid-column:2/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:4px;border-top:1px solid var(--line);font-size:12px;color:var(--mute)}
+#calc .calc-pass-own input{width:122px;height:30px;padding:0 6px;font-size:13px}
+.calc-fields{display:grid;gap:8px}
+.calc-field{display:grid;align-content:start;gap:4px;min-width:0;font-size:13px;color:#dcdce0}
+.calc-field small{font-size:11px;color:var(--mute)}
+.calc-patch .calc-field{grid-template-columns:minmax(0,1fr) minmax(108px,136px);align-items:center;gap:2px 8px}
+.calc-patch .calc-field small{grid-column:1/-1;text-align:right}
+.calc-step{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:4px}
+.calc-step button{height:34px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:700 18px "Quantico";cursor:pointer}
 .calc-step button:hover{background:#4a4a4f}
-#calc .calc-step input{padding:0 2px;text-align:center;appearance:textfield;-moz-appearance:textfield}
+#calc .calc-step input{height:34px;padding:0 2px;text-align:center;appearance:textfield;-moz-appearance:textfield}
 .calc-step input::-webkit-inner-spin-button,.calc-step input::-webkit-outer-spin-button{display:none}
-.calc-copy{margin-top:12px}
-.calc-more>summary{display:flex;align-items:center;gap:8px;margin:30px 0 14px;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c4c4ca;cursor:pointer;list-style:none}
+.calc-rc-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:12px}
+.calc-rc-row b{font-size:14px}
+.calc-rc-row small{font-size:11px;color:var(--mute)}
+.calc-rc{display:flex;align-items:center;gap:8px;padding:2px 12px 2px 6px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;font-size:17px;font-weight:700}
+.calc-rc .calc-icon{width:30px;height:30px}
+@container calc-stage (min-width:540px){
+  .calc-patch:not(.collab){grid-template-columns:68px minmax(0,1fr);gap:12px}
+  .calc-income{grid-template-columns:minmax(0,1fr)}
+  .calc-income>small{text-align:center}
+  .calc-gain{flex-direction:column;gap:2px;padding:6px 2px}
+  .calc-gain .calc-icon{width:30px;height:30px}
+}
+@container calc-stage (min-width:600px){.calc-cols{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
+/* Final balance: one row per patch, the picked one outlined */
+.calc-final{display:flex;flex-direction:column;min-width:0}
+.calc-final h3{margin-bottom:10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-align:center}
+.calc-final-list{display:grid;align-content:start;gap:6px}
+.calc-final-row{display:grid;gap:6px;width:100%;padding:8px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;color:var(--txt);font:inherit;text-align:center;cursor:pointer}
+.calc-final-row:hover{border-color:var(--mute)}
+.calc-final-row[aria-current=true]{background:#1c1c1e;border-color:var(--red)}
+.calc-final-row>b{font-size:14px}
+.calc-final-coins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.calc-final-coin{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.calc-final-coin .calc-icon{width:20px;height:20px}
+.calc-final-coin output{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.calc-final-coin output.short{color:#ff6b6b}
+.calc-notes{display:grid;gap:0 24px}
+.calc-more>summary{display:flex;align-items:center;gap:8px;margin:26px 0 12px;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c4c4ca;cursor:pointer;list-style:none}
 .calc-more>summary::-webkit-details-marker{display:none}
 .calc-more>summary::before{content:"▸";color:var(--mute)}
 .calc-more[open]>summary::before{content:"▾"}
-.calc-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-.calc-head+.calc-start{margin-top:14px}
-.calc-head h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:20px}
-.calc-head p{margin-top:4px;font-size:13px;color:var(--mute)}
-.calc-head a{color:var(--txt);text-decoration:underline}
-.calc-tag{padding:2px 7px;background:var(--side-on);border-radius:3px;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-.calc-tag.guess{background:#3a3a40}
-.calc-rank{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
-#calc .calc-rank select{width:62px}
-.calc-label{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
-.calc-rc-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:8px}
-.calc-rc-row b{font-size:15px}
-.calc-rc-row small{font-size:12px;color:var(--mute)}
-.calc-rc{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 6px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;font-size:18px;font-weight:700}
-.calc-rc .calc-icon{width:32px;height:32px}
-.calc-hint{margin:-4px 0 8px;font-size:12px;color:var(--mute)}
-.calc-money{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
-.calc-coin{display:grid;grid-template-rows:44px auto 1fr;justify-items:center;align-items:center;gap:4px;min-width:0;padding:10px 6px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;font-size:15px;text-align:center}
-.calc-coin small{font-size:11px;line-height:1.2;color:var(--mute)}
-.calc-coin b,.calc-coin output{font-weight:700;overflow-wrap:anywhere}
-.calc-coin output.short{color:#ff6b6b}
-#calc .calc-coin input{padding:0 4px;text-align:center}
-.calc-icon{display:block;flex:none;width:44px;height:44px}
-.calc-icon img{display:block;width:100%;height:100%;object-fit:contain}
-.calc-passes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.calc-pass{display:grid;grid-template-columns:44px minmax(0,1fr) 58px;align-items:center;gap:10px;min-width:0;padding:8px 10px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;font-size:13px;color:#dcdce0}
-.calc-pass small{display:block;margin-top:2px;font-size:11px;color:var(--mute)}
-.calc-pass{cursor:pointer}
-.calc-pass input{justify-self:end;width:22px;height:22px;margin:0 8px 0 0;accent-color:var(--red)}
-.calc-fields{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.calc-field{display:grid;align-content:start;gap:5px;min-width:0;font-size:13px;color:#dcdce0}
-.calc-field small{font-size:11px;color:var(--mute)}
-.calc-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
-.calc-check{display:flex;align-items:flex-start;gap:9px;font-size:14px;cursor:pointer}
-.calc-check input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--red)}
-.calc-check small{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
-.calc-total{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
-.calc-total output{font-size:28px;font-weight:700}
-.calc-total b{font-size:18px}
-.calc-total small{flex-basis:100%;font-size:13px;color:var(--mute)}
-.calc-total a{color:var(--txt);text-decoration:underline}
 .calc-pull{grid-template-columns:repeat(2,minmax(0,1fr))}
 .calc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
 .calc-stat{display:grid;align-content:start;gap:4px;min-width:0;padding:12px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
@@ -506,14 +596,28 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-margin.low{--tone:#6fcf8e}.calc-margin.mid{--tone:#e6bd52}.calc-margin.high{--tone:#ff6b6b}
 .calc-pull-page{display:grid;gap:14px}
 .calc-pull-page[hidden]{display:none}
-@media(max-width:760px){#calc{padding-bottom:64px}.calc-bar{position:fixed;top:auto;left:0;right:0;bottom:0;flex-wrap:nowrap;gap:12px;margin:0;padding:6px 14px calc(6px + env(safe-area-inset-bottom));border-width:2px 0 0;border-top-color:var(--red);border-bottom:0}.calc-bar-item .calc-icon{width:26px;height:26px}.calc-bar-item{flex:1;gap:6px}.calc-bar-item output{font-size:15px}.calc-bar-item small{font-size:10px;line-height:1.2}}
-/* Wide screens: the explanations sit beside the patches and stay in view */
-@media(min-width:1680px){.calc-layout{grid-template-columns:minmax(0,1fr) 360px}.calc-side{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 90px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--red) #0000}.calc-side h2.grp:first-child{margin-top:0}}
+@media(max-width:760px){#calc{padding-bottom:64px}.calc-bar{position:fixed;top:auto;left:0;right:0;bottom:0;z-index:5;flex-wrap:nowrap;gap:12px;margin:0;padding:6px 14px calc(6px + env(safe-area-inset-bottom));border-width:2px 0 0;border-top-color:var(--red);border-bottom:0}.calc-bar-item .calc-icon{width:26px;height:26px}.calc-bar-item{flex:1;gap:6px}.calc-bar-item output{font-size:15px}.calc-bar-item small{font-size:10px;line-height:1.2}}
+/* Middle widths: balance and patches side by side, the final balance under them in columns */
+@media(min-width:1000px){
+  .calc-board{grid-template-columns:268px minmax(0,1fr)}
+  .calc-center{grid-template-columns:30px minmax(0,1fr) 30px}
+  .calc-side-nav{display:flex}
+  .calc-final{grid-column:1/-1}
+  .calc-final-list{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .calc-final-coins{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .calc-notes{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+}
+/* Wide screens: three columns, as tall as the balance or the patch, whichever is taller */
+@media(min-width:1400px){
+  .calc-board{grid-template-columns:256px minmax(0,1fr) 284px;gap:12px}
+  .calc-final{grid-column:auto}
+  .calc-final-list{flex:1 1 0;grid-template-columns:minmax(0,1fr);contain:size;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--red) #0000}
+  .calc-final-coins{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(min-width:1700px){.calc-board{grid-template-columns:270px minmax(0,1fr) 400px}.calc-final-coins{grid-template-columns:repeat(7,minmax(0,1fr))}}
 @media(min-width:1200px){.calc-pull-page{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
-@media(min-width:900px) and (max-width:1679px){.calc-info{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* Black Cards take two columns, so the seven currencies always fill their rows */
-@media(max-width:1100px){.calc-money{grid-template-columns:repeat(4,minmax(0,1fr))}.calc-coin:first-child{grid-column:span 2}.calc-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.calc-passes,.calc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.calc-card{padding:14px}.calc-money,.calc-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-checks,.calc-passes{grid-template-columns:minmax(0,1fr)}.calc-belt-wrap{grid-template-columns:minmax(0,1fr)}.calc-nav{display:none}.calc-track{gap:10px}.calc-stop{width:136px}.calc-money{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.calc-coin{display:flex;align-items:center;gap:3px;padding:4px 3px;font-size:11px}.calc-coin .calc-icon{width:18px;height:18px}.calc-coin small{display:none}.calc-start .calc-money{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.calc-start .calc-coin{gap:6px;padding:4px 6px}.calc-start .calc-icon{width:24px;height:24px}#calc .calc-start input{height:34px}.calc-pass{grid-template-columns:32px minmax(0,1fr) 58px;gap:8px;padding:5px 8px}.calc-pass .calc-icon{width:32px;height:32px}.calc-copy{width:100%}.calc-stat b{font-size:20px}#calc input[type=number],#calc select{font-size:16px}}
+@media(max-width:1100px){.calc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.calc-card{padding:14px}.calc-own{grid-template-columns:minmax(0,1fr) 140px}.calc-track{gap:8px}.calc-stop{width:128px}.calc-patch .calc-field{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.calc-copy{width:100%}.calc-stat b{font-size:20px}#calc input[type=number],#calc input[type=date],#calc select{font-size:16px}}
 .mt-name a::after{content:"";position:absolute;inset:0}
 .mt-name small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--mute)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
@@ -824,9 +928,28 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .ed-live p.desc:empty{display:none}
 .ed-live .card{transition:opacity .18s}
 .ed-live .card:hover,.ed-live .card:active{transform:none;filter:none}
-.ed-live .card.ed-role-drop-target{outline:2px dashed #fff;outline-offset:3px}
+.ed-live .card{-webkit-user-select:none;user-select:none}
 .ed-live .tag[data-ed-role]{cursor:grab}
 .ed-live .tag[data-ed-role]:active{cursor:grabbing}
+/* Mouse dragging: the icon's own spot empties, a full-strength copy follows the pointer, and where it can land is outlined */
+.ed-live .ed-drag-origin{visibility:hidden}
+.ed-ghost{position:fixed;z-index:1000;margin:0;pointer-events:none;box-shadow:0 10px 26px #000c;outline:2px solid #fff;outline-offset:1px}
+.ed-ghost.back{transition:transform .2s ease-out}
+.ed-dragging,.ed-dragging *{cursor:grabbing!important;-webkit-user-select:none!important;user-select:none!important}
+.ed-live .card.ed-drop-on{outline:2px dashed #fff;outline-offset:3px}
+.ed-live .slot.ed-drop-on{z-index:2;outline:2px dashed #fff;outline-offset:1px}
+/* Swapping positions: a round button on the edge two cards share; on phones, arrows at the sides of the card's name */
+.ed-swap{position:absolute;top:calc(144*var(--u));right:0;z-index:4;display:grid;place-items:center;width:32px;height:32px;padding:0;background:#0f0f10;border:1px solid #ffffff66;border-radius:50%;color:#fff;font:700 16px/1 "Quantico";cursor:pointer;transform:translate(50%,-50%);transition:background .12s,border-color .12s}
+.ed-swap:hover,.ed-swap:focus-visible{background:var(--red);border-color:#fff}
+.ed-move{display:none}
+.ed-sliding .ed-swap{display:none}
+.ed-sliding .ed-move{display:block}
+.ed-move button{position:absolute;top:calc(42*var(--u) - 17px);z-index:4;display:grid;place-items:center;width:34px;height:34px;padding:0;background:#0f0f10;border:1px solid #ffffff55;border-radius:4px;color:#fff;font:700 22px/1 "Quantico";cursor:pointer}
+.ed-move .ed-move-left{left:6px}
+.ed-move .ed-move-right{right:6px}
+.ed-picker-option.fit{border-color:#7aa7ff80}
+.ed-picker-option.fit .ed-badge{background:#2b4c86;color:#fff}
+.ed-picker-option.fit img{margin-top:9px;height:35px}
 .ed-live [data-ed-drop]{position:relative;cursor:pointer;transition:outline-color .12s,filter .12s}
 .ed-live [data-ed-drop]:hover,.ed-live [data-ed-drop]:focus-visible{z-index:2;outline:2px solid #ffffffa6;outline-offset:1px;filter:brightness(1.25)}
 .ed-live [data-ed-drop]:focus-visible{outline-color:var(--red);box-shadow:0 0 0 2px #000}

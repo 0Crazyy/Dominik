@@ -88,19 +88,24 @@ const TAB_COLUMNS = { bc: 6, limited: 8, construct: 10, weapon: 14, cub: 16, vou
 // The first "Modes" block of a patch tab lists what repeats: rows starting with "Daily" are dailies, Norman Revival Plan and
 // Clash Reflection go to "fortnightly", and the rest are weeklies.
 // A patch with no tab of its own gets nothing here (the sheet answers with another tab), and counts in full on the page
+// Weeklies the planner lets the player mark as done, kept apart from the rest of "weekly"
+const WEEKLY_MODES = [{ key: "ppc", name: "Phantom Pain Cage" }, { key: "warzone", name: "Warzone" }];
 async function patchIncome({ patch, start, end, gains }) {
   const lines = await readTab(patch);
   const first = lines.findIndex(line => line[1] === "Modes");
   if (first < 0 || lines[first + 1][1] !== "Daily") return {};
   const last = lines.findIndex((line, i) => i > first && line[1] === "Modes");
   const found = [];
-  const income = { daily: {}, weekly: {}, fortnightly: Object.fromEntries(FORTNIGHTLY.map(mode => [mode.key, {}])), events: [], oneOff: {} };
+  const income = { daily: {}, weekly: {}, weeklyModes: {}, fortnightly: Object.fromEntries(FORTNIGHTLY.map(mode => [mode.key, {}])), events: [], oneOff: {} };
   for (const line of lines.slice(first + 1, last).filter(line => line[1])) {
     const mode = FORTNIGHTLY.find(mode => line[1].startsWith(mode.name));
     if (mode) found.push(mode);
     const part = line[1].startsWith("Daily") ? income.daily : mode ? income.fortnightly[mode.key] : income.weekly;
+    const weekly = WEEKLY_MODES.find(m => line[1].startsWith(m.name));
     for (const [key, column] of Object.entries(TAB_COLUMNS)) {
-      if (line[column]) part[key] = (part[key] || 0) + number(line[column]);
+      if (!line[column]) continue;
+      part[key] = (part[key] || 0) + number(line[column]);
+      if (weekly) ((income.weeklyModes[weekly.key] ||= {})[key] = (income.weeklyModes[weekly.key][key] || 0) + number(line[column]));
     }
   }
   // The sheet's rows for these modes don't always match what the resets pay, so each becomes the pay of the resets in the
@@ -113,8 +118,8 @@ async function patchIncome({ patch, start, end, gains }) {
       income.gains[key] += (income.fortnightly[mode.key][key] || 0) - (sheet[key] || 0);
     }
   }
-  // Below that block come the events. Only the ones ending before the patch does are kept: the rest last all of it, and an
-  // event with no end date, or with an end before its start, counts until the end too
+  // Below that block come the events. Only the ones with an end date inside the patch are kept (see below for the ones that last
+  // all of it): an event with no end date, or with an end before its start, counts until the end too
   const total = lines.findIndex(line => line[1]?.startsWith("All Tickets TOTAL"));
   for (const line of lines.slice(last + 1, total)) {
     // Compensation repays a problem of that patch, so the forecast can't expect it again
@@ -125,9 +130,12 @@ async function patchIncome({ patch, start, end, gains }) {
     }
     if (!/^\d\d\/\d\d\/\d\d$/.test(line[5] || "")) continue;
     const eventEnd = date(line[5]);
-    if (eventEnd >= end || eventEnd < date(line[4])) continue;
+    if (eventEnd > end || eventEnd < date(line[4])) continue;
     const gains = {};
     for (const [key, column] of Object.entries(TAB_COLUMNS)) if (line[column]) gains[key] = number(line[column]);
+    // An event that lasts the whole patch is still a limited event (Dreamhouse Tycoon) unless it is permanent content: a row
+    // that pays only Black Cards (Simulated Battlefield) or the Tactical Assessment manual
+    if (eventEnd === end && (Object.keys(gains).every(key => key === "bc") || /^Tactical Ass/i.test(line[1].trim()))) continue;
     income.events.push({ name: line[1].trim(), end: eventEnd, gains });
   }
   return income;
