@@ -3335,7 +3335,7 @@ function swap(update) {
   else update();
 }
 // Written here because each address has its own title in the HTML, from tools/make-embeds.mjs
-const SITE_TITLE = "Dominik - Punishing: Gray Raven Builds e Plans";
+const SITE_TITLE = "Dominik - Punishing: Gray Raven Builds & Plans";
 function route() {
   // Older addresses of the Constructs page
   if (/^\/(characters|assets\/skills)\/?$/.test(location.pathname)) {
