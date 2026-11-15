@@ -2,3 +2,4 @@
 # Cloudflare follows these rules even when a file exists: a general one like /assets/* would also catch the images.
 /characters /constructs 301
 /assets/skills /constructs 301
+/contact /credits 301

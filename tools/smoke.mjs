@@ -99,7 +99,6 @@ async function checkPage(context, size, path, base, shot) {
 const FLOWS = {
   "esteira de personagens": async page => {
     await page.goto("/");
-    await page.locator(".hero-track").evaluate(track => { track.style.animationPlayState = "paused"; });
     const icon = page.locator('.hero-track a:not([aria-hidden="true"])').first();
     const href = await icon.getAttribute("href");
     if (!href?.startsWith("/constructs/")) throw new Error("o ícone da esteira não aponta para a página do personagem");
@@ -148,6 +147,14 @@ const FLOWS = {
     await page.click('#main a[href^="/assets/weapon/"]');
     await page.waitForURL(/\/assets\/weapon\//);
     await page.waitForSelector("#main h1");
+  },
+  "detalhe de memória, ressonância e CUB": async page => {
+    for (const [list, kind] of [["memories", "memory"], ["resonances", "resonance"], ["cubs", "cub"]]) {
+      await page.goto(`/assets/${list}`);
+      await page.click(`#main a[href^="/assets/${kind}/"]`);
+      await page.waitForURL(new RegExp(`/assets/${kind}/`));
+      await page.waitForSelector("#main h1");
+    }
   },
   // Skill pages are not in sitemap.xml, and they are the only ones that load skills-data.js
   "página de skills": async page => {
@@ -222,6 +229,28 @@ const FLOWS = {
     await page.waitForSelector("#edStage .card .rank[data-ed-drop]");
     const cards = page.locator("#edStage .card");
     if (await page.locator("#edPanel").count()) throw new Error("o painel lateral de peças ainda aparece");
+    // Monta um rotation pelos botões e confere o texto que o time guarda
+    const buildRotation = async () => {
+      step = "building a rotation with the move buttons";
+      const box = page.locator("#edDetail .ed-detail").nth(0);
+      await box.locator('[data-ed-tab="rotation"]').click();
+      const click = selector => box.locator(selector).first().click();
+      await click('[data-rot-move="Red Orb"]');
+      await click('[data-rot-act="more"]');
+      await click('[data-rot-move="Red Orb"]');
+      await click('[data-rot-move="Signature"]');
+      await box.locator('[data-rot-act="hold"]').nth(2).click();
+      await click('[data-rot-move="Swap out"]');
+      const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("dominik-editor")).cards[0].rotation);
+      if (saved !== ["# Turn 1", "Tap Red Orb 2x", "Tap Red Orb", "Hold Signature", "Swap out"].join("\n"))
+        throw new Error(`o rotation montado pelos botões saiu diferente: ${JSON.stringify(saved)}`);
+      if (await box.locator('textarea[name="c0.rotation"]').inputValue() !== saved)
+        throw new Error("o texto do rotation não acompanhou os botões");
+      if (!await box.locator(".ed-rot-preview .rot-line img").count()) throw new Error("a prévia do rotation não mostrou ícones");
+      if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth))
+        throw new Error("o construtor de rotation causou rolagem horizontal");
+      await box.locator('[data-ed-tab="notes"]').click(); // os próximos testes escrevem em Notes
+    };
     if (size === "mobile") {
       step = "opening equipment picker on mobile";
       await cards.nth(0).locator(".rank").tap();
@@ -258,6 +287,7 @@ const FLOWS = {
         throw new Error("as posições de Notes e Rotation não se empilharam no celular");
       if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth))
         throw new Error("as caixas fixas de Notes e Rotation causaram rolagem horizontal");
+      await buildRotation();
       return;
     }
     const state = () => page.evaluate(() => JSON.parse(localStorage.getItem("dominik-editor")));
@@ -314,6 +344,7 @@ const FLOWS = {
       || !detail.includes("notes") || !detail.includes("rotation")
       || /Weapon Harmony|Main memory set|Sub memory set/.test(detail))
       throw new Error("Notes e Rotation não ficaram fixas, em colunas para Blue, Red e Yellow");
+    await buildRotation();
     if (await page.locator("#edDetail").evaluate(el => getComputedStyle(el).gridTemplateColumns.split(" ").length) !== 3)
       throw new Error("os detalhes não se alinharam abaixo das três posições");
     if (await page.locator('#edDetail textarea[name="c0.desc"]').evaluate(el => getComputedStyle(el).minHeight) !== "225px"

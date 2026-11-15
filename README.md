@@ -17,7 +17,7 @@
   ·
   <a href="https://dominiko.pages.dev/timeline">Meta Timeline</a>
   ·
-  <a href="https://dominiko.pages.dev/contact">Contact</a>
+  <a href="https://dominiko.pages.dev/credits">Credits</a>
   ·
   <a href="https://ko-fi.com/ofcrazy">Support on Ko-fi</a>
 </p>
@@ -67,7 +67,7 @@ The [Planner](https://dominiko.pages.dev/calculator) has two tabs:
 - **Planner:** enter your starting balance and see your Black Cards across upcoming patches. It also adds up the cost of the passes you pick, with estimated real-money prices.
 - **Pull chance:** choose a banner and a number of pulls to see your odds, including how often pity triggers.
 
-It uses the same math as the [Tickets Income spreadsheet](https://docs.google.com/spreadsheets/d/1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw/edit) by Crazy117 and Sidewayz.
+It uses the same math as my [Tickets Income spreadsheet](https://docs.google.com/spreadsheets/d/1h1fmMIC0zn_XPgAP8iVCEoNGgFV_DQ2-S44JNqErXFw/edit), which I made with Sidewayz.
 
 ### Follow the meta
 
@@ -92,7 +92,7 @@ Dates follow the Chinese server, which gets each frame first, so Global release 
 
 ## Feedback
 
-Found a wrong build, or have a question or suggestion? Message **crazy117** on Discord. You can also find the details on the [Contact page](https://dominiko.pages.dev/contact).
+Found a wrong build, or have a question or suggestion? Message **crazy117** on Discord. You can also find the details on the [Credits page](https://dominiko.pages.dev/credits).
 
 If the site helps you, you can [support it on Ko-fi](https://ko-fi.com/ofcrazy).
 

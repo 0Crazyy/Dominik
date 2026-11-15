@@ -110,6 +110,8 @@ function edMemoryFit(ch) {
   const [, element = ch.element, cls = ch.class, , effect = ""] = CONSTRUCTS[ch.name] || [];
   const traits = [element, effect, cls].filter(Boolean);
   for (const name of CATALOG.memories) {
+    // A signature memory belongs to its own frame, so it never fits another one by element or Effect
+    if (SIGNATURE_OWNER[name] && SIGNATURE_OWNER[name] !== ch.name) continue;
     const boost = ED_MEMORY_BOOST.get(name) || "", at = traits.findIndex(trait => boost.includes(` ${trait} `));
     if (at >= 0) fit.set(name, { order: at, label: traits[at] });
   }
@@ -718,11 +720,17 @@ function edRender(follow) {
   const stage = $("#edStage");
   if (!stage) return;
   const at = follow ?? ($(".comp", stage) && isSliding() ? activeSlide() : 0);
+  // The cards grow with their rotation and notes. When the person is working in the boxes below them (adding steps, typing),
+  // the page scrolls by the same amount, so what they are using stays where it was instead of sliding away
+  const detail = $("#edDetail"), seen = () => detail?.getBoundingClientRect();
+  const before = seen(), working = before && before.top < innerHeight && before.bottom > 0 && before.top > stage.getBoundingClientRect().top;
   stage.innerHTML = edStageBody();
   edWire();
   edPaint();
   const box = $(".comp", stage), card = box?.children[at];
   if (at > 0 && card && isSliding()) box.scrollLeft = card.offsetLeft + card.offsetWidth / 2 - box.clientWidth / 2;
+  const moved = working ? seen().top - before.top : 0;
+  if (moved) scrollBy(0, moved);
 }
 // Moves a whole position, character and equipment, to another slot. Leader and Starter stay with their characters
 function edMoveCard(from, to) {
@@ -765,16 +773,114 @@ const edStatus = text => {
   if (text) edStatusTimer = setTimeout(() => box.classList.remove("on"), 7000);
 };
 
-/* Each position keeps its Notes and Rotation fields visible below the team cards. */
+/* Rotation builder. The rotation stays the text of the position ("# Turn" lines and one step per line); the buttons read and write
+   that text, so links, saving, sending and the cards need nothing else. A step is "Tap X", "Hold X" or the move alone, plus " 2x" */
+const edRotText = turns => turns.map(t => [...(t.name === null ? [] : [`# ${t.name}`]), ...t.steps].join("\n")).join("\n");
+function edRotParse(text) {
+  const turns = [];
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (line.startsWith("#")) turns.push({ name: line.replace(/^#+\s*/, ""), steps: [] });
+    else {
+      if (!turns.length) turns.push({ name: null, steps: [] });
+      turns.at(-1).steps.push(line);
+    }
+  }
+  return turns;
+}
+// A step written the standard way, or null for a free step
+function edStepParse(text) {
+  for (const move of ROTATION_MOVES) {
+    const hit = text.match(new RegExp(`^${move.press ? "(Tap|Hold) " : "()"}${move.name}(?: (\\d+)x)?$`));
+    if (hit) return { move, hold: hit[1] === "Hold", count: Number(hit[2]) || 1 };
+  }
+  return null;
+}
+const edStepText = ({ move, hold, count }) => `${move.press ? (hold ? "Hold " : "Tap ") : ""}${move.name}${count > 1 ? ` ${count}x` : ""}`;
+const ED_ROT_GROUPS = [["Attacks", ["Basic Attack", "Signature", "QTE"]], ["Orbs", ["1st Orb", "Red Orb", "Yellow Orb", "Blue Orb"]],
+  ["Actions", ["Swap in", "Swap out", "Dodge"]]];
+let edRotActive = [null, null, null]; // the turn each position adds its next step to
+let edTab = ["notes", "notes", "notes"];
+const edRotIcon = (ch, text) => rotationIcon(ch?.name, text);
+function edRotPalette(i) {
+  const ch = edChar(edDraft.cards[i].char);
+  return ED_ROT_GROUPS.map(([label, names]) => `<div class="ed-rot-group"><small>${label}</small><div>${names.map(name => {
+    const move = ROTATION_MOVES.find(m => m.name === name);
+    return `<button type="button" class="ed-rot-move" data-rot-act="add" data-rot-i="${i}" data-rot-move="${esc(name)}" aria-label="Add ${esc(name)}">
+      ${edRotIcon(ch, move.word) || `<span class="ed-rot-glyph" aria-hidden="true">+</span>`}<span>${esc(name)}</span></button>`;
+  }).join("")}</div></div>`).join("");
+}
+// The turns and steps, redrawn on every change; the palette and the text box around it stay where they are
+function edRotTurnsBody(i) {
+  const c = edDraft.cards[i], ch = edChar(c.char), turns = edRotParse(c.rotation);
+  const active = Math.min(edRotActive[i] ?? turns.length - 1, turns.length - 1);
+  const btn = (act, t, s, label, inner, extra = "") => `<button type="button" class="ed-rot-btn" data-rot-act="${act}" data-rot-i="${i}" data-rot-t="${t}" data-rot-s="${s}" aria-label="${label}"${extra}>${inner}</button>`;
+  const body = turns.map((turn, t) => `<section class="ed-rot-turn${t === active ? " on" : ""}">
+    <div class="ed-rot-turn-head">${turn.name === null ? `<span>Steps</span>` : `<input class="ed-rot-name" data-rot-name data-rot-i="${i}" data-rot-t="${t}" value="${esc(turn.name)}" maxlength="60" aria-label="Turn name" autocomplete="off">`}
+      ${btn("pick", t, 0, "Add the next steps to this turn", t === active ? "Adding here" : "Add here", ` aria-pressed="${t === active}"`)}
+      ${btn("drop", t, 0, "Remove this turn", "✕")}</div>
+    <ol>${turn.steps.map((text, s) => {
+      const step = edStepParse(text), last = turn.steps.length - 1;
+      return `<li class="ed-rot-step"><b>${s + 1}</b>${edRotIcon(ch, text)}
+        ${step ? `<span class="ed-rot-text">${esc(text)}</span>` : `<input class="ed-rot-text" data-rot-text data-rot-i="${i}" data-rot-t="${t}" data-rot-s="${s}" value="${esc(text)}" maxlength="120" aria-label="Step ${s + 1}" autocomplete="off">`}
+        <span class="ed-rot-tools">
+        ${step?.move.press ? btn("hold", t, s, `Hold: ${step.hold ? "on" : "off"}`, "Hold", ` aria-pressed="${step.hold}"`) : ""}
+        ${step ? btn("less", t, s, "Fewer times", "−", step.count > 1 ? "" : " disabled") + btn("more", t, s, "More times", "+") : ""}
+        ${btn("up", t, s, "Move up", "↑", s ? "" : " disabled")}${btn("down", t, s, "Move down", "↓", s < last ? "" : " disabled")}${btn("del", t, s, "Remove step", "✕")}</span></li>`;
+    }).join("")}</ol></section>`).join("");
+  const steps = turns.flatMap(t => t.steps).length;
+  const preview = ch && steps ? `<div class="rotation ed-rot-preview"><h3>On the card</h3>${rotationBox({ name: ch.name, rotation: { order: edDraft.order, turns: edTurns(c.rotation), source: null } })}</div>` : "";
+  return `${body || `<p class="ed-hint">Tap a move above to start the rotation.</p>`}
+    <button type="button" class="tool ed-rot-addturn" data-rot-act="turn" data-rot-i="${i}">+ Turn</button>${preview}`;
+}
+function edRotBody(i) {
+  const c = edDraft.cards[i];
+  return `<div class="ed-rot" data-ed-rot="${i}">
+    <div class="ed-rot-palette" role="group" aria-label="Add a move">${edRotPalette(i)}</div>
+    <div class="ed-rot-free"><input data-rot-free="${i}" maxlength="120" placeholder="Other step…" aria-label="Other step" autocomplete="off">
+      <button type="button" class="tool" data-rot-act="free" data-rot-i="${i}">Add</button></div>
+    <div id="edRotTurns${i}" class="ed-rot-turns">${edRotTurnsBody(i)}</div>
+    <div id="edRotLive${i}" class="ed-rot-live" role="status" aria-live="polite"></div>
+    <details class="ed-rot-text-edit"><summary>Edit as text</summary>
+      ${edField("One step per line, # starts a turn", `<textarea name="c${i}.rotation" rows="10" maxlength="${ED_LIMITS.rotation}" placeholder="${esc(ED_ROTATION_HINT)}">${esc(c.rotation)}</textarea>`)}</details></div>`;
+}
+/* Each position keeps its Notes and Rotation below the team cards, in two tabs so the page stays short. Both stay in the form */
 function edDetailBody() {
   return edDraft.cards.map((c, i) => {
-    const ch = edChar(c.char), name = key => `c${i}.${key}`;
+    const ch = edChar(c.char), tab = (key, label) => `<button type="button" class="${edTab[i] === key ? "on" : ""}" data-ed-tab="${key}" data-ed-tab-i="${i}" aria-pressed="${edTab[i] === key}">${label}</button>`;
     return `<fieldset class="ed-card ed-detail ed-${ED_BARS[i]}">
-      <legend>${ED_SLOTS[i]} · ${esc(ch?.name || "No character")}</legend><div class="ed-detail-fields">
-    ${edField("Notes", `<textarea name="${name("desc")}" rows="8" maxlength="${ED_LIMITS.desc}" placeholder="Why this build, and what to change at other ranks">${esc(c.desc)}</textarea>`)}
-    ${edField("Rotation · one step per line, # starts a turn", `<textarea name="${name("rotation")}" rows="10" maxlength="${ED_LIMITS.rotation}" placeholder="${esc(ED_ROTATION_HINT)}">${esc(c.rotation)}</textarea>`)}
+      <legend>${ED_SLOTS[i]} · ${esc(ch?.name || "No character")}</legend>
+      <div class="ed-tabs">${tab("notes", "Notes")}${tab("rotation", "Rotation")}</div><div class="ed-detail-fields">
+    <div data-ed-pane="notes"${edTab[i] === "notes" ? "" : " hidden"}>${edField("Notes", `<textarea name="c${i}.desc" rows="8" maxlength="${ED_LIMITS.desc}" placeholder="Why this build, and what to change at other ranks">${esc(c.desc)}</textarea>`)}</div>
+    <div data-ed-pane="rotation"${edTab[i] === "rotation" ? "" : " hidden"}>${edRotBody(i)}</div>
       </div></fieldset>`;
   }).join("");
+}
+// Changes the rotation of one position through its text field, so everything that listens to the form follows
+function edRotEdit(i, change, say, focus) {
+  const turns = edRotParse(edDraft.cards[i].rotation);
+  change(turns);
+  const text = edRotText(turns);
+  if (text.length > ED_LIMITS.rotation) return edStatus(`A rotation can have up to ${ED_LIMITS.rotation} characters.`);
+  const field = $("#edForm").elements[`c${i}.rotation`];
+  field.value = text;
+  field.dispatchEvent(new Event("input", { bubbles: true })); // the form handler saves and redraws the turns
+  const live = $(`#edRotLive${i}`);
+  if (live && say) live.textContent = say;
+  for (const selector of [focus].flat()) {
+    const target = selector && $(`#edRotTurns${i} ${selector}`);
+    if (target && !target.disabled) return target.focus({ preventScroll: true });
+  }
+}
+function edRotAdd(i, text) {
+  let at;
+  edRotEdit(i, turns => {
+    if (!turns.length) turns.push({ name: "Turn 1", steps: [] });
+    at = Math.min(edRotActive[i] ?? turns.length - 1, turns.length - 1);
+    turns[at].steps.push(text);
+    edRotActive[i] = at;
+  }, `${text} added`);
 }
 
 /* applying a selection */
@@ -908,7 +1014,7 @@ function teamBuilder() {
       <li>Drag a portrait onto another card, or use the arrows between the cards, to swap two positions with all their equipment.</li>
       <li>Use the Memory Resonances button on the memory box to set each memory's Upper and Bottom resonance.</li>
       <li>Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot.</li>
-      <li>Notes and Rotation stay visible below the cards for each team position.</li>
+      <li>Each position has Notes and Rotation tabs below the cards. Build a rotation by tapping moves, or switch to "Edit as text".</li>
       <li>The team stays saved in this browser, and you can share it as a link or an image.</li>
       <li>You can also send it to the site: after a review, it shows up on its page with the other builds.</li>
     </ul>
@@ -942,6 +1048,8 @@ addEventListener("input", e => {
   edSave();
   edStatus("");
   edRefresh(el.tagName === "SELECT");
+  const rot = el.name.match(/^c(\d)\.rotation$/);
+  if (rot) $(`#edRotTurns${rot[1]}`).innerHTML = edRotTurnsBody(Number(rot[1]));
 });
 addEventListener("submit", e => { if (e.target.id === "edForm") e.preventDefault(); });
 /* Dragging with a mouse: a C.U.B. skill onto another skill of its card, Leader or Starter onto another card, and a portrait onto
@@ -1230,4 +1338,69 @@ addEventListener("click", e => {
   while (order.length > ED_LIMITS.order && tokens.length) { tokens.pop(); order = tokens.join(ED_ORDER_SEP); }
   set("order", order);
   $("#edOrder").innerHTML = edOrderBody(edDraft);
+});
+
+/* Rotation builder controls: the Notes/Rotation tabs, the move buttons, and the buttons of each turn and step */
+addEventListener("click", e => {
+  if (!$("#edForm") || !e.target.closest) return;
+  const tab = e.target.closest("[data-ed-tab]");
+  if (tab) {
+    const i = Number(tab.dataset.edTabI);
+    edTab[i] = tab.dataset.edTab;
+    const box = tab.closest(".ed-detail");
+    box.querySelectorAll("[data-ed-tab]").forEach(b => { b.classList.toggle("on", b === tab); b.setAttribute("aria-pressed", b === tab); });
+    box.querySelectorAll("[data-ed-pane]").forEach(pane => { pane.hidden = pane.dataset.edPane !== edTab[i]; });
+    return;
+  }
+  const b = e.target.closest("[data-rot-act]");
+  if (!b || b.disabled) return;
+  const i = Number(b.dataset.rotI), t = Number(b.dataset.rotT), s = Number(b.dataset.rotS), act = b.dataset.rotAct;
+  const at = `[data-rot-act="${act}"][data-rot-t="${t}"][data-rot-s="${s}"]`;
+  const edit = (change, say, focus) => edRotEdit(i, turns => change(turns, turns[t]?.steps), say, focus);
+  const redraw = () => { $(`#edRotTurns${i}`).innerHTML = edRotTurnsBody(i); };
+  if (act === "add") return edRotAdd(i, edStepText({ move: ROTATION_MOVES.find(m => m.name === b.dataset.rotMove), hold: false, count: 1 }));
+  if (act === "free") {
+    const input = $(`[data-rot-free="${i}"]`), text = input.value.replace(/\s+/g, " ").trim();
+    if (!text) return input.focus();
+    input.value = "";
+    return edRotAdd(i, text.startsWith("#") ? text.replace(/^#+\s*/, "") : text);
+  }
+  if (act === "turn") {
+    return edRotEdit(i, turns => { turns.push({ name: `Turn ${turns.length + 1}`, steps: [] }); edRotActive[i] = turns.length - 1; }, "Turn added");
+  }
+  if (act === "pick") { edRotActive[i] = t; redraw(); return $(`#edRotTurns${i} .ed-rot-turn.on [data-rot-act="pick"]`)?.focus(); }
+  if (act === "drop") {
+    return edRotEdit(i, turns => { turns.splice(t, 1); edRotActive[i] = null; }, "Turn removed");
+  }
+  const withStep = change => edit((turns, steps) => { const step = edStepParse(steps[s]); if (step) steps[s] = edStepText(change(step)); }, "", at);
+  if (act === "hold") return withStep(step => ({ ...step, hold: !step.hold }));
+  if (act === "less") return withStep(step => ({ ...step, count: Math.max(1, step.count - 1) }));
+  if (act === "more") return withStep(step => ({ ...step, count: step.count + 1 }));
+  if (act === "up" || act === "down") {
+    const to = s + (act === "up" ? -1 : 1);
+    return edit((turns, steps) => { [steps[s], steps[to]] = [steps[to], steps[s]]; }, `Step moved to ${to + 1}`,
+      [`[data-rot-act="${act}"][data-rot-t="${t}"][data-rot-s="${to}"]`, `[data-rot-act="${act === "up" ? "down" : "up"}"][data-rot-t="${t}"][data-rot-s="${to}"]`]);
+  }
+  if (act === "del") {
+    return edit((turns, steps) => { steps.splice(s, 1); }, "Step removed", [`[data-rot-act="del"][data-rot-t="${t}"][data-rot-s="${s}"]`, `[data-rot-act="pick"][data-rot-t="${t}"]`]);
+  }
+});
+// Typing into a turn name or a free step is applied once the field is left
+addEventListener("change", e => {
+  const el = e.target;
+  if (!el.matches?.("[data-rot-name], [data-rot-text]") || !$("#edForm")) return;
+  const i = Number(el.dataset.rotI), t = Number(el.dataset.rotT), s = Number(el.dataset.rotS);
+  const value = el.value.replace(/\s+/g, " ").trim().replace(/^#+\s*/, "");
+  edRotEdit(i, turns => {
+    if (el.matches("[data-rot-name]")) turns[t].name = value || "Turn";
+    else if (value) turns[t].steps[s] = value;
+    else turns[t].steps.splice(s, 1);
+  });
+});
+addEventListener("keydown", e => {
+  const input = e.target.matches?.("[data-rot-free]") ? e.target : null;
+  if (input && e.key === "Enter") {
+    e.preventDefault();
+    input.closest(".ed-rot-free").querySelector("[data-rot-act]").click();
+  }
 });

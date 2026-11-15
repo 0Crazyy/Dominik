@@ -569,7 +569,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 // Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
 // data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
 // ?v=4: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
-const web = src => src.replace("assets/", "assets-web/") + ".webp" + (src.startsWith("assets/rank/") ? "?v=4" : "");
+const web = src => src.replace("assets/", "assets-web/").replace(/\.[^./]+$/, ".webp") +(src.startsWith("assets/rank/") ? "?v=4" : "");
 const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
 // Name shown when hovering an icon, read from its file name ("Memoria - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {
@@ -766,11 +766,30 @@ function weaponArt(c) {
   return `<a class="slot" href="${esc(memoryHref(c.wh))}"${tipAttr(c.wh)}>${pic(memFile(c.wh, "WH", "png"), `alt="" style="transform-origin:${x}% ${y}%;transform:scale(${zoom})"`)}<span class="wh-bar">${pic(WH_BAR, 'alt=""')}<b>WEAPON HARMONY</b></span></a>`;
 }
 // A rotation step shows the icon of the first button it names, from the character's skills. The 1st Orb has no fixed color, so no icon
-const ROTATION_ART = { Signature: "Signature", Basic: "Basic Attack", Red: "Red Orb", Yellow: "Yellow Orb", Blue: "Blue Orb" };
-const ROTATION_WORD = /1st Orb|White|Green|Ping|Dodge|Signature|Basic|Red|Yellow|Blue/;
+// The standard moves of a rotation, also the buttons of the Team Builder. press: written as "Tap X" or "Hold X". word: what the step text is searched for. art: the skill icon of the character, if the move has one. icon: a picture shared by every character
+const ROTATION_MOVES = [
+  { name: "1st Orb", word: "1st Orb", press: true },
+  { name: "Basic Attack", word: "Basic", art: "Basic Attack", press: true },
+  { name: "Signature", word: "Signature", art: "Signature", press: true },
+  { name: "Red Orb", word: "Red", art: "Red Orb", press: true },
+  { name: "Yellow Orb", word: "Yellow", art: "Yellow Orb", press: true },
+  { name: "Blue Orb", word: "Blue", art: "Blue Orb", press: true },
+  { name: "QTE", word: "QTE", art: "QTE", press: true },
+  { name: "Dodge", word: "Dodge", icon: "assets/icons/rotation/dodge.png" },
+  { name: "Ping", word: "Ping" },
+  { name: "Swap in", word: "Swap in", icon: "assets/icons/rotation/swap-in.png" },
+  { name: "Swap out", word: "Swap out", icon: "assets/icons/rotation/swap-out.png" }
+];
+const ROTATION_ART = Object.fromEntries(ROTATION_MOVES.filter(m => m.art).map(m => [m.word, m.art]));
+const ROTATION_ICON = Object.fromEntries(ROTATION_MOVES.filter(m => m.icon).map(m => [m.word, m.icon]));
+const ROTATION_WORD = new RegExp(["White", "Green", ...ROTATION_MOVES.map(m => m.word)].join("|"));
+// The icon of a step: a skill of the character, or the picture shared by Dodge, Swap in and Swap out. "" when it has none
+function rotationIcon(name, text) {
+  const word = text.match(ROTATION_WORD)?.[0];
+  return ROTATION_ICON[word] ? pic(ROTATION_ICON[word]) : ROTATION_ART[word] && name ? pic(skillIcon(name, ROTATION_ART[word])) : "";
+}
 function rotationLine(name, text) {
-  const art = ROTATION_ART[text.match(ROTATION_WORD)?.[0]];
-  return `<span class="rot-line">${art ? pic(skillIcon(name, art)) : ""}<span>${esc(text)}</span></span>`;
+  return `<span class="rot-line">${rotationIcon(name, text)}<span>${esc(text)}</span></span>`;
 }
 function rotationBox(c) {
   const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(turn)}</h4>
@@ -1103,9 +1122,9 @@ function heroBelt() {
     <img src="assets/home/${slug(c.name.replace(":", ""))}.jpg" data-full="${esc(c.portrait)}" alt="" loading="lazy" decoding="async">
     <span class="hero-name">${esc(c.name)}</span></a>`;
   // The list runs twice so the loop has no visible seam; the track moves exactly half its width
-  // A random negative delay starts the loop at a different point on each visit (5s per character, as in style.css)
+  // data-start is a random point in the loop (5s per character), so each visit begins somewhere else; the loop itself runs in the belt code below
   const start = (Math.random() * chars.length * 5).toFixed(1);
-  return `<div class="hero-art" role="navigation" aria-label="Constructs"><div class="hero-track" style="--n:${chars.length};animation-delay:-${start}s">${chars.map(c => link(c)).join("")}${chars.map(c => link(c, true)).join("")}</div></div>`;
+  return `<div class="hero-art" role="navigation" aria-label="Constructs"><div class="hero-track" style="--n:${chars.length}" data-start="${start}">${chars.map(c => link(c)).join("")}${chars.map(c => link(c, true)).join("")}</div></div>`;
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
@@ -1117,14 +1136,14 @@ function homeLinks() {
       : `<svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg>`
   }</span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
   const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
-  const chars = heroChars(), cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
+  const cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
     ["Planner", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
     ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."],
     ["Team Builder", "/editor", "editor", "Put a team together, see its cards and share it as a link or an image."]
   ];
   const data = [
-    ["Constructs", "/constructs", "constructs", count(chars, "construct")],
+    ["Constructs", "/constructs", "constructs", count(Object.keys(CONSTRUCTS), "construct")],
     ["Memories", "/assets/memories", "memories", count(memories, "set")],
     ["Weapons", "/assets/weapons", "weapons", count(WEAPONS, "weapon")],
     ["Weapon Resonance", "/assets/resonances", "resonance", count(resonances, "resonance")],
@@ -1135,6 +1154,17 @@ function homeLinks() {
 }
 // Teams are named after the patch of their newest character, so a team named after the patch running today is new. The tag leaves by itself when that patch ends
 const isNewTeam = id => CALC_PATCHES.some(p => patchTime(p, calcToday()) && p.patch.toLowerCase() === COMPS[id].name.toLowerCase());
+// A New tag shows until the visitor clicks what it marks; the clicks are remembered in this browser. A new patch makes new keys, so tags come back for new content only
+const SEEN_KEY = "dominik-seen";
+const seenList = () => {
+  try { return JSON.parse(localStorage.getItem(SEEN_KEY)) || []; }
+  catch { return []; }
+};
+const isSeen = key => seenList().includes(key);
+function markSeen(key) {
+  try { localStorage.setItem(SEEN_KEY, JSON.stringify([...new Set([...seenList(), key])])); }
+  catch { /* storage blocked: the tag only goes until the page reloads */ }
+}
 function splashMarkup(phrase) {
   let splashChar = 0;
   const typed = text => Array.from(text, char => `<span style="animation-delay:${splashChar++ * 30}ms">${esc(char)}</span>`).join("");
@@ -1148,11 +1178,12 @@ function home() {
   const tile = (e, p, iconDir, color = TILE_COLOR[e]) => {
     if (!e) return `<span class="tile-gap">N/A</span>`;
     const ids = PAGES[`${p}/${slug(e)}`] || [], count = ids.reduce((sum, id) => sum + (COMPS[id].variants || [0]).length, 0);
-    return `<a class="tile${count ? "" : " none"}" style="--c:${color}" href="/${p}/${slug(e)}">
+    const fresh = ids.find(isNewTeam), key = fresh && `tile:${p}/${slug(e)}:${COMPS[fresh].name}`, tag = key && !isSeen(key);
+    return `<a class="tile${count ? "" : " none"}" style="--c:${color}" href="/${p}/${slug(e)}"${tag ? ` data-new="${esc(key)}"` : ""}>
       ${pic(`assets/${iconDir}/${e}.png`, 'class="t-bg" alt=""')}
       <span class="t-ic">${menuIcon(iconDir, e)}</span>
       <span class="t-tx"><b>${e}</b><small>${count ? `${count} team${count > 1 ? "s" : ""}` : "No teams yet"}</small></span>
-      ${ids.some(isNewTeam) ? `<span class="t-new">New</span>` : ""}
+      ${tag ? `<span class="t-new">New</span>` : ""}
     </a>`;
   };
   // Cells go column by column: the row names, then each energy with its effects
@@ -1161,7 +1192,7 @@ function home() {
   const splash = HOME_SPLASHES[Math.floor(Math.random() * HOME_SPLASHES.length)];
   return `<section class="hero">
       <div class="hero-tx">
-        <button class="hero-mark" type="button" aria-label="Show another phrase" data-splash="${esc(splash)}"><img src="assets-web/logo.webp.webp" alt=""></button>
+        <button class="hero-mark" type="button" aria-label="Show another phrase" data-splash="${esc(splash)}"><img src="assets-web/logo.webp" alt=""></button>
         <p class="hero-splash">${splashMarkup(splash)}</p>
       </div>
       ${heroBelt()}
@@ -1177,17 +1208,18 @@ let shown = "", chosen = "";
 const pageBuilds = path => PAGES[path].flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name, cards: COMPS[id].cards }])
   .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, cards: v.cards })));
 // The patch and the group, without repeating the patch when a build has no group of its own
-const buildTags = (comp, group) => `${isNewTeam(comp) ? `<i class="new">New</i>` : ""}${[COMPS[comp].name, group !== COMPS[comp].name && group].filter(Boolean).map(t => `<i>${esc(t)}</i>`).join("")}`;
+const buildTags = (comp, group, key) => `${key ? `<i class="new">New</i>` : ""}${[COMPS[comp].name, group !== COMPS[comp].name && group].filter(Boolean).map(t => `<i>${esc(t)}</i>`).join("")}`;
 function listRow(path, b) {
   const { name: patch } = COMPS[b.comp];
   // The captain leads the row, as the build's main character
   const main = b.cards.find(c => /\bcaptain\b/.test(c.role)) || b.cards[0], mates = b.cards.filter(c => c !== main);
   const search = [b.name, patch, b.group, ...b.cards.map(c => c.name)].filter(Boolean).join(" ").toLowerCase();
-  return `<a class="brow" href="${buildHref(path, b.variant || b.comp)}" data-search="${esc(search)}">
+  const key = isNewTeam(b.comp) && `row:${b.variant || b.comp}`, tag = key && !isSeen(key) ? key : "";
+  return `<a class="brow" href="${buildHref(path, b.variant || b.comp)}" data-search="${esc(search)}"${tag ? ` data-new="${esc(tag)}"` : ""}>
     <span class="brow-art">${main.portrait ? pic(main.portrait) : ""}</span>
     <span class="brow-tx"><b>${esc(b.name)}</b>
       <small><em>${esc(main.name)}</em> with ${mates.map(c => esc(c.name.split(":")[0])).join(" and ")}</small>
-      <span class="brow-tags">${buildTags(b.comp, b.group)}</span></span>
+      <span class="brow-tags">${buildTags(b.comp, b.group, tag)}</span></span>
   </a>`;
 }
 function buildList(path) {
@@ -1224,7 +1256,7 @@ function team(path, pick) {
     if (!shown) return `${back}<p class="empty">Build not found.</p>`;
     const name = pickedVariant(shown)?.name || COMPS[shown].name, group = pickedVariant(shown)?.group;
     return `<div id="noticeBox">${teamNotice(shown)}</div>${back}<h1>${esc(name)}</h1>
-      <p class="sub">${esc(list)} · ${TEAM_LISTS[kind].label}</p><p class="brow-tags build-tags">${buildTags(shown, group)}</p>
+      <p class="sub">${esc(list)} · ${TEAM_LISTS[kind].label}</p><p class="brow-tags build-tags">${buildTags(shown, group, "")}</p>
       <div id="compBox">${compBody(shown)}</div>`;
   }
   const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
@@ -1271,7 +1303,7 @@ const memoryStats = name => { const [ATK, DEF, CRIT, HP] = MEMORY_STATS[name]; r
 const memoryRow = ([name, boost, ext]) => `<tr>
     <td><div class="mt-name"><div class="mt-art">${thumb(ext && memFile(name, "1-4"), starsOf(name))}</div>
       <div><a href="${memoryHref(name)}">${esc(name)}</a><small>${esc(boost)}</small></div></div></td>
-    ${MEMORY_STATS[name].map(value => `<td>${value}</td>`).join("")}${MEMORY_PATCH[name] ? `<td class="txt rel">${esc(MEMORY_PATCH[name])}</td>` : patchCell(SIGNATURE_OWNER[name])}</tr>`;
+    ${MEMORY_STATS[name].map((value, i) => `<td data-label="${STAT_NAMES[i]}">${value}</td>`).join("")}${MEMORY_PATCH[name] ? `<td class="txt rel" data-label="Release">${esc(MEMORY_PATCH[name])}</td>` : patchCell(SIGNATURE_OWNER[name])}</tr>`;
 const weaponFile = file => file && (file.startsWith("assets/") ? file : `${CHARS}/${file}`);
 const weaponThumb = (file, name, rank = "") => thumb(weaponFile(file), file ? starsOf(name, file, rank) : "");
 // A character without a build has no page to link to
@@ -1280,7 +1312,7 @@ const ownerLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">$
 const patchOf = frame => FRAME_PATCH[frame] || TIMELINE.find(c => c.name === frame)?.patch || "";
 // The frame each signature memory belongs to. Memories with no frame (Liliana, Wilde, Klenova, Poincare and the early generic ones) show a dash
 const SIGNATURE_OWNER = Object.fromEntries(Object.entries(SIGNATURE_MEMORY).map(([frame, memory]) => [memory, frame]));
-const patchCell = frame => `<td class="txt rel">${esc(patchOf(frame)) || "—"}</td>`;
+const patchCell = frame => `<td class="txt rel" data-label="Release">${esc(patchOf(frame)) || "—"}</td>`;
 const weaponRow = ([owner, name, type, file, , rank]) => {
   const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
   const subtitle = owner
@@ -1289,7 +1321,7 @@ const weaponRow = ([owner, name, type, file, , rank]) => {
   return `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${weaponThumb(file, name, rank)}</div>
       <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${subtitle}</small></div></div></td>
-    ${WEAPON_STATS[name].map(value => `<td>${value}</td>`).join("")}${patchCell(listedOwner)}</tr>`;
+    ${WEAPON_STATS[name].map((value, i) => `<td data-label="${["ATK", "CRIT"][i]}">${value}</td>`).join("")}${patchCell(listedOwner)}</tr>`;
 };
 const SORT_TABLES = {
   memories: { columns: STAT_NAMES, release: true, row: set => memoryRow(set), name: ([name]) => name,
@@ -1403,10 +1435,28 @@ const statRow = stats => `<dl class="stats">${Object.entries(stats).map(([label,
 let buildReturn = "";
 const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ Back to build</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
 // Every build where a card passes the test, for the bottom of a detail page
-function usedIn(test) {
-  const found = characters().flatMap(ch => ch.builds.filter(b => test(b.card)).map(b => ({ ...b, name: ch.name, portrait: ch.portrait })));
-  const links = found.map(b => `<a href="${esc(b.href)}">${pic(b.portrait)}<span><b>${esc(b.name)}</b><small>${esc([b.variant || b.team, b.page].filter(Boolean).join(" · "))}</small></span></a>`).join("");
-  return `<section class="used"><h2>Used in ${found.length} build${found.length === 1 ? "" : "s"}</h2>${links ? `<div class="used-list">${links}</div>` : ""}</section>`;
+// The characters that use a piece of equipment, shown by portrait. Those are frame names from CONSTRUCTS
+function usedBy(names) {
+  const roster = new Map(constructRoster().map(ch => [ch.name, ch]));
+  const links = names.filter(name => roster.has(name)).map(name => {
+    const [, element, role] = CONSTRUCTS[name];
+    return `<a href="${characterHref(name)}">${pic(roster.get(name).portrait)}<span><b>${esc(name)}</b><small>${esc([element, role].join(" · "))}</small></span></a>`;
+  }).join("");
+  return links ? `<section class="used"><h2>Used by</h2><div class="used-list">${links}</div></section>` : "";
+}
+// Every character with a build where a card passes the test
+const usedIn = test => usedBy(characters().filter(ch => ch.builds.some(b => test(b.card))).map(ch => ch.name));
+// A memory fits a frame when its set bonus names the frame's element, Effect or class. A signature memory only fits its own frame
+const MEMORY_BOOST = new Map(Object.values(MEMORY_TABS).flat().map(([name, boost]) => [name, ` ${boost} `]));
+function memoryFits(name, frame) {
+  if (SIGNATURE_OWNER[name]) return SIGNATURE_OWNER[name] === frame;
+  const [, element, role, , effect = ""] = CONSTRUCTS[frame];
+  return [element, effect, role].filter(Boolean).some(trait => MEMORY_BOOST.get(name)?.includes(` ${trait} `));
+}
+// Sets that no element, Effect or class bonus ties to a frame (Dodge Boost, Signature Move Boost...) list who wears them in a build
+function usedMemory(name) {
+  const frames = Object.keys(CONSTRUCTS).filter(frame => memoryFits(name, frame));
+  return frames.length ? usedBy(frames) : usedIn(c => c.wh === name || (c.memories || []).some(piece => piece === name || iconName(piece) === name));
 }
 function memoryPage([name, boost, ext]) {
   const { tab } = MEM_INDEX.get(name);
@@ -1414,7 +1464,7 @@ function memoryPage([name, boost, ext]) {
   return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
       <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>
-    ${usedIn(c => c.wh === name || (c.memories || []).some(piece => piece === name || iconName(piece) === name))}`;
+    ${usedMemory(name)}`;
 }
 function weaponPage([owner, name, type, file, effect, rank]) {
   const [ATK, CRIT] = WEAPON_STATS[name];
@@ -1422,14 +1472,11 @@ function weaponPage([owner, name, type, file, effect, rank]) {
   const subtitle = listedOwner
     ? [type, listedOwner].filter(Boolean).join(" · ")
     : [type, `${rank || weaponRank(name, file)}-star weapon`].filter(Boolean).join(" · ");
-  const users = WEAPON_USERS[type] || (listedOwner ? [listedOwner] : []);
-  const usableBy = users.length
-    ? `<section class="used"><h2>Usable by</h2><p>${users.map(ownerLink).join(" · ")}</p></section>`
-    : "";
-  const buildUsage = owner ? usedIn(c => c.name === owner) : "";
+  // A weapon belongs to one frame, except the types listed in WEAPON_USERS that are shared by several
+  const users = listedOwner ? [listedOwner] : WEAPON_USERS[type] || [];
   return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
     <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2>Effect</h2>${describe(effect)}` : ""}</div></div>
-    ${usableBy}${buildUsage}`;
+    ${usedBy(users)}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${thumb(WEAPON_RES(name))}</div>
@@ -1442,7 +1489,7 @@ function resonancePage([name, effect]) {
 const cubRow = cub => `<tr>
     <td><div class="mt-name"><div class="mt-art cub-art">${thumb(cub.art, cub.rank === "A" ? starOverlay(5) : STARS)}</div>
       <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small><span class="desk">Rank ${cub.rank}</span><span class="mob">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank}`} · ${esc(cub.element)}</span></small></div></div></td>
-    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${CUB_PATCH[cub.name] ? `<td class="txt rel">${esc(CUB_PATCH[cub.name])}</td>` : patchCell(cub.owner)}</tr>`;
+    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${CUB_PATCH[cub.name] ? `<td class="txt rel" data-label="Release">${esc(CUB_PATCH[cub.name])}</td>` : patchCell(cub.owner)}</tr>`;
 function cubPage(cub) {
   const folder = cub.art.split("/").at(-2), skills = CUB_SKILLS[folder] || [];
   // Some builds show their CUB skills in another order, so each icon is found by its file number
@@ -1450,7 +1497,7 @@ function cubPage(cub) {
   return `${backLink("/assets/cubs", "C.U.B.s")}<h1>${esc(cub.name)}</h1><p class="sub">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank} C.U.B.`} · ${esc(cub.element)}</p>
     <div class="detail wpn-detail">${thumb(cub.art)}<div class="fx">${skills.map(([name, effect], i) =>
       `<div class="cub-skill">${icon(i) ? thumb(icon(i)) : ""}<div><h2>${esc(name)}</h2>${describe(effect)}</div></div>`).join("") || "<p>No skill text yet.</p>"}</div></div>
-    ${usedIn(c => c.construct === cub.art)}`;
+    ${cub.owner ? usedBy([cub.owner]) : usedIn(c => c.construct === cub.art)}`;
 }
 // skills-data.js is long, so it only loads when a skill page opens
 let skillsState = "";
@@ -1532,7 +1579,7 @@ function charactersPage() {
   readFilters();
   return `<h1>Constructs</h1><p class="sub">Every playable construct</p><div id="constructs">${constructsView()}</div>`;
 }
-// Contact page. No art = the first letter of the name in a circle; art goes in assets/credits
+// Credits page. No art = the first letter of the name in a circle; art goes in assets/credits
 const CREDITS = [
   { name: "blacknovatech", text: "creator of Huaxu, for the assets", href: "https://huaxu.app/na/wiki", art: "assets/credits/blacknovatech.png", support: "https://ko-fi.com/blacknova" },
   { name: "sidewayz.", text: "for helping with the site's overall design", art: "assets/credits/sidewayz.png" },
@@ -1540,21 +1587,33 @@ const CREDITS = [
   { name: "Spider 2B", text: "for the guides behind several builds", href: "https://www.youtube.com/@Spider2B", art: "assets/credits/Spider 2B.png" }
 ];
 const KOFI = "https://ko-fi.com/ofcrazy";
+const DISCORD_INVITE = "https://discord.gg/cMmqgRaKGq";
 const creditRow = ({ name, text, href, art, support }) => `<li><span class="credit-art">${art ? pic(art) : esc(name[0].toUpperCase())}</span>
   <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(text)}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>` : ""}</span></li>`;
-const contactPage = () => `<h1>Contact</h1><p class="sub">Found a wrong build, or have a question or suggestion? Send me a message.</p>
+const MADE_WITH = [
+  { name: "Claude", art: "assets/credits/made-with/claude.png" },
+  { name: "VSC", art: "assets/credits/made-with/vscode.png" },
+  { name: "Cloudflare", art: "assets/credits/made-with/cloudflare.png" },
+  { name: "Node.js", art: "assets/credits/made-with/nodejs.png" }
+];
+const creditsPage = () => `<div class="credits-page"><h1>Credits</h1><p class="sub">Found a wrong build, or have a question or suggestion? Send me a message. The people behind the data and art are credited below.</p>
   <div class="contact">
     <section class="contact-card">
       <p class="contact-label">Discord</p>
       <div class="contact-name"><span class="credit-art big">${pic("assets/credits/crazy117.png")}</span><strong>crazy117</strong><button class="tool" data-copy="crazy117">Copy</button></div>
-      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener noreferrer">Support me on Ko-fi</a>
+      <a class="tool contact-kofi" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">${pic("assets/credits/discord.png")}Join the Discord server</a>
+      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener noreferrer">${pic("assets/credits/kofi.png")}Support me on Ko-fi</a>
     </section>
     <section class="contact-card">
       <p class="contact-label">Credits</p>
       <ul>${CREDITS.map(creditRow).join("")}</ul>
     </section>
   </div>
-  <p class="legal">Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.</p>`;
+  <p class="legal">Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.</p>
+  <section class="made-with">
+    <p class="contact-label">Made with:</p>
+    <ul>${MADE_WITH.map(({ name, art }) => `<li>${pic(art, `alt="${esc(name)}"`)}<span>${esc(name)}</span></li>`).join("")}</ul>
+  </section></div>`;
 
 /* ---------- Updates: posts written in Markdown (data/updates-data.js), which only loads when the page opens ---------- */
 let updatesState = "";
@@ -2038,10 +2097,20 @@ function showCalc() {
   $("#calcBarBc").textContent = `${amount(lastBc)} BC`;
   $("#calcBarBc").classList.toggle("short", lastBc < 0);
   const { rate, pity, average, averageCost, early, noPity } = pullStats(calc.pullKind, calc.pulls);
-  $("#calcOdds").innerHTML = calcStat("Chance before pity", `${(early * 100).toFixed(2)}%`, calc.pulls >= pity ? `Pity reached: guaranteed by pull ${pity}` : `${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}% per pull`)
+  const tone = early >= 0.66 ? "high" : early >= 0.33 ? "mid" : "low";
+  const progress = Math.min(calc.pulls, pity) / pity;
+  $("#calcOdds").innerHTML = `<div class="calc-hero ${tone}">
+      <small>Chance before pity</small>
+      <b>${(early * 100).toFixed(2)}%</b>
+      <div class="calc-meter" role="img" aria-label="${calc.pulls} of ${pity} pulls to pity"><span></span></div>
+      <div class="calc-meter-note"><span>${calc.pulls >= pity ? `Pity reached: guaranteed by pull ${pity}` : `${pity - calc.pulls} to pity`}</span><span>${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}% per pull</span></div>
+    </div>
+    <div class="calc-stats">`
     + calcStat("Pity hits", `${Math.floor(calc.pulls / pity)}×`, `Every ${pity} pulls · ${pity - calc.pulls % pity} to the next`)
     + calcStat("Expected", `${Math.round(average)} pulls`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
-    + calcStat("Nearly Guaranteed", `${noPity} pulls`, `${NEARLY_SURE * 100}% chance without pity`);
+    + calcStat("Nearly Guaranteed", `${noPity} pulls`, `${NEARLY_SURE * 100}% chance without pity`)
+    + `</div>`;
+  $("#calcOdds .calc-meter span").style.width = `${progress * 100}%`;
 }
 // The rail above the belt: its thumb follows the belt, and dragging it or clicking its track scrolls the belt
 function syncRail() {
@@ -2105,13 +2174,13 @@ function calculatorPage() {
   const today = calcToday(), patches = calcPlan(), picked = calc.pick = pickedId(patches);
   return `<div id="calc">
     <div class="calc-title">
-      <div><h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> by @Crazy117 &amp; @Sidewayz.</p></div>
+      <div><h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as my <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a>, made with Sidewayz.</p></div>
       <div class="calc-top">
         <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
-        <div class="calc-bar"${calc.tab === "plan" ? "" : " hidden"}>
-          <span class="calc-bar-item">${calcIcon(RC_ART)}<span><output id="calcBarRc"></output><small id="calcBarPrice"></small></span></span>
-          <span class="calc-bar-item">${calcIcon(CURRENCIES[0].art)}<span><output id="calcBarBc"></output><small>BC left after the last patch</small></span></span>
-        </div>
+      </div>
+      <div class="calc-bar"${calc.tab === "plan" ? "" : " hidden"}>
+        <span class="calc-bar-item">${calcIcon(RC_ART)}<span><output id="calcBarRc"></output><small id="calcBarPrice"></small></span></span>
+        <span class="calc-bar-item">${calcIcon(CURRENCIES[0].art)}<span><output id="calcBarBc"></output><small>BC left after the last patch</small></span></span>
       </div>
     </div>
     <div data-calc-panel="plan"${calc.tab === "plan" ? "" : " hidden"}>
@@ -2171,7 +2240,8 @@ function calculatorPage() {
           <label class="calc-field"><span>Banner</span><select data-pull-kind aria-label="Banner">${Object.keys(PULL_ODDS).map(k => `<option${k === calc.pullKind ? " selected" : ""}>${esc(k)}</option>`).join("")}</select></label>
           <label class="calc-field"><span>Pulls</span>${numberBox("data-pulls", calc.pulls, "Pulls")}</label>
         </div>
-        <div class="calc-stats" id="calcOdds"></div>
+        <div class="calc-quick" aria-label="Quick pulls"><button class="tool" type="button" data-pulls-add="10">+10</button><button class="tool" type="button" data-pulls-add="30">+30</button><button class="tool" type="button" data-pulls-add="pity">To pity</button><button class="tool" type="button" data-pulls-add="0">Clear</button></div>
+        <div class="calc-odds" id="calcOdds"></div>
       </section>
       ${calcMore("What the numbers mean", `<section class="calc-card">${calcNotes([
         ["Chance before pity", "The odds of getting it from luck alone. It stops growing one pull before pity, because the next pull is guaranteed."],
@@ -2222,6 +2292,16 @@ $("#main").addEventListener("input", e => {
   else if (option) calc[option] = el.checked;
   else if ("pullKind" in el.dataset) calc.pullKind = el.value;
   else if ("pulls" in el.dataset) calc.pulls = whole(el.value);
+  saveCalc();
+  showCalc();
+});
+// Pull chance shortcuts: add pulls, jump to the pity, or clear
+$("#main").addEventListener("click", e => {
+  const add = e.target.closest?.("[data-pulls-add]");
+  if (!add) return;
+  const by = add.dataset.pullsAdd;
+  calc.pulls = by === "pity" ? PULL_ODDS[calc.pullKind].pity : by === "0" ? 0 : calc.pulls + Number(by);
+  $("#calc [data-pulls]").value = calc.pulls || "";
   saveCalc();
   showCalc();
 });
@@ -2346,6 +2426,68 @@ addEventListener("pointerup", () => {
   // Nothing was under the pointer to click (it left the belt): the flag must not eat the next real click
   setTimeout(() => { beltDragged = false; }, 0);
 });
+/* ---------- New tags: gone once the tile or build is clicked ---------- */
+$("#main").addEventListener("click", e => {
+  const item = e.target.closest?.("[data-new]");
+  if (!item) return;
+  markSeen(item.dataset.new);
+  item.removeAttribute("data-new");
+  item.querySelector(".t-new, i.new")?.remove();
+});
+/* ---------- Hero belt: scrolls by itself, and a mouse or a finger can drag it ---------- */
+// One loop for the page's life: it finds the track on each frame, so a re-rendered home page needs no setup
+const heroBeltState = { track: null, x: 0, drag: null, dragged: false, touched: 0 };
+const heroReduced = matchMedia("(prefers-reduced-motion:reduce)");
+function heroBeltFrame(last, now) {
+  const track = $(".hero-track"), s = heroBeltState, half = track ? track.scrollWidth / 2 : 0;
+  if (track && half) {
+    const loop = track.children.length / 2 * 5;
+    if (s.track !== track) { s.track = track; s.x = -(track.dataset.start / loop) * half; }
+    // Hover or focus holds the belt only while the visitor keeps touching it: after 1.5s without a move, click or drag it runs again
+    const hold = s.drag || heroReduced.matches || (track.matches(":hover, :focus-within") && now - s.touched < 1500);
+    if (!hold) s.x -= Math.min(now - last, 100) / 1000 * (half / loop);
+    s.x = ((s.x % half) - half) % half;
+    track.style.transform = `translateX(${s.x}px)`;
+  }
+  requestAnimationFrame(t => heroBeltFrame(now, t));
+}
+requestAnimationFrame(t => heroBeltFrame(t, t));
+$("#main").addEventListener("pointerdown", e => {
+  const art = e.target.closest?.(".hero-art");
+  if (!art || (e.pointerType === "mouse" && e.button !== 0)) return;
+  heroBeltState.touched = e.timeStamp;
+  heroBeltState.drag ={ art, id: e.pointerId, from: e.clientX, x: heroBeltState.x, moved: false };
+});
+addEventListener("pointermove", e => {
+  const s = heroBeltState, drag = s.drag;
+  if (e.target.closest?.(".hero-art")) s.touched = e.timeStamp;
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.from;
+  if (!drag.moved) {
+    if (Math.abs(dx) < 6) return;
+    drag.moved = true;
+    drag.art.classList.add("dragging");
+    drag.art.setPointerCapture?.(e.pointerId);
+  }
+  s.x = drag.x + dx;
+});
+const heroBeltEnd = () => {
+  const s = heroBeltState;
+  if (!s.drag) return;
+  s.drag.art.classList.remove("dragging");
+  s.touched = performance.now();
+  s.dragged = s.drag.moved;
+  s.drag = null;
+  // If the pointer left the links there is no click to swallow, and the flag must not eat the next real one
+  setTimeout(() => { s.dragged = false; }, 0);
+};
+addEventListener("pointerup", heroBeltEnd);
+addEventListener("pointercancel", heroBeltEnd);
+// A drag ends with a click on the link under the finger; it must not open the character
+$("#main").addEventListener("click", e => {
+  if (heroBeltState.dragged && e.target.closest?.(".hero-art")) { e.preventDefault(); e.stopPropagation(); }
+}, true);
+$("#main").addEventListener("dragstart", e => { if (e.target.closest?.(".hero-art")) e.preventDefault(); });
 /* ---------- Team Builder: its code (editor.js) and catalog load only when the page opens ---------- */
 let editorState = "", editorLoad = null;
 const loadScript = src => new Promise((done, fail) => {
@@ -2427,9 +2569,14 @@ const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overli
 const TL_LINES = [["Tank", "Breaker"], ["Support", "Amplifier", "Overlinker"]];
 const roleLine = role => TL_LINES.find(line => line.includes(role)) || [role];
 const TL_VIEWS = {
-  element: { field: "element", name: "Class & Element", groups: () => ENERGY, dir: "energy-type", rule: "class and element", plural: "elements" },
-  effect: { field: "effect", name: "Class & Effect", groups: () => [...EFFECT, ...SPECIAL_EFFECT], dir: "effects", rule: "class and Effect", plural: "Effects" }
+  element: { field: "element", rank: "S", name: "S-rank Element", groups: () => ENERGY, dir: "energy-type", rule: "class and element", plural: "elements" },
+  effect: { field: "effect", rank: "S", name: "S-rank Effect", groups: () => [...EFFECT, ...SPECIAL_EFFECT], dir: "effects", rule: "class and Effect", plural: "Effects" },
+  elementA: { field: "element", rank: "A", name: "A-rank Element", groups: () => ENERGY, dir: "energy-type", rule: "class and element", plural: "elements" }
 };
+// The characters a tab counts: its rank, and collabs only when the option is on
+const tlFrames = view => TIMELINE.filter(c => c.rank === view.rank && (timelineCollabs || !c.collab));
+const TL_ZOOMS = [1, 2, 4, 8, 16];
+const TL_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 // Effects with no color of their own on the home page
 const tlColor = group => TILE_COLOR[group] || { Disruption: TILE_COLOR.Nihil, Raydiance: "#e6bd52" }[group];
 const TL_SKIP = "Lee: Entropy", TL_SKIP_NOTE = "19 days between Lee: Entropy and Lucia: Crimson Abyss";
@@ -2448,20 +2595,20 @@ const TL_FREE = {
 const TL_CN_HISTORY = "https://wiki.biligame.com/zspms/%E6%88%98%E5%8F%8C%E5%A4%A7%E4%BA%8B%E8%AE%B0";
 // The first patch both servers got on the same day
 const TL_SYNC = "2025-11-13";
-let timelineView = "element", timelineGroup = "", timelineNow = false;
+let timelineView = "element", timelineGroup = "", timelineRole = "", timelineRank = "longest", timelineNow = false, timelineCollabs = false, timelineZoom = 1;
 const TL_ROW = 46, TL_RANKED = 6;
 const monthYear = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 const roleArt = role => CLASS_ART[role] || classIcon(role);
 // A reign lasts until the next frame of the same class line. With no newer one, it is still running
-function timelineLanes(field, group) {
-  const today = dayNumber(calcToday()), frames = TIMELINE.filter(c => c[field] === group);
+function timelineLanes(view, group) {
+  const today = dayNumber(calcToday()), frames = tlFrames(view).filter(c => c[view.field] === group);
   return TL_ROLES.map(role => ({ role, reigns: frames.filter(c => c.role === role).map(c => {
     const next = frames.find(other => other.date > c.date && roleLine(role).includes(other.role));
     const start = dayNumber(c.date), end = next ? dayNumber(next.date) : today;
     return { ...c, start, end, days: end - start, next };
   }) })).filter(lane => lane.reigns.length);
 }
-const reignInfo = r => `Released in ${r.patch} · ${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"} · ${amount(r.days)} days${r.next ? ` · replaced by ${r.next.name}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : " · still in place"}${TL_FREE[r.name] ? ` · free from ${TL_FREE[r.name]}` : ""}`;
+const reignInfo = r => `Released in ${r.patch} · ${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"} · ${amount(r.days)} days${r.next ? ` · replaced by ${r.next.name}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : " · still in place"}${r.collab ? " · collab" : ""}${TL_FREE[r.name] ? ` · free from ${TL_FREE[r.name]}` : ""}`;
 // Expected replacement of whoever holds a class now, by "group|class", filled by timelineBody (see the forecast there)
 let tlForecast = new Map();
 function forecastNote(group, role) {
@@ -2477,41 +2624,47 @@ const reignHref = name => CONSTRUCTS[name] ? ` href="${characterHref(name)}"` : 
 function timelineShown(view) {
   return view.groups().filter(group => !timelineGroup || group === timelineGroup).map(group => ({
     group,
-    lanes: timelineLanes(view.field, group).map(lane => ({ ...lane, reigns: lane.reigns.filter(r => !timelineNow || !r.next) })).filter(lane => lane.reigns.length)
+    lanes: timelineLanes(view, group).filter(lane => !timelineRole || lane.role === timelineRole).map(lane => ({ ...lane, reigns: lane.reigns.filter(r => !timelineNow || !r.next) })).filter(lane => lane.reigns.length)
   })).filter(({ lanes }) => lanes.length);
 }
 // The day each class first appeared, and the day the Global server caught up with this one
-function timelineMarks() {
-  const debuts = TL_ROLES.map(role => ({ date: TIMELINE.find(c => c.role === role).date, text: `${role} debut` })).filter(mark => mark.date > TIMELINE[0].date);
+function timelineMarks(view) {
+  const frames = tlFrames(view);
+  const debuts = TL_ROLES.filter(role => frames.some(c => c.role === role)).map(role => ({ date: frames.find(c => c.role === role).date, text: `${role} debut` })).filter(mark => mark.date > frames[0].date);
   return [...debuts, { date: TL_SYNC, text: "Global/CN sync" }].sort((x, y) => x.date.localeCompare(y.date));
 }
 function timelineChart(view) {
-  const first = dayNumber(TIMELINE[0].date), last = dayNumber(calcToday()), marks = timelineMarks();
+  const start = tlFrames(view)[0].date, first = dayNumber(start), last = dayNumber(calcToday()), marks = timelineMarks(view);
   const at = day => ((day - first) / (last - first) * 100).toFixed(2);
-  const years = Array.from({ length: Number(calcToday().slice(0, 4)) - Number(TIMELINE[0].date.slice(0, 4)) }, (_, i) => Number(TIMELINE[0].date.slice(0, 4)) + i + 1);
-  const lines = years.map(year => `<i style="left:${at(dayNumber(`${year}-01-01`))}%"></i>`).join("") + marks.map(mark => `<i class="mark" style="left:${at(dayNumber(mark.date))}%"></i>`).join("");
-  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
+  const years = Array.from({ length: Number(calcToday().slice(0, 4)) - Number(start.slice(0, 4)) }, (_, i) => Number(start.slice(0, 4)) + i + 1);
+  // Zoomed in far enough, every month gets its own line and name
+  const months = timelineZoom < 4 ? [] : Array.from({ length: (Number(calcToday().slice(0, 4)) - Number(start.slice(0, 4)) + 1) * 12 }, (_, i) => {
+    const month = i % 12, date = `${Number(start.slice(0, 4)) + Math.floor(i / 12)}-${String(month + 1).padStart(2, "0")}-01`;
+    return { month, day: dayNumber(date) };
+  }).filter(m => m.day > first && m.day < last && m.month);
+  const lines = months.map(m => `<i class="mo" style="left:${at(m.day)}%"></i>`).join("") + years.map(year => `<i style="left:${at(dayNumber(`${year}-01-01`))}%"></i>`).join("") + marks.map(mark => `<i class="mark" style="left:${at(dayNumber(mark.date))}%"></i>`).join("");
+  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
   // A line from a character down to whoever replaced them from the next class of the line
   const link = (r, row, lanes) => {
     const rows = lanes.findIndex(lane => lane.role === r.next?.role) - row;
     return r.next && r.next.role !== r.role && rows > 0 ? `<b class="tl-link" style="left:${at(dayNumber(r.next.date))}%;height:${rows * TL_ROW - 36}px"></b>` : "";
   };
   const lane = ({ role, reigns }, row, lanes, group) => `<div class="tl-row"><span class="tl-role">${row && roleLine(role).includes(lanes[row - 1].role) ? "<em>↳</em>" : ""}<span>${pic(roleArt(role))}</span><span class="tl-rname">${esc(role)}${forecastNote(group, role)}</span></span><div class="tl-track">${lines}${reigns.map(r => link(r, row, lanes)).join("")}${reigns.map(reign).join("")}</div></div>`;
-  return `<div class="tl-chart">
-    <div class="tl-row tl-years"><span></span><div class="tl-track">${years.map(year => `<b style="left:${at(dayNumber(`${year}-01-01`))}%">${year}</b>`).join("")}</div></div>
+  return `<div class="tl-scroll${timelineZoom > 1 ? " zoomed" : ""}"><div class="tl-chart" style="--z:${timelineZoom}">
+    <div class="tl-row tl-years"><span></span><div class="tl-track">${months.map(m => `<b class="mo" style="left:${at(m.day)}%">${TL_MONTHS[m.month]}</b>`).join("")}${years.map(year => `<b style="left:${at(dayNumber(`${year}-01-01`))}%">${year}</b>`).join("")}</div></div>
     <div class="tl-row tl-marks"><span></span><div class="tl-track">${marks.map((mark, i) => `<b class="${i % 2 ? "low" : ""}" style="left:${at(dayNumber(mark.date))}%"${tipAttr(mark.text, monthYear(mark.date))}>${esc(mark.text)}</b>`).join("")}</div></div>
     ${timelineShown(view).map(({ group, lanes }) => `<section class="tl-group" style="--c:${tlColor(group)}"><h2>${menuIcon(view.dir, group)}${esc(group)}</h2>${lanes.map((l, i, all) => lane(l, i, all, group)).join("")}</section>`).join("")}
-  </div>`;
+  </div></div>`;
 }
 function timelineList(view) {
-  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}</b><small>${esc(r.patch)}</small><small>${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${amount(r.days)} days</em></a>`;
-  return `<div class="tl-list"><p class="tl-chips">${timelineMarks().map(mark => `<span>${monthYear(mark.date)} · ${esc(mark.text)}</span>`).join("")}</p>
+  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}</b><small>${esc(r.patch)}</small><small>${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${amount(r.days)} days</em></a>`;
+  return `<div class="tl-list"><p class="tl-chips">${timelineMarks(view).map(mark => `<span>${monthYear(mark.date)} · ${esc(mark.text)}</span>`).join("")}</p>
     ${timelineShown(view).map(({ group, lanes }, i) => `<details class="tl-fold" style="--c:${tlColor(group)}"${i ? "" : " open"}><summary>${menuIcon(view.dir, group)}${esc(group)}</summary>
       ${lanes.map(({ role, reigns }) => `<p class="tl-lane">${pic(roleArt(role))}${esc(role)}${forecastNote(group, role)}</p>${[...reigns].reverse().map(item).join("")}`).join("")}</details>`).join("")}</div>`;
 }
 function timelineBody() {
   const view = TL_VIEWS[timelineView];
-  const reigns = view.groups().flatMap(group => timelineLanes(view.field, group).flatMap(lane => lane.reigns.map(r => ({ ...r, group }))));
+  const reigns = view.groups().flatMap(group => timelineLanes(view, group).flatMap(lane => lane.reigns.map(r => ({ ...r, group }))));
   // Only replaced characters have a final number, and the launch-window gap between Lee and Alpha says nothing about the meta
   const done = reigns.filter(r => r.next && r.name !== TL_SKIP);
   const mean = list => list.reduce((total, r) => total + r.days, 0) / list.length;
@@ -2535,46 +2688,94 @@ function timelineBody() {
   // It is an estimate from past patches, not an announcement, so a character past the average shows as overdue
   const today = dayNumber(calcToday());
   const dayDate = day => new Date(day * 864e5).toISOString().slice(0, 10);
-  const forecast = watch.map(r => ({ ...r, expected: r.start + Math.round(r.average) })).sort((x, y) => x.expected - y.expected);
+  // A-Rank frames get no forecast: the replacement watch is about the S-Rank frames still ahead
+  const forecast = (view.rank === "S" ? watch : []).map(r => ({ ...r, expected: r.start + Math.round(r.average) })).sort((x, y) => x.expected - y.expected);
   tlForecast = new Map(forecast.map(r => [r.group + "|" + r.role, r]));
   const nextOf = role => forecast.filter(r => r.role === role)[0];
   const when = r => r.expected > today ? `about ${monthYear(dayDate(r.expected))}, in ${amount(r.expected - today)} days` : `overdue by ${amount(today - r.expected)} days`;
-  // Phones open only the first one, so the timeline itself is not far down the page
-  const ranking = (title, rows, kind = "") => `<details class="tl-rank ${kind}"${calcPhone.matches && kind !== "first" ? "" : " open"}><summary>${esc(title)}</summary><ol>${rows.slice(0, TL_RANKED).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol></details>`;
+  // One ranking panel with a switch, so the page is not four boxes tall on a phone
   const people = list => list.map(r => [pic(r.head), r.name, days(r.days)]);
-  const filter = (group, name) => `<button class="tool${timelineGroup === group ? " on" : ""}" type="button" data-tl-group="${esc(group)}">${esc(name)}</button>`;
+  const RANKINGS = {
+    longest: ["Longest", "Lasted the longest", () => people(byLength)],
+    shortest: ["Shortest", "Lasted the shortest", () => people([...byLength].reverse())],
+    place: ["In place", "Longest in place, not replaced yet", () => people(inPlace)],
+    group: [`By ${view.field}`, `Longest-lasting ${view.plural}, on average`, () => groups.map(g => [menuIcon(view.dir, g.group), g.group, days(g.days)])]
+  };
+  const [, rankTitle, rankRows] = RANKINGS[timelineRank] || RANKINGS.longest;
+  const ranking = `<div class="tl-rank"><div class="tl-seg" role="group" aria-label="Ranking">${Object.entries(RANKINGS).map(([key, [label]]) => `<button class="tool${timelineRank === key ? " on" : ""}" type="button" data-tl-rank="${key}" aria-pressed="${timelineRank === key}">${esc(label)}</button>`).join("")}</div>
+    <h3>${esc(rankTitle)}</h3><ol>${rankRows().slice(0, TL_RANKED).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol></div>`;
+  // The next replacements the estimate expects, narrowed by the same filters as the chart
+  const soon = forecast.filter(r => (!timelineGroup || r.group === timelineGroup) && (!timelineRole || r.role === timelineRole)).slice(0, 4);
+  const soonCard = r => {
+    const left = r.expected - today;
+    return `<div class="tl-soon${left > 0 ? "" : " late"}" title="${esc(r.name)}: ${when(r)}">${pic(r.head, `alt="${esc(r.name)}"`)}<span><b>${esc(r.name)}</b><small>${pic(roleArt(r.role), `alt="${esc(r.role)}" title="${esc(r.role)}"`)}${menuIcon(view.dir, r.group)}</small></span><em>${left > 0 ? "≈ " + monthYear(dayDate(r.expected)) : "Overdue"}<small>${left > 0 ? `${amount(left)} days` : `${amount(-left)} days past`}</small></em></div>`;
+  };
+  // Always four slots, so the boxes below do not move when a filter leaves fewer cards
+  const slots = Array.from({ length: 4 }, (_, i) => soon[i] ? soonCard(soon[i]) : `<div class="tl-soon empty">${i || soon.length ? "" : "No replacement expected for this filter"}</div>`);
+  const forecastPanel = view.rank === "S" ? `<div class="tl-soonbox"><h3>Next replacements, estimated</h3><div class="tl-soonlist">${slots.join("")}</div></div>` : "";
+  // Filters are icons, with the name on hover. Clicking the one that is on turns it off
+  const iconButton = (attr, on, art, label) => `<button class="tool ico${on ? " on" : ""}" type="button" ${attr} title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${on}">${art}</button>`;
+  const groupFilters = `<button class="tool${timelineGroup ? "" : " on"}" type="button" data-tl-group="" aria-pressed="${!timelineGroup}">All</button>${view.groups().filter(group => reigns.some(r => r.group === group)).map(group => iconButton(`data-tl-group="${esc(group)}"`, timelineGroup === group, menuIcon(view.dir, group), group)).join("")}`;
+  const roleFilters = TL_ROLES.filter(role => reigns.some(r => r.role === role)).map(role => iconButton(`data-tl-role="${esc(role)}"`, timelineRole === role, pic(roleArt(role), 'alt=""'), role)).join("");
   return `<div class="tl-summary">
-    <div class="tl-records">
-      ${ranking(`Longest-lasting ${view.plural}, on average`, groups.map(g => [menuIcon(view.dir, g.group), g.group, days(g.days)]), "first")}
-      ${ranking("Lasted the longest", people(byLength))}
-      ${ranking("Lasted the shortest", people([...byLength].reverse()))}
-      ${ranking("Longest in place, not replaced yet", people(inPlace))}
-    </div>
+    <div class="tl-records">${forecastPanel}${ranking}</div>
     <details class="tl-averages"${calcPhone.matches ? "" : " open"}><summary>Average time until replaced, by class</summary>
-      ${averages.map(row => `<div class="tl-average">${pic(roleArt(row.name))}<span>${esc(row.name)}<small>Since ${monthYear(row.first)} · ${row.replaced} replaced${nextOf(row.name) ? ` · next: ${when(nextOf(row.name))}` : ""}</small></span><b>${row.days ? days(row.days) : "None yet"}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
+      ${averages.map(row => `<div class="tl-average${timelineRole && row.name !== timelineRole ? " dim" : ""}"${nextOf(row.name) ? ` title="Next: ${when(nextOf(row.name))}"` : ""}>${pic(roleArt(row.name))}<span>${esc(row.name)}<small>Since ${monthYear(row.first)} · ${row.replaced} replaced${nextOf(row.name) ? ` · next ${nextOf(row.name).expected > today ? "≈ " + monthYear(dayDate(nextOf(row.name).expected)) : "overdue"}` : ""}</small></span><b>${row.days ? days(row.days) : "None yet"}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
     </details>
   </div>
-  ${calcMore("How replacement works", `<p class="tl-rule">A character counts as replaced when a new S-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too. The numbers above leave out the ${TL_SKIP_NOTE}. The watch is a guide, not a release date.${timelineView === "effect" ? " Frames with no Effect are left out." : ""}</p>`)}
-  <div class="tl-tools">${filter("", "All")}${view.groups().map(group => filter(group, group)).join("")}<button class="tool${timelineNow ? " on" : ""}" type="button" data-tl-now>Only in place</button></div>
+  ${calcMore("How replacement works", `<p class="tl-rule">A character counts as replaced when a new ${view.rank}-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too.${view.rank === "S" ? ` The numbers above leave out the ${TL_SKIP_NOTE}. The watch is a guide, not a release date.` : " The dates of A-Rank frames and collabs come from the Fandom wiki."}${view.field === "effect" ? " Frames with no Effect are left out." : ""}${timelineCollabs ? " Collabs are counted like any other frame." : ""}</p>`)}
+  <div class="tl-tools"><div class="tl-filters" role="group" aria-label="${esc(view.field)}">${groupFilters}</div><div class="tl-filters" role="group" aria-label="Class">${roleFilters}</div>
+    <div class="tl-filters tl-opts"><button class="tool tog collab${timelineCollabs ? " on" : ""}" type="button" data-tl-collab aria-pressed="${timelineCollabs}" title="Count collab frames too">Collabs</button><button class="tool tog place${timelineNow ? " on" : ""}" type="button" data-tl-now aria-pressed="${timelineNow}" title="Only characters not replaced yet">In place</button></div>
+    <span class="tl-zoom"><button class="tool" type="button" data-tl-zoom="-1" aria-label="Zoom out"${timelineZoom === TL_ZOOMS[0] ? " disabled" : ""}>−</button><b>${timelineZoom}×</b><button class="tool" type="button" data-tl-zoom="1" aria-label="Zoom in"${timelineZoom === TL_ZOOMS.at(-1) ? " disabled" : ""}>+</button></span></div>
   ${timelineChart(view)}${timelineList(view)}`;
 }
 function timelinePage() {
   const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${TL_VIEWS[key].name}</button>`;
-  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">Chinese wiki</a>, and Global release dates are not considered. Collabs and uniframes are not counted. "Free" marks frames you can get without pulling.</p>
-  <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
+  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">Chinese wiki</a>, and Global release dates are not considered. Uniframes are not counted, and collabs only when you turn on "Collabs". "Free" marks frames you can get without pulling. Click a filter icon again to clear it.</p>
+  <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}${tab("elementA")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
 }
 $("#main").addEventListener("click", e => {
   const view = e.target.closest("[data-tl-view]"), group = e.target.closest("[data-tl-group]"), now = e.target.closest("[data-tl-now]");
-  if (!view && !group && !now) return;
+  const collab = e.target.closest("[data-tl-collab]"), zoom = e.target.closest("[data-tl-zoom]");
+  const role = e.target.closest("[data-tl-role]"), rank = e.target.closest("[data-tl-rank]");
+  if (!view && !group && !now && !collab && !zoom && !role && !rank) return;
   if (view) {
     timelineView = view.dataset.tlView;
-    timelineGroup = "";
+    timelineGroup = timelineRole = "";
     document.querySelectorAll("[data-tl-view]").forEach(button => button.classList.toggle("on", button === view));
   }
-  if (group) timelineGroup = group.dataset.tlGroup;
+  if (group) timelineGroup = timelineGroup === group.dataset.tlGroup ? "" : group.dataset.tlGroup;
+  if (role) timelineRole = timelineRole === role.dataset.tlRole ? "" : role.dataset.tlRole;
+  if (rank) timelineRank = rank.dataset.tlRank;
   if (now) timelineNow = !timelineNow;
+  if (collab) timelineCollabs = !timelineCollabs;
+  if (zoom) timelineZoom = TL_ZOOMS[Math.max(0, Math.min(TL_ZOOMS.length - 1, TL_ZOOMS.indexOf(timelineZoom) + Number(zoom.dataset.tlZoom)))];
   $("#timelineBody").innerHTML = timelineBody();
+  // Zooming in lands on the newest end, where the frames too short to see at 1× are
+  if (zoom) { const box = $(".tl-scroll", $("#timelineBody")); if (box) box.scrollLeft = box.scrollWidth; }
 });
+// Drag the zoomed chart with the mouse. Touch already scrolls it; a drag must not open the character under the pointer
+{
+  let drag = null, moved = false;
+  $("#main").addEventListener("pointerdown", e => {
+    moved = false;
+    const box = e.pointerType === "mouse" && e.button === 0 && e.target.closest(".tl-scroll.zoomed");
+    if (box) { drag = { box, x: e.clientX, left: box.scrollLeft }; moved = false; }
+  });
+  addEventListener("pointermove", e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (!moved && Math.abs(dx) < 4) return;
+    if (!moved) { moved = true; drag.box.classList.add("dragging"); }
+    drag.box.scrollLeft = drag.left - dx;
+  });
+  const stop = () => { if (drag) drag.box.classList.remove("dragging"); drag = null; };
+  addEventListener("pointerup", stop);
+  addEventListener("pointercancel", stop);
+  $("#main").addEventListener("click", e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  // The browser would start dragging the links and pictures instead of the chart
+  $("#main").addEventListener("dragstart", e => { if (e.target.closest?.(".tl-scroll.zoomed")) e.preventDefault(); });
+}
 // "4× Keats · 2× Da Vinci", from the six memory slots
 function memorySummary(memories = []) {
   const count = new Map();
@@ -3141,6 +3342,11 @@ function route() {
     history.replaceState(null, "", `/constructs${location.search}`);
     pageUrl = location.href;
   }
+  // The Contact page is now Credits
+  if (/^\/contact\/?$/.test(location.pathname)) {
+    history.replaceState(null, "", `/credits${location.search}`);
+    pageUrl = location.href;
+  }
   // Keep old character detail links working with their new Constructs address
   const legacyCharacter = location.pathname.match(/^\/character\/([^/]+)\/?$/);
   if (legacyCharacter) {
@@ -3164,7 +3370,7 @@ function route() {
     history.replaceState(null, "", `${characterHref(character.name)}${location.search}`);
     pageUrl = location.href;
   }
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : charactersPage()) : kind === "contact" ? contactPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
+  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : charactersPage()) : kind === "credits" ? creditsPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
     : path ? team(path, pick) : home();
   theme(shown || null);
   if (kind === "editor" && editorState === "ready") edPaint();
@@ -3231,7 +3437,7 @@ if (matchMedia("(hover:hover)").matches) {
   };
   addEventListener("click", e => {
     const el = e.target.closest("[data-tip]");
-    if (!el || el.matches(".portrait") || el.closest(".fcard.side, #edPicker") || el.matches(".ed-live [data-ed-drop]")) return;
+    if (!el || el.matches(".portrait") || el.closest(".fcard.side, #edPicker") || el.matches(".ed-live [data-ed-drop], [data-ed-page], [data-ed-order-add], [data-ed-order-remove]")) return;
     e.preventDefault();
     e.stopPropagation();
     const href = el.getAttribute("href");
@@ -3316,7 +3522,7 @@ function searchData() {
     ...EFFECT.map(e => ({ label: e, kind: "Effect teams", href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...SPECIAL_EFFECT.map(e => ({ label: e, kind: "Special Effect teams", href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),
-    ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Updates", "/updates"], ["Contact", "/contact"]]
+    ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Updates", "/updates"], ["Credits", "/credits"]]
       .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
     { label: "Planner", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
     { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },

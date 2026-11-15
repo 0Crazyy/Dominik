@@ -43,6 +43,27 @@ const PATCH_NAMES = {
 // Dates of the tab that the other sources correct: the Chinese wiki (战双大事记) and grayravens.com/wiki/Patches. Aegis follows the wiki alone
 const CN_DATES = { "2024-08-26": "2024-09-26", "2025-10-10": "2025-09-25", "2026-03-16": "2026-03-17" };
 
+// A-Rank frames and collabs are not in the sheet tab, so their China release dates are written by hand: [date, patch].
+// Source: the patch blocks of https://punishing-gray-raven.fandom.com/wiki/Characters ("China Server Release" and the constructs of each).
+// Kurumi Tokisaki has no block there yet, so it takes the start of its patch in calculator-data.js
+const EXTRA_DATES = {
+  "Lee: Palefire": ["2019-12-05", "Base Game"], "Bianca: Zero": ["2019-12-05", "Base Game"], "Karenina: Blast": ["2019-12-05", "Base Game"],
+  "Watanabe: Nightblade": ["2019-12-05", "Base Game"], "Liv: Lux": ["2019-12-05", "Base Game"], "Lucia: Dawn": ["2019-12-05", "Base Game"],
+  "Kamui: Bastion": ["2019-12-24", "Frozen Darkness"],
+  "Ayla: Brilliance": ["2020-02-06", "Fallen Star"], "Watanabe: Astral": ["2020-02-06", "Fallen Star"],
+  "Sophia: Silverfang": ["2020-03-19", "Eternal Engine"], "Chrome: Arclight": ["2020-04-29", "Nona Ouroboros"],
+  "Vera: Rozen": ["2020-07-23", "Grand Blue"], "Changyu: Qilin": ["2020-10-22", "Lost Chapter"],
+  "Wanshi: Hypnos": ["2021-02-25", "Echo Aria"], "No.21: XXI": ["2021-05-20", "Inscription of Labyrinth"],
+  "Bambinata: Vitrum": ["2022-08-18", "Left Unsaid"], "Hanying: Zitherwoe": ["2023-02-09", "The Floating Reverie"],
+  "Noctis: Indomitus": ["2023-04-27", "Sands of Wrath"], "BLACK★ROCK SHOOTER": ["2023-08-24", "Blazing Simulacrum"],
+  "Teddy: Decryptor": ["2023-12-21", "Stars Ensnared"], "Bridget: Ardeo": ["2023-12-21", "Stars Ensnared"],
+  "Yata: Fulgor": ["2024-07-11", "Shaper's Ripples"], "Jetavie: Daybreak": ["2025-03-06", "Dream Till the Timeless End"],
+  "Discord: Secator": ["2025-07-03", "Through the Tide Home"],
+  "2B": ["2021-01-07", "Untold Naraka"], "9S": ["2021-01-07", "Untold Naraka"], "A2": ["2021-01-07", "Untold Naraka"],
+  "Vergil": ["2025-05-22", "Lamento di Phantasma"], "Dante": ["2025-05-22", "Lamento di Phantasma"],
+  "Kurumi Tokisaki": ["2026-09-24", "Anchored in Faith"]
+};
+
 // The sheet as CSV. Every value comes quoted, so a quote only ever opens or closes one
 function readCsv(text) {
   const rows = [[]];
@@ -104,10 +125,19 @@ for (const [column, [element, role]] of Object.entries(COLUMNS)) {
   if (group.length !== days.length) throw new Error(`${element} ${role}: ${group.length} personagens na wiki e ${days.length} datas na planilha`);
   group.forEach((c, i) => {
     const name = `${c.characterName}: ${c.frameName}`, onSite = site[name] || site[name.replace("No. ", "No.")];
-    entries.push({ name, date: CN_DATES[days[i]] || days[i], patch: patchOf(days[i]), element, role, effect: onSite?.[4] || "", head: `${FOLDER}/${slug(name)}.png`, icon: c.icons.normal });
+    entries.push({ name, date: CN_DATES[days[i]] || days[i], patch: patchOf(days[i]), element, role, effect: onSite?.[4] || "", head: `${FOLDER}/${slug(name)}.png`, rank: "S", icon: c.icons.normal });
   });
 }
 if (entries.length !== frames.length) throw new Error(`${frames.length - entries.length} personagens da wiki sem coluna: atualize COLUMNS`);
+
+// A-Rank frames and collabs (a collab carries the character's own name as its frame name), from EXTRA_DATES
+const wikiName = c => (c.characterName === c.frameName ? c.characterName : `${c.characterName}: ${c.frameName}`).replace("No. ", "No.");
+const wikiAll = wikiData(await (await get(WIKI)).text());
+for (const [name, [date, patch]] of Object.entries(EXTRA_DATES)) {
+  const c = wikiAll.find(item => wikiName(item) === name), onSite = site[name];
+  if (!c || !onSite) throw new Error(`${name}: não achei na wiki ou no site`);
+  entries.push({ name, date, patch, element: onSite[1], role: onSite[2], effect: onSite[4] || "", head: `${FOLDER}/${slug(name)}.png`, rank: onSite[3], ...(c.characterName === c.frameName ? { collab: true } : {}), icon: c.icons.normal });
+}
 
 mkdirSync(join(ROOT, FOLDER), { recursive: true });
 for (const { head, icon } of entries) {

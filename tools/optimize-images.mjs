@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Creates the light WebP copies the site really loads: assets/<file> -> assets-web/<file>.webp
-// The full name stays in the copy (X.png.webp) because X.png and X.webp can sit side by side.
+// Creates the light WebP copies the site really loads: assets/<file>.<ext> -> assets-web/<file>.webp
+// X.png and X.webp would land on the same copy, so the script refuses to run when that happens (see the check below).
 // The originals in assets/ are never changed, and app.js keeps pointing at them: web() in app.js swaps the path on render.
 // Run it after adding or replacing images: node tools/optimize-images.mjs     (--force redoes every file)
 // Needs ImageMagick (magick). Only files that are new or changed are processed.
@@ -51,7 +51,7 @@ async function fitsIn(file, size) {
 }
 
 async function optimize(path) {
-  const src = join(FROM, path), dest = join(TO, `${path}.webp`), size = sizeFor(path);
+  const src = join(FROM, path), dest = join(TO, path.replace(/\.[^./]+$/, ".webp")), size = sizeFor(path);
   if (!FORCE && await mtime(dest) >= await mtime(src)) return false;
   await mkdir(dirname(dest), { recursive: true });
   // A WebP that is already small enough is copied: encoding it again would only lose quality
@@ -61,6 +61,15 @@ async function optimize(path) {
 }
 
 const images = (await listImages(FROM)).filter(path => !SKIP.some(rule => rule.test(path)));
+const seen = new Map();
+for (const path of images) {
+  const key = path.replace(/\.[^./]+$/, "").toLowerCase();
+  if (seen.has(key)) {
+    console.error(`ERRO   ${seen.get(key)} e ${path} gerariam a mesma cópia em assets-web/. Renomeie ou apague um dos dois.`);
+    process.exit(1);
+  }
+  seen.set(key, path);
+}
 let next = 0, made = 0, failed = 0;
 await Promise.all(Array.from({ length: JOBS }, async () => {
   while (next < images.length) {

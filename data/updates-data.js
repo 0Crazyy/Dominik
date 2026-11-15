@@ -9,8 +9,16 @@ const UPDATES = [
     date: "2026-11-15",
     type: "Welcome",
     title: "Welcome to Dominik: what the site is and everything that is already here",
-    summary: "The idea behind the site, how it started, and a look at everything added since.",
-    body: `## Why Dominik exists
+    summary: "The idea behind the site, who made it and how, how it started, and a look at everything added since.",
+    body: `## Made by hand, with Claude's help
+Dominik was built with Claude, an AI, as a coding assistant. Every design (the layout, the look, the rank badges, the art direction) was made by hand, by me and Sidewayz. Claude brought in and organised data that already existed, like builds, skills and the patch history, and wrote code around my and Sidewayz's designs.
+
+I started playing at the Global launch and I have played Punishing: Gray Raven every day since. Despite its flaws, I love this game, and I always enjoy making content that is useful to the community, like the Tickets Income spreadsheet that the Planner is based on.
+
+## Inspiration and the name
+I took a lot of inspiration from the Huaxu site by blacknovatech, and the name follows a similar idea: in the story, Huaxu and the digital Dominik are both artificial minds. Dominik was a legendary scientist and leader of the Golden Age, and his digital copy reaches the Commandant through an invitation. I liked the name as a nod to someone who left something useful for others.
+
+## Why Dominik exists
 Information about Punishing: Gray Raven is spread across guides, videos and spreadsheets. Dominik puts the common answers in one place:
 - Which team should I run for this energy type or effect?
 - Which memories, weapon and resonances does each character need?
@@ -40,7 +48,7 @@ The Planner started as the BC Calculator and was renamed in November.
 - Pick passes (including the other monthly passes) and see their cost, with estimated real-money prices.
 - The Events List lets you mark events you have already done.
 - The Pull chance tab shows your odds for a banner and a number of pulls, including how often pity triggers.
-- It uses the same math as the Tickets Income spreadsheet by Crazy117 and Sidewayz.
+- It uses the same math as my Tickets Income spreadsheet, which I made with Sidewayz.
 
 ## Meta Timeline: how long each frame stays in the meta
 - Shows how long each S-Rank frame held its place before a newer one replaced it.
@@ -63,7 +71,7 @@ The Planner started as the BC Calculator and was renamed in November.
 ## Should the site have a login? I want your feedback
 I am not sure whether Dominik should have accounts. Today there is no login at all, and that keeps the site simple and fast to use. A login could make things like saving your own teams or your Planner settings across devices possible, but it would also mean an account to create and more to look after.
 
-I would like to know what you think: would you use a login, and what would you want it for? Tell me on the [Contact page](/contact).
+I would like to know what you think: would you use a login, and what would you want it for? Tell me on the [Credits page](/credits).
 
 ## A Portuguese version is planned for when the site is more complete
 For now Dominik is only in English. A Portuguese (Brazil) version is planned, and I will add it once the site has more of what it needs, so it is translated once instead of redone every time something new appears.
@@ -72,6 +80,6 @@ For now Dominik is only in English. A Portuguese (Brazil) version is planned, an
 - The **EN | PT** button at the bottom of the side menu will switch the language by hand. It is already there, but turned off until the translation is ready.
 
 ## What comes next
-This page will list the changes made to the site as they happen. Found a wrong build, or have another suggestion? Use the [Contact page](/contact).`
+This page will list the changes made to the site as they happen. Found a wrong build, or have another suggestion? Use the [Credits page](/credits).`
   }
 ];
