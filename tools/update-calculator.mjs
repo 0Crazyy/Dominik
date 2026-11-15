@@ -123,7 +123,7 @@ async function patchIncome({ patch, start, end, gains }) {
   const total = lines.findIndex(line => line[1]?.startsWith("All Tickets TOTAL"));
   for (const line of lines.slice(last + 1, total)) {
     // Compensation repays a problem of that patch, so the forecast can't expect it again
-    if (line[1]?.includes("Compensation")) {
+    if (/Compensation|Letter to Commandant/i.test(line[1] || "")) {
       for (const [key, column] of Object.entries(TAB_COLUMNS)) {
         if (line[column]) income.oneOff[key] = (income.oneOff[key] || 0) + number(line[column]);
       }

@@ -154,7 +154,7 @@ const FLOWS = {
     await page.goto("/assets/skill/leia-fortunaster");
     await page.waitForFunction(() => /Skills|Passive/i.test(document.querySelector("#main")?.textContent) && !/Loading|Could not load/.test(document.querySelector("#main").textContent));
   },
-  // Ticking an event in the Events List takes its rewards out of the patch, and unticking brings them back
+  // Done or Skip on an event in the Events List takes its rewards out of the patch, and pressing it again brings them back
   "planner: lista de eventos": async page => {
     await page.goto("/calculator");
     await page.waitForSelector("[data-events-open]");
@@ -164,17 +164,38 @@ const FLOWS = {
     const before = await totals();
     await page.click("[data-events-open]");
     await page.waitForSelector("#calcEvents[open]");
-    const box = page.locator("#calcEvents [data-event]").first();
-    await box.check();
+    const done = page.locator('#calcEvents [data-ev-set="done"]').first(), skip = page.locator('#calcEvents [data-ev-set="skip"]').first();
+    await done.click();
     await page.click("[data-events-close]");
     if (await totals() === before) throw new Error("marcar um evento não mudou o ganho do patch");
     if (!(await page.locator("#calcEventsCount").innerText()).includes("1")) throw new Error("o botão Events List não mostrou a contagem");
     await page.reload();
     await page.click("[data-events-open]");
-    if (!(await page.locator("#calcEvents [data-event]").first().isChecked())) throw new Error("o evento marcado não ficou salvo");
-    await page.locator("#calcEvents [data-event]").first().uncheck();
+    if (await done.getAttribute("aria-pressed") !== "true") throw new Error("o evento marcado não ficou salvo");
+    await skip.click();
+    if (await done.getAttribute("aria-pressed") !== "false" || await skip.getAttribute("aria-pressed") !== "true") throw new Error("Done e Skip deveriam se excluir");
+    await page.click("[data-events-close]");
+    if (await totals() === before) throw new Error("pular um evento não tirou o ganho");
+    await page.click("[data-events-open]");
+    await skip.click();
     await page.click("[data-events-close]");
     if (await totals() !== before) throw new Error("desmarcar o evento não devolveu o ganho");
+  },
+  // The Tactical Assessment level lives in each patch's card, and the planner can be exported as an image with a preview first
+  "planner: nível e imagem": async page => {
+    await page.goto("/calculator");
+    await page.waitForSelector("[data-events-open]");
+    await page.evaluate(() => localStorage.removeItem("dominik-calculator"));
+    await page.reload();
+    const level = page.locator('.calc-patch:not([hidden]) [data-plan="level"]');
+    if (!(await level.count())) throw new Error("o nível do Tactical Assessment não está no cartão do patch");
+    const voucher = () => page.locator('.calc-patch:not([hidden]) [data-gain="voucher"]').innerText();
+    const before = await voucher();
+    await level.fill("80");
+    if (await voucher() === before) throw new Error("o nível do patch não mudou os vouchers");
+    await page.click("[data-calc-export]");
+    await page.waitForSelector("#exportPreview canvas", { timeout: 15000 });
+    await page.click('[data-xp="close"]');
   },
   "team builder": async (page, size) => {
     let step = "opening page";

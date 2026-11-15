@@ -330,11 +330,11 @@ function edPageBody(team) {
 }
 const edTagsBody = team => ED_TAGS.map(tag => `<button type="button" class="ed-tag${team.tags.includes(tag) ? " on" : ""}"
   data-ed-tag="${tag}" aria-pressed="${team.tags.includes(tag)}">${tag}</button>`).join("");
-// Captain and Starter list the characters by name, so this part is drawn again when a character changes
+// Leader and Starter list the characters by name, so this part is drawn again when a character changes
 function edRolesBody(team) {
   const picks = [0, 1, 2].map(i => [String(i), edShortName(team.cards[i]) || `${ED_SLOTS[i]} slot`]);
   return `<h2 class="ed-team-heading">Battle positions</h2>
-      ${edField("Captain", edSelect("captain", edOptions(picks, String(team.captain))))}
+      ${edField("Leader", edSelect("captain", edOptions(picks, String(team.captain))))}
       ${edField("Starter", edSelect("starter", edOptions(picks, String(team.starter))))}`;
 }
 function edTeamBody(team) {
@@ -702,7 +702,7 @@ function edWire() {
     el.querySelectorAll(".tag.captain,.tag.starter").forEach(tag => {
       const roleName = tag.classList.contains("captain") ? "captain" : "starter";
       tag.dataset.edRole = roleName;
-      tag.title = `Drag to move ${roleName === "captain" ? "Captain" : "Starter"} to another position`;
+      tag.title = `Drag to move ${roleName === "captain" ? "Leader" : "Starter"} to another position`;
     });
     // Swapping two positions: one button on each edge two cards share, or on phones, where one card shows at a time, arrows inside it
     if (i < ED_BARS.length - 1) el.insertAdjacentHTML("beforeend", `<button type="button" class="ed-swap" data-ed-move="${i}" data-ed-to="${i + 1}"
@@ -724,7 +724,7 @@ function edRender(follow) {
   const box = $(".comp", stage), card = box?.children[at];
   if (at > 0 && card && isSliding()) box.scrollLeft = card.offsetLeft + card.offsetWidth / 2 - box.clientWidth / 2;
 }
-// Moves a whole position, character and equipment, to another slot. Captain and Starter stay with their characters
+// Moves a whole position, character and equipment, to another slot. Leader and Starter stay with their characters
 function edMoveCard(from, to) {
   if (from === to || !edDraft.cards[from] || !edDraft.cards[to]) return;
   [edDraft.cards[from], edDraft.cards[to]] = [edDraft.cards[to], edDraft.cards[from]];
@@ -904,7 +904,7 @@ function teamBuilder() {
   return `<h1>Team Builder</h1>
     <ul class="ed-help">
       <li>Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it.</li>
-      <li>Click one C.U.B. skill and then another to swap their positions, or drag it onto the other. Drag Captain and Starter to another card.</li>
+      <li>Click one C.U.B. skill and then another to swap their positions, or drag it onto the other. Drag Leader and Starter to another card.</li>
       <li>Drag a portrait onto another card, or use the arrows between the cards, to swap two positions with all their equipment.</li>
       <li>Use the Memory Resonances button on the memory box to set each memory's Upper and Bottom resonance.</li>
       <li>Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot.</li>
@@ -944,7 +944,7 @@ addEventListener("input", e => {
   edRefresh(el.tagName === "SELECT");
 });
 addEventListener("submit", e => { if (e.target.id === "edForm") e.preventDefault(); });
-/* Dragging with a mouse: a C.U.B. skill onto another skill of its card, Captain or Starter onto another card, and a portrait onto
+/* Dragging with a mouse: a C.U.B. skill onto another skill of its card, Leader or Starter onto another card, and a portrait onto
    another card to swap the two positions. A copy of the icon follows the pointer at full strength while its own spot stays empty;
    let go anywhere it can't land, and it goes back. Touch screens use taps and the arrow buttons instead */
 let edDrag = null, edDragged = false;

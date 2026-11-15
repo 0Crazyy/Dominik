@@ -1006,7 +1006,7 @@ const MEMORY_RESONANCE_EFFECTS = {
   "Ex- Tactical Adjustment": "HP +75, ATK +15"
 };
 
-// Leader skills shown on the CAPTAIN tag. skills-data.js only loads on the Skills pages, so they are copied here;
+// Leader skills shown on the LEADER tag. skills-data.js only loads on the Skills pages, so they are copied here;
 // tools/check-assets.mjs fails if a copy stops matching it
 const LEADER_SKILLS = {
   "Adelyde: Anabasis": ["Leader - Torch Guardian", "Increases all team members' ATK by 10% and Overlinkers' Drk DMG and Ultima Slash DMG by 5%."],
