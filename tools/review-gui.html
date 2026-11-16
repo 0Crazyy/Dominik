@@ -36,17 +36,38 @@ main{max-width:1320px;margin:0 auto;padding:20px}#msg{min-height:22px;margin:0 0
 .grp{display:flex;align-items:baseline;gap:10px;margin:22px 0 10px;font-size:15px;letter-spacing:.02em}.grp:first-child{margin-top:0}.grp small{color:var(--mute);font-weight:400;font-size:12px}.grp .n{margin-left:auto;color:var(--mute);font-size:13px;font-weight:400}
 .off{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:0 8px;color:var(--mute)}
 .empty{color:var(--mute);text-align:center;padding:40px 0}
+.bar{position:sticky;top:57px;z-index:1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar input,.bar select{font:inherit;font-size:14px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px}.bar input[type=search]{flex:1;min-width:200px;max-width:340px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;border-radius:0;padding:6px 12px;font-size:14px;background:var(--panel)}.seg button.on{background:var(--accent);color:#06121f}
+.bar .cnt{margin-left:auto;color:var(--mute);font-size:13px}.bar label{color:var(--mute);font-size:12px;display:flex;align-items:center;gap:6px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:120px}.stat b{display:block;font-size:20px}.stat span{color:var(--mute);font-size:12px}
+.pill{font-size:11px;border-radius:99px;padding:0 8px;border:1px solid var(--line);color:var(--mute);white-space:nowrap}.pill.new{border-color:var(--ok);color:var(--ok);font-weight:600}.pill.off{border-color:var(--accent);color:var(--accent)}.pill.com{border-color:var(--warn);color:var(--warn)}
+.when{color:var(--mute);font-size:12px;white-space:nowrap}
+.sub{display:flex;align-items:baseline;gap:10px;margin:20px 0 8px;font-size:14px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}.sub:first-child{margin-top:0}.sub .n{margin-left:auto;font-size:12px}
 @media(max-width:640px){.faces{display:none}.team .row{grid-template-columns:20px 1fr}}
 </style></head><body>
 <header><h1>Team review</h1><span id="local" class="tag" hidden>local database</span>
 <span class="tabs"><button data-tab="pending" class="on">Pending <span id="nP">0</span></button> <button data-tab="approved">On the site <span id="nA">0</span></button> <button data-tab="hidden">Hidden <span id="nH">0</span></button></span>
 <button id="reload">Refresh</button></header>
-<main><p id="msg" role="status"></p><div id="out"></div></main>
+<div class="bar" id="bar"></div>
+<main><div id="stats" class="stats"></div><p id="msg" role="status"></p><div id="out"></div></main>
 <script>
 const TOKEN = "__TOKEN__";
 const $ = s => document.querySelector(s);
 const SLOT = ["#4f8cff", "#ff5a5a", "#f5c542"];
 let data = null, tab = "pending", open = null, busy = false;
+const F = { q: "", source: "all", kind: "all", page: "all", sort: "new", group: "time" };
+const DAY = 864e5;
+const ago = ms => { const d = Math.floor((Date.now() - ms) / DAY); return d < 1 ? "today" : d === 1 ? "yesterday" : d < 30 ? d + " days ago" : d < 365 ? Math.floor(d / 30) + " mo ago" : Math.floor(d / 365) + " y ago"; };
+const pageInfo = path => data.art?.pages?.find(p => p.path === path);
+const addedOf = r => r.official ? r.added : r.status === "approved" ? (r.reviewed || r.created) : r.created;
+const namesOf = r => r.official ? r.cards.map(c => c.char) : r.team.cards.map(c => c.char);
+const titleOf = r => r.official ? r.name : r.team.name;
+// Tags at the head of each row: how new it is, where it came from, and when
+function tags(r) {
+  const t = r.official ? r.added : r.created, fresh = Date.now() - t < 14 * DAY;
+  return (fresh ? '<span class="pill new">NEW</span>' : "") + '<span class="pill ' + (r.official ? "off" : "com") + '">' + (r.official ? "Official" : "Community") + '</span><span class="when" title="' + esc(when(t)) + '">' + ago(t) + (r.official ? "" : " · " + esc(when(r.created))) + "</span>";
+}
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const when = ms => new Date(ms).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
 const say = (text, err) => { $("#msg").textContent = text; $("#msg").className = err ? "err" : ""; };
@@ -80,8 +101,8 @@ function card(c, i, team) {
 // An official build: written in app.js, not sent by anyone. Hiding it takes it off the site (on the next visit of each reader) and can be undone
 function viewOfficial(o) {
   const isOpen = open === o.id, names = o.cards.map(c => esc(c.char)).join(" · ");
-  const head = '<button class="row" data-toggle="' + esc(o.id) + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="id">Official</span><span class="nm">' + esc(o.name) + '</span><span class="meta">'
-    + esc(o.page) + (o.group ? " · " + esc(o.group) : "") + '</span></span><span class="names">' + names + '</span></span><span class="faces">' + o.cards.map(c => pic(c.portrait, "face", c.char)).join("") + "</span></button>";
+  const head = '<button class="row" data-toggle="' + esc(o.id) + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="nm">' + esc(o.name) + '</span>' + tags(o) + '<span class="meta">'
+    + esc(pageInfo(o.page)?.name || o.page) + (o.group ? " · " + esc(o.group) : "") + '</span></span><span class="names">' + names + '</span></span><span class="faces">' + o.cards.map(c => pic(c.portrait, "face", c.char)).join("") + "</span></button>";
   if (!isOpen) return '<section class="team" data-oid="' + esc(o.id) + '">' + head + "</section>";
   return '<section class="team open" data-oid="' + esc(o.id) + '">' + head + '<div class="detail"><div class="dtop"><span>Official build, written in app.js</span>'
     + '<a class="btn grow" target="_blank" rel="noopener" href="' + esc(data.site + "/" + o.page + "/" + o.id) + '">Open on the site</a></div>'
@@ -91,8 +112,8 @@ function view(row, pending) {
   if (row.official) return viewOfficial(row);
   const t = row.team, isOpen = open === String(row.id);
   const link = data.site + "/editor#t=" + btoa(unescape(encodeURIComponent(JSON.stringify(t)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  const head = '<button class="row" data-toggle="' + String(row.id) + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="id">#' + row.id + '</span><span class="nm">' + esc(t.name) + '</span><span class="meta">'
-    + esc(row.page) + " · " + (row.author ? "by " + esc(row.author) : "no name") + " · " + when(row.created) + '</span></span><span class="names">' + t.cards.map(c => esc(c.char)).join(" · ")
+  const head = '<button class="row" data-toggle="' + String(row.id) + '" aria-expanded="' + isOpen + '"><span class="chev">▸</span><span class="main"><span class="line1"><span class="id">#' + row.id + '</span><span class="nm">' + esc(t.name) + '</span>' + tags(row) + '<span class="meta">'
+    + esc(pageInfo(row.page)?.name || row.page) + " · " + (row.author ? "by " + esc(row.author) : "no name") + '</span></span><span class="names">' + t.cards.map(c => esc(c.char)).join(" · ")
     + '</span></span><span class="faces">' + t.cards.map(c => pic(data.art?.chars?.[c.char]?.portrait, "face", c.char)).join("") + "</span></button>";
   if (!isOpen) return '<section class="team" data-id="' + row.id + '">' + head + "</section>";
   return '<section class="team open" data-id="' + row.id + '">' + head + '<div class="detail"><div class="dtop">' + (t.order ? "<span>Team rotation: " + esc(t.order) + "</span>" : "<span>Sent from the Team Builder</span>")
@@ -101,21 +122,65 @@ function view(row, pending) {
     + '<div class="acts">' + (pending ? '<input placeholder="Rejection reason (only you see it)" maxlength="200"><button class="bad" data-act="reject">Reject</button><button class="ok" data-act="approve">Approve</button>'
       : '<button class="bad" data-act="remove">Take down from the site</button>') + "</div></div></section>";
 }
-// "On the site": one heading per element or Effect page, in the order the site lists them
-function grouped(rows) {
-  const pages = data.art?.pages || [], order = [...pages.map(p => p.path), ...rows.map(r => r.page).filter(path => !pages.some(p => p.path === path))];
-  return [...new Set(order)].map(path => ({ path, rows: rows.filter(r => r.page === path) })).filter(g => g.rows.length).map(g => {
-    const page = pages.find(p => p.path === g.path);
-    return '<h2 class="grp">' + esc(page?.name || g.path) + "<small>" + esc(page?.kind || "") + '</small><span class="n">' + g.rows.length + "</span></h2>" + g.rows.map(r => view(r, false)).join("");
+// Rows of the current tab after the toolbar filters, sorted
+function filtered(rows) {
+  const q = F.q.trim().toLowerCase();
+  const out = rows.filter(r => (F.source === "all" || (F.source === "official") === !!r.official) && (F.kind === "all" || pageInfo(r.page)?.kind === F.kind) && (F.page === "all" || r.page === F.page)
+    && (!q || [titleOf(r), ...namesOf(r), r.author, r.group, pageInfo(r.page)?.name, r.page].filter(Boolean).join(" ").toLowerCase().includes(q)));
+  return out.sort((x, y) => F.sort === "old" ? addedOf(x) - addedOf(y) : addedOf(y) - addedOf(x));
+}
+// Time buckets: the lower the key, the newer
+function bucket(t) {
+  const d = (Date.now() - t) / DAY;
+  if (d < 7) return [0, "Last 7 days"];
+  if (d < 30) return [1, "Last 30 days"];
+  const dt = new Date(t);
+  return [2 + (9999 - dt.getFullYear()) * 12 + (11 - dt.getMonth()), dt.toLocaleString("en-GB", { month: "long", year: "numeric" })];
+}
+function grouped(rows, pending) {
+  const groups = new Map(), order = (data.art?.pages || []).map(p => p.path);
+  for (const r of rows) {
+    const [k, label] = F.group === "time" ? bucket(addedOf(r)) : F.group === "page" ? [order.indexOf(r.page) < 0 ? 999 : order.indexOf(r.page), pageInfo(r.page)?.name || r.page] : [0, ""];
+    if (!groups.has(k)) groups.set(k, { label, sub: F.group === "page" ? pageInfo(r.page)?.kind || "" : "", rows: [] });
+    groups.get(k).rows.push(r);
+  }
+  const keys = [...groups.keys()].sort((x, y) => x - y);
+  if (F.group === "time" && F.sort === "old") keys.reverse();
+  return keys.map(k => {
+    const g = groups.get(k);
+    return (g.label ? '<h2 class="' + (F.group === "page" ? "grp" : "sub") + '">' + esc(g.label) + (g.sub ? "<small>" + esc(g.sub) + "</small>" : "") + '<span class="n">' + g.rows.length + "</span></h2>" : "") + g.rows.map(r => view(r, pending)).join("");
   }).join("");
+}
+function sel(id, label, opts, cur) { return "<label>" + label + '<select id="' + id + '">' + opts.map(([v, t]) => '<option value="' + esc(v) + '"' + (v === cur ? " selected" : "") + ">" + esc(t) + "</option>").join("") + "</select></label>"; }
+function segment(key, opts) { return '<span class="seg">' + opts.map(([v, t]) => '<button data-f="' + key + '" data-v="' + v + '" class="' + (F[key] === v ? "on" : "") + '">' + t + "</button>").join("") + "</span>"; }
+function toolbar(all, shown) {
+  const order = (data.art?.pages || []).map(p => p.path), rank = x => order.indexOf(x) < 0 ? 999 : order.indexOf(x);
+  const pages = [...new Set(all.map(r => r.page))].sort((x, y) => rank(x) - rank(y));
+  const kinds = [...new Set(all.map(r => pageInfo(r.page)?.kind).filter(Boolean))];
+  const focus = document.activeElement?.id === "q";
+  $("#bar").innerHTML = '<input id="q" type="search" placeholder="Search team, character, author..." value="' + esc(F.q) + '">'
+    + (tab === "pending" ? "" : segment("source", [["all", "All"], ["official", "Official"], ["community", "Community"]]))
+    + (kinds.length > 1 ? sel("fkind", "Type", [["all", "All"], ...kinds.map(k => [k, k])], F.kind) : "")
+    + sel("fpage", "Page", [["all", "All pages"], ...pages.map(p => [p, pageInfo(p)?.name || p])], F.page)
+    + sel("fsort", "Sort", [["new", "Newest first"], ["old", "Oldest first"]], F.sort)
+    + sel("fgroup", "Group", [["time", "By date added"], ["page", "By page"], ["none", "None"]], F.group)
+    + '<button data-f="reset" data-v="">Clear</button><span class="cnt">' + shown + " of " + all.length + "</span>";
+  if (focus) { const q = $("#q"); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+}
+function stats(all) {
+  const n = days => all.filter(r => Date.now() - addedOf(r) < days * DAY).length, newest = all.length ? Math.max(...all.map(addedOf)) : 0;
+  $("#stats").innerHTML = [[n(7), "in the last 7 days"], [n(30), "in the last 30 days"], [all.length, tab === "pending" ? "waiting" : "total"], [newest ? ago(newest) : "-", "latest addition"]]
+    .map(([v, t]) => '<div class="stat"><b>' + v + "</b><span>" + t + "</span></div>").join("");
 }
 function render() {
   const official = data.official.map(o => ({ ...o, official: true })), hidden = data.hidden.map(o => ({ ...o, official: true, isHidden: true }));
-  const rows = tab === "pending" ? data.pending : tab === "hidden" ? hidden : [...data.approved, ...official];
+  const all = tab === "pending" ? data.pending : tab === "hidden" ? hidden : [...data.approved, ...official];
+  const rows = filtered(all);
   if (!rows.some(r => String(r.id) === open)) open = null;
   $("#nP").textContent = data.pending.length; $("#nA").textContent = data.approved.length + official.length; $("#nH").textContent = hidden.length; $("#local").hidden = !data.local;
   document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
-  $("#out").innerHTML = rows.length ? (tab === "pending" ? rows.map(r => view(r, true)).join("") : grouped(rows)) : '<p class="empty">' + (tab === "pending" ? "No teams waiting for review." : tab === "hidden" ? "No official builds are hidden." : "No teams on the site.") + "</p>";
+  toolbar(all, rows.length); stats(all);
+  $("#out").innerHTML = rows.length ? grouped(rows, tab === "pending") : '<p class="empty">' + (all.length ? "Nothing matches these filters." : tab === "pending" ? "No teams waiting for review." : tab === "hidden" ? "No official builds are hidden." : "No teams on the site.") + "</p>";
 }
 async function call(path, body) {
   const r = await fetch(path, { method: body ? "POST" : "GET", headers: { "content-type": "application/json", "x-token": TOKEN }, body: body && JSON.stringify(body) });
@@ -123,6 +188,11 @@ async function call(path, body) {
   if (!r.ok) throw new Error(json.error || "Error " + r.status);
   return json;
 }
+document.addEventListener("input", e => { if (e.target.id === "q") { F.q = e.target.value; open = null; render(); } });
+document.addEventListener("change", e => {
+  const m = { fkind: "kind", fpage: "page", fsort: "sort", fgroup: "group" }[e.target.id];
+  if (m) { F[m] = e.target.value; open = null; render(); }
+});
 const lock = on => document.querySelectorAll("button").forEach(b => b.disabled = on);
 async function load(note) {
   if (busy) return; busy = true; say("Loading..."); lock(true);
@@ -132,7 +202,8 @@ async function load(note) {
 document.addEventListener("click", async e => {
   const b = e.target.closest("button"); if (!b || b.disabled) return;
   if (b.id === "reload") return load();
-  if (b.dataset.tab) { tab = b.dataset.tab; open = null; return render(); }
+  if (b.dataset.f) { if (b.dataset.f === "reset") Object.assign(F, { q: "", source: "all", kind: "all", page: "all" }); else F[b.dataset.f] = b.dataset.v; open = null; return render(); }
+  if (b.dataset.tab) { tab = b.dataset.tab; open = null; F.page = "all"; F.kind = "all"; return render(); }
   if (b.dataset.toggle) { const id = b.dataset.toggle; open = open === id ? null : id; render(); return $(".team.open")?.scrollIntoView({ block: "nearest" }); }
   if (!b.dataset.act || busy) return;
   const box = b.closest(".team"), id = box.dataset.oid ?? Number(box.dataset.id), name = (box.dataset.oid ? "" : "#" + id + " ") + box.querySelector(".nm").textContent;

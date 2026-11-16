@@ -11,8 +11,8 @@ async function denied(request, env) {
   return await sha(sent) === await sha(`Bearer ${env.ADMIN_KEY}`) ? null : json({ error: "denied" }, 401);
 }
 async function publish(env) {
-  const { results } = await env.DB.prepare("SELECT id, team, author FROM teams WHERE status = 'approved' ORDER BY reviewed").all();
-  await env.CACHE.put("teams", JSON.stringify(results.map(row => ({ id: row.id, author: row.author, team: JSON.parse(row.team) }))));
+  const { results } = await env.DB.prepare("SELECT id, team, author, created FROM teams WHERE status = 'approved' ORDER BY reviewed").all();
+  await env.CACHE.put("teams", JSON.stringify(results.map(row => ({ id: row.id, author: row.author, created: row.created, team: JSON.parse(row.team) }))));
 }
 
 export async function onRequestGet({ request, env }) {

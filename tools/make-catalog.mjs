@@ -3,7 +3,7 @@
 // The editor offers only these options, and the server will check every submitted team against the same list,
 // so a team can never point at an image or a name the site does not have.
 // Run it with: node tools/make-catalog.mjs      (tools/deploy.mjs runs it too)
-// A character enters the catalog with a build on the site, or with portrait, weapon, C.U.B. and its 6 skills in its folder.
+// A character enters the catalog with a build on the site, or with a portrait (and the skill icons) in its folder.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,7 +17,7 @@ const DATA_END = "const $ = (s, r = document)";
 
 const app = read("app.js"), end = app.indexOf(DATA_END);
 if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/make-catalog.mjs`);
-const names = "COMPS, PAGES, TEAM_LISTS, MEMORY_TABS, MEM_INDEX, memFile, CONSTRUCTS, RESONANCE_EFFECTS, WEAPON_RES, ALL_ATK, MEMORY_RES, MEMORY_RES_NAMES, WEAPONS, CHARS, classIcon, SIGNATURE_MEMORY";
+const names = "COMPS, PAGES, TEAM_LISTS, MEMORY_TABS, MEM_INDEX, memFile, CONSTRUCTS, RESONANCE_EFFECTS, WEAPON_RES, ALL_ATK, MEMORY_RES, MEMORY_RES_NAMES, WEAPONS, CHARS, classIcon, SIGNATURE_MEMORY, OTHER_WEAPONS, FIVE_STAR_WEAPONS, FIVE_STAR_WEAPON_OWNERS, WEAPON_USERS, EXTRA_CUBS";
 const d = vm.runInNewContext(`${read("data/assets-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
@@ -72,16 +72,64 @@ for (const card of cards) {
   characters.set(card.name, { own, kit: { name: card.name, symbol: card.symbol || symbolOf(card.name), portrait: card.portrait,
     weapon: card.weapon, construct: card.construct || "", skills: card.skills || [] } });
 }
-// Characters with art but no build yet
+// Characters with art but no build yet: the portrait is enough. A frame still missing its weapon or C.U.B. art enters without them
+// (the editor then offers no weapon or C.U.B. for it), and the ones with the full kit get it
 for (const name of Object.keys(d.CONSTRUCTS)) {
   if (characters.has(name)) continue;
   const dir = `${d.CHARS}/${charId(name)}`, list = files(dir);
   const find = re => list.find(f => re.test(f));
-  const portrait = find(/^Awaken - /), weapon = find(/^Arma - /), cub = find(/^CUB - (?!Skill )/);
+  const portrait = find(/^Awaken - /), weapon = find(/^Arma[ -]/), cub = find(/^CUB - (?!Skill |Active )/);
+  if (!portrait) continue;
   const skills = [1, 2, 3, 4, 5, 6].map(i => find(new RegExp(`^CUB - Skill ${i}\\.`)));
-  if (!portrait || !weapon || !cub || skills.some(s => !s)) continue;
-  characters.set(name, { kit: { name, symbol: symbolOf(name), portrait: `${dir}/${portrait}`, weapon: `${dir}/${weapon}`,
-    construct: `${dir}/${cub}`, skills: skills.map(s => `${dir}/${s}`) } });
+  const whole = cub && skills.every(Boolean);
+  characters.set(name, { kit: { name, symbol: symbolOf(name), portrait: `${dir}/${portrait}`, weapon: weapon ? `${dir}/${weapon}` : "",
+    construct: whole ? `${dir}/${cub}` : "", skills: whole ? skills.map(s => `${dir}/${s}`) : [] } });
+}
+
+// A frame whose weapon has no art in its own folder still has one in the weapons pages. First by the owner the site lists for each
+// weapon (FIVE_STAR_WEAPON_OWNERS: a weapon keeps its own rank, and a 6-star with no 5-star of the owner's also counts as 5),
+// then by type: the only 6-star of the type it uses
+const LISTED = [...d.FIVE_STAR_WEAPONS, ...d.OTHER_WEAPONS].filter(w => [5, 6].includes(w[5]));
+const hasWeapon = name => weapons.some(w => w.owner === name) || Object.values(sharedWeapons).some(group => group.includes(name));
+for (const name of characters.keys()) {
+  const owned = LISTED.filter(w => d.FIVE_STAR_WEAPON_OWNERS[w[1]] === name);
+  if (!owned.length) continue;
+  // A weapon the site lists for this frame takes its rank over from one that only reused another weapon's icon
+  const taken = new Set(owned.map(w => String(w[5])));
+  for (const w of weapons.filter(w => w.owner === name && !owned.some(o => o[1] === w.name))) w.ranks = w.ranks.filter(r => !taken.has(r.rank));
+  for (let i = weapons.length - 1; i >= 0; i--) if (!weapons[i].ranks.length) weapons.splice(i, 1);
+  for (const [, weapon, type, art, , rank] of owned) {
+    if (!weapons.some(w => w.owner === name && w.name === weapon)) weapons.push({ owner: name, name: weapon, type, ranks: [{ rank: String(rank), art }] });
+  }
+  const mine = weapons.filter(w => w.owner === name);
+  if (!mine.some(w => w.ranks.some(r => r.rank === "5"))) {
+    const six = mine.find(w => w.ranks.some(r => r.rank === "6"));
+    if (six) six.ranks.push({ rank: "5", art: six.ranks.find(r => r.rank === "6").art });
+  }
+}
+const SIX = d.OTHER_WEAPONS.filter(w => w[5] === 6);
+for (const name of characters.keys()) {
+  if (hasWeapon(name)) continue;
+  const types = Object.entries(d.WEAPON_USERS).filter(([, users]) => users.includes(name)).map(([type]) => type);
+  const found = SIX.filter(w => types.includes(w[2]));
+  if (found.length !== 1) continue;
+  const [, weapon, type, art] = found[0];
+  weapons.push({ owner: name, name: weapon, type, ranks: ["6", "5"].map(rank => ({ rank, art })) });
+}
+
+// C.U.B.s: a frame without one in its own folder gets the one the site lists for it (EXTRA_CUBS, by owner). A rank A or S frame the site
+// has none for uses the rank A C.U.B. of its element (shared by every such frame), and skill icons come only when the folder has them
+for (const [name, entry] of characters) {
+  if (entry.kit.construct) continue;
+  const [, element, , rank] = d.CONSTRUCTS[name] || [];
+  const cub = d.EXTRA_CUBS.find(c => c[1] === name) || (/^[AS]$/.test(rank) ? d.EXTRA_CUBS.find(c => c[2] === "A" && c[3] === element) : null);
+  if (!cub) continue;
+  const [cubName, , , , folder, hasSkills] = cub, list = files(folder);
+  const art = list.find(f => f.replace(/\.[^.]+$/, "") === `CUB - ${cubName}`);
+  if (!art) continue;
+  const skills = hasSkills ? [1, 2, 3, 4, 5, 6].map(i => list.find(f => new RegExp(`^CUB - Skill ${i}\\.`).test(f))) : [];
+  entry.kit.construct = `${folder}/${art}`;
+  entry.kit.skills = skills.length && skills.every(Boolean) ? skills.map(f => `${folder}/${f}`) : [];
 }
 
 const catalog = {

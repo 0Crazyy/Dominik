@@ -38,8 +38,8 @@ function write(query) {
 }
 const quote = text => `'${String(text).replace(/'/g, "''")}'`;
 function publish() {
-  const teams = read("SELECT id, team, author FROM teams WHERE status = 'approved' ORDER BY reviewed")
-    .map(row => ({ id: row.id, author: row.author, team: JSON.parse(row.team) }));
+  const teams = read("SELECT id, team, author, created FROM teams WHERE status = 'approved' ORDER BY reviewed")
+    .map(row => ({ id: row.id, author: row.author, created: row.created, team: JSON.parse(row.team) }));
   writeFileSync(join(ROOT, TEMP, "teams.json"), JSON.stringify(teams));
   wrangler(["kv", "key", "put", "teams", `--namespace-id=${kvId}`, `--path=${TEMP}/teams.json`, where]);
   console.log(`OK  ${teams.length} time(s) aprovado(s) no site. Aparecem em até 1 minuto.`);

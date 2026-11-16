@@ -23,6 +23,12 @@ const ED_MATRIX_CLASS = {
   Amplifier: ED_MATRIX_SUPPORT,
   Overlinker: ED_MATRIX_SUPPORT
 };
+// Weapon resonances a new character comes with, by class (the others start empty)
+const ED_MATRIX_DEFAULT = {
+  Tank: ["Domain Deconstruction"], Breaker: ["Domain Deconstruction"],
+  Amplifier: ["Superconducting Axial Ray", "Glorious Spear"], Overlinker: ["Superconducting Axial Ray", "Glorious Spear"], Support: ["Superconducting Axial Ray", "Glorious Spear"]
+};
+const ED_SIGNATURE_MEMORY_SLOTS = [0, 1, 2, 4];
 const edMatrixOptions = ch => CATALOG.matrix.filter(name =>
   ED_MATRIX_COMMON.includes(name) || (ED_MATRIX_CLASS[ch?.class] || []).includes(name));
 // How often each weapon resonance appears in the site's own builds, overall and per class: the most used lead the menu
@@ -65,9 +71,9 @@ function edMatrixChoices(ch) {
     .map(({ name }, rank) => ({ value: name, label: name, art: WEAPON_RES(name), more: rank >= ED_MATRIX_MAIN }));
 }
 // Options flagged "more" sit behind an "Others" button, unless the current choice is one of them
-function edMoreSplit(options, current) {
+function edMoreSplit(options, current, keepClosed = false) {
   const extra = options.filter(option => option.more);
-  return { ordered: [...options.filter(option => !option.more), ...extra], open: extra.some(option => option.value === current), count: extra.length };
+  return { ordered: [...options.filter(option => !option.more), ...extra], open: !keepClosed && extra.some(option => option.value === current), count: extra.length };
 }
 const edMoreButton = (count, open) => count
   ? `<button type="button" class="ed-picker-more" data-ed-more aria-expanded="${open}">${open ? "Show fewer" : `Others (${count})`}</button>` : "";
@@ -398,10 +404,15 @@ const edMemResArt = (ch, name) => name === "Any ATK" ? CATALOG.allAtk : ch?.skil
 function edPickerOptions(kind, i, side) {
   const c = edDraft.cards[i];
   const ch = edChar(c.char);
-  if (kind === "char") return CATALOG.characters.map(character => ({
-    value: character.name, label: character.name, art: character.portrait,
-    info: [character.element, character.class].filter(Boolean).join(" · ")
-  }));
+  if (kind === "char") {
+    // With a team page chosen, its element (or Derivative Effect) decides who is up front; the rest wait behind "Others"
+    const page = CATALOG.pages.find(p => p.path === edDraft.page);
+    const fits = character => !page || (page.kind === "Energy" ? character.element === page.name : (CONSTRUCTS[character.name]?.[4] || "") === page.name);
+    return CATALOG.characters.map(character => ({
+      value: character.name, label: character.name, art: character.portrait,
+      info: [character.element, character.class].filter(Boolean).join(" · "), more: !fits(character)
+    }));
+  }
   if (kind === "mem") {
     // This character's signature memory comes first, then the memories the site's builds of this character use most
     const worn = edMemoryUse(c.char), fit = edMemoryFit(ch);
@@ -426,9 +437,15 @@ function edPickerOptions(kind, i, side) {
     return list;
   }
   // The catalog lists frames oldest first; C.U.B.s are picked newest first
-  if (kind === "cub") return CATALOG.characters.filter(character => character.construct).reverse().map(character => ({
-    value: character.construct, label: iconName(character.construct), art: character.construct, info: `${character.name}'s C.U.B.`
-  }));
+  if (kind === "cub") {
+    // Like the memories: the C.U.B.s of the character's element up front, the rest (even other frames' signatures) behind "Others".
+    // Lingya always stays up front, for its exclusive orb generation. A C.U.B. goes on one character only, so those on other cards are left out
+    return CATALOG.characters.filter((character, at, all) => character.construct && all.findIndex(other => other.construct === character.construct) === at
+      && !edDraft.cards.some((card, k) => k !== i && card.cub === character.construct)).reverse().map(character => ({
+      value: character.construct, label: iconName(character.construct), art: character.construct, info: `${character.name}'s C.U.B.`,
+      more: !!ch && character.element !== ch.element && !character.construct.includes("/lingya/")
+    }));
+  }
   if (kind === "rank") return CATALOG.ranks.map(rank => ({ value: rank, label: rank, art: `assets/rank/${rank}.png` }));
   if (kind === "weapon") return edWeaponOptions(c.char).map(option => ({
     value: `${option.name}::${option.rank}`, label: option.label, art: option.art, info: option.info, stars: option.rank
@@ -467,17 +484,13 @@ function edPositionPicker(picker, stage, anchor) {
   const bounds = stage.getBoundingClientRect(), rect = anchor.getBoundingClientRect();
   const width = Math.max(1, Math.min(440, stage.clientWidth - 16));
   const left = Math.max(8, Math.min(rect.left - bounds.left, stage.clientWidth - width - 8));
-  const anchorTop = rect.top - bounds.top, anchorBottom = rect.bottom - bounds.top;
-  const gap = 6, inset = 8;
-  const belowSpace = stage.clientHeight - anchorBottom - gap - inset;
-  const aboveSpace = anchorTop - gap - inset;
-  const below = belowSpace >= aboveSpace;
-  const available = Math.max(1, below ? belowSpace : aboveSpace);
+  const anchorBottom = rect.bottom - bounds.top, gap = 6;
+  // Always opens below the icon, like every menu: the C.U.B. sits at the bottom of its card, where the stage ends, and the menu
+  // simply runs over what follows (the stage does not clip it)
   picker.style.width = `${width}px`;
   picker.style.left = `${left}px`;
-  picker.style.maxHeight = `${Math.min(available, window.innerHeight * .7, 500)}px`;
-  const height = picker.offsetHeight;
-  picker.style.top = `${below ? anchorBottom + gap : Math.max(inset, anchorTop - height - gap)}px`;
+  picker.style.maxHeight = `${Math.min(window.innerHeight * .7, 500)}px`;
+  picker.style.top = `${anchorBottom + gap}px`;
 }
 function edShowPicker(kind, i, slot, side, anchor) {
   const picker = $("#edPicker"), stage = $("#edStage");
@@ -497,7 +510,7 @@ function edShowPicker(kind, i, slot, side, anchor) {
     ...options
   ];
   edPickerTarget = { kind, card: i, slot, side };
-  const split = edMoreSplit(choices, current);
+  const split = edMoreSplit(choices, current, kind === "char");
   picker.innerHTML = `<div class="ed-picker-head"><strong>${esc(title)}</strong><small>Choose an icon</small></div>
     <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="Close">×</button>
     <input id="edPickerSearch" type="search" placeholder="Search ${esc(ED_PICKER_LABELS[kind])}" aria-label="Search ${esc(ED_PICKER_LABELS[kind])}" autocomplete="off">
@@ -667,6 +680,7 @@ function edWire() {
           cubskill: `C.U.B. skill ${Number(slot) + 1}` };
       node.setAttribute("aria-label", `${labels[drop]} selector`);
       node.title = `Choose ${labels[drop]}`;
+      if (drop === "mem" || drop === "mx") node.title += ". Drag it onto another slot of this card to swap them";
     };
     const c = edDraft.cards[i], cardMemories = $(".mem", el);
     const memoryGroup = document.createElement("div");
@@ -896,8 +910,40 @@ function edApply(kind, name, i, slot, rank = "", side = "") {
       }
       c = edDraft.cards[i];
     } else {
+      const ch = edChar(name), old = edChar(c.char);
       c.char = name;
-      if (!c.cub) c.cub = edChar(name)?.construct || "";
+      // What the previous character brought (its signature C.U.B., memory and resonances) is replaced by the new one's;
+      // anything the person picked themselves stays
+      const oldMatrix = ED_MATRIX_DEFAULT[old?.class] || [];
+      // Signature C.U.B. with skills 1, 2 and 3 on (4 to 6 off)
+      // Always the new character's own; a frame with no C.U.B. art leaves the card without one
+      // A C.U.B. goes on one character only, so a rank A one another card already carries is left off
+      const cubWanted = ch?.construct && !edDraft.cards.some((other, k) => k !== i && other.cub === ch.construct) ? ch.construct : "";
+      if (c.cub !== cubWanted) {
+        c.cub = cubWanted;
+        c.cubSkills = ED_CUB_SKILL_ORDER.slice();
+        c.cubOff = ED_CUB_SKILL_ORDER.map(k => k > 2);
+      }
+      // Signature memory in slots 1, 2, 3 and 5
+      // A new character's signature replaces whatever was there; with none, only the previous character's own signature goes
+      for (const slot of ED_SIGNATURE_MEMORY_SLOTS) {
+        if (ch?.signature) c.mem[slot] = ch.signature;
+        else if (old?.signature && c.mem[slot] === old.signature) c.mem[slot] = "";
+      }
+      // The class's weapon resonances
+      const matrixNow = ED_MATRIX_DEFAULT[ch?.class] || [];
+      for (let slot = 0; slot < 3; slot++) {
+        if (c.matrix[slot] && c.matrix[slot] !== oldMatrix[slot]) continue;
+        const res = matrixNow[slot];
+        c.matrix[slot] = res && edMatrixOptions(ch).includes(res) ? res : "";
+      }
+      // A new character comes with the signature weapon at 6★, unless the weapon already set still fits
+      const options = edWeaponOptions(name);
+      if (!options.some(w => w.name === c.weapon && w.rank === c.weaponRank)) {
+        const signature = options.find(w => w.name === name && w.rank === "6") || options.find(w => w.name === name);
+        c.weapon = signature ? signature.name : "";
+        c.weaponRank = signature ? signature.rank : "";
+      }
     }
   } else if (kind === "char") c.char = "";
   else if (kind === "cub") {
@@ -1056,7 +1102,7 @@ addEventListener("submit", e => { if (e.target.id === "edForm") e.preventDefault
    another card to swap the two positions. A copy of the icon follows the pointer at full strength while its own spot stays empty;
    let go anywhere it can't land, and it goes back. Touch screens use taps and the arrow buttons instead */
 let edDrag = null, edDragged = false;
-const ED_DRAG_FROM = "#edStage [data-ed-cub-skill-index], #edStage [data-ed-role], #edStage .portrait[data-ed-drop]";
+const ED_DRAG_FROM = "#edStage [data-ed-cub-skill-index], #edStage [data-ed-role], #edStage .portrait[data-ed-drop], #edStage [data-ed-drop=mem], #edStage [data-ed-drop=mx]";
 function edDropTarget(drag, under) {
   const card = under?.closest?.("#edStage .card[data-ed-card]");
   if (!card) return null;
@@ -1065,11 +1111,24 @@ function edDropTarget(drag, under) {
     const skill = under.closest("[data-ed-cub-skill-index]");
     return skill && at === drag.card && skill !== drag.source ? skill : null;
   }
+  if (drag.kind === "mem" || drag.kind === "mx") {
+    const slot = under.closest(`[data-ed-drop="${drag.kind}"]`);
+    return slot && at === drag.card && slot !== drag.source ? slot : null;
+  }
   return at !== drag.card ? card : null;
 }
 function edDropOn(drag, target) {
   if (drag.kind === "card") return edMoveCard(drag.card, Number(target.dataset.edCard));
-  if (drag.kind === "skill") {
+  if (drag.kind === "mem" || drag.kind === "mx") {
+    const c = edDraft.cards[drag.card], from = Number(drag.source.dataset.edSlot), to = Number(target.dataset.edSlot);
+    // A memory moves with its own resonances; weapon resonances move alone
+    const list = drag.kind === "mem" ? [c.mem, c.memRes] : [c.matrix];
+    for (const items of list) [items[from], items[to]] = [items[to], items[from]];
+    c.res = c.memRes[0][0];
+    c.core = c.memRes[0][1];
+    edDraft = edClean(edDraft);
+    edStatus(drag.kind === "mem" ? "Memory positions updated." : "Weapon resonance positions updated.");
+  } else if (drag.kind === "skill") {
     const order = edDraft.cards[drag.card].cubSkills, from = Number(drag.source.dataset.edCubSkillIndex), to = Number(target.dataset.edCubSkillIndex);
     [order[from], order[to]] = [order[to], order[from]];
     edCubSkillPick = null;
@@ -1104,8 +1163,10 @@ addEventListener("pointerdown", e => {
   const source = e.target.closest?.(ED_DRAG_FROM);
   if (!source) return;
   const card = Number(source.closest(".card").dataset.edCard);
-  const kind = source.matches("[data-ed-cub-skill-index]") ? "skill" : source.matches("[data-ed-role]") ? "role" : "card";
+  const kind = source.matches("[data-ed-cub-skill-index]") ? "skill" : source.matches("[data-ed-role]") ? "role" : source.matches(".portrait") ? "card" : source.dataset.edDrop;
   if (kind === "card" && !edDraft.cards[card]?.char) return;
+  // An empty memory or resonance slot has nothing to move: a click still opens its menu
+  if ((kind === "mem" || kind === "mx") && !(kind === "mem" ? edDraft.cards[card]?.mem : edDraft.cards[card]?.matrix)?.[Number(source.dataset.edSlot)]) return;
   // Keeps the browser from selecting text or starting its own drag; the click still comes when the pointer doesn't move
   e.preventDefault();
   edDrag = { kind, source, card, x: e.clientX, y: e.clientY, ghost: null, target: null };

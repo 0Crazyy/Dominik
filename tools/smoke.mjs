@@ -472,11 +472,12 @@ const FLOWS = {
     const swapped = (await state()).cards.map(card => card.char);
     if (swapped[0] !== "Bianca: Crepuscule" || swapped[1] !== character)
       throw new Error("selecionar um personagem existente não trocou os slots");
-    step = "showing weapon type in an empty weapon slot";
+    step = "equipping the signature weapon on a new character";
     await cards.nth(2).locator(".portrait").click();
     await page.locator('.ed-picker-option[data-ed-picker-value="Watanabe: Epitaph"]').click();
-    if ((await cards.nth(2).locator(".wp > .slot").first().innerText()).trim() !== "Trailblade")
-      throw new Error("o slot de arma vazio não mostrou o tipo de arma do personagem");
+    const added = (await state()).cards[2];
+    if (added.weapon !== "Watanabe: Epitaph" || added.weaponRank !== "6")
+      throw new Error("o personagem novo não veio com a arma de assinatura 6★");
     } catch (error) {
       throw new Error(`${step}: ${error.message}`, { cause: error });
     }

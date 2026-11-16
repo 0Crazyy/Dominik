@@ -3,6 +3,909 @@
 const CATALOG = {
  "characters": [
   {
+   "name": "Lucia: Lotus",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-lotus/Awaken - Lucia Lotus.png",
+   "weapon": "",
+   "construct": "",
+   "skills": [],
+   "signature": "",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-lotus/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-lotus/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-lotus/skills/Class.png",
+    "Core": "assets/characters/lucia-lotus/skills/Core.png",
+    "QTE": "assets/characters/lucia-lotus/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-lotus/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-lotus/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-lotus/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Liv: Eclipse",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/liv-eclipse/Awaken - Liv Eclipse.png",
+   "weapon": "",
+   "construct": "",
+   "skills": [],
+   "signature": "",
+   "element": "Physical",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/liv-eclipse/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/liv-eclipse/skills/Blue Orb.png",
+    "Class": "assets/characters/liv-eclipse/skills/Class.png",
+    "Core": "assets/characters/liv-eclipse/skills/Core.png",
+    "QTE": "assets/characters/liv-eclipse/skills/QTE.png",
+    "Red Orb": "assets/characters/liv-eclipse/skills/Red Orb.png",
+    "Signature": "assets/characters/liv-eclipse/skills/Signature.png",
+    "Yellow Orb": "assets/characters/liv-eclipse/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lee: Palefire",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lee-palefire/Awaken - Lee Palefire.png",
+   "weapon": "assets/characters/lee-palefire/Arma - Lee Palefire (5).png",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lee-palefire/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lee-palefire/skills/Blue Orb.png",
+    "Class": "assets/characters/lee-palefire/skills/Class.png",
+    "Core": "assets/characters/lee-palefire/skills/Core.png",
+    "QTE": "assets/characters/lee-palefire/skills/QTE.png",
+    "Red Orb": "assets/characters/lee-palefire/skills/Red Orb.png",
+    "Signature": "assets/characters/lee-palefire/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lee-palefire/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Kamui: Bastion",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/kamui-bastion/Awaken - Kamui Bastion.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/kamui-bastion/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/kamui-bastion/skills/Blue Orb.png",
+    "Class": "assets/characters/kamui-bastion/skills/Class.png",
+    "Core": "assets/characters/kamui-bastion/skills/Core.png",
+    "QTE": "assets/characters/kamui-bastion/skills/QTE.png",
+    "Red Orb": "assets/characters/kamui-bastion/skills/Red Orb.png",
+    "Signature": "assets/characters/kamui-bastion/skills/Signature.png",
+    "Yellow Orb": "assets/characters/kamui-bastion/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Nanami: Storm",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/nanami-storm/Awaken - Nanami Storm.png",
+   "weapon": "",
+   "construct": "",
+   "skills": [],
+   "signature": "",
+   "element": "Physical",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/nanami-storm/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/nanami-storm/skills/Blue Orb.png",
+    "Class": "assets/characters/nanami-storm/skills/Class.png",
+    "Core": "assets/characters/nanami-storm/skills/Core.png",
+    "QTE": "assets/characters/nanami-storm/skills/QTE.png",
+    "Red Orb": "assets/characters/nanami-storm/skills/Red Orb.png",
+    "Signature": "assets/characters/nanami-storm/skills/Signature.png",
+    "Yellow Orb": "assets/characters/nanami-storm/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Bianca: Zero",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/bianca-zero/Awaken - Bianca Zero.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/bianca-zero/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/bianca-zero/skills/Blue Orb.png",
+    "Class": "assets/characters/bianca-zero/skills/Class.png",
+    "Core": "assets/characters/bianca-zero/skills/Core.png",
+    "QTE": "assets/characters/bianca-zero/skills/QTE.png",
+    "Red Orb": "assets/characters/bianca-zero/skills/Red Orb.png",
+    "Signature": "assets/characters/bianca-zero/skills/Signature.png",
+    "Yellow Orb": "assets/characters/bianca-zero/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Karenina: Blast",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/karenina-blast/Awaken - Karenina Blast.png",
+   "weapon": "",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/karenina-blast/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/karenina-blast/skills/Blue Orb.png",
+    "Class": "assets/characters/karenina-blast/skills/Class.png",
+    "Core": "assets/characters/karenina-blast/skills/Core.png",
+    "QTE": "assets/characters/karenina-blast/skills/QTE.png",
+    "Red Orb": "assets/characters/karenina-blast/skills/Red Orb.png",
+    "Signature": "assets/characters/karenina-blast/skills/Signature.png",
+    "Yellow Orb": "assets/characters/karenina-blast/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Watanabe: Nightblade",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/watanabe-nightblade/Awaken - Watanabe Nightblade.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/watanabe-nightblade/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/watanabe-nightblade/skills/Blue Orb.png",
+    "Class": "assets/characters/watanabe-nightblade/skills/Class.png",
+    "Core": "assets/characters/watanabe-nightblade/skills/Core.png",
+    "QTE": "assets/characters/watanabe-nightblade/skills/QTE.png",
+    "Red Orb": "assets/characters/watanabe-nightblade/skills/Red Orb.png",
+    "Signature": "assets/characters/watanabe-nightblade/skills/Signature.png",
+    "Yellow Orb": "assets/characters/watanabe-nightblade/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Liv: Lux",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/liv-lux/Awaken - Liv Lux.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Lightning",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/liv-lux/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/liv-lux/skills/Blue Orb.png",
+    "Class": "assets/characters/liv-lux/skills/Class.png",
+    "Core": "assets/characters/liv-lux/skills/Core.png",
+    "QTE": "assets/characters/liv-lux/skills/QTE.png",
+    "Red Orb": "assets/characters/liv-lux/skills/Red Orb.png",
+    "Signature": "assets/characters/liv-lux/skills/Signature.png",
+    "Yellow Orb": "assets/characters/liv-lux/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lucia: Dawn",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-dawn/Awaken - Lucia Dawn.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Lightning",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-dawn/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-dawn/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-dawn/skills/Class.png",
+    "Core": "assets/characters/lucia-dawn/skills/Core.png",
+    "QTE": "assets/characters/lucia-dawn/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-dawn/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-dawn/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-dawn/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lee: Entropy",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lee-entropy/Awaken - Lee Entropy.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lee-entropy/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lee-entropy/skills/Blue Orb.png",
+    "Class": "assets/characters/lee-entropy/skills/Class.png",
+    "Core": "assets/characters/lee-entropy/skills/Core.png",
+    "QTE": "assets/characters/lee-entropy/skills/QTE.png",
+    "Red Orb": "assets/characters/lee-entropy/skills/Red Orb.png",
+    "Signature": "assets/characters/lee-entropy/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lee-entropy/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Liv: Luminance",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/liv-luminance/Awaken - Liv Luminance.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/liv-luminance/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/liv-luminance/skills/Blue Orb.png",
+    "Class": "assets/characters/liv-luminance/skills/Class.png",
+    "Core": "assets/characters/liv-luminance/skills/Core.png",
+    "QTE": "assets/characters/liv-luminance/skills/QTE.png",
+    "Red Orb": "assets/characters/liv-luminance/skills/Red Orb.png",
+    "Signature": "assets/characters/liv-luminance/skills/Signature.png",
+    "Yellow Orb": "assets/characters/liv-luminance/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Kamui: Tenebrion",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/kamui-tenebrion/Awaken - Kamui Tenebrion.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/kamui-tenebrion/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/kamui-tenebrion/skills/Blue Orb.png",
+    "Class": "assets/characters/kamui-tenebrion/skills/Class.png",
+    "Core": "assets/characters/kamui-tenebrion/skills/Core.png",
+    "QTE": "assets/characters/kamui-tenebrion/skills/QTE.png",
+    "Red Orb": "assets/characters/kamui-tenebrion/skills/Red Orb.png",
+    "Signature": "assets/characters/kamui-tenebrion/skills/Signature.png",
+    "Yellow Orb": "assets/characters/kamui-tenebrion/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Karenina: Ember",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/karenina-ember/Awaken - Karenina Ember.png",
+   "weapon": "",
+   "construct": "assets/cubs/nitor/CUB - Nitor.png",
+   "skills": [
+    "assets/cubs/nitor/CUB - Skill 1.png",
+    "assets/cubs/nitor/CUB - Skill 2.png",
+    "assets/cubs/nitor/CUB - Skill 3.png",
+    "assets/cubs/nitor/CUB - Skill 4.png",
+    "assets/cubs/nitor/CUB - Skill 5.png",
+    "assets/cubs/nitor/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/karenina-ember/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/karenina-ember/skills/Blue Orb.png",
+    "Class": "assets/characters/karenina-ember/skills/Class.png",
+    "Core": "assets/characters/karenina-ember/skills/Core.png",
+    "QTE": "assets/characters/karenina-ember/skills/QTE.png",
+    "Red Orb": "assets/characters/karenina-ember/skills/Red Orb.png",
+    "Signature": "assets/characters/karenina-ember/skills/Signature.png",
+    "Yellow Orb": "assets/characters/karenina-ember/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Nanami: Pulse",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/nanami-pulse/Awaken - Nanami Pulse.png",
+   "weapon": "",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/nanami-pulse/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/nanami-pulse/skills/Blue Orb.png",
+    "Class": "assets/characters/nanami-pulse/skills/Class.png",
+    "Core": "assets/characters/nanami-pulse/skills/Core.png",
+    "QTE": "assets/characters/nanami-pulse/skills/QTE.png",
+    "Red Orb": "assets/characters/nanami-pulse/skills/Red Orb.png",
+    "Signature": "assets/characters/nanami-pulse/skills/Signature.png",
+    "Yellow Orb": "assets/characters/nanami-pulse/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lucia: Crimson Abyss",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-crimson-abyss/Awaken - Lucia Crimson Abyss.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-crimson-abyss/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-crimson-abyss/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-crimson-abyss/skills/Class.png",
+    "Core": "assets/characters/lucia-crimson-abyss/skills/Core.png",
+    "QTE": "assets/characters/lucia-crimson-abyss/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-crimson-abyss/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-crimson-abyss/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-crimson-abyss/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Ayla: Brilliance",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/ayla-brilliance/Awaken - Ayla Brilliance.png",
+   "weapon": "assets/characters/ayla-brilliance/Arma - Ayla Brilliance (5).png",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/ayla-brilliance/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/ayla-brilliance/skills/Blue Orb.png",
+    "Class": "assets/characters/ayla-brilliance/skills/Class.png",
+    "Core": "assets/characters/ayla-brilliance/skills/Core.png",
+    "QTE": "assets/characters/ayla-brilliance/skills/QTE.png",
+    "Red Orb": "assets/characters/ayla-brilliance/skills/Red Orb.png",
+    "Signature": "assets/characters/ayla-brilliance/skills/Signature.png",
+    "Yellow Orb": "assets/characters/ayla-brilliance/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Watanabe: Astral",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/watanabe-astral/Awaken - Watanabe Astral.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/watanabe-astral/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/watanabe-astral/skills/Blue Orb.png",
+    "Class": "assets/characters/watanabe-astral/skills/Class.png",
+    "Core": "assets/characters/watanabe-astral/skills/Core.png",
+    "QTE": "assets/characters/watanabe-astral/skills/QTE.png",
+    "Red Orb": "assets/characters/watanabe-astral/skills/Red Orb.png",
+    "Signature": "assets/characters/watanabe-astral/skills/Signature.png",
+    "Yellow Orb": "assets/characters/watanabe-astral/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Bianca: Veritas",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/bianca-veritas/Awaken - Bianca Veritas.png",
+   "weapon": "",
+   "construct": "assets/cubs/toniris/CUB - Toniris.png",
+   "skills": [
+    "assets/cubs/toniris/CUB - Skill 1.png",
+    "assets/cubs/toniris/CUB - Skill 2.png",
+    "assets/cubs/toniris/CUB - Skill 3.png",
+    "assets/cubs/toniris/CUB - Skill 4.png",
+    "assets/cubs/toniris/CUB - Skill 5.png",
+    "assets/cubs/toniris/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Lightning",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/bianca-veritas/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/bianca-veritas/skills/Blue Orb.png",
+    "Class": "assets/characters/bianca-veritas/skills/Class.png",
+    "Core": "assets/characters/bianca-veritas/skills/Core.png",
+    "QTE": "assets/characters/bianca-veritas/skills/QTE.png",
+    "Red Orb": "assets/characters/bianca-veritas/skills/Red Orb.png",
+    "Signature": "assets/characters/bianca-veritas/skills/Signature.png",
+    "Yellow Orb": "assets/characters/bianca-veritas/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Sophia: Silverfang",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/sophia-silverfang/Awaken - Sophia Silverfang.png",
+   "weapon": "",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/sophia-silverfang/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/sophia-silverfang/skills/Blue Orb.png",
+    "Class": "assets/characters/sophia-silverfang/skills/Class.png",
+    "Core": "assets/characters/sophia-silverfang/skills/Core.png",
+    "QTE": "assets/characters/sophia-silverfang/skills/QTE.png",
+    "Red Orb": "assets/characters/sophia-silverfang/skills/Red Orb.png",
+    "Signature": "assets/characters/sophia-silverfang/skills/Signature.png",
+    "Yellow Orb": "assets/characters/sophia-silverfang/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Chrome: Arclight",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/chrome-arclight/Awaken - Chrome Arclight.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Lightning",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/chrome-arclight/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/chrome-arclight/skills/Blue Orb.png",
+    "Class": "assets/characters/chrome-arclight/skills/Class.png",
+    "Core": "assets/characters/chrome-arclight/skills/Core.png",
+    "QTE": "assets/characters/chrome-arclight/skills/QTE.png",
+    "Red Orb": "assets/characters/chrome-arclight/skills/Red Orb.png",
+    "Signature": "assets/characters/chrome-arclight/skills/Signature.png",
+    "Yellow Orb": "assets/characters/chrome-arclight/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lucia: Plume",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-plume/Awaken - Lucia Plume.png",
+   "weapon": "",
+   "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
+   "skills": [
+    "assets/cubs/seeshell/CUB - Skill 1.png",
+    "assets/cubs/seeshell/CUB - Skill 2.png",
+    "assets/cubs/seeshell/CUB - Skill 3.png",
+    "assets/cubs/seeshell/CUB - Skill 4.png",
+    "assets/cubs/seeshell/CUB - Skill 5.png",
+    "assets/cubs/seeshell/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Ice",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-plume/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-plume/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-plume/skills/Class.png",
+    "Core": "assets/characters/lucia-plume/skills/Core.png",
+    "QTE": "assets/characters/lucia-plume/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-plume/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-plume/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-plume/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Vera: Rozen",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/vera-rozen/Awaken - Vera Rozen.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/vera-rozen/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/vera-rozen/skills/Blue Orb.png",
+    "Class": "assets/characters/vera-rozen/skills/Class.png",
+    "Core": "assets/characters/vera-rozen/skills/Core.png",
+    "QTE": "assets/characters/vera-rozen/skills/QTE.png",
+    "Red Orb": "assets/characters/vera-rozen/skills/Red Orb.png",
+    "Signature": "assets/characters/vera-rozen/skills/Signature.png",
+    "Yellow Orb": "assets/characters/vera-rozen/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Camu: Crocotta",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/camu-crocotta/Awaken - Camu Crocotta.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/camu-crocotta/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/camu-crocotta/skills/Blue Orb.png",
+    "Class": "assets/characters/camu-crocotta/skills/Class.png",
+    "Core": "assets/characters/camu-crocotta/skills/Core.png",
+    "QTE": "assets/characters/camu-crocotta/skills/QTE.png",
+    "Red Orb": "assets/characters/camu-crocotta/skills/Red Orb.png",
+    "Signature": "assets/characters/camu-crocotta/skills/Signature.png",
+    "Yellow Orb": "assets/characters/camu-crocotta/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Rosetta: Rigor",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/rosetta-rigor/Awaken - Rosetta Rigor.png",
+   "weapon": "",
+   "construct": "assets/cubs/frost-oath/CUB - Frost Oath.png",
+   "skills": [
+    "assets/cubs/frost-oath/CUB - Skill 1.png",
+    "assets/cubs/frost-oath/CUB - Skill 2.png",
+    "assets/cubs/frost-oath/CUB - Skill 3.png",
+    "assets/cubs/frost-oath/CUB - Skill 4.png",
+    "assets/cubs/frost-oath/CUB - Skill 5.png",
+    "assets/cubs/frost-oath/CUB - Skill 6.png"
+   ],
+   "signature": "Leeuwenhoek",
+   "element": "Physical",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/rosetta-rigor/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/rosetta-rigor/skills/Blue Orb.png",
+    "Class": "assets/characters/rosetta-rigor/skills/Class.png",
+    "Core": "assets/characters/rosetta-rigor/skills/Core.png",
+    "QTE": "assets/characters/rosetta-rigor/skills/QTE.png",
+    "Red Orb": "assets/characters/rosetta-rigor/skills/Red Orb.png",
+    "Signature": "assets/characters/rosetta-rigor/skills/Signature.png",
+    "Yellow Orb": "assets/characters/rosetta-rigor/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Qu: Pavo",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/qu-pavo/Awaken - Qu Pavo.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "Wu'an",
+   "element": "Physical",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/qu-pavo/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/qu-pavo/skills/Blue Orb.png",
+    "Class": "assets/characters/qu-pavo/skills/Class.png",
+    "Core": "assets/characters/qu-pavo/skills/Core.png",
+    "QTE": "assets/characters/qu-pavo/skills/QTE.png",
+    "Red Orb": "assets/characters/qu-pavo/skills/Red Orb.png",
+    "Signature": "assets/characters/qu-pavo/skills/Signature.png",
+    "Yellow Orb": "assets/characters/qu-pavo/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Changyu: Qilin",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/changyu-qilin/Awaken - Changyu Qilin.png",
+   "weapon": "",
+   "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
+   "skills": [
+    "assets/cubs/seeshell/CUB - Skill 1.png",
+    "assets/cubs/seeshell/CUB - Skill 2.png",
+    "assets/cubs/seeshell/CUB - Skill 3.png",
+    "assets/cubs/seeshell/CUB - Skill 4.png",
+    "assets/cubs/seeshell/CUB - Skill 5.png",
+    "assets/cubs/seeshell/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Ice",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/changyu-qilin/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/changyu-qilin/skills/Blue Orb.png",
+    "Class": "assets/characters/changyu-qilin/skills/Class.png",
+    "Core": "assets/characters/changyu-qilin/skills/Core.png",
+    "QTE": "assets/characters/changyu-qilin/skills/QTE.png",
+    "Red Orb": "assets/characters/changyu-qilin/skills/Red Orb.png",
+    "Signature": "assets/characters/changyu-qilin/skills/Signature.png",
+    "Yellow Orb": "assets/characters/changyu-qilin/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Luna: Laurel",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/luna-laurel/Awaken - Luna Laurel.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "Flamel",
+   "element": "Dark",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/luna-laurel/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/luna-laurel/skills/Blue Orb.png",
+    "Class": "assets/characters/luna-laurel/skills/Class.png",
+    "Core": "assets/characters/luna-laurel/skills/Core.png",
+    "QTE": "assets/characters/luna-laurel/skills/QTE.png",
+    "Red Orb": "assets/characters/luna-laurel/skills/Red Orb.png",
+    "Signature": "assets/characters/luna-laurel/skills/Signature.png",
+    "Yellow Orb": "assets/characters/luna-laurel/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "2B",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/2b/Awaken - 2B.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/2b/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/2b/skills/Blue Orb.png",
+    "Class": "assets/characters/2b/skills/Class.png",
+    "Core": "assets/characters/2b/skills/Core.png",
+    "QTE": "assets/characters/2b/skills/QTE.png",
+    "Red Orb": "assets/characters/2b/skills/Red Orb.png",
+    "Signature": "assets/characters/2b/skills/Signature.png",
+    "Yellow Orb": "assets/characters/2b/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "9S",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/9s/Awaken - 9S.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/9s/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/9s/skills/Blue Orb.png",
+    "Class": "assets/characters/9s/skills/Class.png",
+    "Core": "assets/characters/9s/skills/Core.png",
+    "QTE": "assets/characters/9s/skills/QTE.png",
+    "Red Orb": "assets/characters/9s/skills/Red Orb.png",
+    "Signature": "assets/characters/9s/skills/Signature.png",
+    "Yellow Orb": "assets/characters/9s/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "A2",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/a2/Awaken - A2.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/a2/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/a2/skills/Blue Orb.png",
+    "Class": "assets/characters/a2/skills/Class.png",
+    "Core": "assets/characters/a2/skills/Core.png",
+    "QTE": "assets/characters/a2/skills/QTE.png",
+    "Red Orb": "assets/characters/a2/skills/Red Orb.png",
+    "Signature": "assets/characters/a2/skills/Signature.png",
+    "Yellow Orb": "assets/characters/a2/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Wanshi: Hypnos",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/wanshi-hypnos/Awaken - Wanshi Hypnos.png",
+   "weapon": "",
+   "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
+   "skills": [
+    "assets/cubs/seeshell/CUB - Skill 1.png",
+    "assets/cubs/seeshell/CUB - Skill 2.png",
+    "assets/cubs/seeshell/CUB - Skill 3.png",
+    "assets/cubs/seeshell/CUB - Skill 4.png",
+    "assets/cubs/seeshell/CUB - Skill 5.png",
+    "assets/cubs/seeshell/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Ice",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/wanshi-hypnos/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/wanshi-hypnos/skills/Blue Orb.png",
+    "Class": "assets/characters/wanshi-hypnos/skills/Class.png",
+    "Core": "assets/characters/wanshi-hypnos/skills/Core.png",
+    "QTE": "assets/characters/wanshi-hypnos/skills/QTE.png",
+    "Red Orb": "assets/characters/wanshi-hypnos/skills/Red Orb.png",
+    "Signature": "assets/characters/wanshi-hypnos/skills/Signature.png",
+    "Yellow Orb": "assets/characters/wanshi-hypnos/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Selena: Tempest",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/selena-tempest/Awaken - Selena Tempest.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "Lucrezia",
+   "element": "Lightning",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/selena-tempest/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/selena-tempest/skills/Blue Orb.png",
+    "Class": "assets/characters/selena-tempest/skills/Class.png",
+    "Core": "assets/characters/selena-tempest/skills/Core.png",
+    "QTE": "assets/characters/selena-tempest/skills/QTE.png",
+    "Red Orb": "assets/characters/selena-tempest/skills/Red Orb.png",
+    "Signature": "assets/characters/selena-tempest/skills/Signature.png",
+    "Yellow Orb": "assets/characters/selena-tempest/skills/Yellow Orb.png"
+   }
+  },
+  {
    "name": "Chrome: Glory",
    "symbol": "assets/classes/Tanque.png",
    "portrait": "assets/characters/chrome-glory/Awaken - Chrome Glory.png",
@@ -31,6 +934,342 @@ const CATALOG = {
    }
   },
   {
+   "name": "No.21: XXI",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/no21-xxi/Awaken - No.21 XXI.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/no21-xxi/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/no21-xxi/skills/Blue Orb.png",
+    "Class": "assets/characters/no21-xxi/skills/Class.png",
+    "Core": "assets/characters/no21-xxi/skills/Core.png",
+    "QTE": "assets/characters/no21-xxi/skills/QTE.png",
+    "Red Orb": "assets/characters/no21-xxi/skills/Red Orb.png",
+    "Signature": "assets/characters/no21-xxi/skills/Signature.png",
+    "Yellow Orb": "assets/characters/no21-xxi/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Vera: Garnet",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/vera-garnet/Awaken - Vera Garnet.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "Tifa",
+   "element": "Lightning",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/vera-garnet/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/vera-garnet/skills/Blue Orb.png",
+    "Class": "assets/characters/vera-garnet/skills/Class.png",
+    "Core": "assets/characters/vera-garnet/skills/Core.png",
+    "QTE": "assets/characters/vera-garnet/skills/QTE.png",
+    "Red Orb": "assets/characters/vera-garnet/skills/Red Orb.png",
+    "Signature": "assets/characters/vera-garnet/skills/Signature.png",
+    "Yellow Orb": "assets/characters/vera-garnet/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Roland: Flambeau",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/roland-flambeau/Awaken - Roland Flambeau.png",
+   "weapon": "",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "Jack",
+   "element": "Fire",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/roland-flambeau/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/roland-flambeau/skills/Blue Orb.png",
+    "Class": "assets/characters/roland-flambeau/skills/Class.png",
+    "Core": "assets/characters/roland-flambeau/skills/Core.png",
+    "QTE": "assets/characters/roland-flambeau/skills/QTE.png",
+    "Red Orb": "assets/characters/roland-flambeau/skills/Red Orb.png",
+    "Signature": "assets/characters/roland-flambeau/skills/Signature.png",
+    "Yellow Orb": "assets/characters/roland-flambeau/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Liv: Empyrea",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/liv-empyrea/Awaken - Liv Empyrea.png",
+   "weapon": "",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "Elizabeth",
+   "element": "Fire",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/liv-empyrea/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/liv-empyrea/skills/Blue Orb.png",
+    "Class": "assets/characters/liv-empyrea/skills/Class.png",
+    "Core": "assets/characters/liv-empyrea/skills/Core.png",
+    "QTE": "assets/characters/liv-empyrea/skills/QTE.png",
+    "Red Orb": "assets/characters/liv-empyrea/skills/Red Orb.png",
+    "Signature": "assets/characters/liv-empyrea/skills/Signature.png",
+    "Yellow Orb": "assets/characters/liv-empyrea/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Selena: Capriccio",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/selena-capriccio/Awaken - Selena Capriccio.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "Seraphine",
+   "element": "Dark",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/selena-capriccio/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/selena-capriccio/skills/Blue Orb.png",
+    "Class": "assets/characters/selena-capriccio/skills/Class.png",
+    "Core": "assets/characters/selena-capriccio/skills/Core.png",
+    "QTE": "assets/characters/selena-capriccio/skills/QTE.png",
+    "Red Orb": "assets/characters/selena-capriccio/skills/Red Orb.png",
+    "Signature": "assets/characters/selena-capriccio/skills/Signature.png",
+    "Yellow Orb": "assets/characters/selena-capriccio/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Pulao: Dragontoll",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/pulao-dragontoll/Awaken - Pulao Dragontoll.png",
+   "weapon": "",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "Marco",
+   "element": "Physical",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/pulao-dragontoll/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/pulao-dragontoll/skills/Blue Orb.png",
+    "Class": "assets/characters/pulao-dragontoll/skills/Class.png",
+    "Core": "assets/characters/pulao-dragontoll/skills/Core.png",
+    "QTE": "assets/characters/pulao-dragontoll/skills/QTE.png",
+    "Red Orb": "assets/characters/pulao-dragontoll/skills/Red Orb.png",
+    "Signature": "assets/characters/pulao-dragontoll/skills/Signature.png",
+    "Yellow Orb": "assets/characters/pulao-dragontoll/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Nanami: Starfarer",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/nanami-starfarer/Awaken - Nanami Starfarer.png",
+   "weapon": "",
+   "construct": "assets/cubs/jet-jaeger/CUB - Jet Jaeger.png",
+   "skills": [
+    "assets/cubs/jet-jaeger/CUB - Skill 1.png",
+    "assets/cubs/jet-jaeger/CUB - Skill 2.png",
+    "assets/cubs/jet-jaeger/CUB - Skill 3.png",
+    "assets/cubs/jet-jaeger/CUB - Skill 4.png",
+    "assets/cubs/jet-jaeger/CUB - Skill 5.png",
+    "assets/cubs/jet-jaeger/CUB - Skill 6.png"
+   ],
+   "signature": "Unimate",
+   "element": "Fire",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/nanami-starfarer/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/nanami-starfarer/skills/Blue Orb.png",
+    "Class": "assets/characters/nanami-starfarer/skills/Class.png",
+    "Core": "assets/characters/nanami-starfarer/skills/Core.png",
+    "QTE": "assets/characters/nanami-starfarer/skills/QTE.png",
+    "Red Orb": "assets/characters/nanami-starfarer/skills/Red Orb.png",
+    "Signature": "assets/characters/nanami-starfarer/skills/Signature.png",
+    "Yellow Orb": "assets/characters/nanami-starfarer/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Haicma: Starveil",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/haicma-starveil/Awaken - Haicma Starveil.png",
+   "weapon": "",
+   "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
+   "skills": [
+    "assets/cubs/seeshell/CUB - Skill 1.png",
+    "assets/cubs/seeshell/CUB - Skill 2.png",
+    "assets/cubs/seeshell/CUB - Skill 3.png",
+    "assets/cubs/seeshell/CUB - Skill 4.png",
+    "assets/cubs/seeshell/CUB - Skill 5.png",
+    "assets/cubs/seeshell/CUB - Skill 6.png"
+   ],
+   "signature": "Isabel",
+   "element": "Ice",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/haicma-starveil/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/haicma-starveil/skills/Blue Orb.png",
+    "Class": "assets/characters/haicma-starveil/skills/Class.png",
+    "Core": "assets/characters/haicma-starveil/skills/Core.png",
+    "QTE": "assets/characters/haicma-starveil/skills/QTE.png",
+    "Red Orb": "assets/characters/haicma-starveil/skills/Red Orb.png",
+    "Signature": "assets/characters/haicma-starveil/skills/Signature.png",
+    "Yellow Orb": "assets/characters/haicma-starveil/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Karenina: Scire",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/karenina-scire/Awaken - Karenina Scire.png",
+   "weapon": "",
+   "construct": "assets/cubs/moonhopper/CUB - Moonhopper.png",
+   "skills": [
+    "assets/cubs/moonhopper/CUB - Skill 1.png",
+    "assets/cubs/moonhopper/CUB - Skill 2.png",
+    "assets/cubs/moonhopper/CUB - Skill 3.png",
+    "assets/cubs/moonhopper/CUB - Skill 4.png",
+    "assets/cubs/moonhopper/CUB - Skill 5.png",
+    "assets/cubs/moonhopper/CUB - Skill 6.png"
+   ],
+   "signature": "Boone",
+   "element": "Dark",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/karenina-scire/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/karenina-scire/skills/Blue Orb.png",
+    "Class": "assets/characters/karenina-scire/skills/Class.png",
+    "Core": "assets/characters/karenina-scire/skills/Core.png",
+    "QTE": "assets/characters/karenina-scire/skills/QTE.png",
+    "Red Orb": "assets/characters/karenina-scire/skills/Red Orb.png",
+    "Signature": "assets/characters/karenina-scire/skills/Signature.png",
+    "Yellow Orb": "assets/characters/karenina-scire/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Noan: Arca",
+   "symbol": "assets/classes/Vanguard.png",
+   "portrait": "assets/characters/noan-arca/Awaken - Noan Arca.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "Shelley",
+   "element": "Lightning",
+   "class": "Vanguard",
+   "skillArt": {
+    "Basic Attack": "assets/characters/noan-arca/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/noan-arca/skills/Blue Orb.png",
+    "Class": "assets/characters/noan-arca/skills/Class.png",
+    "Core": "assets/characters/noan-arca/skills/Core.png",
+    "QTE": "assets/characters/noan-arca/skills/QTE.png",
+    "Red Orb": "assets/characters/noan-arca/skills/Red Orb.png",
+    "Signature": "assets/characters/noan-arca/skills/Signature.png",
+    "Yellow Orb": "assets/characters/noan-arca/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Bianca: Stigmata",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/bianca-stigmata/Awaken - Bianca Stigmata.png",
+   "weapon": "",
+   "construct": "assets/cubs/shimmer/CUB - Shimmer.png",
+   "skills": [
+    "assets/cubs/shimmer/CUB - Skill 1.png",
+    "assets/cubs/shimmer/CUB - Skill 2.png",
+    "assets/cubs/shimmer/CUB - Skill 3.png",
+    "assets/cubs/shimmer/CUB - Skill 4.png",
+    "assets/cubs/shimmer/CUB - Skill 5.png",
+    "assets/cubs/shimmer/CUB - Skill 6.png"
+   ],
+   "signature": "Charlotte",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/bianca-stigmata/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/bianca-stigmata/skills/Blue Orb.png",
+    "Class": "assets/characters/bianca-stigmata/skills/Class.png",
+    "Core": "assets/characters/bianca-stigmata/skills/Core.png",
+    "QTE": "assets/characters/bianca-stigmata/skills/QTE.png",
+    "Red Orb": "assets/characters/bianca-stigmata/skills/Red Orb.png",
+    "Signature": "assets/characters/bianca-stigmata/skills/Signature.png",
+    "Yellow Orb": "assets/characters/bianca-stigmata/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Bambinata: Vitrum",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/bambinata-vitrum/Awaken - Bambinata Vitrum.png",
+   "weapon": "",
+   "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
+   "skills": [
+    "assets/cubs/seeshell/CUB - Skill 1.png",
+    "assets/cubs/seeshell/CUB - Skill 2.png",
+    "assets/cubs/seeshell/CUB - Skill 3.png",
+    "assets/cubs/seeshell/CUB - Skill 4.png",
+    "assets/cubs/seeshell/CUB - Skill 5.png",
+    "assets/cubs/seeshell/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Ice",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/bambinata-vitrum/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/bambinata-vitrum/skills/Blue Orb.png",
+    "Class": "assets/characters/bambinata-vitrum/skills/Class.png",
+    "Core": "assets/characters/bambinata-vitrum/skills/Core.png",
+    "QTE": "assets/characters/bambinata-vitrum/skills/QTE.png",
+    "Red Orb": "assets/characters/bambinata-vitrum/skills/Red Orb.png",
+    "Signature": "assets/characters/bambinata-vitrum/skills/Signature.png",
+    "Yellow Orb": "assets/characters/bambinata-vitrum/skills/Yellow Orb.png"
+   }
+  },
+  {
    "name": "Lee: Hyperreal",
    "symbol": "assets/classes/Attacker.png",
    "portrait": "assets/characters/lee-hyperreal/Awaken - Lee Hyperreal.png",
@@ -56,6 +1295,230 @@ const CATALOG = {
     "Red Orb": "assets/characters/lee-hyperreal/skills/Red Orb.png",
     "Signature": "assets/characters/lee-hyperreal/skills/Signature.png",
     "Yellow Orb": "assets/characters/lee-hyperreal/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Ayla: Kaleido",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/ayla-kaleido/Awaken - Ayla Kaleido.png",
+   "weapon": "",
+   "construct": "assets/cubs/rainbow/CUB - Rainbow.png",
+   "skills": [
+    "assets/cubs/rainbow/CUB - Skill 1.png",
+    "assets/cubs/rainbow/CUB - Skill 2.png",
+    "assets/cubs/rainbow/CUB - Skill 3.png",
+    "assets/cubs/rainbow/CUB - Skill 4.png",
+    "assets/cubs/rainbow/CUB - Skill 5.png",
+    "assets/cubs/rainbow/CUB - Skill 6.png"
+   ],
+   "signature": "Aline",
+   "element": "Ice",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/ayla-kaleido/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/ayla-kaleido/skills/Blue Orb.png",
+    "Class": "assets/characters/ayla-kaleido/skills/Class.png",
+    "Core": "assets/characters/ayla-kaleido/skills/Core.png",
+    "QTE": "assets/characters/ayla-kaleido/skills/QTE.png",
+    "Red Orb": "assets/characters/ayla-kaleido/skills/Red Orb.png",
+    "Signature": "assets/characters/ayla-kaleido/skills/Signature.png",
+    "Yellow Orb": "assets/characters/ayla-kaleido/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lucia: Crimson Weave",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lucia-crimson-weave/Awaken - Lucia Crimson Weave.png",
+   "weapon": "",
+   "construct": "assets/cubs/motorbolt/CUB - Motorbolt.png",
+   "skills": [
+    "assets/cubs/motorbolt/CUB - Skill 1.png",
+    "assets/cubs/motorbolt/CUB - Skill 2.png",
+    "assets/cubs/motorbolt/CUB - Skill 3.png",
+    "assets/cubs/motorbolt/CUB - Skill 4.png",
+    "assets/cubs/motorbolt/CUB - Skill 5.png",
+    "assets/cubs/motorbolt/CUB - Skill 6.png"
+   ],
+   "signature": "Diesel",
+   "element": "Lightning",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lucia-crimson-weave/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lucia-crimson-weave/skills/Blue Orb.png",
+    "Class": "assets/characters/lucia-crimson-weave/skills/Class.png",
+    "Core": "assets/characters/lucia-crimson-weave/skills/Core.png",
+    "QTE": "assets/characters/lucia-crimson-weave/skills/QTE.png",
+    "Red Orb": "assets/characters/lucia-crimson-weave/skills/Red Orb.png",
+    "Signature": "assets/characters/lucia-crimson-weave/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lucia-crimson-weave/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Hanying: Zitherwoe",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/hanying-zitherwoe/Awaken - Hanying Zitherwoe.png",
+   "weapon": "assets/characters/hanying-zitherwoe/Arma - Hanying Zitherwoe.png",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/hanying-zitherwoe/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/hanying-zitherwoe/skills/Blue Orb.png",
+    "Class": "assets/characters/hanying-zitherwoe/skills/Class.png",
+    "Core": "assets/characters/hanying-zitherwoe/skills/Core.png",
+    "QTE": "assets/characters/hanying-zitherwoe/skills/QTE.png",
+    "Red Orb": "assets/characters/hanying-zitherwoe/skills/Red Orb.png",
+    "Signature": "assets/characters/hanying-zitherwoe/skills/Signature.png",
+    "Yellow Orb": "assets/characters/hanying-zitherwoe/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "No.21: Feral",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/no21-feral/Awaken - No.21 Feral.png",
+   "weapon": "assets/characters/no21-feral/Arma No.21 Feral.png",
+   "construct": "assets/characters/no21-feral/CUB - Hades Fangs.png",
+   "skills": [
+    "assets/characters/no21-feral/CUB - Skill 1.png",
+    "assets/characters/no21-feral/CUB - Skill 2.png",
+    "assets/characters/no21-feral/CUB - Skill 3.png",
+    "assets/characters/no21-feral/CUB - Skill 4.png",
+    "assets/characters/no21-feral/CUB - Skill 5.png",
+    "assets/characters/no21-feral/CUB - Skill 6.png"
+   ],
+   "signature": "Fran",
+   "element": "Lightning",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/no21-feral/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/no21-feral/skills/Blue Orb.png",
+    "Class": "assets/characters/no21-feral/skills/Class.png",
+    "Core": "assets/characters/no21-feral/skills/Core.png",
+    "QTE": "assets/characters/no21-feral/skills/QTE.png",
+    "Red Orb": "assets/characters/no21-feral/skills/Red Orb.png",
+    "Signature": "assets/characters/no21-feral/skills/Signature.png",
+    "Yellow Orb": "assets/characters/no21-feral/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Noctis: Indomitus",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/noctis-indomitus/Awaken - Noctis Indomitus.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Lightning",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/noctis-indomitus/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/noctis-indomitus/skills/Blue Orb.png",
+    "Class": "assets/characters/noctis-indomitus/skills/Class.png",
+    "Core": "assets/characters/noctis-indomitus/skills/Core.png",
+    "QTE": "assets/characters/noctis-indomitus/skills/QTE.png",
+    "Red Orb": "assets/characters/noctis-indomitus/skills/Red Orb.png",
+    "Signature": "assets/characters/noctis-indomitus/skills/Signature.png",
+    "Yellow Orb": "assets/characters/noctis-indomitus/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Alisa: Echo",
+   "symbol": "assets/classes/Amplifier.png",
+   "portrait": "assets/characters/alisa-echo/Awaken - Alisa Echo.png",
+   "weapon": "assets/characters/alisa-echo/Arma - Alisa Echo.png",
+   "construct": "assets/cubs/dawn-chorus/CUB - Dawn Chorus.png",
+   "skills": [
+    "assets/cubs/dawn-chorus/CUB - Skill 1.png",
+    "assets/cubs/dawn-chorus/CUB - Skill 2.png",
+    "assets/cubs/dawn-chorus/CUB - Skill 3.png",
+    "assets/cubs/dawn-chorus/CUB - Skill 4.png",
+    "assets/cubs/dawn-chorus/CUB - Skill 5.png",
+    "assets/cubs/dawn-chorus/CUB - Skill 6.png"
+   ],
+   "signature": "Signa",
+   "element": "Physical",
+   "class": "Amplifier",
+   "skillArt": {
+    "Basic Attack": "assets/characters/alisa-echo/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/alisa-echo/skills/Blue Orb.png",
+    "Class": "assets/characters/alisa-echo/skills/Class.png",
+    "Core": "assets/characters/alisa-echo/skills/Core.png",
+    "QTE": "assets/characters/alisa-echo/skills/QTE.png",
+    "Red Orb": "assets/characters/alisa-echo/skills/Red Orb.png",
+    "Signature": "assets/characters/alisa-echo/skills/Signature.png",
+    "Yellow Orb": "assets/characters/alisa-echo/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Lamia: Lost Lullaby",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/lamia-lost-lullaby/Awaken - Lamia Lost Lullaby.png",
+   "weapon": "",
+   "construct": "assets/cubs/cetus/CUB - Cetus.png",
+   "skills": [
+    "assets/cubs/cetus/CUB - Skill 1.png",
+    "assets/cubs/cetus/CUB - Skill 2.png",
+    "assets/cubs/cetus/CUB - Skill 3.png",
+    "assets/cubs/cetus/CUB - Skill 4.png",
+    "assets/cubs/cetus/CUB - Skill 5.png",
+    "assets/cubs/cetus/CUB - Skill 6.png"
+   ],
+   "signature": "Derketo",
+   "element": "Dark",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/lamia-lost-lullaby/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/lamia-lost-lullaby/skills/Blue Orb.png",
+    "Class": "assets/characters/lamia-lost-lullaby/skills/Class.png",
+    "Core": "assets/characters/lamia-lost-lullaby/skills/Core.png",
+    "QTE": "assets/characters/lamia-lost-lullaby/skills/QTE.png",
+    "Red Orb": "assets/characters/lamia-lost-lullaby/skills/Red Orb.png",
+    "Signature": "assets/characters/lamia-lost-lullaby/skills/Signature.png",
+    "Yellow Orb": "assets/characters/lamia-lost-lullaby/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "BLACK★ROCK SHOOTER",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/blackrock-shooter/Awaken - BLACK★ROCK SHOOTER.png",
+   "weapon": "",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/blackrock-shooter/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/blackrock-shooter/skills/Blue Orb.png",
+    "Class": "assets/characters/blackrock-shooter/skills/Class.png",
+    "Core": "assets/characters/blackrock-shooter/skills/Core.png",
+    "QTE": "assets/characters/blackrock-shooter/skills/QTE.png",
+    "Red Orb": "assets/characters/blackrock-shooter/skills/Red Orb.png",
+    "Signature": "assets/characters/blackrock-shooter/skills/Signature.png",
+    "Yellow Orb": "assets/characters/blackrock-shooter/skills/Yellow Orb.png"
    }
   },
   {
@@ -115,6 +1578,34 @@ const CATALOG = {
    }
   },
   {
+   "name": "Teddy: Decryptor",
+   "symbol": "assets/classes/Support.png",
+   "portrait": "assets/characters/teddy-decryptor/Awaken - Teddy Decryptor.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Support",
+   "skillArt": {
+    "Basic Attack": "assets/characters/teddy-decryptor/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/teddy-decryptor/skills/Blue Orb.png",
+    "Class": "assets/characters/teddy-decryptor/skills/Class.png",
+    "Core": "assets/characters/teddy-decryptor/skills/Core.png",
+    "QTE": "assets/characters/teddy-decryptor/skills/QTE.png",
+    "Red Orb": "assets/characters/teddy-decryptor/skills/Red Orb.png",
+    "Signature": "assets/characters/teddy-decryptor/skills/Signature.png",
+    "Yellow Orb": "assets/characters/teddy-decryptor/skills/Yellow Orb.png"
+   }
+  },
+  {
    "name": "Luna: Oblivion",
    "symbol": "assets/classes/Annihilator.png",
    "portrait": "assets/characters/luna-oblivion/Awaken - Luna Oblivion.png",
@@ -140,6 +1631,34 @@ const CATALOG = {
     "Red Orb": "assets/characters/luna-oblivion/skills/Red Orb.png",
     "Signature": "assets/characters/luna-oblivion/skills/Signature.png",
     "Yellow Orb": "assets/characters/luna-oblivion/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Bridget: Ardeo",
+   "symbol": "assets/classes/Tanque.png",
+   "portrait": "assets/characters/bridget-ardeo/Awaken - Bridget Ardeo.png",
+   "weapon": "assets/characters/bridget-ardeo/Arma - Bridget (5).png",
+   "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
+   "skills": [
+    "assets/cubs/yuan-ye/CUB - Skill 1.png",
+    "assets/cubs/yuan-ye/CUB - Skill 2.png",
+    "assets/cubs/yuan-ye/CUB - Skill 3.png",
+    "assets/cubs/yuan-ye/CUB - Skill 4.png",
+    "assets/cubs/yuan-ye/CUB - Skill 5.png",
+    "assets/cubs/yuan-ye/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Fire",
+   "class": "Tank",
+   "skillArt": {
+    "Basic Attack": "assets/characters/bridget-ardeo/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/bridget-ardeo/skills/Blue Orb.png",
+    "Class": "assets/characters/bridget-ardeo/skills/Class.png",
+    "Core": "assets/characters/bridget-ardeo/skills/Core.png",
+    "QTE": "assets/characters/bridget-ardeo/skills/QTE.png",
+    "Red Orb": "assets/characters/bridget-ardeo/skills/Red Orb.png",
+    "Signature": "assets/characters/bridget-ardeo/skills/Signature.png",
+    "Yellow Orb": "assets/characters/bridget-ardeo/skills/Yellow Orb.png"
    }
   },
   {
@@ -224,6 +1743,34 @@ const CATALOG = {
     "Red Orb": "assets/characters/lucia-pyroath/skills/Red Orb.png",
     "Signature": "assets/characters/lucia-pyroath/skills/Signature.png",
     "Yellow Orb": "assets/characters/lucia-pyroath/skills/Yellow Orb.png"
+   }
+  },
+  {
+   "name": "Yata: Fulgor",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/yata-fulgor/Awaken - Yata Fulgor.png",
+   "weapon": "",
+   "construct": "assets/cubs/lingya/CUB - Lingya.png",
+   "skills": [
+    "assets/cubs/lingya/CUB - Skill 1.png",
+    "assets/cubs/lingya/CUB - Skill 2.png",
+    "assets/cubs/lingya/CUB - Skill 3.png",
+    "assets/cubs/lingya/CUB - Skill 4.png",
+    "assets/cubs/lingya/CUB - Skill 5.png",
+    "assets/cubs/lingya/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Lightning",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/yata-fulgor/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/yata-fulgor/skills/Blue Orb.png",
+    "Class": "assets/characters/yata-fulgor/skills/Class.png",
+    "Core": "assets/characters/yata-fulgor/skills/Core.png",
+    "QTE": "assets/characters/yata-fulgor/skills/QTE.png",
+    "Red Orb": "assets/characters/yata-fulgor/skills/Red Orb.png",
+    "Signature": "assets/characters/yata-fulgor/skills/Signature.png",
+    "Yellow Orb": "assets/characters/yata-fulgor/skills/Yellow Orb.png"
    }
   },
   {
@@ -339,6 +1886,34 @@ const CATALOG = {
    }
   },
   {
+   "name": "Jetavie: Daybreak",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/jetavie-daybreak/Awaken - Jetavie Daybreak.png",
+   "weapon": "",
+   "construct": "assets/cubs/noctua/CUB - Noctua.png",
+   "skills": [
+    "assets/cubs/noctua/CUB - Skill 1.png",
+    "assets/cubs/noctua/CUB - Skill 2.png",
+    "assets/cubs/noctua/CUB - Skill 3.png",
+    "assets/cubs/noctua/CUB - Skill 4.png",
+    "assets/cubs/noctua/CUB - Skill 5.png",
+    "assets/cubs/noctua/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Dark",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/jetavie-daybreak/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/jetavie-daybreak/skills/Blue Orb.png",
+    "Class": "assets/characters/jetavie-daybreak/skills/Class.png",
+    "Core": "assets/characters/jetavie-daybreak/skills/Core.png",
+    "QTE": "assets/characters/jetavie-daybreak/skills/QTE.png",
+    "Red Orb": "assets/characters/jetavie-daybreak/skills/Red Orb.png",
+    "Signature": "assets/characters/jetavie-daybreak/skills/Signature.png",
+    "Yellow Orb": "assets/characters/jetavie-daybreak/skills/Yellow Orb.png"
+   }
+  },
+  {
    "name": "Vera: Geiravor",
    "symbol": "assets/classes/Amplifier.png",
    "portrait": "assets/characters/vera-geiravor/Awaken - Vera-chan Geiravor.png",
@@ -451,6 +2026,34 @@ const CATALOG = {
    }
   },
   {
+   "name": "Discord: Secator",
+   "symbol": "assets/classes/Attacker.png",
+   "portrait": "assets/characters/discord-secator/Awaken - Discord Secator.png",
+   "weapon": "assets/characters/discord-secator/Arma - Discord (5).png",
+   "construct": "assets/cubs/thorny/CUB - Thorny.png",
+   "skills": [
+    "assets/cubs/thorny/CUB - Skill 1.png",
+    "assets/cubs/thorny/CUB - Skill 2.png",
+    "assets/cubs/thorny/CUB - Skill 3.png",
+    "assets/cubs/thorny/CUB - Skill 4.png",
+    "assets/cubs/thorny/CUB - Skill 5.png",
+    "assets/cubs/thorny/CUB - Skill 6.png"
+   ],
+   "signature": "",
+   "element": "Physical",
+   "class": "Attacker",
+   "skillArt": {
+    "Basic Attack": "assets/characters/discord-secator/skills/Basic Attack.png",
+    "Blue Orb": "assets/characters/discord-secator/skills/Blue Orb.png",
+    "Class": "assets/characters/discord-secator/skills/Class.png",
+    "Core": "assets/characters/discord-secator/skills/Core.png",
+    "QTE": "assets/characters/discord-secator/skills/QTE.png",
+    "Red Orb": "assets/characters/discord-secator/skills/Red Orb.png",
+    "Signature": "assets/characters/discord-secator/skills/Signature.png",
+    "Yellow Orb": "assets/characters/discord-secator/skills/Yellow Orb.png"
+   }
+  },
+  {
    "name": "Veronica: Aegis",
    "symbol": "assets/classes/Amplifier.png",
    "portrait": "assets/characters/veronica-aegis/Awaken - Veronica Aegis.png",
@@ -517,8 +2120,8 @@ const CATALOG = {
     "assets/characters/teddy-spectre/CUB - Skill 2.png",
     "assets/characters/teddy-spectre/CUB - Skill 3.png",
     "assets/characters/teddy-spectre/CUB - Skill 4.png",
-    "assets/characters/teddy-spectre/CUB - Skill 6.png",
-    "assets/characters/bianca-crepuscule/CUB - Skill 6.png"
+    "assets/characters/teddy-spectre/CUB - Skill 5.png",
+    "assets/characters/teddy-spectre/CUB - Skill 6.png"
    ],
    "signature": "Joanna",
    "element": "Ice",
@@ -841,10 +2444,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp"
     }
    ]
   },
@@ -869,10 +2468,6 @@ const CATALOG = {
    "type": "Scythe",
    "ranks": [
     {
-     "rank": "6",
-     "art": "assets/characters/ayla-brilliance/Arma - Ayla Brilliance (5).png"
-    },
-    {
      "rank": "5",
      "art": "assets/characters/ayla-brilliance/Arma - Ayla Brilliance (5).png"
     }
@@ -886,10 +2481,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png"
     }
    ]
   },
@@ -898,10 +2489,6 @@ const CATALOG = {
    "name": "Everburning Ray",
    "type": "Tactical Tonfas",
    "ranks": [
-    {
-     "rank": "6",
-     "art": "assets/characters/bridget-ardeo/Arma - Bridget (5).png"
-    },
     {
      "rank": "5",
      "art": "assets/characters/bridget-ardeo/Arma - Bridget (5).png"
@@ -916,10 +2503,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/chrome-glory/Arma - Chrome Glory.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/chrome-glory/Arma - Chrome Glory.png"
     }
    ]
   },
@@ -931,10 +2514,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/dante/Arma - Dante.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/dante/Arma - Dante.png"
     }
    ]
   },
@@ -943,10 +2522,6 @@ const CATALOG = {
    "name": "Spinebreaker",
    "type": "Scissors",
    "ranks": [
-    {
-     "rank": "6",
-     "art": "assets/characters/discord-secator/Arma - Discord (5).png"
-    },
     {
      "rank": "5",
      "art": "assets/characters/discord-secator/Arma - Discord (5).png"
@@ -961,10 +2536,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png"
     }
    ]
   },
@@ -975,10 +2546,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/hanying-zitherwoe/Arma - Hanying Zitherwoe.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/hanying-zitherwoe/Arma - Hanying Zitherwoe.png"
     }
    ]
@@ -991,10 +2558,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp"
     }
    ]
   },
@@ -1005,10 +2568,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png"
     }
    ]
@@ -1021,10 +2580,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png"
     }
    ]
   },
@@ -1035,10 +2590,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp"
     }
    ]
@@ -1051,10 +2602,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp"
     }
    ]
   },
@@ -1066,10 +2613,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/lee-hyperreal/Arma - Lee Hyperreal.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/lee-hyperreal/Arma - Lee Hyperreal.png"
     }
    ]
   },
@@ -1078,10 +2621,6 @@ const CATALOG = {
    "name": "Gloomlight",
    "type": "Dual Guns",
    "ranks": [
-    {
-     "rank": "6",
-     "art": "assets/characters/lee-palefire/Arma - Lee Palefire (5).png"
-    },
     {
      "rank": "5",
      "art": "assets/characters/lee-palefire/Arma - Lee Palefire (5).png"
@@ -1096,10 +2635,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png"
     }
    ]
   },
@@ -1110,10 +2645,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png"
     }
    ]
@@ -1126,10 +2657,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png"
     }
    ]
   },
@@ -1140,10 +2667,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp"
     }
    ]
@@ -1156,10 +2679,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp"
     }
    ]
   },
@@ -1170,10 +2689,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png"
     }
    ]
@@ -1186,10 +2701,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png"
     }
    ]
   },
@@ -1200,10 +2711,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp"
     }
    ]
@@ -1216,10 +2723,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/no21-feral/Arma No.21 Feral.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/no21-feral/Arma No.21 Feral.png"
     }
    ]
   },
@@ -1230,10 +2733,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/qu-shukra/Arma - Qu Shukra.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/qu-shukra/Arma - Qu Shukra.png"
     }
    ]
@@ -1246,10 +2745,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp"
     }
    ]
   },
@@ -1260,10 +2755,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/selena-pianissimo/Arma - Selena Pianissimo.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/selena-pianissimo/Arma - Selena Pianissimo.png"
     }
    ]
@@ -1276,10 +2767,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png"
     }
    ]
   },
@@ -1290,10 +2777,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/vera-geiravor/Arma - Vera Geiravor.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/vera-geiravor/Arma - Vera Geiravor.png"
     }
    ]
@@ -1306,10 +2789,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/vergil/Arma - Vergil.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/vergil/Arma - Vergil.png"
     }
    ]
   },
@@ -1320,10 +2799,6 @@ const CATALOG = {
    "ranks": [
     {
      "rank": "6",
-     "art": "assets/characters/veronica-aegis/Arma - Veronica Aegis.png"
-    },
-    {
-     "rank": "5",
      "art": "assets/characters/veronica-aegis/Arma - Veronica Aegis.png"
     }
    ]
@@ -1336,10 +2811,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png"
-    },
-    {
-     "rank": "5",
-     "art": "assets/characters/wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png"
     }
    ]
   },
@@ -1351,10 +2822,1289 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png"
+    }
+   ]
+  },
+  {
+   "owner": "Selena: Pianissimo",
+   "name": "Crowned Laurel",
+   "type": "Bowstring Rapier",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2lyreswordmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Wanshi: Lucid Dreamer",
+   "name": "Eternal Peace",
+   "type": "Revolver",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2revolvermd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Helentine: Lacrimosa",
+   "name": "Base Fog",
+   "type": "Folding Buzzsaw",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2chainsawmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Leia: Fortunaster",
+   "name": "Marrow's Glimmer",
+   "type": "Rhythmic Ray",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2gymnasticmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Inverse Crown",
+   "name": "BX-02M Fellfrost",
+   "type": "Cylinder Katana",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2ssalphamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Teddy: Spectre",
+   "name": "Skybound Beats",
+   "type": "Digital Warboots",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2shoesmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Luna: Oblivion",
+   "name": "Dark Moon",
+   "type": "Chakram",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2circlemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Rosetta: Arete",
+   "name": "Mirage Halberd",
+   "type": "Radiant Halberd",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2halberdmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nirvatia: Dirge",
+   "name": "Death's Plume",
+   "type": "Judgment Scythe",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2sicklemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Watanabe: Epitaph",
+   "name": "Pale Plume",
+   "type": "Trailblade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2sabremd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Vera: Geiravor",
+   "name": "Fiery Twilight",
+   "type": "Dual-Bladed Lance",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2bladespearmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Kamui: Aeternion",
+   "name": "Ray Slasher",
+   "type": "Kinetic Greatsword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2greatswordmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Pyroath",
+   "name": "Mist Netherlight",
+   "type": "Pyro Katana",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2tachiamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Limpidity",
+   "name": "Cyan Blossom",
+   "type": "Lotus Wheel",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2lotusblademd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nanami: Startrail",
+   "name": "Sparkle ZL-09 - Mod",
+   "type": "Shield Axe",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2swordaxemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bianca: Crepuscule",
+   "name": "Night Sunderer",
+   "type": "Lashblade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2chainswordmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Adelyde: Anabasis",
+   "name": "Abyss Forgefire",
+   "type": "Cross Cannon",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2heavycrossmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lilith: Daemonissa",
+   "name": "Glazed Enigma",
+   "type": "Moon Umbrella",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2brollymd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Kurumi Tokisaki",
+   "name": "Clock Hands",
+   "type": "Zafkiel: Dual Guns",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2kurumimd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Hanying: Solacetune",
+   "name": "Moonside Petal",
+   "type": "Pipa",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2pipamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Veronica: Aegis",
+   "name": "Skyradiance",
+   "type": "Lance",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2dragonlancemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Karenina: Effulgence",
+   "name": "Spindrift Shimmer",
+   "type": "Drift Anchor",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2anchormd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Eclipse",
+   "name": "Type Zero",
+   "type": "Levi-Gun",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e2floatmd060011.png"
     },
     {
      "rank": "5",
-     "art": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png"
+     "art": "assets/weapons/6stars/e2floatmd060011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lee: Palefire",
+   "name": "Wolf Fang",
+   "type": "Dual Guns",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3gunmd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Kamui: Bastion",
+   "name": "Big Kamui",
+   "type": "Greatsword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3claymoremd070011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3claymoremd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nanami: Storm",
+   "name": "Inverse - Chimera",
+   "type": "Saw",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sawmd070011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3sawmd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bianca: Zero",
+   "name": "Ramiel",
+   "type": "Bow",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3bowmd070011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3bowmd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Karenina: Blast",
+   "name": "Berserk Fusion",
+   "type": "Cannon",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sleevemd070011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3sleevemd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Watanabe: Nightblade",
+   "name": "Soul Ripper",
+   "type": "Dagger",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3daggermd070011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3daggermd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Lux",
+   "name": "Benediction",
+   "type": "Levi-Gun",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3floatmd080011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3floatmd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Dawn",
+   "name": "Inverse - Shadow",
+   "type": "Katana",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3swordmd080011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3swordmd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lee: Entropy",
+   "name": "Zero Scale",
+   "type": "Dual Guns",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3gunmd080011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3gunmd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Kamui: Tenebrion",
+   "name": "Darkness",
+   "type": "Greatsword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/Darkness.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/Darkness.png"
+    }
+   ]
+  },
+  {
+   "owner": "Karenina: Ember",
+   "name": "Fusion Dragon",
+   "type": "Cannon",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sleevemd080011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3sleevemd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nanami: Pulse",
+   "name": "Hydro Heat",
+   "type": "Saw",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sawmd080011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3sawmd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Crimson Abyss",
+   "name": "Sakura",
+   "type": "Katana",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3swordmd090011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3swordmd090011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Ayla: Brilliance",
+   "name": "Purple Peony",
+   "type": "Scythe",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sickmd070011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Watanabe: Astral",
+   "name": "Peacemaker",
+   "type": "Dagger",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3daggermd110011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3daggermd110011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bianca: Veritas",
+   "name": "Tonitrus",
+   "type": "Bow",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3bowmd080011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3bowmd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Sophia: Silverfang",
+   "name": "Scion",
+   "type": "Dual Guns",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3gunmd090011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3gunmd090011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Chrome: Arclight",
+   "name": "St. Elmo",
+   "type": "Scythe",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sickmd090011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3sickmd090011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Plume",
+   "name": "Crimson Birch",
+   "type": "Katana",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3swordmd130111p01.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3swordmd130111p01.png"
+    }
+   ]
+  },
+  {
+   "owner": "Vera: Rozen",
+   "name": "Sariel",
+   "type": "Katana",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3swordmd150111p01.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3swordmd150111p01.png"
+    }
+   ]
+  },
+  {
+   "owner": "Camu: Crocotta",
+   "name": "Glimpse",
+   "type": "Uniframe: Greatsword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2kamumd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Camu: Crocotta",
+   "name": "Thanatos",
+   "type": "Uniframe: Greatsword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3kamumd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Rosetta: Rigor",
+   "name": "RL-03C Black Spike",
+   "type": "Spear Shield",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2spearmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Rosetta: Rigor",
+   "name": "Gungnir",
+   "type": "Spear Shield",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3spearmd010011p01.png"
+    }
+   ]
+  },
+  {
+   "owner": "Qu: Pavo",
+   "name": "Guiyun",
+   "type": "Uniframe: Glaive",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2qumd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Changyu: Qilin",
+   "name": "White Qilin",
+   "type": "Gauntlets",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2glovemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Changyu: Qilin",
+   "name": "Baji",
+   "type": "Gauntlets",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3glovemd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Luna: Laurel",
+   "name": "Solar Ring",
+   "type": "Amplifier",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2ringmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Luna: Laurel",
+   "name": "Ozma",
+   "type": "Amplifier",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3ringmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "2B",
+   "name": "Virtuous Contract",
+   "type": "Katana & Greatsword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e22bmd010011.webp"
+    }
+   ]
+  },
+  {
+   "owner": "2B",
+   "name": "Virtuous Contract - Mod",
+   "type": "Katana & Greatsword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e32bmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "9S",
+   "name": "Cruel Oath - Mod",
+   "type": "Katana (NieR)",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e39smd010011p02.webp"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e39smd010011p02.webp"
+    }
+   ]
+  },
+  {
+   "owner": "A2",
+   "name": "Type-4O Lance",
+   "type": "Tactical Lance",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e3a2md010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "A2",
+   "name": "Type-4O Lance - Mod",
+   "type": "Tactical Lance",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3a2md010011p02.png"
+    }
+   ]
+  },
+  {
+   "owner": "Wanshi: Hypnos",
+   "name": "FA2D-AP",
+   "type": "Gun Set",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2riflemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Wanshi: Hypnos",
+   "name": "Scale",
+   "type": "Gun Set",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3riflemd010011p01.png"
+    }
+   ]
+  },
+  {
+   "owner": "Selena: Tempest",
+   "name": "Odette",
+   "type": "Uniframe: Cello Blade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2cellomd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Selena: Tempest",
+   "name": "Waldmeister",
+   "type": "Uniframe: Cello Blade",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3cellomd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Chrome: Glory",
+   "name": "Kara Type 1 Gunblade",
+   "type": "Gunblade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2gunblademd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "No.21: XXI",
+   "name": "Animus",
+   "type": "Co-Bot",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2ballrobotmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "No.21: XXI",
+   "name": "Snore",
+   "type": "Co-Bot",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3ballrobotmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Vera: Garnet",
+   "name": "Glorious Knight",
+   "type": "Banner Spear",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2lancemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Vera: Garnet",
+   "name": "Phoenix",
+   "type": "Banner Spear",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3lancemd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Roland: Flambeau",
+   "name": "Blooming Rose",
+   "type": "Uniframe: Chain Blade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2luolanmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Roland: Flambeau",
+   "name": "Durendal",
+   "type": "Uniframe: Chain Blade",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3luolanmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Empyrea",
+   "name": "Bipolar Star Rift",
+   "type": "Scepter",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2wandmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Empyrea",
+   "name": "Hestia",
+   "type": "Scepter",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/Hestia.png"
+    }
+   ]
+  },
+  {
+   "owner": "Selena: Capriccio",
+   "name": "Neapolitan Solo",
+   "type": "Flute Sword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2fluntmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Selena: Capriccio",
+   "name": "Sarastro",
+   "type": "Flute Sword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3fluntmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Pulao: Dragontoll",
+   "name": "Whitefrost Ruler",
+   "type": "Dragon Axe",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2boomerangmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Pulao: Dragontoll",
+   "name": "Infinity",
+   "type": "Uniframe: Dragon Axe",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3boomerangmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nanami: Starfarer",
+   "name": "Red Shift",
+   "type": "Mega Saw",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2cuttingmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nanami: Starfarer",
+   "name": "Implosion",
+   "type": "Mega Saw",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3cuttingmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Haicma: Starveil",
+   "name": "Galatea",
+   "type": "Scythe",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3sickmd100011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3sickmd100011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Karenina: Scire",
+   "name": "Despair Breaker",
+   "type": "Blast Hammer",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2hammermd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Karenina: Scire",
+   "name": "Illuminare",
+   "type": "Blast Hammer",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e2hammermd030011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Noan: Arca",
+   "name": "Progressive Knife",
+   "type": "Rev Blade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2nuoanmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Noan: Arca",
+   "name": "Prometheus",
+   "type": "Uniframe: Rev Blade",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3nuoanmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bianca: Stigmata",
+   "name": "Polar Night",
+   "type": "Swordstaff",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2bigswordmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bianca: Stigmata",
+   "name": "Hecate",
+   "type": "Swordstaff",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3bigswordmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bambinata: Vitrum",
+   "name": "Comet's Edge",
+   "type": "Mantis Blades",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2bangbinatamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bambinata: Vitrum",
+   "name": "Sound of Silence",
+   "type": "Mantis Blades",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3bangbinatamd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lee: Hyperreal",
+   "name": "Nuclear Meltdown δ",
+   "type": "Composite Armaments",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2superlimd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Ayla: Kaleido",
+   "name": "Dual Rainbows",
+   "type": "Beam Gunlance",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2beamlancemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Ayla: Kaleido",
+   "name": "Star Voyager",
+   "type": "Beam Gunlance",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3beamlancemd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Crimson Weave",
+   "name": "Red Sprite",
+   "type": "Daisho",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2alphamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Crimson Weave",
+   "name": "Nightblaze",
+   "type": "Daisho",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3alphamd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Hanying: Zitherwoe",
+   "name": "Returning Wind",
+   "type": "Folding Fan",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2fanmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "No.21: Feral",
+   "name": "Trio-Claws",
+   "type": "Claw Blades",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2clawmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Noctis: Indomitus",
+   "name": "FPT-II - Mod",
+   "type": "Robotic Arm",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2armmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Noctis: Indomitus",
+   "name": "Crimson Howl",
+   "type": "Robotic Arm",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3armmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lamia: Lost Lullaby",
+   "name": "Reversal Node",
+   "type": "Halberd Blade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2lamiyamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lamia: Lost Lullaby",
+   "name": "Metis",
+   "type": "Halberd Blade",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3lamiyamd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "BLACK★ROCK SHOOTER",
+   "name": "Rock Cannon",
+   "type": "Bladed Cannon",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e3rockcannon5md010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Qu: Shukra",
+   "name": "Phoenix Edge",
+   "type": "Longsword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2jianmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Teddy: Decryptor",
+   "name": "White Night's Noise",
+   "type": "Tactical Headphones",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2headsetmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Teddy: Decryptor",
+   "name": "Hacker's Tune",
+   "type": "Tactical Headphones",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3headsetmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Bridget: Ardeo",
+   "name": "Cestus",
+   "type": "Tactical Tonfas",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3tonfamd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Yata: Fulgor",
+   "name": "Raijin",
+   "type": "Powered Arms",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2packmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Yata: Fulgor",
+   "name": "Fudo Myo-o",
+   "type": "Powered Arms",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3packmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Ishmael: Parhelion",
+   "name": "Celestial Reflection",
+   "type": "Keystaff",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2keywandmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Jetavie: Daybreak",
+   "name": "Lethal Shadow",
+   "type": "Fusion Gunsword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2pistolmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Jetavie: Daybreak",
+   "name": "Final Arbiter",
+   "type": "Fusion Gunsword",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3pistolmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Vergil",
+   "name": "Yamato - Kageuchi",
+   "type": "Yamato",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2vyamatomd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Dante",
+   "name": "Devil Hunter Sword",
+   "type": "Devil Sword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e3ddevilsworddantemd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Discord: Secator",
+   "name": "Osseous Guillotine",
+   "type": "Scissors",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3shearsmd010011.png"
     }
    ]
   }

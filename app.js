@@ -200,8 +200,7 @@ const TEDDY_KIT = {
   name: "Teddy: Spectre", symbol: classIcon("Amplifier"), portrait: `${TEDDY}/Awaken - Teddy Spectre.png`,
   weapon: `${TEDDY}/Arma - Teddy Spectre.png`, matrix: matrix(SAR, GS, INC),
   resonance: ALL_ATK, core: `${TEDDY}/Skill - Signature HD.png`, construct: `${TEDDY}/CUB - Beep-Boop.png`,
-  // Order as in the reference image: slot 5 is Teddy's Skill 6, slot 6 is Bianca's Skill 6
-  skills: [...cubSkills(TEDDY).slice(0, 4), `${TEDDY}/CUB - Skill 6.png`, `${CHARS}/bianca-crepuscule/CUB - Skill 6.png`]
+  skills: cubSkills(TEDDY)
 };
 const LEIA_KIT = {
   name: "Leia: Fortunaster", symbol: classIcon("Breaker"), portrait: `${LEIA}/Awaken - Leia Fortunaster.png`,
@@ -583,16 +582,29 @@ function iconName(src = "") {
   if (file.startsWith("Skill - Core")) return "Core Passive";
   if (file.startsWith("Skill - Class")) return "Class Skill";
   const name = file.replace(/^(Memoria|Ressonancia de Arma|Ressonancia|CUB) - /, "").replace(/ (HD|1-4|2-5|3-6)$/, "");
-  const skill = name.match(/^Skill (\d)$/);
+  const skill = name.match(/^Skill (\d)$/), active = name.match(/^Active (\w+)$/);
+  if (active) return swapElement(cubSkill(src, 1)?.[0], active[1]) || `CUB ${name}`;
   return skill ? cubSkill(src, skill[1])?.[0] || `CUB ${name}` : name;
 }
 const cubSkill = (src, n) => CUB_SKILLS[src.split("/").at(-2)]?.[n - 1];
+// The Active skill of a C.U.B. takes the element of whoever carries it: its icon, name and text change. The texts are
+// written for one element: only the element tags ("Skill Name: Fire", "Skill Name - Fire") and "<element> DMG" are swapped,
+// never a word inside a skill name, and the numbers stay the same in every element
+const CUB_ELEMENT_SPOT = new RegExp(String.raw`(?<=[:-] )(?:${CUB_ELEMENTS.join("|")})\b|\b(?:${CUB_ELEMENTS.join("|")})(?= DMG)`, "g");
+const swapElement = (text = "", element) => CUB_ELEMENTS.includes(element) ? text.replace(CUB_ELEMENT_SPOT, element) : text;
+// The icon of "CUB - Skill 1" for that element, when the C.U.B. has one
+const cubActiveFor = (src, element) => src && CUB_ELEMENTS.includes(element) && CUB_ACTIVE.includes(src.split("/").at(-2))
+  ? src.replace(/CUB - Skill 1\.(\w+)$/, `CUB - Active ${element}.$1`) : src;
+// The skills a card shows: the Active one in the element of the character in the card
+const cardSkills = c => (c.skills || []).map(src => cubActiveFor(src, CONSTRUCTS[c.name]?.[1]));
 // "active" is how many pieces of this set a card wears: the bonuses it reaches start with a check mark, which the tooltip draws highlighted
 const memoryInfo = (name, active = 0) => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2 <= active ? "✓ " : ""}${(i + 1) * 2} pcs: ${text}`).join("\n\n");
 // What an icon does, when known: shown under its name
 function iconInfo(src = "") {
   const memory = src.match(/Memoria - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
+  const active = src.match(/CUB - Active (\w+)\.\w+$/)?.[1];
   if (memory) return memoryInfo(memory);
+  if (active) return swapElement(cubSkill(src, 1)?.[1], active);
   if (skill) return cubSkill(src, skill)?.[1] || "";
   return RESONANCE_EFFECTS[iconName(src)] || MEMORY_RESONANCE_EFFECTS[iconName(src)] || "";
 }
@@ -625,6 +637,9 @@ const STAR_BARS = {
 const STARS_BAR = STAR_BARS[6], WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", BAR_RATIO = 230 / 2048;
 const starOverlay = rank => pic(STAR_BARS[rank] || STARS_BAR, `class="stars" alt="${rank || 6} stars"`);
 const STARS = starOverlay(6);
+// A rank A C.U.B. has 5 stars, an S rank one 6 (EXTRA_CUBS lists the rank A ones)
+const CUB_RANK_A = new Set(EXTRA_CUBS.filter(c => c[2] === "A").map(([name, , , , dir]) => `${dir}/CUB - ${name}.png`));
+const cubStars = art => CUB_RANK_A.has(art) ? starOverlay(5) : STARS;
 // The weapon icon gets one blue down chevron per weapon resonance filled in (0-3), filled from the top down. Each entry is the chevron's start point, [x, y]; the same shape is drawn in the exported image
 const HARMONY_CHEVRONS = [[2, 2], [2, 10], [2, 18]];
 const harmonyChevrons = count => HARMONY_CHEVRONS.slice(0, count);
@@ -840,7 +855,7 @@ function card(c) {
         <div class="res"><span>6×</span>${skillSlot(c.resonance)}<span>6×</span>${skillSlot(c.core)}</div>
       </div>
     </div>
-    <div class="box kit">${slot(c.construct, "C.U.B.", STARS, undefined, cub)}${n(6, i => numbered((c.skills || [])[i], i + 1, cub, (c.skillsOff || [])[i])).join("")}</div>
+    <div class="box kit">${slot(c.construct, "C.U.B.", cubStars(c.construct), undefined, cub)}${n(6, i => numbered(cardSkills(c)[i], i + 1, cub, (c.skillsOff || [])[i])).join("")}</div>
     ${cardNotes(c)}
     </div><i class="bar bar-top"></i><i class="bar bar-bot"></i><div class="tags">${tags}</div>
   </article>`;
@@ -981,6 +996,16 @@ $("#main").addEventListener("click", e => {
   if (note) return showNote(note);
   // Team Builder cards are for editing: clicks there place and clear pieces instead of enlarging the card
   if (c && !e.target.closest("a") && !c.closest(".ed-live")) openFocus(c);
+});
+$("#main").addEventListener("click", e => {
+  const tab = e.target.closest("[data-cub-element]");
+  if (!tab) return;
+  const box = tab.closest(".cub-active");
+  for (const other of box.querySelectorAll("[data-cub-element]")) {
+    other.classList.toggle("on", other === tab);
+    other.setAttribute("aria-pressed", String(other === tab));
+  }
+  for (const block of box.querySelectorAll(".cub-skill")) block.hidden = block.dataset.element !== tab.dataset.cubElement;
 });
 $("#main").addEventListener("click", e => {
   const filter = e.target.closest("[data-filter]");
@@ -1206,18 +1231,21 @@ function home() {
 let shown = "", chosen = "";
 // Every build of a page, flat: a composition with variants gives one per variant
 const pageBuilds = path => PAGES[path].flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name, cards: COMPS[id].cards }])
-  .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, cards: v.cards })));
+  .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, author: v.author, date: v.date, cards: v.cards })));
+// "2026-11-15" as "Nov 15, 2026"; empty for a build without a date
+const postedOn = date => /^\d{4}-\d\d-\d\d$/.test(date || "") ? new Date(date + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "";
+const byLine = (author, date) => [author && `by ${esc(author)}`, postedOn(date) && `<time datetime="${esc(date)}">${postedOn(date)}</time>`].filter(Boolean).join(" · ");
 // The patch and the group, without repeating the patch when a build has no group of its own
 const buildTags = (comp, group, key) => `${key ? `<i class="new">New</i>` : ""}${[COMPS[comp].name, group !== COMPS[comp].name && group].filter(Boolean).map(t => `<i>${esc(t)}</i>`).join("")}`;
 function listRow(path, b) {
   const { name: patch } = COMPS[b.comp];
   // The captain leads the row, as the build's main character
   const main = b.cards.find(c => /\bcaptain\b/.test(c.role)) || b.cards[0], mates = b.cards.filter(c => c !== main);
-  const search = [b.name, patch, b.group, ...b.cards.map(c => c.name)].filter(Boolean).join(" ").toLowerCase();
+  const search = [b.name, patch, b.group, b.author, ...b.cards.map(c => c.name)].filter(Boolean).join(" ").toLowerCase();
   const key = isNewTeam(b.comp) && `row:${b.variant || b.comp}`, tag = key && !isSeen(key) ? key : "";
   return `<a class="brow" href="${buildHref(path, b.variant || b.comp)}" data-search="${esc(search)}"${tag ? ` data-new="${esc(tag)}"` : ""}>
     <span class="brow-art">${main.portrait ? pic(main.portrait) : ""}</span>
-    <span class="brow-tx"><b>${esc(b.name)}</b>
+    <span class="brow-tx"><b>${esc(b.name)}</b>${b.author || b.date ? `<span class="brow-by">${byLine(b.author, b.date)}</span>` : ""}
       <small><em>${esc(main.name)}</em> with ${mates.map(c => esc(c.name.split(":")[0])).join(" and ")}</small>
       <span class="brow-tags">${buildTags(b.comp, b.group, tag)}</span></span>
   </a>`;
@@ -1254,9 +1282,9 @@ function team(path, pick) {
   if (pick) {
     const back = `<div class="backs"><a class="back" href="/${path}">‹ ${esc(list)} builds</a></div>`;
     if (!shown) return `${back}<p class="empty">Build not found.</p>`;
-    const name = pickedVariant(shown)?.name || COMPS[shown].name, group = pickedVariant(shown)?.group;
+    const v = pickedVariant(shown), name = v?.name || COMPS[shown].name, by = byLine(v?.author, v?.date);
     return `<div id="noticeBox">${teamNotice(shown)}</div>${back}<h1>${esc(name)}</h1>
-      <p class="sub">${esc(list)} · ${TEAM_LISTS[kind].label}</p><p class="brow-tags build-tags">${buildTags(shown, group, "")}</p>
+      <p class="sub">${esc(list)} · ${TEAM_LISTS[kind].label}</p>${by ? `<p class="brow-by">${by}</p>` : ""}<p class="brow-tags build-tags">${buildTags(shown, v?.group, "")}</p>
       <div id="compBox">${compBody(shown)}</div>`;
   }
   const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
@@ -1280,7 +1308,9 @@ const sortQuery = table => ({ sort: tableSort[table] === SORT_DEFAULT[table] ? "
 // Weapons page: filter by rank (4, 5 or 6 stars). It goes in the address (?stars=6) next to the element tab and the sort
 let weaponStars = "";
 const weaponStarList = () => [...new Set(WEAPONS.map(w => weaponRank(w[1], w[3], w[5])))].sort((a, b) => b - a);
-const weaponRows = tab => WEAPONS.filter(w => (tab === "All" || CONSTRUCTS[w[0]]?.[1] === tab)
+// A weapon's frame: the owner in its row, or the one the site lists for it
+const weaponOwner = ([owner, name]) => owner || FIVE_STAR_WEAPON_OWNERS[name];
+const weaponRows = tab => WEAPONS.filter(w => (tab === "All" || CONSTRUCTS[weaponOwner(w)]?.[1] === tab)
   && (!weaponStars || weaponRank(w[1], w[3], w[5]) === Number(weaponStars)));
 const weaponStarBar = () => `<div class="sortbar star-filter" id="starFilter" role="group" aria-label="Weapon rank"><span>Rank</span>${["", ...weaponStarList()].map(n =>
   `<button class="tool${String(n) === weaponStars ? " on" : ""}" data-stars="${n}" aria-pressed="${String(n) === weaponStars}">${n ? `${n}<b class="star s${n}">★︎</b>` : "All"}</button>`).join("")}</div>`;
@@ -1329,7 +1359,7 @@ const SORT_TABLES = {
   // Character-bound weapons follow their frame's release; standalone weapons sort after them
   weapons: { columns: ["ATK", "CRIT"], release: true, row: weapon => weaponRow(weapon), name: ([, name]) => name,
     // A weapon with no frame comes after them, the higher stars first
-    value: ([owner, name, , file, , rank], column) => column === "Release" ? CONSTRUCTS[owner]?.[0] ?? weaponRank(name, file, rank) / 100 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
+    value: ([owner, name, , file, , rank], column) => column === "Release" ? CONSTRUCTS[weaponOwner([owner, name])]?.[0] ?? weaponRank(name, file, rank) / 100 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
   // Same for a CUB. They all have the same ATK, so no stat column
   cubs: { columns: [], plain: ["Recommended user", "Element"], release: true, row: cub => cubRow(cub), name: cub => cub.name, value: cub => CONSTRUCTS[cub.owner]?.[0] ?? 0 },
   resonances: { columns: [], row: resonance => resonanceRow(resonance), name: ([name]) => name, noRelease: true }
@@ -1490,12 +1520,19 @@ const cubRow = cub => `<tr>
     <td><div class="mt-name"><div class="mt-art cub-art">${thumb(cub.art, cub.rank === "A" ? starOverlay(5) : STARS)}</div>
       <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small><span class="desk">Rank ${cub.rank}</span><span class="mob">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank}`} · ${esc(cub.element)}</span></small></div></div></td>
     <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${CUB_PATCH[cub.name] ? `<td class="txt rel" data-label="Release">${esc(CUB_PATCH[cub.name])}</td>` : patchCell(cub.owner)}</tr>`;
+// The Active skill with a picker for the element it is cast in: one block per element, only the chosen one shown
+function activeSkill(cub, folder, name, effect) {
+  const ext = cub.skills[0]?.match(/\.(\w+)$/)?.[1] || "png", chosen = CUB_ELEMENTS.includes(cub.element) ? cub.element : CUB_ELEMENTS[0];
+  const tab = element => `<button type="button" class="el-tab${element === chosen ? " on" : ""}" data-cub-element="${element}" aria-pressed="${element === chosen}" aria-label="${element}">${thumb(`${cub.art.split("/").slice(0, -1).join("/")}/CUB - Active ${element}.${ext}`)}</button>`;
+  return `<div class="cub-active"><div class="el-tabs" role="group" aria-label="Element of the carrier">${CUB_ELEMENTS.map(tab).join("")}</div>${CUB_ELEMENTS.map(element =>
+    `<div class="cub-skill" data-element="${element}"${element === chosen ? "" : " hidden"}>${thumb(`${cub.art.split("/").slice(0, -1).join("/")}/CUB - Active ${element}.${ext}`)}<div><h2>${esc(swapElement(name, element))}</h2>${describe(swapElement(effect, element))}</div></div>`).join("")}</div>`;
+}
 function cubPage(cub) {
   const folder = cub.art.split("/").at(-2), skills = CUB_SKILLS[folder] || [];
   // Some builds show their CUB skills in another order, so each icon is found by its file number
   const icon = i => cub.skills.find(src => src.includes(`${folder}/CUB - Skill ${i + 1}.`));
   return `${backLink("/assets/cubs", "C.U.B.s")}<h1>${esc(cub.name)}</h1><p class="sub">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank} C.U.B.`} · ${esc(cub.element)}</p>
-    <div class="detail wpn-detail">${thumb(cub.art)}<div class="fx">${skills.map(([name, effect], i) =>
+    <div class="detail wpn-detail">${thumb(cub.art)}<div class="fx">${skills.map(([name, effect], i) => i === 0 && CUB_ACTIVE.includes(folder) ? activeSkill(cub, folder, name, effect) :
       `<div class="cub-skill">${icon(i) ? thumb(icon(i)) : ""}<div><h2>${esc(name)}</h2>${describe(effect)}</div></div>`).join("") || "<p>No skill text yet.</p>"}</div></div>
     ${cub.owner ? usedBy([cub.owner]) : usedIn(c => c.construct === cub.art)}`;
 }
@@ -2527,7 +2564,8 @@ function addCommunity(list) {
       (PAGES[team.page] ||= []).push(comp);
     }
     const author = typeof item.author === "string" ? item.author.slice(0, 32) : "";
-    COMPS[comp].variants.push({ id, name: team.name.trim() || "Untitled team", group: author ? `by ${author}` : undefined, cards });
+    const date = Number.isFinite(item.created) ? new Date(item.created).toISOString().slice(0, 10) : undefined;
+    COMPS[comp].variants.push({ id, name: team.name.trim() || "Untitled team", author: author || undefined, date, cards });
     added++;
   }
   return added;
@@ -2938,7 +2976,7 @@ const loadImage = src => new Promise(done => {
   img.src = web(src);
 });
 const cardArt = c => [c.symbol, c.portrait, rankArt(c), c.weapon, c.resonance, c.core, c.construct, c.wh && memFile(c.wh, "WH", "png"),
-  ...(c.memories || []), ...(c.matrix || []), ...(c.skills || [])].filter(src => src?.startsWith("assets/"));
+  ...(c.memories || []), ...(c.matrix || []), ...cardSkills(c)].filter(src => src?.startsWith("assets/"));
 function drawArt(g, img, x, y, w, h, { fit = "cover", zoom = 1, ox = 50, oy = 50 } = {}) {
   if (!img) return;
   const r = (fit === "cover" ? Math.max : Math.min)(w / img.width, h / img.height), dw = img.width * r, dh = img.height * r;
@@ -3076,7 +3114,7 @@ function drawCard(g, c, art, cardColor, x, y, flare) {
   for (let i = 0; i < 6; i++) {
     const cx = left + pad + cubW + gap + i * (unit + gap);
     drawSlot(g, cx, kitY + pad, unit, unit);
-    drawArt(g, art.get((c.skills || [])[i]), cx, kitY + pad, unit, unit);
+    drawArt(g, art.get(cardSkills(c)[i]), cx, kitY + pad, unit, unit);
     if ((c.skillsOff || [])[i]) {
       g.fillStyle = "#000000b8";
       g.fillRect(cx, kitY + pad, unit, unit);

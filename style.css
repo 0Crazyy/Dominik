@@ -135,6 +135,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .brow-art img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
 .brow-tx{display:grid;align-content:center;gap:4px;min-width:0;padding:8px 0}
 .brow-tx b{font:700 16px "Quantico";overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow-by{font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .brow-tx small{font-size:13px;color:var(--mute)}
 .brow-tx em{font-style:normal;color:#c4c4ca}
 .brow-tags{display:flex;flex-wrap:wrap;gap:5px}
@@ -715,6 +716,13 @@ a.slot:hover{border-color:#fff}
 .cub-skill{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:start}
 .cub-skill+.cub-skill{margin-top:14px}
 .cub-skill .slot{aspect-ratio:1}
+.cub-skill[hidden]{display:none}
+.el-tabs{display:flex;gap:6px;margin-bottom:12px}
+.el-tab{all:unset;box-sizing:border-box;width:44px;cursor:pointer;opacity:.55;border-radius:8px;outline:2px solid transparent;outline-offset:1px}
+.el-tab:hover{opacity:.85}
+.el-tab.on{opacity:1;outline-color:var(--red)}
+.el-tab:focus-visible{outline-color:currentColor}
+.el-tab .slot{aspect-ratio:1}
 .skills{display:grid;gap:12px;max-width:1000px}
 .skills .fx{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:start;padding:16px;background:var(--panel);border:1px solid var(--line)}
 .skills .slot{aspect-ratio:1}

@@ -157,6 +157,7 @@ const OTHER_WEAPONS = [
   ["", "Crimson Birch", "Katana", "assets/weapons/6stars/e3swordmd130111p01.png", "Ice DMG increases by 15%. All DMG increases by 10% for 5s after a 3-Ping.", 6],
   ["", "Crimson Howl", "Robotic Arm", "assets/weapons/6stars/e3armmd010011.png", "ATK increases by 10%. Noctis: Indomitus gains 120 Energy each time upon entering battle. Immediately gains a Blast Orb after casting Signature - Magnetic Blast.", 6],
   ["", "Cruel Oath - Mod", "Katana (NieR)", "assets/weapons/6stars/e39smd010011p02.webp", "Increases Physical DMG and Healing effects by 15%, also doubles the effects of Leader Skill. After triggering Overclock Indicator, swapping cooldown for 2B and A2 decreases by 1s and they gain 1 random Signal Orb.", 6],
+  ["", "Darkness", "Greatsword", "assets/weapons/6stars/Darkness.png", "After a 3-Ping, Physical DMG and Dark DMG dealt increase by 20% for 5s. Duration resets every time it is triggered.", 6],
   ["", "Dragon Wind", "Levi-Gun", "assets/weapons/6stars/e3floatmd090011.png", "Basic Attacks have a 10% chance to inflict Frail, reducing the target's ATK by 10% for 5s. Duration resets every time it is triggered. Attacking a Frail enemy has a 10% chance to restore 1 Signal Orb. 6s cooldown.", 6],
   ["", "Durendal", "Uniframe: Chain Blade", "assets/weapons/6stars/e3luolanmd010011.png", "Fire DMG increases by 10%. The cooldown between consecutive dodging is removed. After dodging a damage, accumulates 1 Combo 2 - Dazzling Blade, which can be cast directly toward the direction of the joystick by tapping the White Orb. Also increases Extra DMG Bonus by 10% for 8s. During Apex of Trickery, the Deception Points generated from this combo are converted into 10 Trickery Points instead.", 6],
   ["", "Final Arbiter", "Fusion Gunsword", "assets/weapons/6stars/e3pistolmd010011.png", "ATK increases by 10%. Returns 1 Cluster Orb for every 3 Cluster Orbs consumed. Extra DMG Bonus of Reflection Chain and Flaming Gush increases by 20%.", 6],
@@ -166,6 +167,7 @@ const OTHER_WEAPONS = [
   ["", "Gungnir", "Spear Shield", "assets/weapons/6stars/e3spearmd010011p01.png", "Damaging a target will reduce their Physical DEF by 20% for 8s. The duration is refreshed each time this effect is triggered. Dealing damage with small/medium/wide-area electromagnetic beam also applies a damage over time effect for 8s, dealing Physical DMG equal to 25%/50%/100% of ATK every second.", 6],
   ["", "Hacker's Tune", "Tactical Headphones", "assets/weapons/6stars/e3headsetmd010011.png", "ATK increases by 10%. Base DMG of Signal Orbs and Stress Orbs increases by 30%. When Teddy: Decryptor enters the battlefield while she is not in Analysis Mode, she will enter Analysis Mode automatically and gain 40 Analysis Points if she has full Signature Energy. Otherwise, she gains 100 Signature Energy.", 6],
   ["", "Hecate", "Swordstaff", "assets/weapons/6stars/e3bigswordmd010011.png", "CRIT DMG increases by 30%. Upon entering the Sword Form, immediately gains 20 stacks of Stigmata Will and activates the Resolution status.", 6],
+  ["", "Hestia", "Scepter", "assets/weapons/6stars/Hestia.png", "Liv: Empyrea gains 10% more ATK. Every time she enters the battlefield, she gains 50% Prayer. Fire DMG Bonus of Purity Oath against enemies affected by White Oracle increases by 20% (up to 100%).", 6],
   ["", "Hydro Heat", "Saw", "assets/weapons/6stars/e3sawmd080011.png", "Attacks have a 10% chance to reduce the target's Fire Resistance by 5% for 5s. 8s cooldown against the same target. A Signature Move increases Fire DMG by 20% and doubles the chance of reducing the target's Resistance.", 6],
   ["", "Illuminare", "Blast Hammer", "assets/weapons/6stars/e2hammermd030011.png", "The Chain Fusion effect applied by Karenina: Scire increases by 10%. Each time Karenina casts Radiant Whirlwind, she recovers 1 Energy. The Extra DMG Bonus of Leap Attack increases by 20%.", 6],
   ["", "Implosion", "Mega Saw", "assets/weapons/6stars/e3cuttingmd010011.png", "Fire DMG increases by 15%. When Nanami: Starfarer is on standby, her teammates' every 3-Ping will restore 12 Signature Energy for her. Missiles will inflict Scorching Invasion upon hitting the target: reduces 15% Fire Resistance for 8s. When Nanami: Starfarer triggers the QTE, if there is Missile Support on the field, the duration of Missile Support will be refreshed.", 6],
@@ -341,6 +343,7 @@ const FIVE_STAR_WEAPON_OWNERS = {
   "Crimson Birch": "Lucia: Plume",
   "Crimson Howl": "Noctis: Indomitus",
   "Cruel Oath - Mod": "9S",
+  "Darkness": "Kamui: Tenebrion",
   "Devil Sword Dante": "Dante",
   "Durendal": "Roland: Flambeau",
   "Final Arbiter": "Jetavie: Daybreak",
@@ -350,6 +353,7 @@ const FIVE_STAR_WEAPON_OWNERS = {
   "Gungnir": "Rosetta: Rigor",
   "Hacker's Tune": "Teddy: Decryptor",
   "Hecate": "Bianca: Stigmata",
+  "Hestia": "Liv: Empyrea",
   "Hydro Heat": "Nanami: Pulse",
   "Illuminare": "Karenina: Scire",
   "Implosion": "Nanami: Starfarer",
@@ -544,10 +548,10 @@ const WEAPON_STATS = {
 // Stats of OTHER_WEAPONS: [ATK, CRIT]. Source: https://huaxu.app/na/wiki/weapons
   "Apollo": [445, 254], "Baji": [467, 236], "Benediction": [423, 245],
   "Berserk Fusion": [458, 249], "Big Kamui": [436, 230], "Crimson Birch": [463, 234],
-  "Crimson Howl": [436, 249], "Cruel Oath - Mod": [445, 254], "Devil Sword Dante": [436, 249],
+  "Crimson Howl": [436, 249], "Cruel Oath - Mod": [445, 254], "Darkness": [445, 226], "Devil Sword Dante": [436, 249],
   "Dragon Wind": [406, 253], "Durendal": [467, 249], "Final Arbiter": [436, 244],
   "Fudo Myo-o": [436, 244], "Fusion Dragon": [450, 253], "Galatea": [480, 236],
-  "Gungnir": [458, 230], "Hacker's Tune": [436, 241], "Hecate": [471, 249],
+  "Gungnir": [458, 230], "Hacker's Tune": [436, 241], "Hecate": [471, 249], "Hestia": [476, 249],
   "Hydro Heat": [436, 230], "Illuminare": [458, 249], "Implosion": [467, 236],
   "Infinity": [463, 269], "Inverse - Chimera": [425, 235], "Inverse - Shadow": [445, 226],
   "Metis": [458, 249], "Nightblaze": [484, 241], "Ozma": [480, 261],
@@ -946,28 +950,33 @@ const CUB_SKILLS = {
 // Their skills are in CUB_SKILLS above, by the last part of the folder. Source: https://huaxu.app/na/wiki/cubs
 const EXTRA_CUBS = [
   ["Yuan Ye", "", "A", "Fire", "assets/cubs/yuan-ye", true],
-  ["Noctua", "", "A", "Dark", "assets/cubs/noctua", false],
-  ["Seeshell", "", "A", "Ice", "assets/cubs/seeshell", false],
+  ["Noctua", "", "A", "Dark", "assets/cubs/noctua", true],
+  ["Seeshell", "", "A", "Ice", "assets/cubs/seeshell", true],
   ["Lingya", "", "A", "Lightning", "assets/cubs/lingya", true],
   ["Thorny", "", "A", "Physical", "assets/cubs/thorny", true],
-  ["Toniris", "Bianca: Veritas", "S", "Lightning", "assets/cubs/toniris", false],
-  ["Frost Oath", "Rosetta: Rigor", "S", "Physical", "assets/cubs/frost-oath", false],
-  ["Nitor", "Karenina: Ember", "S", "Fire", "assets/cubs/nitor", false],
+  ["Toniris", "Bianca: Veritas", "S", "Lightning", "assets/cubs/toniris", true],
+  ["Frost Oath", "Rosetta: Rigor", "S", "Physical", "assets/cubs/frost-oath", true],
+  ["Nitor", "Karenina: Ember", "S", "Fire", "assets/cubs/nitor", true],
   ["Boreas", "Chrome: Glory", "S", "Ice", "assets/characters/chrome-glory", true],
-  ["Jet Jaeger", "Nanami: Starfarer", "S", "Fire", "assets/cubs/jet-jaeger", false],
-  ["Moonhopper", "Karenina: Scire", "S", "Dark", "assets/cubs/moonhopper", false],
-  ["Shimmer", "Bianca: Stigmata", "S", "Physical", "assets/cubs/shimmer", false],
+  ["Jet Jaeger", "Nanami: Starfarer", "S", "Fire", "assets/cubs/jet-jaeger", true],
+  ["Moonhopper", "Karenina: Scire", "S", "Dark", "assets/cubs/moonhopper", true],
+  ["Shimmer", "Bianca: Stigmata", "S", "Physical", "assets/cubs/shimmer", true],
   ["Punchy", "Lee: Hyperreal", "S", "Fire", "assets/characters/lee-hyperreal", true],
-  ["Rainbow", "Ayla: Kaleido", "S", "Ice", "assets/cubs/rainbow", false],
-  ["Motorbolt", "Lucia: Crimson Weave", "S", "Lightning", "assets/cubs/motorbolt", false],
+  ["Rainbow", "Ayla: Kaleido", "S", "Ice", "assets/cubs/rainbow", true],
+  ["Motorbolt", "Lucia: Crimson Weave", "S", "Lightning", "assets/cubs/motorbolt", true],
   ["Hades Fangs", "No.21: Feral", "S", "Lightning", "assets/characters/no21-feral", true],
-  ["Dawn Chorus", "Alisa: Echo", "S", "Physical", "assets/cubs/dawn-chorus", false],
-  ["Cetus", "Lamia: Lost Lullaby", "S", "Dark", "assets/cubs/cetus", false],
+  ["Dawn Chorus", "Alisa: Echo", "S", "Physical", "assets/cubs/dawn-chorus", true],
+  ["Cetus", "Lamia: Lost Lullaby", "S", "Dark", "assets/cubs/cetus", true],
   ["Diamaton", "Ishmael: Parhelion", "S", "Nihil", "assets/characters/ishmael-parhelion", true],
   ["Huiyu", "Qu: Shukra", "S", "Ice", "assets/characters/qu-shukra", true],
   ["Mirage Blades", "Vergil", "S", "Physical", "assets/characters/vergil", true],
   ["Cavaliere", "Dante", "S", "Fire", "assets/characters/dante", true]
 ];
+
+// C.U.B.s with the Active skill icon in every element: "CUB - Active <element>.<ext>" next to "CUB - Skill 1". In the game the Active skill
+// takes the element of the character carrying the C.U.B., and so does its name and text (see cubActiveFor in app.js)
+const CUB_ELEMENTS = ["Fire", "Ice", "Lightning", "Dark", "Physical", "Nihil"];
+const CUB_ACTIVE = ["adelyde-anabasis", "bianca-crepuscule", "cetus", "chrome-glory", "dante", "dawn-chorus", "frost-oath", "hanying-solacetune", "helentine-lacrimosa", "ishmael-parhelion", "jet-jaeger", "kamui-aeternion", "karenina-effulgence", "kurumi-tokisaki", "lee-hyperreal", "leia-fortunaster", "lilith-daemonissa", "lingya", "liv-limpidity", "lucia-inverse-crown", "lucia-pyroath", "luna-oblivion", "moonhopper", "motorbolt", "nanami-startrail", "nirvatia-dirge", "nitor", "no21-feral", "noctua", "qu-shukra", "rainbow", "rosetta-arete", "seeshell", "selena-pianissimo", "shimmer", "teddy-spectre", "thorny", "toniris", "vera-geiravor", "vergil", "veronica-aegis", "wanshi-lucid-dreamer", "watanabe-epitaph", "yuan-ye"];
 
 // The Global patch each early CUB launched in, from the user's notes. It can differ from its owner's frame. A CUB not listed here
 // (every S-Rank CUB after Reveries With a Whale) came out with its owner, so the owner's patch is used
@@ -1046,13 +1055,13 @@ const CONSTRUCTS = {
   "Watanabe: Nightblade": [600, "Physical", "Attacker", "A", ""],
   "Liv: Lux": [700, "Lightning", "Support", "A", ""],
   "Lucia: Dawn": [800, "Lightning", "Attacker", "A", ""],
-  "Ayla: Brilliance": [850, "Physical", "Tank", "A", ""],
   "Lee: Entropy": [900, "Physical", "Attacker", "S", ""],
   "Liv: Luminance": [1000, "Physical", "Support", "S", ""],
   "Kamui: Tenebrion": [1100, "Dark", "Tank", "S", ""],
   "Karenina: Ember": [1200, "Fire", "Attacker", "S", ""],
   "Nanami: Pulse": [1300, "Fire", "Tank", "S", ""],
   "Lucia: Crimson Abyss": [1400, "Physical", "Attacker", "S", ""],
+  "Ayla: Brilliance": [1450, "Physical", "Tank", "A", ""], // Fallen Star: after the base game frames and Frozen Darkness
   "Watanabe: Astral": [1500, "Dark", "Attacker", "A", ""],
   "Bianca: Veritas": [1600, "Lightning", "Attacker", "S", ""],
   "Sophia: Silverfang": [1700, "Fire", "Support", "A", ""],
@@ -1128,6 +1137,7 @@ const CONSTRUCTS = {
 // Patch of the frames the Meta Timeline does not list. Their CUBs and weapons follow. Written by hand
 const FRAME_PATCH = {
   "No.21: Feral": "Chaos Unsnarled", "Dante": "Lamento di Phantasma", "Vergil": "Lamento di Phantasma",
+  "Camu: Crocotta": "Grand Blue", // collab frame that launched with Thanatos in Grand Blue
   "Kurumi Tokisaki": "Anchored in Faith", // the same patch as Adelyde: Anabasis
   // Frames before Firn Night's successors that the Meta Timeline skips. Dates: https://punishing-gray-raven.fandom.com/wiki/Characters
   "Qu: Pavo": "Lost Chapter", "Selena: Tempest": "Echo Aria", "Roland: Flambeau": "Evernight Beat",

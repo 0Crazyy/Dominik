@@ -41,8 +41,8 @@ function write(query) {
 }
 const quote = text => `'${String(text).replace(/'/g, "''")}'`;
 function publish() {
-  const teams = read("SELECT id, team, author FROM teams WHERE status = 'approved' ORDER BY reviewed")
-    .map(row => ({ id: row.id, author: row.author, team: JSON.parse(row.team) }));
+  const teams = read("SELECT id, team, author, created FROM teams WHERE status = 'approved' ORDER BY reviewed")
+    .map(row => ({ id: row.id, author: row.author, created: row.created, team: JSON.parse(row.team) }));
   writeFileSync(join(ROOT, TEMP, "teams.json"), JSON.stringify(teams));
   wrangler(["kv", "key", "put", "teams", `--namespace-id=${kvId}`, `--path=${TEMP}/teams.json`, where]);
   return teams.length;
@@ -59,6 +59,24 @@ function artIndex() {
       pages: catalog.pages, mem: Object.fromEntries(MEM_INDEX), res: catalog.memoryResonances, allAtk: catalog.allAtk };
   } catch { return null; } // sem imagens o painel continua mostrando os textos
 }
+// Quando cada build oficial entrou no app.js: a primeira vez que o id (ou a chave da composição) aparece em uma linha
+// adicionada do histórico do git. Uma chamada só, guardada até o HEAD mudar. Build ainda sem commit conta como nova (agora)
+let addedCache = { head: "", map: new Map() };
+function addedDates() {
+  const run = args => spawnSync("git", args, { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 29 });
+  const head = run(["rev-parse", "HEAD"]).stdout.trim();
+  if (addedCache.head === head) return addedCache.map;
+  const map = new Map();
+  let time = 0;
+  for (const line of (run(["log", "-p", "-U0", "--reverse", "--format=COMMIT:%at", "--", "app.js"]).stdout || "").split("\n")) {
+    if (line.startsWith("COMMIT:")) { time = Number(line.slice(7)) * 1000; continue; }
+    if (!line.startsWith("+") || line.startsWith("+++")) continue;
+    const m = line.match(/^\+ {2}"([a-z0-9-]+)": \{/) || line.match(/^\+\s*(?:\{\s*)?id: "([^"]+)"/);
+    if (m && !map.has(m[1])) map.set(m[1], time);
+  }
+  addedCache = { head, map };
+  return map;
+}
 // As builds oficiais, lidas do app.js como o make-catalog faz. O id é o de uma variante, ou o da composição quando ela não tem variantes
 function officials() {
   const app = readFileSync(join(ROOT, "app.js"), "utf8"), end = app.indexOf("const $ = (s, r = document)");
@@ -66,12 +84,12 @@ function officials() {
   const { COMPS, PAGES } = vm.runInNewContext(`${readFileSync(join(ROOT, "data/assets-data.js"), "utf8")}
 ${app.slice(0, end)}
 ;({ COMPS, PAGES })`);
-  const rows = [];
+  const rows = [], dates = addedDates(), now = Date.now();
   for (const [comp, c] of Object.entries(COMPS)) {
     const page = Object.keys(PAGES).find(path => PAGES[path].includes(comp));
     if (!page) continue;
     for (const t of c.variants || [{ id: comp, name: "", cards: c.cards }]) {
-      rows.push({ id: t.id, page, name: [c.name, t.name].filter(Boolean).join(" · "), group: t.group || "", cards: t.cards.map(card => ({ char: card.name, portrait: card.portrait })) });
+      rows.push({ id: t.id, page, added: dates.get(t.id) ?? (c.variants ? dates.get(comp) : undefined) ?? now, name: [c.name, t.name].filter(Boolean).join(" · "), group: t.group || "", cards: t.cards.map(card => ({ char: card.name, portrait: card.portrait })) });
     }
   }
   return rows;
