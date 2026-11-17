@@ -5,7 +5,7 @@ const CATALOG = {
   {
    "name": "Lucia: Lotus",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-lotus/Awaken - Lucia Lotus.png",
+   "portrait": "assets/characters/lucia-lotus/Awaken - Lucia Lotus.webp",
    "weapon": "",
    "construct": "",
    "skills": [],
@@ -26,7 +26,7 @@ const CATALOG = {
   {
    "name": "Liv: Eclipse",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/liv-eclipse/Awaken - Liv Eclipse.png",
+   "portrait": "assets/characters/liv-eclipse/Awaken - Liv Eclipse.webp",
    "weapon": "",
    "construct": "",
    "skills": [],
@@ -47,7 +47,7 @@ const CATALOG = {
   {
    "name": "Lee: Palefire",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lee-palefire/Awaken - Lee Palefire.png",
+   "portrait": "assets/characters/lee-palefire/Awaken - Lee Palefire.webp",
    "weapon": "assets/characters/lee-palefire/Arma - Lee Palefire (5).png",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -75,7 +75,7 @@ const CATALOG = {
   {
    "name": "Kamui: Bastion",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/kamui-bastion/Awaken - Kamui Bastion.png",
+   "portrait": "assets/characters/kamui-bastion/Awaken - Kamui Bastion.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -103,7 +103,7 @@ const CATALOG = {
   {
    "name": "Nanami: Storm",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/nanami-storm/Awaken - Nanami Storm.png",
+   "portrait": "assets/characters/nanami-storm/Awaken - Nanami Storm.webp",
    "weapon": "",
    "construct": "",
    "skills": [],
@@ -124,7 +124,7 @@ const CATALOG = {
   {
    "name": "Bianca: Zero",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/bianca-zero/Awaken - Bianca Zero.png",
+   "portrait": "assets/characters/bianca-zero/Awaken - Bianca Zero.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -152,7 +152,7 @@ const CATALOG = {
   {
    "name": "Karenina: Blast",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/karenina-blast/Awaken - Karenina Blast.png",
+   "portrait": "assets/characters/karenina-blast/Awaken - Karenina Blast.webp",
    "weapon": "",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -180,7 +180,7 @@ const CATALOG = {
   {
    "name": "Watanabe: Nightblade",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/watanabe-nightblade/Awaken - Watanabe Nightblade.png",
+   "portrait": "assets/characters/watanabe-nightblade/Awaken - Watanabe Nightblade.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -208,7 +208,7 @@ const CATALOG = {
   {
    "name": "Liv: Lux",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/liv-lux/Awaken - Liv Lux.png",
+   "portrait": "assets/characters/liv-lux/Awaken - Liv Lux.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -236,7 +236,7 @@ const CATALOG = {
   {
    "name": "Lucia: Dawn",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-dawn/Awaken - Lucia Dawn.png",
+   "portrait": "assets/characters/lucia-dawn/Awaken - Lucia Dawn.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -264,7 +264,7 @@ const CATALOG = {
   {
    "name": "Lee: Entropy",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lee-entropy/Awaken - Lee Entropy.png",
+   "portrait": "assets/characters/lee-entropy/Awaken - Lee Entropy.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -292,7 +292,7 @@ const CATALOG = {
   {
    "name": "Liv: Luminance",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/liv-luminance/Awaken - Liv Luminance.png",
+   "portrait": "assets/characters/liv-luminance/Awaken - Liv Luminance.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -320,7 +320,7 @@ const CATALOG = {
   {
    "name": "Kamui: Tenebrion",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/kamui-tenebrion/Awaken - Kamui Tenebrion.png",
+   "portrait": "assets/characters/kamui-tenebrion/Awaken - Kamui Tenebrion.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -348,7 +348,7 @@ const CATALOG = {
   {
    "name": "Karenina: Ember",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/karenina-ember/Awaken - Karenina Ember.png",
+   "portrait": "assets/characters/karenina-ember/Awaken - Karenina Ember.webp",
    "weapon": "",
    "construct": "assets/cubs/nitor/CUB - Nitor.png",
    "skills": [
@@ -376,7 +376,7 @@ const CATALOG = {
   {
    "name": "Nanami: Pulse",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/nanami-pulse/Awaken - Nanami Pulse.png",
+   "portrait": "assets/characters/nanami-pulse/Awaken - Nanami Pulse.webp",
    "weapon": "",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -404,7 +404,7 @@ const CATALOG = {
   {
    "name": "Lucia: Crimson Abyss",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-crimson-abyss/Awaken - Lucia Crimson Abyss.png",
+   "portrait": "assets/characters/lucia-crimson-abyss/Awaken - Lucia Crimson Abyss.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -432,7 +432,7 @@ const CATALOG = {
   {
    "name": "Ayla: Brilliance",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/ayla-brilliance/Awaken - Ayla Brilliance.png",
+   "portrait": "assets/characters/ayla-brilliance/Awaken - Ayla Brilliance.webp",
    "weapon": "assets/characters/ayla-brilliance/Arma - Ayla Brilliance (5).png",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -460,7 +460,7 @@ const CATALOG = {
   {
    "name": "Watanabe: Astral",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/watanabe-astral/Awaken - Watanabe Astral.png",
+   "portrait": "assets/characters/watanabe-astral/Awaken - Watanabe Astral.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -488,7 +488,7 @@ const CATALOG = {
   {
    "name": "Bianca: Veritas",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/bianca-veritas/Awaken - Bianca Veritas.png",
+   "portrait": "assets/characters/bianca-veritas/Awaken - Bianca Veritas.webp",
    "weapon": "",
    "construct": "assets/cubs/toniris/CUB - Toniris.png",
    "skills": [
@@ -516,7 +516,7 @@ const CATALOG = {
   {
    "name": "Sophia: Silverfang",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/sophia-silverfang/Awaken - Sophia Silverfang.png",
+   "portrait": "assets/characters/sophia-silverfang/Awaken - Sophia Silverfang.webp",
    "weapon": "",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -544,7 +544,7 @@ const CATALOG = {
   {
    "name": "Chrome: Arclight",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/chrome-arclight/Awaken - Chrome Arclight.png",
+   "portrait": "assets/characters/chrome-arclight/Awaken - Chrome Arclight.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -572,7 +572,7 @@ const CATALOG = {
   {
    "name": "Lucia: Plume",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-plume/Awaken - Lucia Plume.png",
+   "portrait": "assets/characters/lucia-plume/Awaken - Lucia Plume.webp",
    "weapon": "",
    "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
    "skills": [
@@ -600,7 +600,7 @@ const CATALOG = {
   {
    "name": "Vera: Rozen",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/vera-rozen/Awaken - Vera Rozen.png",
+   "portrait": "assets/characters/vera-rozen/Awaken - Vera Rozen.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -628,7 +628,7 @@ const CATALOG = {
   {
    "name": "Camu: Crocotta",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/camu-crocotta/Awaken - Camu Crocotta.png",
+   "portrait": "assets/characters/camu-crocotta/Awaken - Camu Crocotta.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -656,7 +656,7 @@ const CATALOG = {
   {
    "name": "Rosetta: Rigor",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/rosetta-rigor/Awaken - Rosetta Rigor.png",
+   "portrait": "assets/characters/rosetta-rigor/Awaken - Rosetta Rigor.webp",
    "weapon": "",
    "construct": "assets/cubs/frost-oath/CUB - Frost Oath.png",
    "skills": [
@@ -684,7 +684,7 @@ const CATALOG = {
   {
    "name": "Qu: Pavo",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/qu-pavo/Awaken - Qu Pavo.png",
+   "portrait": "assets/characters/qu-pavo/Awaken - Qu Pavo.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -712,7 +712,7 @@ const CATALOG = {
   {
    "name": "Changyu: Qilin",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/changyu-qilin/Awaken - Changyu Qilin.png",
+   "portrait": "assets/characters/changyu-qilin/Awaken - Changyu Qilin.webp",
    "weapon": "",
    "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
    "skills": [
@@ -740,7 +740,7 @@ const CATALOG = {
   {
    "name": "Luna: Laurel",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/luna-laurel/Awaken - Luna Laurel.png",
+   "portrait": "assets/characters/luna-laurel/Awaken - Luna Laurel.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -768,7 +768,7 @@ const CATALOG = {
   {
    "name": "2B",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/2b/Awaken - 2B.png",
+   "portrait": "assets/characters/2b/Awaken - 2B.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -796,7 +796,7 @@ const CATALOG = {
   {
    "name": "9S",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/9s/Awaken - 9S.png",
+   "portrait": "assets/characters/9s/Awaken - 9S.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -824,7 +824,7 @@ const CATALOG = {
   {
    "name": "A2",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/a2/Awaken - A2.png",
+   "portrait": "assets/characters/a2/Awaken - A2.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -852,7 +852,7 @@ const CATALOG = {
   {
    "name": "Wanshi: Hypnos",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/wanshi-hypnos/Awaken - Wanshi Hypnos.png",
+   "portrait": "assets/characters/wanshi-hypnos/Awaken - Wanshi Hypnos.webp",
    "weapon": "",
    "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
    "skills": [
@@ -880,7 +880,7 @@ const CATALOG = {
   {
    "name": "Selena: Tempest",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/selena-tempest/Awaken - Selena Tempest.png",
+   "portrait": "assets/characters/selena-tempest/Awaken - Selena Tempest.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -908,7 +908,7 @@ const CATALOG = {
   {
    "name": "Chrome: Glory",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/chrome-glory/Awaken - Chrome Glory.png",
+   "portrait": "assets/characters/chrome-glory/Awaken - Chrome Glory.webp",
    "weapon": "assets/characters/chrome-glory/Arma - Chrome Glory.png",
    "construct": "assets/characters/chrome-glory/CUB - Boreas.png",
    "skills": [
@@ -936,7 +936,7 @@ const CATALOG = {
   {
    "name": "No.21: XXI",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/no21-xxi/Awaken - No.21 XXI.png",
+   "portrait": "assets/characters/no21-xxi/Awaken - No.21 XXI.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -964,7 +964,7 @@ const CATALOG = {
   {
    "name": "Vera: Garnet",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/vera-garnet/Awaken - Vera Garnet.png",
+   "portrait": "assets/characters/vera-garnet/Awaken - Vera Garnet.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -992,7 +992,7 @@ const CATALOG = {
   {
    "name": "Roland: Flambeau",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/roland-flambeau/Awaken - Roland Flambeau.png",
+   "portrait": "assets/characters/roland-flambeau/Awaken - Roland Flambeau.webp",
    "weapon": "",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -1020,7 +1020,7 @@ const CATALOG = {
   {
    "name": "Liv: Empyrea",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/liv-empyrea/Awaken - Liv Empyrea.png",
+   "portrait": "assets/characters/liv-empyrea/Awaken - Liv Empyrea.webp",
    "weapon": "",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -1048,7 +1048,7 @@ const CATALOG = {
   {
    "name": "Selena: Capriccio",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/selena-capriccio/Awaken - Selena Capriccio.png",
+   "portrait": "assets/characters/selena-capriccio/Awaken - Selena Capriccio.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -1076,7 +1076,7 @@ const CATALOG = {
   {
    "name": "Pulao: Dragontoll",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/pulao-dragontoll/Awaken - Pulao Dragontoll.png",
+   "portrait": "assets/characters/pulao-dragontoll/Awaken - Pulao Dragontoll.webp",
    "weapon": "",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -1104,7 +1104,7 @@ const CATALOG = {
   {
    "name": "Nanami: Starfarer",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/nanami-starfarer/Awaken - Nanami Starfarer.png",
+   "portrait": "assets/characters/nanami-starfarer/Awaken - Nanami Starfarer.webp",
    "weapon": "",
    "construct": "assets/cubs/jet-jaeger/CUB - Jet Jaeger.png",
    "skills": [
@@ -1132,7 +1132,7 @@ const CATALOG = {
   {
    "name": "Haicma: Starveil",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/haicma-starveil/Awaken - Haicma Starveil.png",
+   "portrait": "assets/characters/haicma-starveil/Awaken - Haicma Starveil.webp",
    "weapon": "",
    "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
    "skills": [
@@ -1160,7 +1160,7 @@ const CATALOG = {
   {
    "name": "Karenina: Scire",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/karenina-scire/Awaken - Karenina Scire.png",
+   "portrait": "assets/characters/karenina-scire/Awaken - Karenina Scire.webp",
    "weapon": "",
    "construct": "assets/cubs/moonhopper/CUB - Moonhopper.png",
    "skills": [
@@ -1188,7 +1188,7 @@ const CATALOG = {
   {
    "name": "Noan: Arca",
    "symbol": "assets/classes/Vanguard.png",
-   "portrait": "assets/characters/noan-arca/Awaken - Noan Arca.png",
+   "portrait": "assets/characters/noan-arca/Awaken - Noan Arca.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -1216,7 +1216,7 @@ const CATALOG = {
   {
    "name": "Bianca: Stigmata",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/bianca-stigmata/Awaken - Bianca Stigmata.png",
+   "portrait": "assets/characters/bianca-stigmata/Awaken - Bianca Stigmata.webp",
    "weapon": "",
    "construct": "assets/cubs/shimmer/CUB - Shimmer.png",
    "skills": [
@@ -1244,7 +1244,7 @@ const CATALOG = {
   {
    "name": "Bambinata: Vitrum",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/bambinata-vitrum/Awaken - Bambinata Vitrum.png",
+   "portrait": "assets/characters/bambinata-vitrum/Awaken - Bambinata Vitrum.webp",
    "weapon": "",
    "construct": "assets/cubs/seeshell/CUB - Seeshell.png",
    "skills": [
@@ -1272,7 +1272,7 @@ const CATALOG = {
   {
    "name": "Lee: Hyperreal",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lee-hyperreal/Awaken - Lee Hyperreal.png",
+   "portrait": "assets/characters/lee-hyperreal/Awaken - Lee Hyperreal.webp",
    "weapon": "assets/characters/lee-hyperreal/Arma - Lee Hyperreal.png",
    "construct": "assets/characters/lee-hyperreal/CUB - Punchy.png",
    "skills": [
@@ -1300,7 +1300,7 @@ const CATALOG = {
   {
    "name": "Ayla: Kaleido",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/ayla-kaleido/Awaken - Ayla Kaleido.png",
+   "portrait": "assets/characters/ayla-kaleido/Awaken - Ayla Kaleido.webp",
    "weapon": "",
    "construct": "assets/cubs/rainbow/CUB - Rainbow.png",
    "skills": [
@@ -1328,7 +1328,7 @@ const CATALOG = {
   {
    "name": "Lucia: Crimson Weave",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-crimson-weave/Awaken - Lucia Crimson Weave.png",
+   "portrait": "assets/characters/lucia-crimson-weave/Awaken - Lucia Crimson Weave.webp",
    "weapon": "",
    "construct": "assets/cubs/motorbolt/CUB - Motorbolt.png",
    "skills": [
@@ -1356,7 +1356,7 @@ const CATALOG = {
   {
    "name": "Hanying: Zitherwoe",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/hanying-zitherwoe/Awaken - Hanying Zitherwoe.png",
+   "portrait": "assets/characters/hanying-zitherwoe/Awaken - Hanying Zitherwoe.webp",
    "weapon": "assets/characters/hanying-zitherwoe/Arma - Hanying Zitherwoe.png",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -1384,7 +1384,7 @@ const CATALOG = {
   {
    "name": "No.21: Feral",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/no21-feral/Awaken - No.21 Feral.png",
+   "portrait": "assets/characters/no21-feral/Awaken - No.21 Feral.webp",
    "weapon": "assets/characters/no21-feral/Arma No.21 Feral.png",
    "construct": "assets/characters/no21-feral/CUB - Hades Fangs.png",
    "skills": [
@@ -1412,7 +1412,7 @@ const CATALOG = {
   {
    "name": "Noctis: Indomitus",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/noctis-indomitus/Awaken - Noctis Indomitus.png",
+   "portrait": "assets/characters/noctis-indomitus/Awaken - Noctis Indomitus.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -1440,7 +1440,7 @@ const CATALOG = {
   {
    "name": "Alisa: Echo",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/alisa-echo/Awaken - Alisa Echo.png",
+   "portrait": "assets/characters/alisa-echo/Awaken - Alisa Echo.webp",
    "weapon": "assets/characters/alisa-echo/Arma - Alisa Echo.png",
    "construct": "assets/cubs/dawn-chorus/CUB - Dawn Chorus.png",
    "skills": [
@@ -1468,7 +1468,7 @@ const CATALOG = {
   {
    "name": "Lamia: Lost Lullaby",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lamia-lost-lullaby/Awaken - Lamia Lost Lullaby.png",
+   "portrait": "assets/characters/lamia-lost-lullaby/Awaken - Lamia Lost Lullaby.webp",
    "weapon": "",
    "construct": "assets/cubs/cetus/CUB - Cetus.png",
    "skills": [
@@ -1496,7 +1496,7 @@ const CATALOG = {
   {
    "name": "BLACK★ROCK SHOOTER",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/blackrock-shooter/Awaken - BLACK★ROCK SHOOTER.png",
+   "portrait": "assets/characters/blackrock-shooter/Awaken - BLACK★ROCK SHOOTER.webp",
    "weapon": "",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -1524,7 +1524,7 @@ const CATALOG = {
   {
    "name": "Watanabe: Epitaph",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/watanabe-epitaph/Awaken - Watanabe Epitaph.png",
+   "portrait": "assets/characters/watanabe-epitaph/Awaken - Watanabe Epitaph.webp",
    "weapon": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png",
    "construct": "assets/characters/watanabe-epitaph/CUB - Shadow Wing.png",
    "skills": [
@@ -1552,7 +1552,7 @@ const CATALOG = {
   {
    "name": "Qu: Shukra",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/qu-shukra/Awaken - Qu Shukra.png",
+   "portrait": "assets/characters/qu-shukra/Awaken - Qu Shukra.webp",
    "weapon": "assets/characters/qu-shukra/Arma - Qu Shukra.png",
    "construct": "assets/characters/qu-shukra/CUB - Huiyu.png",
    "skills": [
@@ -1580,7 +1580,7 @@ const CATALOG = {
   {
    "name": "Teddy: Decryptor",
    "symbol": "assets/classes/Support.png",
-   "portrait": "assets/characters/teddy-decryptor/Awaken - Teddy Decryptor.png",
+   "portrait": "assets/characters/teddy-decryptor/Awaken - Teddy Decryptor.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -1608,7 +1608,7 @@ const CATALOG = {
   {
    "name": "Luna: Oblivion",
    "symbol": "assets/classes/Annihilator.png",
-   "portrait": "assets/characters/luna-oblivion/Awaken - Luna Oblivion.png",
+   "portrait": "assets/characters/luna-oblivion/Awaken - Luna Oblivion.webp",
    "weapon": "assets/characters/luna-oblivion/Arma - Luna Oblivion.png",
    "construct": "assets/characters/luna-oblivion/CUB - Guardrake.png",
    "skills": [
@@ -1636,7 +1636,7 @@ const CATALOG = {
   {
    "name": "Bridget: Ardeo",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/bridget-ardeo/Awaken - Bridget Ardeo.png",
+   "portrait": "assets/characters/bridget-ardeo/Awaken - Bridget Ardeo.webp",
    "weapon": "assets/characters/bridget-ardeo/Arma - Bridget (5).png",
    "construct": "assets/cubs/yuan-ye/CUB - Yuan Ye.png",
    "skills": [
@@ -1664,7 +1664,7 @@ const CATALOG = {
   {
    "name": "Hanying: Solacetune",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/hanying-solacetune/Awaken - Hanying Solacetune.png",
+   "portrait": "assets/characters/hanying-solacetune/Awaken - Hanying Solacetune.webp",
    "weapon": "assets/characters/hanying-solacetune/Arma - Hanying Solacetune.png",
    "construct": "assets/characters/hanying-solacetune/CUB - Dreamwing.png",
    "skills": [
@@ -1720,7 +1720,7 @@ const CATALOG = {
   {
    "name": "Lucia: Pyroath",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-pyroath/Awaken - Lucia Pyroath.png",
+   "portrait": "assets/characters/lucia-pyroath/Awaken - Lucia Pyroath.webp",
    "weapon": "assets/characters/lucia-pyroath/Arma - Lucia Pyroath.webp",
    "construct": "assets/characters/lucia-pyroath/CUB - Corvus.webp",
    "skills": [
@@ -1748,7 +1748,7 @@ const CATALOG = {
   {
    "name": "Yata: Fulgor",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/yata-fulgor/Awaken - Yata Fulgor.png",
+   "portrait": "assets/characters/yata-fulgor/Awaken - Yata Fulgor.webp",
    "weapon": "",
    "construct": "assets/cubs/lingya/CUB - Lingya.png",
    "skills": [
@@ -1776,7 +1776,7 @@ const CATALOG = {
   {
    "name": "Nanami: Startrail",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/nanami-startrail/Awaken - Nanami Startrail.png",
+   "portrait": "assets/characters/nanami-startrail/Awaken - Nanami Startrail.webp",
    "weapon": "assets/characters/nanami-startrail/Arma - Nanami Startrail.png",
    "construct": "assets/characters/nanami-startrail/CUB - Bramble Angler.png",
    "skills": [
@@ -1804,7 +1804,7 @@ const CATALOG = {
   {
    "name": "Ishmael: Parhelion",
    "symbol": "assets/classes/Observer.png",
-   "portrait": "assets/characters/ishmael-parhelion/Awaken - Ishmael Parhelion.png",
+   "portrait": "assets/characters/ishmael-parhelion/Awaken - Ishmael Parhelion.webp",
    "weapon": "assets/characters/ishmael-parhelion/Arma - Ishmael Parhelion.png",
    "construct": "assets/characters/ishmael-parhelion/CUB - Diamaton.png",
    "skills": [
@@ -1832,7 +1832,7 @@ const CATALOG = {
   {
    "name": "Lilith: Daemonissa",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/lilith-daemonissa/Awaken - Lilith Daemonissa.png",
+   "portrait": "assets/characters/lilith-daemonissa/Awaken - Lilith Daemonissa.webp",
    "weapon": "assets/characters/lilith-daemonissa/Arma - Lilith Daemonissa.png",
    "construct": "assets/characters/lilith-daemonissa/CUB - Billie.png",
    "skills": [
@@ -1860,7 +1860,7 @@ const CATALOG = {
   {
    "name": "Selena: Pianissimo",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/selena-pianissimo/Awaken - Selena Pianissimo.png",
+   "portrait": "assets/characters/selena-pianissimo/Awaken - Selena Pianissimo.webp",
    "weapon": "assets/characters/selena-pianissimo/Arma - Selena Pianissimo.png",
    "construct": "assets/characters/selena-pianissimo/CUB - Snow Waltz.png",
    "skills": [
@@ -1888,7 +1888,7 @@ const CATALOG = {
   {
    "name": "Jetavie: Daybreak",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/jetavie-daybreak/Awaken - Jetavie Daybreak.png",
+   "portrait": "assets/characters/jetavie-daybreak/Awaken - Jetavie Daybreak.webp",
    "weapon": "",
    "construct": "assets/cubs/noctua/CUB - Noctua.png",
    "skills": [
@@ -1916,7 +1916,7 @@ const CATALOG = {
   {
    "name": "Vera: Geiravor",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/vera-geiravor/Awaken - Vera-chan Geiravor.png",
+   "portrait": "assets/characters/vera-geiravor/Awaken - Vera-chan Geiravor.webp",
    "weapon": "assets/characters/vera-geiravor/Arma - Vera Geiravor.png",
    "construct": "assets/characters/vera-geiravor/CUB - Wrathfang.png",
    "skills": [
@@ -1944,7 +1944,7 @@ const CATALOG = {
   {
    "name": "Vergil",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/vergil/Awaken - Vergil.png",
+   "portrait": "assets/characters/vergil/Awaken - Vergil.webp",
    "weapon": "assets/characters/vergil/Arma - Vergil.png",
    "construct": "assets/characters/vergil/CUB - Mirage Blades.png",
    "skills": [
@@ -1972,7 +1972,7 @@ const CATALOG = {
   {
    "name": "Dante",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/dante/Awaken - Dante.png",
+   "portrait": "assets/characters/dante/Awaken - Dante.webp",
    "weapon": "assets/characters/dante/Arma - Dante.png",
    "construct": "assets/characters/dante/CUB - Cavaliere.png",
    "skills": [
@@ -2000,7 +2000,7 @@ const CATALOG = {
   {
    "name": "Bianca: Crepuscule",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/bianca-crepuscule/Awaken - Bianca Crepuscule.png",
+   "portrait": "assets/characters/bianca-crepuscule/Awaken - Bianca Crepuscule.webp",
    "weapon": "assets/characters/bianca-crepuscule/Arma - Bianca Crepuscule.png",
    "construct": "assets/characters/bianca-crepuscule/CUB - Noctiluca.png",
    "skills": [
@@ -2028,7 +2028,7 @@ const CATALOG = {
   {
    "name": "Discord: Secator",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/discord-secator/Awaken - Discord Secator.png",
+   "portrait": "assets/characters/discord-secator/Awaken - Discord Secator.webp",
    "weapon": "assets/characters/discord-secator/Arma - Discord (5).png",
    "construct": "assets/cubs/thorny/CUB - Thorny.png",
    "skills": [
@@ -2056,7 +2056,7 @@ const CATALOG = {
   {
    "name": "Veronica: Aegis",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/veronica-aegis/Awaken - Veronica Aegis.png",
+   "portrait": "assets/characters/veronica-aegis/Awaken - Veronica Aegis.webp",
    "weapon": "assets/characters/veronica-aegis/Arma - Veronica Aegis.png",
    "construct": "assets/characters/veronica-aegis/CUB - Scaled Rampart.png",
    "skills": [
@@ -2084,7 +2084,7 @@ const CATALOG = {
   {
    "name": "Liv: Limpidity",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/liv-limpidity/Awaken - Liv Limpidity.png",
+   "portrait": "assets/characters/liv-limpidity/Awaken - Liv Limpidity.webp",
    "weapon": "assets/characters/liv-limpidity/Arma - Liv Limpidity.png",
    "construct": "assets/characters/liv-limpidity/CUB - Levvi.png",
    "skills": [
@@ -2112,7 +2112,7 @@ const CATALOG = {
   {
    "name": "Teddy: Spectre",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/teddy-spectre/Awaken - Teddy Spectre.png",
+   "portrait": "assets/characters/teddy-spectre/Awaken - Teddy Spectre.webp",
    "weapon": "assets/characters/teddy-spectre/Arma - Teddy Spectre.png",
    "construct": "assets/characters/teddy-spectre/CUB - Beep-Boop.png",
    "skills": [
@@ -2140,7 +2140,7 @@ const CATALOG = {
   {
    "name": "Rosetta: Arete",
    "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/rosetta-arete/Awaken - Rosetta Arete.png",
+   "portrait": "assets/characters/rosetta-arete/Awaken - Rosetta Arete.webp",
    "weapon": "assets/characters/rosetta-arete/Arma - Mirage Alberd.webp",
    "construct": "assets/characters/rosetta-arete/CUB - Buzzling.webp",
    "skills": [
@@ -2168,7 +2168,7 @@ const CATALOG = {
   {
    "name": "Nirvatia: Dirge",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/nirvatia-dirge/Awaken - Nirvatia Dirge.png",
+   "portrait": "assets/characters/nirvatia-dirge/Awaken - Nirvatia Dirge.webp",
    "weapon": "assets/characters/nirvatia-dirge/Arma - Obituary for Yesterday..webp",
    "construct": "assets/characters/nirvatia-dirge/CUB - Morigan.webp",
    "skills": [
@@ -2196,7 +2196,7 @@ const CATALOG = {
   {
    "name": "Kamui: Aeternion",
    "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/kamui-aeternion/Awaken - Kamui.png",
+   "portrait": "assets/characters/kamui-aeternion/Awaken - Kamui.webp",
    "weapon": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png",
    "construct": "assets/characters/kamui-aeternion/CUB - Ignis.png",
    "skills": [
@@ -2224,7 +2224,7 @@ const CATALOG = {
   {
    "name": "Lucia: Inverse Crown",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/lucia-inverse-crown/Awaken - Lucia Inverse Crown.png",
+   "portrait": "assets/characters/lucia-inverse-crown/Awaken - Lucia Inverse Crown.webp",
    "weapon": "assets/characters/lucia-inverse-crown/Arma - Lucia Inverse Crown.webp",
    "construct": "assets/characters/lucia-inverse-crown/CUB - Allos.webp",
    "skills": [
@@ -2252,7 +2252,7 @@ const CATALOG = {
   {
    "name": "Helentine: Lacrimosa",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/helentine-lacrimosa/Awaken - Helentine.png",
+   "portrait": "assets/characters/helentine-lacrimosa/Awaken - Helentine.webp",
    "weapon": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp",
    "construct": "assets/characters/helentine-lacrimosa/CUB - Grand Duke.webp",
    "skills": [
@@ -2280,7 +2280,7 @@ const CATALOG = {
   {
    "name": "Karenina: Effulgence",
    "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/karenina-effulgence/Awaken - Karenina Effulgence.png",
+   "portrait": "assets/characters/karenina-effulgence/Awaken - Karenina Effulgence.webp",
    "weapon": "assets/characters/karenina-effulgence/Arma - Karenina Effulgence.webp",
    "construct": "assets/characters/karenina-effulgence/CUB - Patrick.webp",
    "skills": [
@@ -2308,7 +2308,7 @@ const CATALOG = {
   {
    "name": "Kurumi Tokisaki",
    "symbol": "assets/classes/Attacker.png",
-   "portrait": "assets/characters/kurumi-tokisaki/Awaken - Kurumi Tokisaki.png",
+   "portrait": "assets/characters/kurumi-tokisaki/Awaken - Kurumi Tokisaki.webp",
    "weapon": "assets/characters/kurumi-tokisaki/Arma - Kurumi Tokisaki.webp",
    "construct": "assets/characters/kurumi-tokisaki/CUB - Zafkiel.webp",
    "skills": [
@@ -2336,7 +2336,7 @@ const CATALOG = {
   {
    "name": "Adelyde: Anabasis",
    "symbol": "assets/characters/adelyde-anabasis/Classe - Adelyde Anabasis.png",
-   "portrait": "assets/characters/adelyde-anabasis/Awaken - Adelyde Anabasis.png",
+   "portrait": "assets/characters/adelyde-anabasis/Awaken - Adelyde Anabasis.webp",
    "weapon": "assets/characters/adelyde-anabasis/Arma - Adelyde Anabasis.webp",
    "construct": "assets/characters/adelyde-anabasis/CUB - Kelpie.webp",
    "skills": [
@@ -2364,7 +2364,7 @@ const CATALOG = {
   {
    "name": "Leia: Fortunaster",
    "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/leia-fortunaster/Awaken - Leia Fortunaster.png",
+   "portrait": "assets/characters/leia-fortunaster/Awaken - Leia Fortunaster.webp",
    "weapon": "assets/characters/leia-fortunaster/Arma - Leia Fortunaster.png",
    "construct": "assets/characters/leia-fortunaster/CUB - Vulpecula.png",
    "skills": [
@@ -3068,6 +3068,21 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "Lucia: Lotus",
+   "name": "Lotus Berserker",
+   "type": "Katana",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3swordmd070011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3swordmd070011.png"
+    }
+   ]
+  },
+  {
    "owner": "Liv: Eclipse",
    "name": "Type Zero",
    "type": "Levi-Gun",
@@ -3210,6 +3225,21 @@ const CATALOG = {
     {
      "rank": "5",
      "art": "assets/weapons/6stars/e3gunmd080011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Luminance",
+   "name": "Dragon Wind",
+   "type": "Levi-Gun",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/e3floatmd090011.png"
+    },
+    {
+     "rank": "5",
+     "art": "assets/weapons/6stars/e3floatmd090011.png"
     }
    ]
   },
@@ -3426,6 +3456,17 @@ const CATALOG = {
     {
      "rank": "5",
      "art": "assets/weapons/5stars/e2qumd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Qu: Pavo",
+   "name": "Qinghe",
+   "type": "Uniframe: Glaive",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/Qinghe.png"
     }
    ]
   },
@@ -3977,6 +4018,17 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "BLACK★ROCK SHOOTER",
+   "name": "★Rock Cannon",
+   "type": "Bladed Cannon",
+   "ranks": [
+    {
+     "rank": "6",
+     "art": "assets/weapons/6stars/Star Rock Cannon.png"
+    }
+   ]
+  },
+  {
    "owner": "Qu: Shukra",
    "name": "Phoenix Edge",
    "type": "Longsword",
@@ -4124,11 +4176,17 @@ const CATALOG = {
   "Frederick",
   "Cottie",
   "Hanna",
+  "Carrielynn",
+  "Aife",
+  "Mozart",
+  "Ike",
   "Darwin",
   "Condelina",
   "Guinevere",
   "Philip II",
   "Einsteina",
+  "Voltaire",
+  "Samantha",
   "Catherine",
   "Da Vinci",
   "Gloria",
@@ -4140,6 +4198,7 @@ const CATALOG = {
   "Santiago",
   "Keats",
   "Burana",
+  "Richelieu",
   "Chang Wuzi",
   "Signa",
   "Charlotte",
@@ -4186,21 +4245,79 @@ const CATALOG = {
   "Jack",
   "Lucrezia",
   "Wu'an",
-  "Koya"
+  "Koya",
+  "Boudica",
+  "Lucia - Summer Daze",
+  "Lee - Celebration under the Moon",
+  "Liv - United",
+  "Chrome - Banquet",
+  "Luna - Fullmoon Laurel",
+  "Bianca - Tipsy Night",
+  "Cerberus - Rave Party",
+  "Liv - Reindeer",
+  "Vera - Scarlet Summers",
+  "New Year Fireworks",
+  "Lantern Festival - Reunion",
+  "Liv - Ceremony",
+  "Kuriko - Eternal"
  ],
  "harmony": [
+  "Frederick",
   "Cottie",
+  "Hanna",
   "Darwin",
+  "Condelina",
   "Guinevere",
+  "Philip II",
   "Einsteina",
+  "Catherine",
   "Da Vinci",
+  "Clusius",
+  "Bunsen",
+  "Poincare",
   "Klenova",
+  "Wilde",
+  "Santiago",
+  "Keats",
+  "Burana",
+  "Chang Wuzi",
+  "Signa",
+  "Charlotte",
+  "Leeuwenhoek",
   "Patton",
+  "Feynman",
+  "Hervor",
+  "Heraclitus",
+  "Alphonse",
+  "Turing",
+  "Unimate",
+  "Elizabeth",
   "Shakespeare",
+  "Pavlichenko",
   "Liston",
+  "Ji Bo'an",
+  "Aline",
   "Chen Jiyuan",
+  "Mousme",
+  "Cogito",
+  "Natasha",
+  "Herschell",
+  "Fran",
+  "Diesel",
+  "Tifa",
   "Heisen",
-  "Bathlon"
+  "Pesanteur",
+  "Nimue",
+  "Jeanne",
+  "Barcelo",
+  "Derketo",
+  "Boone",
+  "Seraphine",
+  "Flamel",
+  "Bathlon",
+  "Bulgakov",
+  "Sothoth",
+  "Cleopatra"
  ],
  "matrix": [
   "Absolute Defense",

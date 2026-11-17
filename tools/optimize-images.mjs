@@ -28,6 +28,8 @@ const SIZES = [
   [/^classes\//, "256x256"],
   [/^resonances\//, "320x320"],
   [/\/Awaken - /, "384x384"],
+  // Full memory portraits (about 1141x1440 originals), shown wide on the memory page
+  [/\/Art - /, "900x1200"],
   // Weapon Harmony art is zoomed up to 6x by WH_FRAME, so it needs far more pixels than its slot suggests
   [/ WH\.\w+$/, "1200x1800"]
 ];

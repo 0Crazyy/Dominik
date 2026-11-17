@@ -11,3 +11,6 @@ node_modules
 .smoke
 # Local copies of the API secrets, for wrangler pages dev
 .dev.vars
+
+# Local notes for the next Updates post (not published)
+notas-update.md

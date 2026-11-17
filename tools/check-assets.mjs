@@ -65,7 +65,7 @@ function check() {
   for (const name of Object.keys(d.CONSTRUCTS)) {
     if (builtNames.has(name)) continue;
     const folder = slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "");
-    use(`${d.CHARS}/${folder}/Awaken - ${name.replace(":", "").trim()}.png`, `construct ${name}`);
+    use(`${d.CHARS}/${folder}/Awaken - ${name.replace(":", "").trim()}.webp`, `construct ${name}`);
   }
 
   for (const [path, ids] of Object.entries(d.PAGES)) for (const id of ids) {
@@ -84,7 +84,7 @@ function check() {
   for (const [owner, name] of d.WEAPONS) if (owner && !d.CONSTRUCTS[owner]) errors.push(`dono da arma "${name}" sem dados em CONSTRUCTS (a página Weapons quebra): ${owner}`);
   for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
   for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type] of skills) {
-    if (type === "Harmony Skill" || type === "Leap Skill") continue; // sem arte ainda: a página mostra só o texto
+    if (type === "Harmony Skill" || type === "Leap Skill" || type === "Uniframe Skill") continue; // sem arte ainda: a página mostra só o texto
     use(`${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${type}.png`, `skill de ${name}`);
   }
   for (const [name, [title, text]] of Object.entries(d.LEADER_SKILLS)) {

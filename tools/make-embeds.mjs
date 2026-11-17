@@ -55,7 +55,7 @@ function image(...options) {
 }
 // The light square thumbnail of the home page, or the full art when there is none
 const portrait = ({ name, portrait: art }) => image(`assets/home/${slug(name.replace(":", ""))}.jpg`, art);
-const constructPortrait = name => `${CHARS}/${charId(name)}/Awaken - ${name.replace(":", "").trim()}.png`;
+const constructPortrait = name => `${CHARS}/${charId(name)}/Awaken - ${name.replace(":", "").trim()}.webp`;
 const memoryArt = ([name, , ext]) => ext ? memFile(name, "1-4") : "";
 const weaponArt = ([, , , file]) => file ? (file.startsWith("assets/") ? file : `${CHARS}/${file}`) : "";
 

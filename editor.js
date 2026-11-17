@@ -411,13 +411,17 @@ function edPickerOptions(kind, i, side) {
     return CATALOG.characters.map(character => ({
       value: character.name, label: character.name, art: character.portrait,
       info: [character.element, character.class].filter(Boolean).join(" · "), more: !fits(character)
-    }));
+    })).sort((a, b) => (CONSTRUCTS[b.value]?.[0] ?? 0) - (CONSTRUCTS[a.value]?.[0] ?? 0)); // newest first
   }
-  if (kind === "mem") {
-    // This character's signature memory comes first, then the memories the site's builds of this character use most
-    const worn = edMemoryUse(c.char), fit = edMemoryFit(ch);
+  // What puts a memory up front for this character: its signature, a bonus that fits it, or being in a build of this team or of the site
+  const edUpFront = () => {
     const signatures = new Map();
     if (ch?.signature) signatures.set(ch.signature, edShortName(c));
+    return { signatures, worn: edMemoryUse(c.char), fit: edMemoryFit(ch), inDraft: new Set(edDraft.cards.flatMap(card => [...card.mem, card.wh].filter(Boolean))) };
+  };
+  if (kind === "mem") {
+    // This character's signature memory comes first, then the memories the site's builds of this character use most
+    const { signatures, worn, fit } = edUpFront();
     const rank = name => signatures.has(name) ? [0, [...signatures.keys()].indexOf(name)] : worn.has(name) ? [1, -worn.get(name)]
       : fit.has(name) ? [2, fit.get(name).order] : [3, 0];
     const list = CATALOG.memories.map((name, index) => ({
@@ -460,9 +464,18 @@ function edPickerOptions(kind, i, side) {
       sub: info.replace(name, "").replace(/^[\s·]+/, "") || info
     }));
   }
-  if (kind === "wh") return CATALOG.harmony.map(name => ({
-    value: name, label: name, art: memFile(name, "WH", "png"), info: edMemInfo(name)
-  }));
+  if (kind === "wh") {
+    // Same rule as the memories: only the signature, the ones of the same element or Effect and those in use stay up front. The rest wait behind "Others"
+    const { signatures, worn, fit, inDraft } = edUpFront();
+    return CATALOG.harmony.map(name => ({
+      value: name, label: name, art: memFile(name, "WH", "png"),
+      info: (signatures.has(name) ? `Signature memory of ${signatures.get(name)}
+
+` : "") + edMemInfo(name),
+      badge: signatures.has(name) ? "Signature" : worn.has(name) ? `In ${worn.get(name)} build${worn.get(name) > 1 ? "s" : ""}` : "",
+      more: !(signatures.has(name) || fit.has(name) || worn.has(name) || inDraft.has(name))
+    }));
+  }
   return [];
 }
 function edPickerCurrent(kind, c, slot, side) {
@@ -678,7 +691,9 @@ function edWire() {
       const labels = { char: "character", rank: "rank", weapon: "weapon", wh: "Weapon Harmony",
           mem: `Memory ${Number(slot) + 1}`, mx: `Weapon resonance ${Number(slot) + 1}`, cub: "C.U.B.",
           cubskill: `C.U.B. skill ${Number(slot) + 1}` };
-      node.setAttribute("aria-label", `${labels[drop]} selector`);
+      // An accessible name has to include the text the slot shows (an empty slot shows "Construct", a weapon its name)
+      const shown = node.textContent.trim().replace(/\s+/g, " ");
+      node.setAttribute("aria-label", `${shown ? `${shown}, ` : ""}${labels[drop]} selector`);
       node.title = `Choose ${labels[drop]}`;
       if (drop === "mem" || drop === "mx") node.title += ". Drag it onto another slot of this card to swap them";
     };

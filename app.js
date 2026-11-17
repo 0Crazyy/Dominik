@@ -24,13 +24,13 @@ const MEMORY_RES_NAMES = ["Ex- Enhanced Power", "Ex- Precision Action", "Ex- Pre
 // Entry: [name, boost, art extension]. No extension = no art yet: its Assets card shows empty slots
 // and a build shows its name instead. When the art arrives, just add the extension here.
 const MEMORY_TABS = {
-  Common: [["Frederick", "Dodge Boost", "png"], ["Cottie", "Signature Move Boost", "png"], ["Hanna", "3-Ping Boost", "png"],
+  Common: [["Frederick", "Dodge Boost", "png"], ["Cottie", "Signature Move Boost", "png"], ["Hanna", "3-Ping Boost", "png"], ["Carrielynn", "Basic Attack Boost", "png"], ["Aife", "Matrix Boost", "png"], ["Mozart", "Matrix Boost", "png"], ["Ike", "Elemental Boost", "png"],
     ["Darwin", "Orb Skill Boost", "png"], ["Condelina", "Basic Attack Boost", "png"]],
-  Support: [["Guinevere", "Support Boost II", "png"], ["Philip II", "Support Boost I", "png"], ["Einsteina", "Survival Boost II", "png"],
+  Support: [["Guinevere", "Support Boost II", "png"], ["Philip II", "Support Boost I", "png"], ["Einsteina", "Survival Boost II", "png"], ["Voltaire", "Weaken Enemy I", "png"], ["Samantha", "Elemental Support Boost", "png"],
     ["Catherine", "Survival Boost I", "png"], ["Da Vinci", "QTE Boost", "png"], ["Gloria", "Weaken Enemy II", "png"]],
   Effect: [["Clusius", "Ignition Boost", "png"], ["Bunsen", "Ultima Slash Boost", "png"], ["Poincare", "Darkflow Boost", "png"],
     ["Klenova", "Glaciation Boost", "png"], ["Wilde", "Plasma Beam Boost", "png"]],
-  Physical: [["Santiago", "Physical Boost", "webp"], ["Keats", "Physical Boost", "png"], ["Burana", "Physical Boost", "png"],
+  Physical: [["Santiago", "Physical Boost", "webp"], ["Keats", "Physical Boost", "png"], ["Burana", "Physical Boost", "png"], ["Richelieu", "Physical Support Boost", "png"],
     ["Chang Wuzi", "Physical Boost", "png"], ["Signa", "Physical Boost", "png"], ["Charlotte", "Physical Boost", "png"],
     ["Leeuwenhoek", "Physical Support Boost", "png"], ["Patton", "Physical Boost", "png"]],
   Fire: [["Feynman", "Fire Boost", "webp"], ["Hervor", "Fire Boost", "png"], ["Heraclitus", "Fire Boost", "png"],
@@ -45,12 +45,16 @@ const MEMORY_TABS = {
     ["Seraphine", "Dark Boost", "png"], ["Flamel", "ATK Boost", "png"], ["Bathlon", "Dark Boost", "png"]],
   Nihil: [["Bulgakov", "Nihil Boost", "webp"], ["Sothoth", "Nihil Boost", "png"], ["Cleopatra", "Nihil Boost", "png"]],
   Uniframe: [["Liliana", "ATK Boost", "png"], ["Shelley", "Lightning Boost", "png"], ["Isabel", "Ice Boost", "png"], ["Marco", "Physical Boost", "png"],
-    ["Jack", "Fire Boost", "png"], ["Lucrezia", "Lightning Boost", "png"], ["Wu'an", "ATK Boost", "png"], ["Koya", "ATK Boost", "png"]]
+    ["Jack", "Fire Boost", "png"], ["Lucrezia", "Lightning Boost", "png"], ["Wu'an", "ATK Boost", "png"], ["Koya", "ATK Boost", "png"], ["Boudica", "Event Set", "png"]],
+  Event: [["Lucia - Summer Daze", "Event Set", "png"], ["Lee - Celebration under the Moon", "Event Set", "png"], ["Liv - United", "Event Set", "png"], ["Chrome - Banquet", "Event Set", "png"], ["Luna - Fullmoon Laurel", "Event Set", "png"], ["Bianca - Tipsy Night", "Event Set", "png"], ["Cerberus - Rave Party", "Event Set", "png"], ["Liv - Reindeer", "Event Set", "png"], ["Vera - Scarlet Summers", "Event Set", "png"], ["New Year Fireworks", "Event Set", "png"], ["Lantern Festival - Reunion", "Event Set", "png"], ["Liv - Ceremony", "Event Set", "png"], ["Kuriko - Eternal", "Event Set", "png"]]
 };
 const MEM_INDEX = new Map(Object.entries(MEMORY_TABS).flatMap(([tab, sets]) => sets.map(([name, , ext]) => [name, { tab, ext }])));
 const memFile = (name, piece, ext = MEM_INDEX.get(name).ext) => `${MEM}/${MEM_INDEX.get(name).tab.toLowerCase()}/Memoria - ${name} ${piece}.${ext}`;
 // The three arts of a memory set, in slot order: 1-4, 2-5, 3-6
 const memSet = name => ["1-4", "2-5", "3-6"].map(p => MEM_INDEX.get(name).ext ? memFile(name, p) : name);
+// Full portrait arts ("Art - <name> 1|2|3.png" beside the card icons). Most sets have 3; these are the exceptions
+const MEMORY_ART_COUNT = { "Liv - Reindeer": 1, "Vera - Scarlet Summers": 1, "Lantern Festival - Reunion": 1, "Liv - Ceremony": 1, "Kuriko - Eternal": 1 };
+const memArts = name => Array.from({ length: MEMORY_ART_COUNT[name] ?? 3 }, (_, i) => `${MEM}/${MEM_INDEX.get(name).tab.toLowerCase()}/Art - ${name} ${i + 1}.webp`);
 // 4 pieces of "main" (slots 1, 2, 3, 5) + 2 pieces of "sub" (slots 4, 6)
 const memBuild = (main, sub) => [main[0], main[1], main[2], sub[0], main[1], sub[2]];
 const cubSkills = (dir, ext = "png") => [1, 2, 3, 4, 5, 6].map(i => `${dir}/CUB - Skill ${i}.${ext}`);
@@ -114,17 +118,61 @@ const rotated = ([a, b, c]) => [c, a, b];
 // Weapon Harmony: each memory is framed once here, as [x%, y%, zoom]. A card only says wh: "Da Vinci".
 // A memory missing from this list still works: it just shows the whole art until a frame is added.
 const WH_FRAME = {
+  "Aline": [26.3, 12.0, 3.6],
+  "Alphonse": [39.3, -4.6, 3.6],
+  "Barcelo": [37.1, 5.1, 3.6],
   "Bathlon": [54, 15, 5.4],
+  "Boone": [31.2, 24.3, 3.4],
+  "Bulgakov": [50.0, 39.0, 3.0],
+  "Bunsen": [47.3, 21.7, 3.6],
+  "Burana": [54.2, 16.2, 3.6],
+  "Catherine": [53.1, 11.0, 3.8],
+  "Chang Wuzi": [45.9, -2.6, 3.8],
+  "Charlotte": [51.5, 8.3, 3.8],
   "Chen Jiyuan": [50, 21, 3.5],
+  "Cleopatra": [54.7, 13.4, 3.6],
+  "Clusius": [50.0, 48.4, 3.4],
+  "Cogito": [51.9, 35.7, 3.4],
+  "Condelina": [45.4, 9.6, 3.8],
   "Cottie": [49, 6, 3.2],
   "Da Vinci": [50, 31, 4.6],
   "Darwin": [48, 21, 4.07],
+  "Derketo": [44.6, 7.8, 3.6],
+  "Diesel": [36.1, 16.2, 3.6],
   "Einsteina": [48, 33, 5.5],
+  "Elizabeth": [52.3, 2.9, 3.8],
+  "Feynman": [32.8, 16.4, 3.8],
+  "Flamel": [50.0, 12.4, 3.8],
+  "Fran": [62.1, 31.4, 3.4],
+  "Frederick": [50.0, 1.5, 3.8],
   "Guinevere": [50, 48, 6],
+  "Hanna": [50.0, 42.8, 3.4],
   "Heisen": [44, 9, 3.7],
+  "Heraclitus": [44.3, 28.6, 3.4],
+  "Herschell": [43.8, 25.8, 3.6],
+  "Hervor": [50.9, 16.2, 3.6],
+  "Jeanne": [48.7, 49.8, 3.4],
+  "Ji Bo'an": [49.1, 13.7, 3.8],
+  "Keats": [50.0, 59.1, 3.2],
   "Klenova": [56, 41, 3.5],
+  "Leeuwenhoek": [39.6, 6.5, 3.6],
+  "Mousme": [40.4, 25.8, 3.6],
+  "Natasha": [37.3, 25.8, 3.6],
+  "Nimue": [52.8, 25.6, 3.2],
   "Patton": [52, 23, 4.3],
-  "Shakespeare": [33, 6, 3]
+  "Pavlichenko": [50.8, 28.6, 3.6],
+  "Pesanteur": [55.8, 16.2, 3.6],
+  "Philip II": [45.8, 17.8, 3.8],
+  "Poincare": [42.7, 23.1, 3.6],
+  "Santiago": [50.0, 51.8, 3.2],
+  "Seraphine": [48.3, 12.4, 3.8],
+  "Shakespeare": [33, 6, 3],
+  "Signa": [41.8, 13.7, 3.8],
+  "Sothoth": [53.4, 42.0, 3.0],
+  "Tifa": [47.9, 13.7, 3.8],
+  "Turing": [42.9, 24.5, 3.6],
+  "Unimate": [51.0, 5.6, 3.8],
+  "Wilde": [54.2, 28.6, 3.6]
 };
 
 const GA = "Glorious Afterglow", GS = "Glorious Spear", ML = "Matrix Lightning", SAR = "Superconducting Axial Ray",
@@ -149,81 +197,81 @@ const WANSHI_BUILD = {
 
 // Parts of a character's card that stay the same across teams; each card adds its memories, matrix and desc
 const LUCIA_IC_KIT = {
-  name: "Lucia: Inverse Crown", symbol: classIcon("Attacker"), portrait: `${LUCIA_IC}/Awaken - Lucia Inverse Crown.png`,
+  name: "Lucia: Inverse Crown", symbol: classIcon("Attacker"), portrait: `${LUCIA_IC}/Awaken - Lucia Inverse Crown.webp`,
   weapon: `${LUCIA_IC}/Arma - Lucia Inverse Crown.webp`, matrix: matrix(GA, INC, DLT),
   resonance: ALL_ATK, core: `${LUCIA_IC}/Skill - Signature HD.png`, construct: `${LUCIA_IC}/CUB - Allos.webp`, skills: cubSkills(LUCIA_IC, "webp")
 };
 const SELENA_KIT = {
-  name: "Selena: Pianissimo", symbol: classIcon("Attacker"), portrait: `${SELENA}/Awaken - Selena Pianissimo.png`,
+  name: "Selena: Pianissimo", symbol: classIcon("Attacker"), portrait: `${SELENA}/Awaken - Selena Pianissimo.webp`,
   weapon: `${SELENA}/Arma - Selena Pianissimo.png`, memories: memBuild(BURANA, COTTIE),
   resonance: ALL_ATK, core: `${SELENA}/Skill - Core Passiva.png`, construct: `${SELENA}/CUB - Snow Waltz.png`, skills: cubSkills(SELENA)
 };
 const LIV_KIT = {
-  name: "Liv: Limpidity", symbol: classIcon("Attacker"), portrait: `${LIV}/Awaken - Liv Limpidity.png`,
+  name: "Liv: Limpidity", symbol: classIcon("Attacker"), portrait: `${LIV}/Awaken - Liv Limpidity.webp`,
   weapon: `${LIV}/Arma - Liv Limpidity.png`, matrix: matrix(GA, INC, ML),
   resonance: ALL_ATK, core: `${LIV}/Skill - Core Passiva HD.png`, construct: `${LIV}/CUB - Levvi.png`, skills: cubSkills(LIV)
 };
 const HANYING_KIT = {
-  name: "Hanying: Solacetune", symbol: classIcon("Tanque"), portrait: `${HANYING}/Awaken - Hanying Solacetune.png`,
+  name: "Hanying: Solacetune", symbol: classIcon("Tanque"), portrait: `${HANYING}/Awaken - Hanying Solacetune.webp`,
   weapon: `${HANYING}/Arma - Hanying Solacetune.png`,
   resonance: ALL_ATK, core: `${HANYING}/Skill - Core Passiva.png`, construct: `${HANYING}/CUB - Dreamwing.png`, skills: cubSkills(HANYING)
 };
 const VERONICA_KIT = {
-  name: "Veronica: Aegis", symbol: classIcon("Amplifier"), portrait: `${VERONICA}/Awaken - Veronica Aegis.png`,
+  name: "Veronica: Aegis", symbol: classIcon("Amplifier"), portrait: `${VERONICA}/Awaken - Veronica Aegis.webp`,
   weapon: `${VERONICA}/Arma - Veronica Aegis.png`, wh: "Da Vinci", memories: memBuild(KEATS, DA_VINCI), matrix: matrix(SAR, GS, INC),
   resonance: ALL_ATK, core: `${VERONICA}/Skill - Signature.png`, construct: `${VERONICA}/CUB - Scaled Rampart.png`,
   // Order as in the reference images: slots 1 and 3 are her Skill 3 and Skill 1
   skills: [3, 2, 1, 4, 5, 6].map(i => `${VERONICA}/CUB - Skill ${i}.png`)
 };
 const KARENINA_KIT = {
-  name: "Karenina: Effulgence", symbol: classIcon("Breaker"), portrait: `${KARENINA}/Awaken - Karenina Effulgence.png`,
+  name: "Karenina: Effulgence", symbol: classIcon("Breaker"), portrait: `${KARENINA}/Awaken - Karenina Effulgence.webp`,
   weapon: `${KARENINA}/Arma - Karenina Effulgence.webp`, wh: "Patton", memories: memBuild(SANTIAGO, PATTON), matrix: matrix(DD, GA, INC),
   resonance: ALL_ATK, core: `${KARENINA}/Skill - Signature 2X.png`, construct: `${KARENINA}/CUB - Patrick.webp`, skills: cubSkills(KARENINA, "webp")
 };
 const HELENTINE_KIT = {
-  name: "Helentine: Lacrimosa", symbol: classIcon("Amplifier"), portrait: `${HELENTINE}/Awaken - Helentine.png`,
+  name: "Helentine: Lacrimosa", symbol: classIcon("Amplifier"), portrait: `${HELENTINE}/Awaken - Helentine.webp`,
   weapon: `${HELENTINE}/Arma - Helentine Lacrimosa.webp`, matrix: matrix(SAR, GS, INC),
   resonance: ALL_ATK, core: `${HELENTINE}/Skill - Signature 2X.png`, construct: `${HELENTINE}/CUB - Grand Duke.webp`, skills: cubSkills(HELENTINE, "webp")
 };
 const VERA_KIT = {
-  name: "Vera: Geiravor", symbol: classIcon("Amplifier"), portrait: `${VERA}/Awaken - Vera-chan Geiravor.png`,
+  name: "Vera: Geiravor", symbol: classIcon("Amplifier"), portrait: `${VERA}/Awaken - Vera-chan Geiravor.webp`,
   weapon: `${VERA}/Arma - Vera Geiravor.png`, wh: "Shakespeare", memories: memBuild(HERVOR, SHAKESPEARE), matrix: matrix(SAR, GS, INC),
   resonance: ALL_ATK, core: `${VERA}/Skill - Signature 2X.png`, construct: `${VERA}/CUB - Wrathfang.png`, skills: cubSkills(VERA)
 };
 const KAMUI_KIT = {
-  name: "Kamui: Aeternion", symbol: classIcon("Breaker"), portrait: `${KAMUI}/Awaken - Kamui.png`,
+  name: "Kamui: Aeternion", symbol: classIcon("Breaker"), portrait: `${KAMUI}/Awaken - Kamui.webp`,
   weapon: `${KAMUI}/Arma - Kamui Aeternion.png`, wh: "Darwin", memories: memBuild(FEYNMAN, COTTIE),
   resonance: ALL_ATK, core: `${KAMUI}/Skill - Signature 2.png`, construct: `${KAMUI}/CUB - Ignis.png`, skills: cubSkills(KAMUI, "png")
 };
 const TEDDY_KIT = {
   rank: "assets/rank/SSS.png",
-  name: "Teddy: Spectre", symbol: classIcon("Amplifier"), portrait: `${TEDDY}/Awaken - Teddy Spectre.png`,
+  name: "Teddy: Spectre", symbol: classIcon("Amplifier"), portrait: `${TEDDY}/Awaken - Teddy Spectre.webp`,
   weapon: `${TEDDY}/Arma - Teddy Spectre.png`, matrix: matrix(SAR, GS, INC),
   resonance: ALL_ATK, core: `${TEDDY}/Skill - Signature HD.png`, construct: `${TEDDY}/CUB - Beep-Boop.png`,
   skills: cubSkills(TEDDY)
 };
 const LEIA_KIT = {
-  name: "Leia: Fortunaster", symbol: classIcon("Breaker"), portrait: `${LEIA}/Awaken - Leia Fortunaster.png`,
+  name: "Leia: Fortunaster", symbol: classIcon("Breaker"), portrait: `${LEIA}/Awaken - Leia Fortunaster.webp`,
   weapon: `${LEIA}/Arma - Leia Fortunaster.png`,
   matrix: matrix(DD, GA, ML), resonance: ALL_ATK, core: `${LEIA}/Skill - Core Passiva.png`, construct: `${LEIA}/CUB - Vulpecula.png`, skills: cubSkills(LEIA)
 };
 const NANAMI_KIT = {
-  name: "Nanami: Startrail", symbol: classIcon("Tanque"), portrait: `${NANAMI}/Awaken - Nanami Startrail.png`,
+  name: "Nanami: Startrail", symbol: classIcon("Tanque"), portrait: `${NANAMI}/Awaken - Nanami Startrail.webp`,
   weapon: `${NANAMI}/Arma - Nanami Startrail.png`, matrix: matrix(DD, ML, INC),
   resonance: ALL_ATK, core: `${NANAMI}/Skill - Signature HD.png`, construct: `${NANAMI}/CUB - Bramble Angler.png`, skills: cubSkills(NANAMI)
 };
 const ADELYDE_KIT = {
-  name: "Adelyde: Anabasis", symbol: `${ADELYDE}/Classe - Adelyde Anabasis.png`, portrait: `${ADELYDE}/Awaken - Adelyde Anabasis.png`,
+  name: "Adelyde: Anabasis", symbol: `${ADELYDE}/Classe - Adelyde Anabasis.png`, portrait: `${ADELYDE}/Awaken - Adelyde Anabasis.webp`,
   weapon: `${ADELYDE}/Arma - Adelyde Anabasis.webp`, wh: "Bathlon", memories: memBuild(PESANTEUR, BATHLON), matrix: matrix(SAR, GS, ML),
   resonance: ALL_ATK, core: `${ADELYDE}/Skill - Signature 2X.png`, construct: `${ADELYDE}/CUB - Kelpie.webp`, skills: cubSkills(ADELYDE, "webp")
 };
 const ROSETTA_KIT = {
-  name: "Rosetta: Arete", symbol: classIcon("Breaker"), portrait: `${ROSETTA}/Awaken - Rosetta Arete.png`,
+  name: "Rosetta: Arete", symbol: classIcon("Breaker"), portrait: `${ROSETTA}/Awaken - Rosetta Arete.webp`,
   weapon: `${ROSETTA}/Arma - Mirage Alberd.webp`, wh: "Cottie", memories: memBuild(NIMUE, COTTIE), matrix: matrix(DD, DLT, GA),
   resonance: ALL_ATK, core: `${ROSETTA}/Skill - Signature.webp`, construct: `${ROSETTA}/CUB - Buzzling.webp`, skills: cubSkills(ROSETTA, "webp")
 };
 const LILITH_KIT = {
-  name: "Lilith: Daemonissa", symbol: classIcon("Amplifier"), portrait: `${LILITH}/Awaken - Lilith Daemonissa.png`,
+  name: "Lilith: Daemonissa", symbol: classIcon("Amplifier"), portrait: `${LILITH}/Awaken - Lilith Daemonissa.webp`,
   weapon: `${LILITH}/Arma - Lilith Daemonissa.png`, resonance: ALL_ATK, core: `${LILITH}/Skill - Signature HD.png`,
   construct: `${LILITH}/CUB - Billie.png`, skills: cubSkills(LILITH)
 };
@@ -339,7 +387,7 @@ const COMPS = {
     variants: [{ id: "luna-rosetta-nirvatia", name: "Luna · Rosetta · Nirvatia", cards: [
       { bar: "blue", name: "Luna: Oblivion", role: "captain",
         symbol: classIcon("Annihilator"),
-        portrait: `${LUNA}/Awaken - Luna Oblivion.png`,
+        portrait: `${LUNA}/Awaken - Luna Oblivion.webp`,
         weapon: `${LUNA}/Arma - Luna Oblivion.png`,
         wh: "Cottie",
         memories: memBuild(CLEOPATRA, COTTIE),
@@ -354,7 +402,7 @@ const COMPS = {
         desc: "Made for the Nihil team: one Signature per entrance.\n• SS3 and above: still play her as at SS0. Awkward, but every help counts.\n• Bathlon over Cottie: she deals some damage and, with Luna's class skill effect, debuffs enemies, while Cottie would only help herself. A good fit given the lack of Ishmael." },
       { bar: "gold", name: "Nirvatia: Dirge", role: "",
         symbol: classIcon("Amplifier"),
-        portrait: `${NIRVATIA}/Awaken - Nirvatia Dirge.png`,
+        portrait: `${NIRVATIA}/Awaken - Nirvatia Dirge.webp`,
         weapon: `${NIRVATIA}/Arma - Obituary for Yesterday..webp`,
         wh: "Guinevere",
         memories: memBuild(rotated(BULGAKOV), GUINEVERE),
@@ -381,7 +429,7 @@ const COMPS = {
     variants: [{ id: "watanabe-vera-kamui", name: "Watanabe · Vera · Kamui", cards: [
       { bar: "blue", name: "Watanabe: Epitaph", role: "starter",
         symbol: classIcon("Tanque"),
-        portrait: `${WATANABE}/Awaken - Watanabe Epitaph.png`,
+        portrait: `${WATANABE}/Awaken - Watanabe Epitaph.webp`,
         weapon: `${WATANABE}/Arma - Watanabe Epitaph.png`,
         wh: "Da Vinci",
         memories: memBuild(ALPHONSE, DA_VINCI),
@@ -396,7 +444,7 @@ const COMPS = {
     ] }, { id: "lucia-vera-kamui", name: "Lucia · Vera · Kamui", cards: [
       { bar: "blue", name: "Lucia: Pyroath", role: "starter",
         symbol: classIcon("Attacker"),
-        portrait: `${LUCIA_P}/Awaken - Lucia Pyroath.png`,
+        portrait: `${LUCIA_P}/Awaken - Lucia Pyroath.webp`,
         weapon: `${LUCIA_P}/Arma - Lucia Pyroath.webp`,
         wh: "Da Vinci",
         memories: [HERACLITUS[0], HERACLITUS[1], HERACLITUS[2], DA_VINCI[0], HERACLITUS[1], DA_VINCI[2]],
@@ -426,7 +474,7 @@ const COMPS = {
     variants: [{ id: "bianca-adelyde-rosetta", name: "Bianca · Adelyde · Rosetta", cards: [
       { bar: "blue", name: "Bianca: Crepuscule", role: "starter",
         symbol: classIcon("Attacker"),
-        portrait: `${BIANCA}/Awaken - Bianca Crepuscule.png`,
+        portrait: `${BIANCA}/Awaken - Bianca Crepuscule.webp`,
         weapon: `${BIANCA}/Arma - Bianca Crepuscule.png`,
         wh: "Bathlon",
         memories: memBuild(JEANNE, BATHLON),
@@ -450,7 +498,7 @@ const COMPS = {
     ] }, { id: "kurumi-adelyde-rosetta", name: "Kurumi · Adelyde · Rosetta", cards: [
       { bar: "blue", name: "Kurumi Tokisaki", role: "starter",
         symbol: classIcon("Attacker"),
-        portrait: `${KURUMI}/Awaken - Kurumi Tokisaki.png`,
+        portrait: `${KURUMI}/Awaken - Kurumi Tokisaki.webp`,
         weapon: `${KURUMI}/Arma - Kurumi Tokisaki.webp`,
         wh: "Darwin",
         memories: memBuild(BATHLON, DERKETO),
@@ -568,7 +616,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 // Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
 // data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
 // ?v=4: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
-const web = src => src.replace("assets/", "assets-web/").replace(/\.[^./]+$/, ".webp") +(src.startsWith("assets/rank/") ? "?v=4" : "");
+const web = src => src.replace("assets/", "assets-web/").replace(/\.[^./]+$/, ".webp") +(src.startsWith("assets/rank/") ? "?v=5" : "");
 const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
 // Name shown when hovering an icon, read from its file name ("Memoria - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {
@@ -612,7 +660,8 @@ const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name
 // The game calls the captain role "Leader": role keys in the data stay as they are, only the label changes
 const TAG_LABEL = { captain: "LEADER" };
 // Detail pages: /assets/<memory|weapon|resonance|cub|skill>/<id> and /constructs/<id>
-const linkId = s => slug(s).replace(/[^a-z0-9-]/g, "");
+// A name that starts with a star ("★Rock Cannon") keeps a mark, so it does not share an address with the weapon of the same name without it
+const linkId = s => slug(s).replace(/^★/, "star-").replace(/[^a-z0-9-]/g, "");
 const memoryHref = name => `/assets/memory/${linkId(name)}`;
 const weaponHref = name => `/assets/weapon/${linkId(name)}`;
 const resonanceHref = name => `/assets/resonance/${linkId(name)}`;
@@ -637,6 +686,8 @@ const STAR_BARS = {
 const STARS_BAR = STAR_BARS[6], WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", BAR_RATIO = 230 / 2048;
 const starOverlay = rank => pic(STAR_BARS[rank] || STARS_BAR, `class="stars" alt="${rank || 6} stars"`);
 const STARS = starOverlay(6);
+// With a Weapon Harmony chosen, the weapon icon wears the same red bar as the harmony
+const whOverlay = pic(WH_BAR, 'class="stars" alt="Weapon Harmony"');
 // A rank A C.U.B. has 5 stars, an S rank one 6 (EXTRA_CUBS lists the rank A ones)
 const CUB_RANK_A = new Set(EXTRA_CUBS.filter(c => c[2] === "A").map(([name, , , , dir]) => `${dir}/CUB - ${name}.png`));
 const cubStars = art => CUB_RANK_A.has(art) ? starOverlay(5) : STARS;
@@ -849,7 +900,7 @@ function card(c) {
       <div class="rank"${tipAttr(c.name && iconName(rankArt(c)))}>${c.name ? pic(rankArt(c), 'alt="rank"') : ""}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
-      <div class="wp">${slot(c.weapon, weaponType, c.weapon ? starOverlay(weaponRank(weapon, c.weapon, c.weaponRank)) + harmonyArrows(resonanceCount(c)) : "", weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
+      <div class="wp">${slot(c.weapon, weaponType, c.weapon ? (c.wh ? whOverlay : starOverlay(weaponRank(weapon, c.weapon, c.weaponRank))) + harmonyArrows(resonanceCount(c)) : "", weapon, weapon && weaponHref(weapon), weaponEffect)}${weaponArt(c)}</div>
       <div class="mxw">
         <div class="mx">${n(3, i => numbered((c.matrix || [])[i], i + 1, resonance((c.matrix || [])[i]))).join("")}</div>
         <div class="res"><span>6×</span>${skillSlot(c.resonance)}<span>6×</span>${skillSlot(c.core)}</div>
@@ -1117,7 +1168,7 @@ function characters() {
   }
   return characterList = [...found.values()];
 }
-const constructPortrait = name => `${CHARS}/${charId(name)}/Awaken - ${name.replace(":", "").trim()}.png`;
+const constructPortrait = name => `${CHARS}/${charId(name)}/Awaken - ${name.replace(":", "").trim()}.webp`;
 function constructRoster() {
   const built = new Map(characters().map(ch => [ch.name, ch]));
   return Object.keys(CONSTRUCTS).map(name => built.get(name) || ({ name, portrait: constructPortrait(name), builds: [] }));
@@ -1294,7 +1345,7 @@ function team(path, pick) {
 
 /* ---------- assets pages ---------- */
 const thumb = (src, overlay = "") => `<div class="slot">${src ? pic(src) + overlay : ""}</div>`;
-const FIVE_STAR = new Set(["Gloria"]);
+const FIVE_STAR = new Set(["Gloria", "Carrielynn", "Aife", "Mozart", "Ike", "Voltaire", "Samantha", "Richelieu", "Lucia - Summer Daze", "Lee - Celebration under the Moon", "Liv - United", "Chrome - Banquet", "Luna - Fullmoon Laurel", "Bianca - Tipsy Night", "Cerberus - Rave Party", "Liv - Reindeer", "Vera - Scarlet Summers", "New Year Fireworks", "Lantern Festival - Reunion", "Liv - Ceremony", "Kuriko - Eternal", "Boudica"]);
 const weaponRank = (name, file = "", rank = "") => Number(rank || String(file || "").match(/\s\(([456])\)(?=\.[^.]+$)/)?.[1] || (FIVE_STAR.has(name) ? 5 : 6));
 const starsOf = (name, file = "", rank = "") => starOverlay(weaponRank(name, file, rank));
 const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(src => thumb(src, starsOf(name))).join("");
@@ -1302,6 +1353,7 @@ const memoryArt = (name, ext) => (ext ? memSet(name) : ["", "", ""]).map(src => 
 // back to the default one. The order stays while browsing and goes in the address (?sort=), so a link keeps it
 const STAT_NAMES = ["ATK", "DEF", "CRIT", "HP"];
 const SORT_DEFAULT = { memories: "Release-high", weapons: "Release-high", cubs: "Release-high", resonances: "" };
+const tableSearch = { memories: "", weapons: "", cubs: "", resonances: "" }; // what the search box above each table looks for
 const tableSort = { ...SORT_DEFAULT }, shownRows = { memories: [], weapons: [], cubs: [], resonances: [] };
 // The default order stays out of the address
 const sortQuery = table => ({ sort: tableSort[table] === SORT_DEFAULT[table] ? "" : tableSort[table], ...(table === "weapons" && { stars: weaponStars }) });
@@ -1310,6 +1362,33 @@ let weaponStars = "";
 const weaponStarList = () => [...new Set(WEAPONS.map(w => weaponRank(w[1], w[3], w[5])))].sort((a, b) => b - a);
 // A weapon's frame: the owner in its row, or the one the site lists for it
 const weaponOwner = ([owner, name]) => owner || FIVE_STAR_WEAPON_OWNERS[name];
+// The three versions of a weapon (4, 5 and 6 stars) share a model in the file name (e2halberdmd01..., e2halberdmd02..., e3halberdmd01...:
+// same name and same last digits). A weapon with no frame of its own takes the release of the earliest frame that has one of its versions
+const weaponModel = file => { const m = /\/e\d([a-z0-9]+?)md\d\d(\d+)\.\w+$/i.exec(file || ""); return m ? `${m[1]}|${m[2]}` : ""; };
+let modelFrames;
+function weaponFrame(weapon) {
+  const owner = weaponOwner(weapon);
+  if (owner) return owner;
+  if (!modelFrames) {
+    modelFrames = new Map();
+    for (const w of WEAPONS) {
+      const frame = weaponOwner(w), model = weaponModel(w[3]);
+      if (frame && CONSTRUCTS[frame] && model && !(CONSTRUCTS[modelFrames.get(model)]?.[0] <= CONSTRUCTS[frame][0])) modelFrames.set(model, frame);
+    }
+  }
+  return modelFrames.get(weaponModel(weapon[3])) || "";
+}
+// A frame's weapon type: its own weapon first, then the weapon the site recommends for it
+const weaponTypeOf = frame => (WEAPONS.find(w => w[0] === frame) || WEAPONS.find(w => FIVE_STAR_WEAPON_OWNERS[w[1]] === frame))?.[2] || WEAPON_TYPE_EXTRA[frame] || "";
+// The icon of a type is the silhouette of one of its weapons, in white: the 6 star one if there is one, else the highest rank
+const weaponTypeArt = type => {
+  const best = WEAPONS.filter(w => w[2] === type && w[3]).sort((a, b) => weaponRank(b[1], b[3], b[5]) - weaponRank(a[1], a[3], a[5]) || (a[0] ? 1 : 0) - (b[0] ? 1 : 0))[0];
+  return best ? weaponFile(best[3]) : "";
+};
+const typeIcon = type => {
+  const art = weaponTypeArt(type);
+  return art ? `<span class="wtype" role="img" aria-label="${esc(type)}" style="-webkit-mask-image:url('/${esc(encodeURI(web(art)))}');mask-image:url('/${esc(encodeURI(web(art)))}')"></span>` : "";
+};
 const weaponRows = tab => WEAPONS.filter(w => (tab === "All" || CONSTRUCTS[weaponOwner(w)]?.[1] === tab)
   && (!weaponStars || weaponRank(w[1], w[3], w[5]) === Number(weaponStars)));
 const weaponStarBar = () => `<div class="sortbar star-filter" id="starFilter" role="group" aria-label="Weapon rank"><span>Rank</span>${["", ...weaponStarList()].map(n =>
@@ -1321,7 +1400,8 @@ function nextSort(table, column) {
   return sort === first ? second : sort === second ? SORT_DEFAULT[table] : first;
 }
 function sortedRows(table) {
-  const sort = tableSort[table], rows = shownRows[table], { name, value } = SORT_TABLES[table];
+  const sort = tableSort[table], { name, value, text } = SORT_TABLES[table];
+  const term = tableSearch[table].trim().toLowerCase(), rows = term ? shownRows[table].filter(row => text(row).toLowerCase().includes(term)) : shownRows[table];
   if (!sort) return rows;
   const byName = (a, b) => name(a).localeCompare(name(b));
   if (sort === "az") return [...rows].sort(byName);
@@ -1351,18 +1431,19 @@ const weaponRow = ([owner, name, type, file, , rank]) => {
   return `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${weaponThumb(file, name, rank)}</div>
       <div><a href="${weaponHref(name)}">${esc(name)}</a><small>${subtitle}</small></div></div></td>
-    ${WEAPON_STATS[name].map((value, i) => `<td data-label="${["ATK", "CRIT"][i]}">${value}</td>`).join("")}${patchCell(listedOwner)}</tr>`;
+    ${WEAPON_STATS[name].map((value, i) => `<td data-label="${["ATK", "CRIT"][i]}">${value}</td>`).join("")}${patchCell(weaponFrame([owner, name, type, file]))}</tr>`;
 };
 const SORT_TABLES = {
-  memories: { columns: STAT_NAMES, release: true, row: set => memoryRow(set), name: ([name]) => name,
+  memories: { columns: STAT_NAMES, release: true, row: set => memoryRow(set), name: ([name]) => name, text: ([name, boost]) => `${name} ${boost}`,
     value: ([name], column) => column === "Release" ? MEMORY_RELEASE[name] : MEMORY_STATS[name][STAT_NAMES.indexOf(column)] },
   // Character-bound weapons follow their frame's release; standalone weapons sort after them
   weapons: { columns: ["ATK", "CRIT"], release: true, row: weapon => weaponRow(weapon), name: ([, name]) => name,
+    text: ([owner, name, type]) => `${name} ${weaponOwner([owner, name]) || ""} ${type}`,
     // A weapon with no frame comes after them, the higher stars first
-    value: ([owner, name, , file, , rank], column) => column === "Release" ? CONSTRUCTS[weaponOwner([owner, name])]?.[0] ?? weaponRank(name, file, rank) / 100 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
+    value: ([owner, name, , file, , rank], column) => column === "Release" ? CONSTRUCTS[weaponFrame([owner, name, "", file])]?.[0] ?? weaponRank(name, file, rank) / 100 : WEAPON_STATS[name][column === "ATK" ? 0 : 1] },
   // Same for a CUB. They all have the same ATK, so no stat column
-  cubs: { columns: [], plain: ["Recommended user", "Element"], release: true, row: cub => cubRow(cub), name: cub => cub.name, value: cub => CONSTRUCTS[cub.owner]?.[0] ?? 0 },
-  resonances: { columns: [], row: resonance => resonanceRow(resonance), name: ([name]) => name, noRelease: true }
+  cubs: { columns: [], plain: ["Recommended user", "Element"], release: true, row: cub => cubRow(cub), name: cub => cub.name, text: cub => `${cub.name} ${cub.owner || ""}`, value: cub => CONSTRUCTS[cub.owner]?.[0] ?? 0 },
+  resonances: { columns: [], row: resonance => resonanceRow(resonance), name: ([name]) => name, text: ([name]) => name, noRelease: true }
 };
 // Replaces the query of the address without adding a history entry. Empty values are left out
 function setQuery(values) {
@@ -1375,10 +1456,13 @@ function setQuery(values) {
 // Shows a table with the order in the address, if it has one, or else the one in use
 function openTable(table, rows) {
   shownRows[table] = rows;
+  tableSearch[table] = "";
   const sort = new URLSearchParams(location.search).get("sort");
   if (["Name", "Release", ...SORT_TABLES[table].columns].flatMap(columnSorts).includes(sort)) tableSort[table] = sort;
   setQuery(sortQuery(table));
-  return `<div id="sortTable" data-table="${table}">${sortTable(table)}</div>`;
+  const label = { memories: "memories", weapons: "weapons", cubs: "C.U.B.s", resonances: "weapon resonances" }[table];
+  return `<div class="tbl"><input class="cx-search tb-search" type="search" placeholder="Search ${label}" aria-label="Search ${label}" data-table-search="${table}">
+    <div id="sortTable" data-table="${table}">${sortTable(table)}</div></div>`;
 }
 function sortTable(table) {
   const sort = tableSort[table], { columns, plain = [], release: releaseColumn, row, noRelease } = SORT_TABLES[table];
@@ -1414,7 +1498,7 @@ const constructValue = (c, group) => CONSTRUCTS[c.name][CONSTRUCT_FILTERS.indexO
 const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${ADELYDE}/Classe - Adelyde Anabasis.png`, Vanguard: classIcon("Vanguard") };
 const filterIcon = (group, value) => group === "Element" ? menuIcon("energy-type", value) : group === "Effect" ? menuIcon("effects", value)
   : group === "Class" ? pic(CLASS_ART[value] || classIcon(value))
-    : value === "S" ? pic("assets/rank/S.png") : `<b>${esc(value)}</b>`;
+    : ["S", "A", "B"].includes(value) ? pic(`assets/rank/${value}.png`) : `<b>${esc(value)}</b>`;
 function constructFilters() {
   const active = CONSTRUCT_FILTERS.filter(group => constructFilter[group]).length;
   const bar = `<div class="filter-bar"><input class="cx-search" type="search" placeholder="Search constructs" aria-label="Search constructs" value="${esc(constructSearch)}" data-construct-search><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">Filters${active ? ` (${active})` : ""}</button><button class="tool" data-clear-filters${active ? "" : " data-empty"} aria-disabled="${!active}">Clear filters</button></div>`;
@@ -1427,12 +1511,13 @@ function constructFilters() {
       const on = (constructFilter[group] || "") === value;
       const style = group === "Element" && value ? ` style="--c:${TILE_COLOR[value] || ""}"` : "";
       const icon = value ? `<span class="chip-icon">${filterIcon(group, value)}</span>` : "";
-      return `<button class="tool chip${on ? " on" : ""}"${style} data-filter="${group}" data-value="${esc(value)}" aria-pressed="${on}"${group === "Rank" && value ? ` aria-label="Rank ${esc(value)}"` : ""}>${icon}${group === "Rank" && value ? "" : esc(label)}${value ? `<small class="chip-n">${tally.get(value)}</small>` : ""}</button>`;
+      return `<button class="tool chip${on ? " on" : ""}"${style} data-filter="${group}" data-value="${esc(value)}" aria-pressed="${on}"${group === "Rank" && value ? ` aria-label="Rank ${esc(value)} ${tally.get(value)}"` : ""}>${icon}${group === "Rank" && value ? "" : esc(label)}${value ? ` <small class="chip-n">${tally.get(value)}</small>` : ""}</button>`;
     };
-    return `<div class="filter" role="group" aria-label="${group}"><span>${group}</span><div class="filter-bar-tools">${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div></div>`;
+    return `<div class="filter filter-${group.toLowerCase()}" role="group" aria-label="${group}"><span>${group}</span><div class="filter-bar-tools">${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div></div>`;
   }).join("")}</div>`;
 }
-// A card per construct: portrait, rank, and the class, element and Effect as icons, tinted by the element
+// A tile per construct: the portrait with its name over it, the class and element icons on the
+// top left and the Effect on the top right, all tinted by the element. Newest first
 let constructSearch = "";
 function constructCards() {
   const term = constructSearch.trim().toLowerCase();
@@ -1440,17 +1525,26 @@ function constructCards() {
     .sort((a, b) => CONSTRUCTS[b.name][0] - CONSTRUCTS[a.name][0]);
   const count = `<p class="cx-count">${list.length} construct${list.length === 1 ? "" : "s"}, newest first</p>`;
   if (!list.length) return `${count}<p class="sub">No constructs match these filters.</p>`;
-  return `${count}<div class="agrid cgrid">${list.map(c => {
+  const badge = (group, value) => value ? `<span class="ct-b" title="${esc(value)}"><span class="chip-icon">${filterIcon(group, value)}</span></span>` : "";
+  const tile = c => {
     const [, element, type, rank, effect] = CONSTRUCTS[c.name];
-    const builds = c.builds.length ? `${c.builds.length} build${c.builds.length === 1 ? "" : "s"}` : "No builds yet";
-    const tag = (group, value) => value ? `<span class="cc-tag" title="${esc(value)}"><span class="chip-icon">${filterIcon(group, value)}</span><em>${esc(value)}</em></span>` : "";
-    return `<a class="acard ccard" href="${characterHref(c.name)}" style="--c:${TILE_COLOR[element] || "#5a5a62"}">${thumb(c.portrait)}
-      <div><h3>${esc(c.name)}</h3><div class="cc-tags">${tag("Class", type)}${tag("Element", element)}${tag("Effect", effect)}</div>
-      <p><span class="cc-rank">${esc(rank)}</span> · ${builds}</p></div></a>`;
-  }).join("")}</div>`;
+    const [who, ...frame] = c.name.split(": ");
+    const info = [c.name, [type, element, effect].filter(Boolean).join(" · "), c.builds.length ? `${c.builds.length} build${c.builds.length === 1 ? "" : "s"}` : "No builds yet"].join("\n");
+    return `<a class="ctile" href="${characterHref(c.name)}" style="--c:${TILE_COLOR[element] || "#5a5a62"}" title="${esc(info)}" aria-label="${esc(`${c.name.replace(": ", " ")}, ${type}, ${element}${effect ? `, ${effect}` : ""}, ${rank}-Rank`)}">
+      <div class="slot">${c.portrait ? pic(c.portrait, 'alt=""') : ""}</div>
+      <span class="ct-top">${badge("Class", type)}${badge("Element", element)}</span><span class="ct-fx">${badge("Effect", effect)}</span>
+      <span class="ct-name"><b>${esc(who)}</b>${frame.length ? ` <small>${esc(frame.join(": "))}</small>` : ""}</span></a>`;
+  };
+  return `${count}<div class="ctiles">${list.map(tile).join("")}</div>`;
 }
 const constructsView = () => `${constructFilters()}<div id="constructGrid">${constructCards()}</div>`;
 $("#main").addEventListener("input", e => {
+  if (e.target.matches("[data-table-search]")) {
+    const table = e.target.dataset.tableSearch;
+    tableSearch[table] = e.target.value;
+    $("#sortTable").innerHTML = sortTable(table);
+    return;
+  }
   if (!e.target.matches("[data-construct-search]")) return;
   constructSearch = e.target.value;
   $("#constructGrid").innerHTML = constructCards();
@@ -1492,8 +1586,9 @@ function memoryPage([name, boost, ext]) {
   const { tab } = MEM_INDEX.get(name);
   const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2>${describe(text)}`).join("");
   return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
-    <div class="detail"><div class="mem">${memoryArt(name, ext)}</div>
+    <div class="detail${memArts(name).length ? " solo" : ""}">${memArts(name).length ? "" : `<div class="mem">${memoryArt(name, ext)}</div>`}
       <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>
+    ${memArts(name).length ? `<section class="mem-arts"><h2>Art</h2><div class="mem-arts-list">${memArts(name).map((src, i) => `<div class="mem-art-col"><p class="mem-art-head">${["1 / 4", "2 / 5", "3 / 6"][i]}</p>${ext ? `<div class="mt-art">${thumb(memSet(name)[i], starsOf(name))}</div>` : ""}${pic(src, `alt="${esc(name)} art"`)}</div>`).join("")}</div></section>` : ""}
     ${usedMemory(name)}`;
 }
 function weaponPage([owner, name, type, file, effect, rank]) {
@@ -1505,7 +1600,7 @@ function weaponPage([owner, name, type, file, effect, rank]) {
   // A weapon belongs to one frame, except the types listed in WEAPON_USERS that are shared by several
   const users = listedOwner ? [listedOwner] : WEAPON_USERS[type] || [];
   return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
-    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2>Effect</h2>${describe(effect)}` : ""}</div></div>
+    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2 class="wtype-head">${typeIcon(type)}Effect</h2>${describe(effect)}` : ""}</div></div>
     ${usedBy(users)}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
@@ -2463,6 +2558,37 @@ addEventListener("pointerup", () => {
   // Nothing was under the pointer to click (it left the belt): the flag must not eat the next real click
   setTimeout(() => { beltDragged = false; }, 0);
 });
+/* ---------- Memory art: click a portrait on a memory page to see it close up ---------- */
+document.addEventListener("click", e => {
+  const img = e.target.closest?.(".mem-art-col > img");
+  if (!img) return;
+  const arts = [...img.closest(".mem-arts-list").querySelectorAll(":scope > .mem-art-col > img")];
+  let at = arts.indexOf(img);
+  const box = document.createElement("div");
+  box.className = "art-zoom";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-label", "Memory art, close up");
+  const nav = arts.length > 1;
+  box.innerHTML = `<img alt="">${nav ? `<button type="button" class="prev" aria-label="Previous art">‹</button><button type="button" class="next" aria-label="Next art">›</button>` : ""}<button type="button" class="close" aria-label="Close">×</button>`;
+  const show = step => { at = (at + step + arts.length) % arts.length; const big = box.querySelector("img"); big.src = arts[at].dataset.full; big.alt = arts[at].alt; };
+  const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+  const onKey = k => {
+    if (k.key === "Escape") close();
+    else if (nav && k.key === "ArrowLeft") show(-1);
+    else if (nav && k.key === "ArrowRight") show(1);
+  };
+  box.addEventListener("click", ev => {
+    const btn = ev.target.closest("button");
+    if (btn?.classList.contains("prev")) show(-1);
+    else if (btn?.classList.contains("next")) show(1);
+    else close();
+  });
+  document.addEventListener("keydown", onKey);
+  show(0);
+  document.body.append(box);
+  box.querySelector(".close").focus();
+});
+
 /* ---------- New tags: gone once the tile or build is clicked ---------- */
 $("#main").addEventListener("click", e => {
   const item = e.target.closest?.("[data-new]");
@@ -2835,7 +2961,8 @@ const SKILL_GROUPS = [
   ["Common", ["Leader", "Class", "Awakening"]],
   ["Evolution", ["SS-Rank", "SSS-Rank", "SSS+ Rank"]],
   ["Harmony", ["Harmony Skill"]],
-  ["Leap", ["Leap Skill"]]
+  ["Leap", ["Leap Skill"]],
+  ["Uniframe", ["Uniframe Skill"]]
 ];
 const SKILL_SCALES = new Set(["Red Orb", "Yellow Orb", "Blue Orb", "Basic Attack", "Core", "Signature", "QTE"]);
 // The texts come at level 18 (the Huaxu default). Checked against the game: +1 level on Veil Pierce gives 164.71% from 160%
@@ -2898,7 +3025,7 @@ function skillGroups(ch) {
 // Each skill that scales has its own level, kept while browsing. Harmony and Leap skills have no icon art yet
 const skillKey = (ch, type) => `${ch.name}|${type}`;
 const skillLevelOf = (ch, type) => skillLevels.get(skillKey(ch, type)) ?? SKILL_BASE;
-const SKILL_NO_ICON = new Set(["Harmony Skill", "Leap Skill"]);
+const SKILL_NO_ICON = new Set(["Harmony Skill", "Leap Skill", "Uniframe Skill"]);
 function skillCard(ch, [type, name, effect]) {
   const scales = SKILL_SCALES.has(type), level = skillLevelOf(ch, type);
   const slider = scales ? `<label class="cx-level">Lv <b>${level}</b><input type="range" min="1" max="${SKILL_MAX}" value="${level}" data-sk-level="${esc(type)}" aria-label="${esc(name)} level"></label>` : "";
@@ -2935,10 +3062,10 @@ const buildGroup = (title, builds, href) => builds.length
 function characterPage(ch) {
   skillChar = ch;
   const [, element, type, rank, effect] = CONSTRUCTS[ch.name];
-  const weapon = WEAPONS.find(w => w[0] === ch.name), cub = cubList().find(c => c.owner === ch.name);
+  const weaponType = weaponTypeOf(ch.name), cub = cubList().find(c => c.owner === ch.name);
   const attr = (group, value) => value ? `<div class="cx-attr"><span class="chip-icon">${filterIcon(group, value)}</span><div><small>${group}</small><span>${esc(group === "Rank" ? `${value}-Rank` : value)}</span></div></div>` : "";
   const gear = [
-    weapon && `<a class="acard wpn" href="${weaponHref(weapon[1])}">${weaponThumb(weapon[3], weapon[1])}<div><h3>${esc(weapon[1])}</h3><p>Weapon</p></div></a>`,
+    weaponType && `<div class="acard wpn wtype-card"><div class="slot">${typeIcon(weaponType)}</div><div><h3>${esc(weaponType)}</h3><p>Weapon type</p></div></div>`,
     cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`
   ].filter(Boolean).join("");
   const pagePath = href => href.split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
@@ -3061,7 +3188,7 @@ function drawCard(g, c, art, cardColor, x, y, flare) {
   drawSlot(g, wpX, boxY + pad, wpW, weaponH);
   drawArt(g, art.get(c.weapon), wpX, boxY + pad, wpW, weaponH, { fit: "contain" });
   const barH = wpW * BAR_RATIO;
-  const weaponBar = art.get(STAR_BARS[weaponRank(WEAPONS.find(w => w[0] === c.name)?.[1], c.weapon, c.weaponRank)]);
+  const weaponBar = c.wh ? art.get(WH_BAR) : art.get(STAR_BARS[weaponRank(WEAPONS.find(w => w[0] === c.name)?.[1], c.weapon, c.weaponRank)]);
   if (weaponBar) drawArt(g, weaponBar, wpX, boxY + pad + weaponH - barH, wpW, barH, { fit: "contain" });
   if (c.weapon && resonanceCount(c)) {
     const s = 12 / 30, ax = wpX + wpW - 18, ay = boxY + pad + 6;

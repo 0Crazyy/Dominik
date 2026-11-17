@@ -4,16 +4,19 @@
 // Run it with: npm run smoke                       (once per computer: npm install)
 //              node tools/smoke.mjs timeline energy/fire    (only these pages, with screenshots, and no click tests; "home" is the home page)
 // Screenshots go to .smoke/. They are for looking at: nothing here judges how a page looks.
+//              node tools/smoke.mjs --a11y [pages]   (adds an axe accessibility scan of each page; a separate report that never changes the exit code)
 // Exit code 1 = something is broken. Pages added since the last deploy are not in sitemap.xml: name them as above.
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { dirname, extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SHOTS = join(ROOT, ".smoke");
 const WORKERS = 6;
+const A11Y = process.argv.includes("--a11y");
 const SIZES = {
   desktop: { viewport: { width: 1366, height: 800 } },
   mobile: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
@@ -51,12 +54,28 @@ const report = (size, where, text) => {
   problems.get(text).add(`[${size}] ${where}`);
 };
 
+// Accessibility findings from axe (only with --a11y): rule -> where, how many elements, one example. Kept apart from problems: it is a worklist, not a pass/fail
+const a11y = new Map();
+const IMPACT = ["critical", "serious", "moderate", "minor"];
+async function scanA11y(page, size, path) {
+  const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+  for (const v of violations) {
+    const key = `${v.impact} ${v.id}: ${v.help}`;
+    const item = a11y.get(key) || { places: new Set(), nodes: 0, sample: v.nodes[0]?.target.join(" ") };
+    item.places.add(`[${size}] ${path}`);
+    item.nodes += v.nodes.length;
+    a11y.set(key, item);
+  }
+}
+
 // Everything the browser complains about. Other sites (the web font) are left out: being offline is not a bug of the site
 function watch(page, size, where, base) {
   const ours = url => url.startsWith(base);
   page.on("pageerror", e => report(size, where, `erro de JavaScript: ${e.message}`));
   page.on("console", m => {
     // "Failed to load resource" repeats what the response listener below says, with less detail
+    // axe re-reads the cross-origin font stylesheet from the page, which the CSP blocks; that only happens with --a11y and is not a site bug
+    if (A11Y && /fonts.googleapis.com/.test(m.text())) return;
     if (m.type() === "error" && !m.text().startsWith("Failed to load resource") && (ours(m.location().url || base) || /Content Security Policy/i.test(m.text()))) report(size, where, `console: ${m.text()}`);
   });
   page.on("response", r => { if (ours(r.url()) && r.status() >= 400) report(size, where, `${r.status()} em ${decodeURI(r.url().slice(base.length))}`); });
@@ -84,9 +103,12 @@ async function checkPage(context, size, path, base, shot) {
     if (!state.filled) report(size, path, "a página abriu vazia");
     if (state.lost) report(size, path, "a página diz que não existe");
     if (state.extra > 1) report(size, path, `rolagem lateral de ${state.extra}px (começa em ${state.wide})`);
+    if (A11Y) await scanA11y(page, size, path);
     if (shot) {
       const name = path.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home";
-      await page.screenshot({ path: join(SHOTS, size, `${name}.png`), fullPage: true });
+      // Chromium refuses captures taller than about 16000px (the Memories list on a phone), so a long page is cut there
+      const height = await page.evaluate(() => document.documentElement.scrollHeight), width = page.viewportSize().width;
+      await page.screenshot({ path: join(SHOTS, size, `${name}.png`), fullPage: true, ...(height > 15000 && { fullPage: false, clip: { x: 0, y: 0, width, height: 15000 } }) });
     }
   } catch (e) {
     report(size, path, `não abriu: ${e.message.split("\n")[0]}`);
@@ -512,7 +534,7 @@ async function pool(jobs) {
 }
 
 // Git Bash rewrites /timeline into a Windows path, so addresses are written without the first slash
-const chosen = process.argv.slice(2).map(arg => {
+const chosen = process.argv.slice(2).filter(arg => arg !== "--a11y").map(arg => {
   if (arg.includes(":")) { console.error(`Endereço inválido: ${arg}. Escreva sem a barra inicial, assim: timeline`); process.exit(2); }
   return arg === "home" ? "/" : `/${arg.replace(/^\/+/, "")}`;
 });
@@ -530,7 +552,7 @@ try {
   const contexts = Object.fromEntries(await Promise.all(Object.keys(SIZES).map(async size => [size, await browser.newContext(SIZES[size])])));
   const jobs = Object.keys(SIZES).flatMap(size => [
     ...paths.map(path => () => checkPage(contexts[size], size, path, base, chosen.length > 0 || SHOT_PAGES.includes(path))),
-    ...(chosen.length ? [] : Object.keys(FLOWS).map(name => () => checkFlow(browser, size, name, base)))
+    ...(chosen.length || A11Y ? [] : Object.keys(FLOWS).map(name => () => checkFlow(browser, size, name, base)))
   ]);
   const total = jobs.length;
   await pool(jobs);
@@ -539,6 +561,13 @@ try {
     const list = [...places].sort();
     console.log(`ERRO   ${text}\n       em ${list.slice(0, 3).join(", ")}${list.length > 3 ? ` e mais ${list.length - 3}` : ""}`);
   }
+  const found = [...a11y].sort(([a], [b]) => IMPACT.indexOf(a.split(" ")[0]) - IMPACT.indexOf(b.split(" ")[0]) || a.localeCompare(b));
+  for (const [text, { places, nodes, sample }] of found) {
+    const list = [...places].sort();
+    console.log(`A11Y   ${text}
+       ${nodes} elemento(s) em ${list.slice(0, 3).join(", ")}${list.length > 3 ? ` e mais ${list.length - 3}` : ""}; exemplo: ${sample}`);
+  }
+  if (A11Y) console.log(`Acessibilidade: ${found.length} tipo(s) de problema (não afeta o código de saída).`);
   console.log(`${total} verificações em ${seconds}s: ${problems.size} problema(s). Prints em .smoke/`);
 } finally {
   await browser.close();

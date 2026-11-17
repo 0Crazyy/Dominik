@@ -100,7 +100,7 @@ h1{font-size:34px;font-weight:800}
 .hl-tx{display:grid;gap:2px;min-width:0}
 .hl-tx b{font-size:14px;font-weight:700}
 .hl-tx small{font-size:12px;line-height:1.35;color:var(--mute)}
-.tile-gap{display:grid;place-items:center;min-height:88px;border:1px dashed #ffffff0f;color:#ffffff40;font-size:12px;font-weight:600}
+.tile-gap{display:grid;place-items:center;min-height:88px;border:1px dashed #ffffff0f;color:#ffffff80;font-size:12px;font-weight:600}
 .tile{--cut:14px;position:relative;display:flex;align-items:center;gap:14px;min-height:88px;padding:16px 18px;overflow:hidden;background:linear-gradient(100deg,color-mix(in srgb,var(--c) 20%,transparent),transparent 72%),var(--panel);border-left:3px solid var(--c);clip-path:polygon(0 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%);transition:filter .2s,transform .2s}
 .tile:hover,.tile:focus-visible{filter:brightness(1.25);transform:translateY(-2px)}
 .tile:focus-visible{outline-offset:-3px}
@@ -120,7 +120,7 @@ h1{font-size:34px;font-weight:800}
 .tile.none small{color:var(--mute)}
 h2.grp{display:flex;align-items:center;gap:12px;font-size:14px;margin:30px 0 14px;color:#c4c4ca;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
-.picker{display:grid;gap:10px;margin-bottom:22px}
+.picker{max-width:1100px;display:grid;gap:10px;margin-bottom:22px}
 .bsearch{display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
 .bsearch:focus-within{border-color:#8a8a92}
 .bsearch input{flex:1;min-width:0;height:44px;background:none;border:0;outline:0;color:var(--txt);font:14px "Quantico"}
@@ -216,10 +216,12 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .res .slot{width:100%;max-width:calc(58*var(--u));aspect-ratio:1;background:#00000033;border:0}
 .res img{object-fit:contain}
 .kit{display:grid;grid-template-columns:1.2fr repeat(6,1fr);gap:calc(9*var(--u))}
-.slot{position:relative;display:grid;place-items:center;background:#0000004b;border:1px solid #ffffff30;color:#ffffff66;font-size:11px;overflow:hidden}
+.slot{position:relative;display:grid;place-items:center;background:#0000004b;border:1px solid #ffffff30;color:#ffffff80;font-size:11px;overflow:hidden}
 .slot img{width:100%;height:100%;object-fit:cover;display:block}
 .wp .slot,.mx .slot,.kit .slot{background-image:linear-gradient(135deg,transparent 71%,#ffffff1f 71%,#ffffff0f 100%);background-clip:padding-box}
 .slot .stars{position:absolute;left:0;bottom:0;height:auto;transform:none}
+/* Uniframe memories are cut-out art: no box around them, only the icon (the border stays transparent so the size does not change) */
+.slot:has(>img[data-full*="/memories/uniframe/"]){background:none;border-color:transparent}
 .wh-bar{position:absolute;top:0;left:0;right:0;line-height:0}
 .slot .wh-bar img{height:auto}
 /* Starts after the stripes on the left of the bar */
@@ -700,6 +702,7 @@ a.slot:hover{border-color:#fff}
 .back{font-size:13px;color:var(--mute)}
 .back:hover{color:var(--txt)}
 .detail{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:start;max-width:1000px}
+.detail.solo{grid-template-columns:minmax(0,1fr)}
 .wpn-detail{grid-template-columns:minmax(0,220px) minmax(0,1fr)}
 .wpn-detail .slot{aspect-ratio:1}
 .wpn-detail img{object-fit:contain}
@@ -755,7 +758,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .card{--u:1px;flex:0 0 var(--cw);scroll-snap-align:center;scroll-snap-stop:always}
 .comp .card{cursor:default;transition:opacity .25s,transform .25s}
 .comp .card:hover,.comp .card:active{transform:none;filter:none}
-.comp .card.peek{opacity:.45;transform:scale(.96);cursor:pointer}
+.comp .card.peek{opacity:.55;transform:scale(.96);cursor:pointer}
 .comp .card .bar{left:-1px;right:-1px;clip-path:none}
 .comp .card .bar::before{clip-path:none}
 .card .mem .slot.named{padding:0;font-size:9px;writing-mode:horizontal-tb;place-items:center}
@@ -960,7 +963,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .tl-years .tl-track{height:22px}
 .tl-years b{position:absolute;top:3px;transform:translateX(-50%);font-size:12px;color:var(--mute)}
 .tl-group{padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c)}
-.tl-group h2{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:15px;color:var(--c)}
+.tl-group h2{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:15px;color:color-mix(in srgb,var(--c) 70%,#fff)}
 .tl-group h2 img{width:22px;height:22px;object-fit:contain}
 .tl-reign{position:absolute;top:5px;height:36px;min-width:40px;background:color-mix(in srgb,var(--c) 24%,transparent);border-left:2px solid var(--c);color:var(--txt)}
 .tl-reign.now{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 50%,transparent),color-mix(in srgb,var(--c) 18%,transparent))}
@@ -971,7 +974,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .tl-reign small{display:block;overflow:hidden;font-size:10px;font-weight:400;text-overflow:ellipsis;color:#d6d6da}
 .tl-list{display:none;gap:8px}
 .tl-fold{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c)}
-.tl-fold summary{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:700;color:var(--c);cursor:pointer}
+.tl-fold summary{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:700;color:color-mix(in srgb,var(--c) 70%,#fff);cursor:pointer}
 .tl-fold summary img{width:22px;height:22px;object-fit:contain}
 .tl-lane{display:flex;align-items:center;gap:6px;padding:8px 12px 4px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 .tl-lane img{width:18px;height:18px;object-fit:contain}
@@ -1068,6 +1071,8 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 /* the cards as drop targets */
 .ed-live p.desc:empty{display:none}
 .ed-live .card{transition:opacity .18s}
+/* The name always takes two lines, so the card keeps its height whichever construct is picked */
+.ed-live .card h3{display:flex;align-items:center;justify-content:center;height:2.4em;line-height:1.2;overflow:hidden}
 .ed-live .card:hover,.ed-live .card:active{transform:none;filter:none}
 .ed-live .card{-webkit-user-select:none;user-select:none}
 .ed-live .tag[data-ed-role]{cursor:grab}
@@ -1210,18 +1215,12 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 /* /constructs: search, count and richer cards */
 .cx-search{flex:1 1 200px;max-width:320px;min-height:34px;padding:6px 12px;background:var(--panel);border:1px solid var(--line);border-radius:999px;color:var(--txt);font:600 13px "Quantico"}
 .cx-search:focus{outline:none;border-color:#d8d8dc}
+.wtype{display:inline-block;width:100%;height:100%;background:#e5e5e5;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
+.wtype-card .slot{display:grid;place-items:center;padding:3px}
+.wtype-head{display:flex;align-items:center;gap:10px}
+.wtype-head .wtype{width:44px;height:44px;flex:none}
+.tb-search{display:block;width:100%;max-width:320px;margin:0 0 12px}
 .cx-count{margin:0 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-.cgrid{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
-a.ccard{display:flex;border-left:3px solid var(--c)}
-.ccard .slot{width:84px;height:84px}
-.ccard>div{min-width:0}
-.ccard h3{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cc-tags{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 6px}
-.cc-tag{display:inline-flex;align-items:center;gap:4px;padding:1px 7px 1px 3px;background:#0f0f10;border:1px solid var(--line);border-radius:999px;font-size:11px}
-.cc-tag .chip-icon,.cc-tag .chip-icon img{width:16px;height:16px}
-.cc-tag .chip-icon b{font-size:13px}
-.cc-tag em{font-style:normal;color:var(--txt)}
-.cc-rank{font-weight:700;color:var(--c)}
 
 .tl-role{align-items:flex-start;padding-top:2px}
 .tl-role img{margin-top:2px}
@@ -1236,11 +1235,41 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appeara
   background:linear-gradient(45deg,#0000 43%,var(--mute) 43% 57%,#0000 57%),linear-gradient(-45deg,#0000 43%,var(--mute) 43% 57%,#0000 57%)}
 input[type=search]::-webkit-search-cancel-button:hover{opacity:1;background:linear-gradient(45deg,#0000 43%,var(--red) 43% 57%,#0000 57%),linear-gradient(-45deg,#0000 43%,var(--red) 43% 57%,#0000 57%)}
 
-/* Constructs filters: every chip is the same size, so each group lines up in columns */
-.filter-bar-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:8px}
-.filter-bar-tools .tool.chip{display:flex;justify-content:flex-start;width:100%;min-width:0;margin:0;padding-inline:10px;text-align:left;white-space:nowrap}
-.filter-bar-tools .chip-n{margin-left:auto}
-@media(max-width:560px){.filter-bar-tools{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
+/* Constructs filters: Element across the top, then Class and Rank on the left with Effect on the right. Each chip is a tile: icon over text, count in the corner */
+.filters{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"element element" "class effect" "rank effect"}
+.filter-element{grid-area:element}.filter-class{grid-area:class}.filter-effect{grid-area:effect}.filter-rank{grid-area:rank}
+.filter{grid-template-columns:minmax(0,1fr);align-content:start;gap:8px;padding:12px 16px}
+.filter+.filter{border-top:0}
+.filter-class,.filter-effect,.filter-rank{border-top:1px solid var(--line)}
+.filter-effect{border-left:1px solid var(--line)}
+.filter-bar-tools{display:flex;flex-wrap:wrap;gap:8px}
+.filter-bar-tools .tool.chip{position:relative;flex-direction:column;justify-content:center;gap:4px;width:auto;min-width:78px;min-height:70px;margin:0;padding:8px 10px;border-left-width:1px;border-bottom:3px solid var(--c);border-radius:8px;text-align:center;font-size:12.5px;line-height:1.1}
+.filter-bar-tools .chip-icon,.filter-bar-tools .chip-icon img{width:34px;height:34px}
+.filter-bar-tools .chip-icon b{font-size:26px}
+.filter-bar-tools .chip-n{position:absolute;top:3px;right:4px;margin:0;padding:0 5px;font-size:10px}
+.filter-bar-tools .tool.chip[data-value=""]{min-width:56px}
+@media(max-width:900px){.filters{grid-template-columns:minmax(0,1fr);grid-template-areas:"element" "class" "rank" "effect"}.filter-effect{border-left:0}}
+@media(max-width:560px){.filter-bar-tools .tool.chip{min-width:70px;min-height:64px}.filter-bar-tools .chip-icon,.filter-bar-tools .chip-icon img{width:30px;height:30px}}
+
+/* Constructs gallery: a section per class, a tile per construct */
+.cx-class{margin:0 0 22px}
+.cx-class h2{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:17px;letter-spacing:.06em;text-transform:uppercase}
+.cx-class h2 .chip-icon,.cx-class h2 .chip-icon img{width:30px;height:30px}
+.cx-class h2 small{padding:1px 8px;background:#ffffff14;border-radius:999px;font-size:11px;color:var(--mute)}
+.ctiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:10px}
+a.ctile{position:relative;display:block;overflow:hidden;border:1px solid var(--line);border-bottom:0;border-radius:8px;background:#111}
+a.ctile:hover{border-color:color-mix(in srgb,var(--c) 60%,#fff0);transform:translateY(-2px)}
+.ctile .slot{aspect-ratio:1/1.1;border:0;border-radius:0}
+.ctile .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.ct-top{position:absolute;top:5px;left:5px;display:flex;flex-direction:column;gap:4px}
+.ct-fx{position:absolute;top:5px;right:5px}
+.ct-b{display:grid;place-items:center;width:26px;height:26px;background:#000000a6;border:1px solid #ffffff2b;border-radius:50%}
+.ct-b .chip-icon,.ct-b .chip-icon img{width:18px;height:18px}
+.ct-b .chip-icon b{font-size:14px}
+.ct-name{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;min-height:42px;padding:12px 6px 5px;background:linear-gradient(#0000,#000000d9 60%);box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--c) 70%,#0000);text-align:center;text-shadow:0 1px 3px #000}
+.ct-name b{overflow:hidden;font-size:13px;line-height:1.15;text-overflow:ellipsis;white-space:nowrap}
+.ct-name small{overflow:hidden;font-size:11px;line-height:1.15;color:#ffffffd9;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:560px){.ctiles{grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}.ct-name b{font-size:12px}}
 
 /* Effect texts on the Assets detail pages: a line per sentence, values and game terms in red like the skills */
 .effect{display:grid;gap:8px;margin-top:6px}
@@ -1314,3 +1343,19 @@ input[type=search]::-webkit-search-cancel-button:hover{opacity:1;background:line
 .ed-rot-text-edit .ed-field{margin-top:8px}
 @media(max-width:600px){.ed-rot-palette{position:static}.ed-rot-group>div{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.ed-rot-move{flex:0 0 auto}.ed-rot-tools{flex:1 0 100%;justify-content:flex-end}}
 @media(min-width:601px){.ed-rot-palette{display:flex;flex-wrap:wrap;gap:4px;padding:6px}.ed-rot-group{display:contents}.ed-rot-group>small{display:none}.ed-rot-group>div{display:contents}.ed-rot-move{min-height:34px;gap:4px;padding:2px 8px 2px 4px;font-size:10px}.ed-rot-move img,.ed-rot-glyph{width:24px;height:24px}}
+
+/* Full portrait arts on a memory page */
+.mem-arts{margin-top:24px}
+.mem-arts-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:960px}
+.mem-art-col{display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:10px;background:#0000004b;border:1px solid #ffffff30}
+.mem-art-head{align-self:stretch;margin:0;padding:8px;background:#8e0f2a;color:#fff;font-weight:700;text-align:center}
+.mem-art-col .mt-art{width:110px}
+.mem-art-col>img{width:100%;height:auto;display:block}
+@media(max-width:600px){.mem-arts-list{grid-template-columns:1fr}}
+.mem-art-col>img{cursor:zoom-in}
+.art-zoom{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:16px;background:#000000e6;cursor:zoom-out}
+.art-zoom img{max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);object-fit:contain}
+.art-zoom button{position:absolute;top:10px;right:14px;width:40px;height:40px;border:0;background:#00000080;color:#fff;font-size:28px;line-height:1;cursor:pointer}
+.art-zoom .prev,.art-zoom .next{top:50%;transform:translateY(-50%);width:48px;height:64px;font-size:40px}
+.art-zoom .prev{left:10px;right:auto}
+.art-zoom .next{right:10px}

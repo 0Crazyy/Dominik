@@ -69,7 +69,28 @@ const MEMORY_EFFECTS = {
   "Turing": ["Fire DMG increases by 10%.", "Hypermatrix Strike and Signature - Collapsing Realm's Base DMG increases by 100%. Casting Hypermatrix Strike in Hypermatrix increases the duration of Hypermatrix by 1s."],
   "Unimate": ["Increases Fire DMG by 10%.", "Oops! Missed it!/\"Perfect!\"/Burning Blow deals 100% more Base DMG. Nanami: Starfarer's QTE Skill will inflict Scorching Invasion that reduces the target's Fire Resistance by 15% upon hitting it for 8s."],
   "Wilde": ["Lightning DMG increases by 5% and Plasma Beam DMG increases by 10%.", "ATK +5% and Plasma Beam DMG +10% during Electric Storm Flash."],
-  "Wu'an": ["Basic Attack's Extra DMG Bonus increases by 5%, Physical DMG increases by 7%.", "The Super Armor of Sweeping Tempest lasts 2s longer. Physical DMG increases by 15% while Super Armor is active."]
+  "Wu'an": ["Basic Attack's Extra DMG Bonus increases by 5%, Physical DMG increases by 7%.", "The Super Armor of Sweeping Tempest lasts 2s longer. Physical DMG increases by 15% while Super Armor is active."],
+  "Carrielynn": ["Basic Attack's Extra DMG Bonus increases by 10%.", "Basic Attack's Extra DMG Bonus increases by 15% when not attacked. This effect enters a 12s cooldown upon being attacked."],
+  "Aife": ["For each orb pinged, Extra DMG Bonus increases by 2% for 3s. Can be stacked up to 5 times. Duration resets every time it is triggered.", "Enters Matrix upon a 3-Ping. 60s cooldown."],
+  "Mozart": ["Extra DMG Bonus increases by 15% when in Matrix.", "Deals 200% damage to all enemies on screen when you enter Matrix."],
+  "Ike": ["Extra DMG Bonus increases by 2% and Elemental DMG increases by 4%.", "When dealing Elemental DMG, you have a 15% chance to inflict Burn, Electrocute, Frost, and Corruption depending on the element. Lasts 5 seconds and has 8 second cooldown on the same unit."],
+  "Voltaire": ["Attacks reduce the target's DEF by 10% for 5s. 12s cooldown.", "When taking damage, reduces the attacker's Physical DEF by 15% for 7s. Can be stacked up to 2 times. Duration resets every time it is triggered."],
+  "Samantha": ["Healing effect increases by 5%. Next healing effect increases the target's Elemental DMG by 8% for 4s. 5s cooldown.", "The next healing effect adds an elemental aura that increases the Elemental DMG and Elemental Resistance of the allies in the area by 8% and 5% respectively. 10s cooldown."],
+  "Richelieu": ["Healing effect increases by 5%. Next healing effect increases the target's Physical DMG by 8% for 4s. 5s cooldown.", "Gains a random Signal Orb for every 8 orbs pinged. 5s cooldown."],
+  "Lucia - Summer Daze": ["Basic Attack DMG increases by 10%.", "After any 3-Ping, randomly gain one of the below effects for 3s. 4s cooldown. Wild Rocker: All DMG increases by 7%. Soothing Chord: Receives a shield equal to 15% of your Defense. The shield refreshes when this effect is triggered again."],
+  "Lee - Celebration under the Moon": ["Total resistance increases by 10% during dodge for 3s.", "The own max. HP restores 10% when entering Matrix, and is triggered every 30s."],
+  "Liv - United": ["Movement speed increases by 10%.", "After 3-Ping, heals for 10% more and gains a 10% shield for 5 seconds."],
+  "Chrome - Banquet": ["DEF increases by 10%.", "After a 3-Ping, gain a shield of 15% max HP for 8s. Can be triggered once per 8s."],
+  "Luna - Fullmoon Laurel": ["Every 20s, receives a healing effect equal to 10% of max HP.", "Every 30s, when taking DMG, gains a shield equal to 25% of max HP, lasting for 5s."],
+  "Bianca - Tipsy Night": ["Movement speed increases by 10%.", "After a 3-Ping, DEF increases by 10% for 5s."],
+  "Cerberus - Rave Party": ["DEF increases by 10%.", "After a 3-Ping, recover HP equal to 50% of ATK of self. Can be triggered once every 5s."],
+  "Liv - Reindeer": ["Signal Orb skills' Extra DMG Bonus and healing affect increases by 5%.", "Attacks have a 20% chance to drop Christmas gifts next to the enemy. Picking up a gift restores 5 Energy and increases Extra DMG Bonus by 5%. 10s cooldown."],
+  "Vera - Scarlet Summers": ["Upon a 3-Ping, gains 5% ATK for 5s. Cooldown: 10s.", "While in Matrix, restores HP equal to 200% of the current ATK next time when dealing DMG. Cooldown: 25s."],
+  "New Year Fireworks": ["ATK increases by 5%.", "For every 3 Red Orbs pinged, summons 4 red packets that deal 10% Fire DMG when they touch the enemy. Lasts 10s. Cooldown: 30s."],
+  "Lantern Festival - Reunion": ["After performing a 3-Ping or QTE skill, releases a lantern to follow the character on field, increasing the ATK and Movement Speed of nearby allies by 7% for 15s. Cooldown: 30s."],
+  "Liv - Ceremony": ["Gains a healing effect equal to 15% of own max HP every 20s.", "When taking DMG, gains a shield equal to 20% of own max HP for 5s. Cooldown: 30s."],
+  "Kuriko - Eternal": ["When attacking, has a 20% chance to call an artillery strike, each shell dealing 40% Physical DMG to the target. Cooldown: 15s."],
+  "Boudica": ["Basic Attack's Extra DMG Bonus increases by 7%.", "All DMG dealt and Movement Speed are increased by 5% and 10% when in Matrix. Extra DMG Bonus increases by 3% upon dealing DMG. It can only be triggered once per 2s. Stacks up to 5 times until taking DMG."]
 };
 
 // [owner, weapon name, weapon type, image path, effect, optional rank]
@@ -174,6 +195,7 @@ const OTHER_WEAPONS = [
   ["", "Infinity", "Uniframe: Dragon Axe", "assets/weapons/6stars/e3boomerangmd010011.png", "Increases Physical DMG dealt by 15% and Base DMG of Signature - Spirit Blade Dance by 25%. CRIT Rate of Spirit Blade: Falling Stars increases by 30% for every Dragon Force Combo cast. (Can be stacked up to 2 times)", 6],
   ["", "Inverse - Chimera", "Saw", "assets/weapons/6stars/e3sawmd070011.png", "Attacks have a 20% chance to inflict Breach, dealing 2% Physical DMG per second for 3s. The chance is doubled if the enemy's DEF has been reduced. Can be stacked up to 10 times. Duration resets every time it is triggered. Physical DMG increases by 10% when attacking a Breached enemy.", 6],
   ["", "Inverse - Shadow", "Katana", "assets/weapons/6stars/e3swordmd080011.png", "Lightning DMG Bonus increases by 5% for 4s when dealing Lightning DMG. Can be stacked up to 4 times. Signature Move increases own Extra DMG Bonus by 10% for 10s. Both duration will reset every time it is triggered.", 6],
+  ["", "Lotus Berserker", "Katana", "assets/weapons/6stars/e3swordmd070011.png", "Basic Attack's Extra DMG Bonus increases by 10%. Physical DMG increases by 5% for 2s after each Basic Attack. Can be stacked up to 5 times. Duration resets every time it is triggered.", 6],
   ["", "Metis", "Halberd Blade", "assets/weapons/6stars/e3lamiyamd010011.png", "ATK increases by 10%. The amount of Abyssal Points earned increases by 100%. Pinging a Tidal Orb will trigger Matrix if it is not in cooldown.", 6],
   ["", "Nightblaze", "Daisho", "assets/weapons/6stars/e3alphamd010011.png", "Increases ATK by 10%. When Lucia: Crimson Weave holds the odachi, her Extra DMG Bonus increases by 15%. The efficiency of acquiring Aphotic Points increases by 40%.", 6],
   ["", "Osseous Guillotine", "Scissors", "assets/weapons/6stars/e3shearsmd010011.png", "ATK +10%. Reduces additional Signature Energy consumption by 50% during Rampant Disaster.", 6],
@@ -182,7 +204,9 @@ const OTHER_WEAPONS = [
   ["", "Phoenix", "Banner Spear", "assets/weapons/6stars/e3lancemd010011.png", "Lightning DMG increases by 15%. Victorious War Flag and Signature Move Shining Piercer can create another stack of Electric Charge. When Victorious War Flag is on the field, deploying Vera: Garnet will consume all of Electric Charge to cast Lightning Fall. Create another stack of Electric Charge afterward.", 6],
   ["", "Prometheus", "Uniframe: Rev Blade", "assets/weapons/6stars/e3nuoanmd010011.png", "ATK increases by 10%. Triggering Gear-Break Combo or Assault-Rising Combo restores 10 Signature Energy. Dodge Gauge restores 100% faster.", 6],
   ["", "Purple Peony", "Scythe", "assets/weapons/6stars/e3sickmd070011.png", "Extra DMG Bonus increases by 2% for 5s when dealing DMG to enemies with Super Armor. Can be stacked up to 3 times. Duration resets every time it is triggered. Stuns an enemy for 2s when breaking its Super Armor. 10s cooldown for the same target. Physical DMG increases by 15% for 7s when releasing Vector Cube. Duration resets every time it is triggered.", 6],
+  ["", "Qinghe", "Uniframe: Glaive", "assets/weapons/6stars/Qinghe.png", "Increases Physical DMG by 20% and Huiyu's attack frequency by 50%. Huiyu gains a new skill: Curse Incarnate. Curse Incarnate: Huiyu becomes a curse attached to the target, dealing up to 420% Physical DMG. It explodes after a short while to deal 480% Physical DMG. The DMG varies based on Qu's Signature Move level.", 6],
   ["", "Ramiel", "Bow", "assets/weapons/6stars/e3bowmd070011.png", "Signature Move's Extra DMG Bonus increases by 15%. Signature Move reduces its target's Physical Resistance by 2% for 5s per hit. Can be stacked up to 8 times. Duration resets every time it is triggered.", 6],
+  ["", "★Rock Cannon", "Bladed Cannon", "assets/weapons/6stars/Star Rock Cannon.png", "ATK increases by 10%. Base DMG of Flare Strike, Starry Bayonet, Basic Attack - Skycrushing Blade, and Core Passive - Limit Released increases by 100%.", 6],
   ["", "Sakura", "Katana", "assets/weapons/6stars/e3swordmd090011.png", "Each Ping increases Physical DMG by 2% for 5s, stacking up to a max of 10 times and repeated trigger refreshes duration. One Sword Orb can be additionally obtained when entering Sword State. 10s cooldown.", 6],
   ["", "Sarastro", "Flute Sword", "assets/weapons/6stars/e3fluntmd010011.png", "Each phantom unleashed by Selena: Capriccio on the field will make Selena: Capriccio deal 5% more Extra DMG. This effect can be stacked up to 6 times. Upon casting a Reprise: Echo, Selena: Capriccio gains 12 additional Signature Energy.", 6],
   ["", "Sariel", "Katana", "assets/weapons/6stars/e3swordmd150111p01.png", "Dark DMG increases by 15%. Attacks have a 15% chance to unleash a shadow wave, dealing 75% Dark DMG. 0.5s cooldown.", 6],
@@ -217,6 +241,7 @@ const OTHER_WEAPONS = [
   ["", "Emerald Quill", "Longsword", "assets/weapons/4stars/e2jianmd010011.png", "ATK increases by 5%.", 4],
   ["", "Firecrash", "Dual-Bladed Lance", "assets/weapons/4stars/e2bladespearmd010011.png", "ATK increases by 5%.", 4],
   ["", "Fish Mount", "Levi-Gun", "assets/weapons/4stars/e2floatmd040011.png", "Basic Attack's Extra DMG Bonus increases by 10%.", 4],
+  ["", "Flamethorn", "Lance", "assets/weapons/4stars/e2dragonlancemd010011.png", "ATK increases by 5%.", 4],
   ["", "Flange", "Folding Buzzsaw", "assets/weapons/4stars/e2chainsawmd010011.png", "ATK increases by 5%.", 4],
   ["", "Folded Edge", "Kinetic Greatsword", "assets/weapons/4stars/e2greatswordmd010011.png", "ATK increases by 5%.", 4],
   ["", "Frontier Foliage", "Pipa", "assets/weapons/4stars/e2pipamd010011.png", "ATK increases by 5%.", 4],
@@ -227,12 +252,15 @@ const OTHER_WEAPONS = [
   ["", "Heartless Blades", "Mantis Blades", "assets/weapons/4stars/e2bangbinatamd010011.png", "ATK increases by 5%.", 4],
   ["", "Hope of the Village", "Uniframe: Rev Blade", "assets/weapons/4stars/e2nuoanmd010011.png", "DMG Bonus of Basic Attack increases by 15%.", 4],
   ["", "Hunter Knife", "Dagger", "assets/weapons/4stars/e2daggermd040011.png", "Movement Speed is increases by 30% and ATK is increases by 10% for 3s after a 3-Ping. Duration resets every time it is triggered.", 4],
+  ["", "Iron Star Type VI", "Uniframe: Glaive", "assets/weapons/4stars/e2qumd010011.png", "Physical DMG increases by 10% for 5s upon entering Matrix.", 4],
   ["", "Iron Vow", "Cross Cannon", "assets/weapons/4stars/e2heavycrossmd010011.png", "ATK increases by 5%.", 4],
   ["", "Laceration", "Scissors", "assets/weapons/4stars/e2shearsmd010011.png", "ATK increases by 5%.", 4],
+  ["", "LB - Flash Prototype", "Pyro Katana", "assets/weapons/4stars/e2tachiamd010011.png", "ATK increases by 5%.", 4],
   ["", "Lightning Devourer", "Claw Blades", "assets/weapons/4stars/e2clawmd010011.png", "ATK increases by 5%.", 4],
   ["", "Load & Rest", "Revolver", "assets/weapons/4stars/e2revolvermd010011.png", "ATK increases by 5%.", 4],
   ["", "Lotus Wheel MW-03 Prototype", "Lotus Wheel", "assets/weapons/4stars/e2lotusblademd010011.png", "ATK increases by 5%.", 4],
   ["", "Lunar Stride", "Digital Warboots", "assets/weapons/4stars/e2shoesmd010011.png", "ATK increases by 5%.", 4],
+  ["", "Noise", "Saw", "assets/weapons/4stars/e2sawmd100011.png", "Physical DMG increases by 10% for 3s when switching targets.", 4],
   ["", "Oriflamme", "Banner Spear", "assets/weapons/4stars/e2lancemd010011.png", "DMG from Red Orbs Reaper Sweep increases by 10%.", 4],
   ["", "Overture", "Uniframe: Cello Blade", "assets/weapons/4stars/e2cellomd010011.png", "Attack increases by 8%. After dodging an attack, movement speed increases by 8% for 4s.", 4],
   ["", "Paintbrush Prototype", "Beam Gunlance", "assets/weapons/4stars/e2beamlancemd010011.png", "ATK increases by 5%.", 4],
@@ -257,6 +285,7 @@ const OTHER_WEAPONS = [
   ["", "Swiftplume", "Daisho", "assets/weapons/4stars/e2alphamd010011.png", "ATK increases by 5%.", 4],
   ["", "The Last Answer", "Keystaff", "assets/weapons/4stars/e2keywandmd010011.png", "ATK increases by 5%.", 4],
   ["", "Tokarev", "Dual Guns", "assets/weapons/4stars/e2gunmd040011.png", "Physical DMG increases by 15% when combo is greater than 50.", 4],
+  ["", "Unbranded Blade", "Katana", "assets/weapons/4stars/e2swordmd040011.png", "Extra DMG Bonus of Red Orb skills increases by 15%.", 4],
   ["", "Verse Abiding", "Bowstring Rapier", "assets/weapons/4stars/e2lyreswordmd010011.png", "ATK increases by 5%.", 4],
   ["", "White Crest", "Drift Anchor", "assets/weapons/4stars/e2anchormd010011.png", "ATK increases by 5%.", 4],
   ["", "Wind, Sand and Stars", "Rhythmic Ray", "assets/weapons/4stars/e2gymnasticmd010011.png", "ATK increases by 5%.", 4],
@@ -345,6 +374,10 @@ const FIVE_STAR_WEAPON_OWNERS = {
   "Cruel Oath - Mod": "9S",
   "Darkness": "Kamui: Tenebrion",
   "Devil Sword Dante": "Dante",
+  "Dragon Wind": "Liv: Luminance",
+  "Lotus Berserker": "Lucia: Lotus",
+  "Qinghe": "Qu: Pavo",
+  "★Rock Cannon": "BLACK★ROCK SHOOTER",
   "Durendal": "Roland: Flambeau",
   "Final Arbiter": "Jetavie: Daybreak",
   "Fudo Myo-o": "Yata: Fulgor",
@@ -389,6 +422,8 @@ const FIVE_STAR_WEAPON_OWNERS = {
   "Zero Scale": "Lee: Entropy",
 };
 
+// Weapon type of the frames that have no weapon row (from the GRAY RAVENS wiki)
+const WEAPON_TYPE_EXTRA = { "Lucia: Lotus": "Katana", "Liv: Luminance": "Levi-Gun" };
 const WEAPON_USERS = {
   "Katana": ["Lucia: Lotus", "Lucia: Dawn", "Lucia: Crimson Abyss", "Lucia: Plume", "Vera: Rozen"],
   "Levi-Gun": ["Liv: Eclipse", "Liv: Lux", "Liv: Luminance"],
@@ -511,7 +546,28 @@ const MEMORY_STATS = {
   "Flamel": [132, 223, 66, 1536], "Bathlon": [134, 223, 64, 1453], "Bulgakov": [132, 223, 66, 1491], "Sothoth": [132, 223, 66, 1491],
   "Cleopatra": [132, 223, 66, 1491], "Liliana": [132, 223, 66, 1491], "Shelley": [132, 223, 66, 1491], "Isabel": [136, 223, 62, 1521],
   "Marco": [132, 223, 66, 1491], "Jack": [132, 223, 66, 1491], "Lucrezia": [134, 217, 66, 1506], "Wu'an": [134, 219, 66, 1476],
-  "Koya": [134, 223, 66, 1491]
+  "Koya": [134, 223, 66, 1491],
+  "Carrielynn": [107, 181, 54, 1184],
+  "Aife": [109, 181, 53, 1184],
+  "Mozart": [109, 177, 53, 1208],
+  "Ike": [109, 181, 51, 1208],
+  "Voltaire": [107, 181, 51, 1232],
+  "Samantha": [107, 181, 51, 1208],
+  "Richelieu": [107, 181, 53, 1208],
+  "Lucia - Summer Daze": [109, 177, 53, 1208],
+  "Lee - Celebration under the Moon": [107, 181, 53, 1208],
+  "Liv - United": [107, 181, 53, 1208],
+  "Chrome - Banquet": [107, 181, 53, 1208],
+  "Luna - Fullmoon Laurel": [107, 181, 53, 1208],
+  "Bianca - Tipsy Night": [107, 181, 53, 1208],
+  "Cerberus - Rave Party": [107, 181, 53, 1208],
+  "Liv - Reindeer": [109, 177, 53, 1208],
+  "Vera - Scarlet Summers": [109, 177, 53, 1208],
+  "New Year Fireworks": [109, 177, 53, 1208],
+  "Lantern Festival - Reunion": [109, 177, 53, 1208],
+  "Liv - Ceremony": [107, 181, 53, 1208],
+  "Kuriko - Eternal": [97, 158, 49, 1059],
+  "Boudica": [109, 177, 53, 1208]
 };
 
 // Weapon stats: [ATK, CRIT]. Source: https://grayravens.com/wiki/Weapons/6%E2%98%85_Weapons
@@ -549,7 +605,7 @@ const WEAPON_STATS = {
   "Apollo": [445, 254], "Baji": [467, 236], "Benediction": [423, 245],
   "Berserk Fusion": [458, 249], "Big Kamui": [436, 230], "Crimson Birch": [463, 234],
   "Crimson Howl": [436, 249], "Cruel Oath - Mod": [445, 254], "Darkness": [445, 226], "Devil Sword Dante": [436, 249],
-  "Dragon Wind": [406, 253], "Durendal": [467, 249], "Final Arbiter": [436, 244],
+  "Dragon Wind": [406, 253], "Qinghe": [506, 261], "Lotus Berserker": [428, 234], "★Rock Cannon": [450, 251], "Durendal": [467, 249], "Final Arbiter": [436, 244],
   "Fudo Myo-o": [436, 244], "Fusion Dragon": [450, 253], "Galatea": [480, 236],
   "Gungnir": [458, 230], "Hacker's Tune": [436, 241], "Hecate": [471, 249], "Hestia": [476, 249],
   "Hydro Heat": [436, 230], "Illuminare": [458, 249], "Implosion": [467, 236],
@@ -562,7 +618,7 @@ const WEAPON_STATS = {
   "Sound of Silence": [454, 249], "St. Elmo": [436, 236], "Star Voyager": [480, 249],
   "Thanatos": [493, 249], "Tonitrus": [476, 249], "Type Zero": [415, 249],
   "Type-4O Lance - Mod": [458, 249], "Virtuous Contract - Mod": [467, 261], "Waldmeister": [471, 261],
-  "Zero Scale": [445, 254], "Aftershock Halberd": [224, 131], "Apocalypse": [244, 131],
+  "Zero Scale": [445, 254], "Aftershock Halberd": [224, 131], "Flamethorn": [224, 131], "Iron Star Type VI": [260, 137], "LB - Flash Prototype": [224, 131], "Noise": [218, 124], "Unbranded Blade": [224, 121], "Apocalypse": [244, 131],
   "Armor Break Type IX": [240, 124], "Astray Explorer": [235, 121], "Atoll": [235, 131],
   "Black Raven": [224, 131], "Blast Hammer Prototype": [235, 131], "Bleak Scythe": [218, 131],
   "Bullet Ant": [233, 131], "Collaborator": [233, 132], "Composite Armaments Prototype": [249, 128],
@@ -1161,7 +1217,8 @@ const MEMORY_RELEASE = {
   "Liston": 1643, "Heraclitus": 1644, "Wilde": 1645, "Herschell": 1646, "Sothoth": 1647, "Barcelo": 1648,
   "Burana": 1649, "Klenova": 1650, "Hervor": 1651, "Jeanne": 1652, "Keats": 1653, "Natasha": 1654,
   "Poincare": 1655, "Joanna": 1656, "Nimue": 1657, "Bunsen": 1658, "Bulgakov": 1659, "Feynman": 1660,
-  "Pavlichenko": 1661, "Clusius": 1662, "Cogito": 1663, "Santiago": 1664, "Pesanteur": 1665, "Mousme": 1666
+  "Pavlichenko": 1661, "Clusius": 1662, "Cogito": 1663, "Santiago": 1664, "Pesanteur": 1665, "Mousme": 1666,
+  "Carrielynn": 1506, "Aife": 1507, "Mozart": 1508, "Ike": 1509, "Voltaire": 1510, "Samantha": 1511, "Richelieu": 1512, "Lucia - Summer Daze": 1513, "Lee - Celebration under the Moon": 1514, "Liv - United": 1515, "Chrome - Banquet": 1516, "Luna - Fullmoon Laurel": 1517, "Bianca - Tipsy Night": 1518, "Cerberus - Rave Party": 1519, "Liv - Reindeer": 1520, "Vera - Scarlet Summers": 1521, "New Year Fireworks": 1512.1, "Lantern Festival - Reunion": 1512.2, "Kuriko - Eternal": 1512.3, "Boudica": 1512.4, "Liv - Ceremony": 1512.5
 };
 
 // The signature memory of each frame, from the user's notes (patches memories.txt) and the wiki. Only frames named in CONSTRUCTS are listed;
