@@ -616,7 +616,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 // Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
 // data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
 // ?v=4: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
-const web = src => src.replace("assets/", "assets-web/").replace(/\.[^./]+$/, ".webp") +(src.startsWith("assets/rank/") ? "?v=5" : "");
+const web = src => src.replace("assets/", "assets-web/").replace(/\.[^./]+$/, ".webp") +(src.startsWith("assets/rank/") ? "?v=6" : "");
 const pic = (src, attrs = 'alt=""') => `<img src="${esc(web(src))}" data-full="${esc(src)}" ${attrs} loading="lazy" decoding="async">`;
 // Name shown when hovering an icon, read from its file name ("Memoria - Cottie 1-4.png" is "Cottie")
 function iconName(src = "") {
@@ -656,7 +656,8 @@ function iconInfo(src = "") {
   if (skill) return cubSkill(src, skill)?.[1] || "";
   return RESONANCE_EFFECTS[iconName(src)] || MEMORY_RESONANCE_EFFECTS[iconName(src)] || "";
 }
-const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(info)}"` : "");
+// Tooltips are plain text: the color marks of the skill and C.U.B. texts come off
+const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(String(info).replace(/\[\/?[rb]\]/g, ""))}"` : "");
 // The game calls the captain role "Leader": role keys in the data stay as they are, only the label changes
 const TAG_LABEL = { captain: "LEADER" };
 // Detail pages: /assets/<memory|weapon|resonance|cub|skill>/<id> and /constructs/<id>
@@ -1034,6 +1035,12 @@ function closeFocus(instant) {
   setTimeout(showSources, Math.max(0, time - FOCUS_FADE_MS));
   setTimeout(finish, time);
 }
+// C.U.B. skills of a build card can be switched off to see which ones the build leaves out: right click on a mouse, a tap on a touch screen.
+// It only changes the page (the exported image keeps what the build says), and the capture phase keeps the tap from opening the card or the C.U.B. link
+const cubSkillCell = e => e.target.closest(".kit > .cell:has(.slot)");
+const flipCubSkill = (e, cell) => { e.preventDefault(); e.stopPropagation(); cell.classList.toggle("off"); };
+$("#main").addEventListener("contextmenu", e => { const cell = cubSkillCell(e); if (cell && !cell.closest(".ed-live")) flipCubSkill(e, cell); });
+$("#main").addEventListener("click", e => { const cell = cubSkillCell(e); if (cell && !cell.closest(".ed-live") && matchMedia("(hover:none)").matches) flipCubSkill(e, cell); }, true);
 $("#main").addEventListener("click", e => {
   setNav(false);
   const c = e.target.closest(".comp .card");
@@ -1241,6 +1248,31 @@ function markSeen(key) {
   try { localStorage.setItem(SEEN_KEY, JSON.stringify([...new Set([...seenList(), key])])); }
   catch { /* storage blocked: the tag only goes until the page reloads */ }
 }
+// Phrases come from a shuffled deck, so none repeats until all have been shown.
+// The remaining deck is kept in localStorage, so it also holds across visits
+function nextSplash() {
+  const KEY = "dominik-splash-deck";
+  let deck = [];
+  try { deck = JSON.parse(localStorage.getItem(KEY)) || []; } catch { /* storage unavailable */ }
+  deck = deck.filter(phrase => HOME_SPLASHES.includes(phrase));
+  if (!deck.length) {
+    deck = HOME_SPLASHES.slice();
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    // Avoid showing the same phrase twice in a row across a reshuffle
+    let prev = null;
+    try { prev = localStorage.getItem(KEY + "-last"); } catch { /* storage unavailable */ }
+    if (deck.length > 1 && deck[deck.length - 1] === prev) deck.unshift(deck.pop());
+  }
+  const phrase = deck.pop();
+  try {
+    localStorage.setItem(KEY, JSON.stringify(deck));
+    localStorage.setItem(KEY + "-last", phrase);
+  } catch { /* storage unavailable */ }
+  return phrase;
+}
 function splashMarkup(phrase) {
   let splashChar = 0;
   const typed = text => Array.from(text, char => `<span style="animation-delay:${splashChar++ * 30}ms">${esc(char)}</span>`).join("");
@@ -1265,7 +1297,7 @@ function home() {
   // Cells go column by column: the row names, then each energy with its effects
   const labels = Object.values(TEAM_LISTS).map(l => `<h2 class="home-label">${l.label}</h2>`).join("");
   const columns = ENERGY.map(e => tile(e, "energy", "energy-type") + tile(ENERGY_EFFECT[e], "effect", "effects", TILE_COLOR[e]) + tile(ENERGY_SPECIAL[e], "special", "effects", TILE_COLOR[e])).join("");
-  const splash = HOME_SPLASHES[Math.floor(Math.random() * HOME_SPLASHES.length)];
+  const splash = nextSplash();
   return `<section class="hero">
       <div class="hero-tx">
         <button class="hero-mark" type="button" aria-label="Show another phrase" data-splash="${esc(splash)}"><img src="assets-web/logo.webp" alt=""></button>
@@ -1299,6 +1331,7 @@ function listRow(path, b) {
     <span class="brow-tx"><b>${esc(b.name)}</b>${b.author || b.date ? `<span class="brow-by">${byLine(b.author, b.date)}</span>` : ""}
       <small><em>${esc(main.name)}</em> with ${mates.map(c => esc(c.name.split(":")[0])).join(" and ")}</small>
       <span class="brow-tags">${buildTags(b.comp, b.group, tag)}</span></span>
+    <span class="b-mates brow-mates" aria-hidden="true">${mates.map(c => `<span class="slot">${c.portrait ? pic(c.portrait) : ""}</span>`).join("")}</span>
   </a>`;
 }
 function buildList(path) {
@@ -1340,7 +1373,15 @@ function team(path, pick) {
   }
   const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
   if (!ids.length) return head + `<p class="empty">No teams yet.</p>`;
-  return head + buildList(path);
+  return head + buildList(path) + pageCharacters(path);
+}
+// Below the list: every character in the builds of the page, each a link to its construct page
+function pageCharacters(path) {
+  const seen = new Map();
+  for (const b of pageBuilds(path)) for (const c of b.cards) if (c.name && !seen.has(c.name)) seen.set(c.name, c);
+  if (!seen.size) return "";
+  return `<section class="page-chars"><h2 class="grp">Characters on this page</h2><div class="page-chars-list">${[...seen.values()].map(c =>
+    `<a href="${characterHref(c.name)}" title="${esc(c.name)}"><span class="slot">${c.portrait ? pic(c.portrait, `alt=""`) : ""}</span><span>${esc(c.name)}</span></a>`).join("")}</div></section>`;
 }
 
 /* ---------- assets pages ---------- */
@@ -1486,19 +1527,22 @@ const assetTabs = (base, tabs, tab, label) => `<div class="atabs" role="navigati
 // Constructs page: newest first. The filters stay while browsing and go in the address (?element=Ice), so a link keeps them
 const CONSTRUCT_FILTERS = ["Element", "Class", "Rank", "Effect"];
 const constructFilter = {};
-let filtersOpen = false; // phones only: there the filters start hidden behind a button
+let filtersOpen = false; // the filters start hidden behind a button, so the constructs are the first thing on the page
 const filterQuery = () => Object.fromEntries(CONSTRUCT_FILTERS.map(group => [group.toLowerCase(), constructFilter[group]]));
 function readFilters() {
   const query = new URLSearchParams(location.search);
   for (const group of CONSTRUCT_FILTERS) if (query.has(group.toLowerCase())) constructFilter[group] = query.get(group.toLowerCase());
   setQuery(filterQuery());
 }
+// Order of the Class filter; a class not listed goes last, alphabetically
+const CLASS_ORDER = ["Attacker", "Tank", "Support", "Amplifier", "Breaker", "Overlinker", "Annihilator", "Observer", "Vanguard"];
+const classOrder = c => { const i = CLASS_ORDER.indexOf(c); return i < 0 ? CLASS_ORDER.length : i; };
 const constructValue = (c, group) => CONSTRUCTS[c.name][CONSTRUCT_FILTERS.indexOf(group) + 1];
 // Class files that are not named after the class. Only rank S has art: any other rank shows its letter
 const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${ADELYDE}/Classe - Adelyde Anabasis.png`, Vanguard: classIcon("Vanguard") };
 const filterIcon = (group, value) => group === "Element" ? menuIcon("energy-type", value) : group === "Effect" ? menuIcon("effects", value)
   : group === "Class" ? pic(CLASS_ART[value] || classIcon(value))
-    : ["S", "A", "B"].includes(value) ? pic(`assets/rank/${value}.png`) : `<b>${esc(value)}</b>`;
+    : ["S", "A", "B"].includes(value) ? pic(`assets/rank-letters/${value}.png`) : `<b>${esc(value)}</b>`;
 function constructFilters() {
   const active = CONSTRUCT_FILTERS.filter(group => constructFilter[group]).length;
   const bar = `<div class="filter-bar"><input class="cx-search" type="search" placeholder="Search constructs" aria-label="Search constructs" value="${esc(constructSearch)}" data-construct-search><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">Filters${active ? ` (${active})` : ""}</button><button class="tool" data-clear-filters${active ? "" : " data-empty"} aria-disabled="${!active}">Clear filters</button></div>`;
@@ -1506,7 +1550,7 @@ function constructFilters() {
     const tally = new Map();
     for (const c of constructRoster()) { const v = constructValue(c, group); if (v) tally.set(v, (tally.get(v) || 0) + 1); }
     const found = new Set(tally.keys());
-    const values = group === "Element" ? ENERGY.filter(e => found.has(e)) : group === "Rank" ? ["S", "A", "B"].filter(r => found.has(r)) : [...found].sort();
+    const values = group === "Element" ? ENERGY.filter(e => found.has(e)) : group === "Rank" ? ["S", "A", "B"].filter(r => found.has(r)) : group === "Class" ? [...found].sort((a, b) => classOrder(a) - classOrder(b) || a.localeCompare(b)) : [...found].sort();
     const chip = (label, value) => {
       const on = (constructFilter[group] || "") === value;
       const style = group === "Element" && value ? ` style="--c:${TILE_COLOR[value] || ""}"` : "";
@@ -1584,12 +1628,21 @@ function usedMemory(name) {
 }
 function memoryPage([name, boost, ext]) {
   const { tab } = MEM_INDEX.get(name);
-  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2>${describe(text)}`).join("");
+  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2>${describe(text, "plain")}`).join("");
   return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail${memArts(name).length ? " solo" : ""}">${memArts(name).length ? "" : `<div class="mem">${memoryArt(name, ext)}</div>`}
       <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>
     ${memArts(name).length ? `<section class="mem-arts"><h2>Art</h2><div class="mem-arts-list">${memArts(name).map((src, i) => `<div class="mem-art-col"><p class="mem-art-head">${["1 / 4", "2 / 5", "3 / 6"][i]}</p>${ext ? `<div class="mt-art">${thumb(memSet(name)[i], starsOf(name))}</div>` : ""}${pic(src, `alt="${esc(name)} art"`)}</div>`).join("")}</div></section>` : ""}
     ${usedMemory(name)}`;
+}
+// The Harmonization levels of a signature weapon, from WEAPON_HARMONY in assets-data.js. Level 2 unlocks the Harmony skill, shown inside it
+function weaponHarmony(weapon) {
+  const harmony = WEAPON_HARMONY[weapon];
+  if (!harmony) return "";
+  const [skill, effect, icon, levels] = harmony;
+  const skillHtml = `<div class="cub-skill">${thumb(`${CHARS}/${icon}`)}<div><h2>${esc(skill)}</h2>${describe(effect, "plain")}</div></div>`;
+  const rows = levels.map(([name, text], i) => `<li><span class="wh-lv">${i + 1}</span><div><h3>${esc(name)}</h3><p>${esc(text)}</p>${i === 1 ? skillHtml : ""}</div></li>`);
+  return `<h2 class="wh-head">Harmonization</h2><ol class="wh-levels">${rows.join("")}</ol>`;
 }
 function weaponPage([owner, name, type, file, effect, rank]) {
   const [ATK, CRIT] = WEAPON_STATS[name];
@@ -1600,7 +1653,7 @@ function weaponPage([owner, name, type, file, effect, rank]) {
   // A weapon belongs to one frame, except the types listed in WEAPON_USERS that are shared by several
   const users = listedOwner ? [listedOwner] : WEAPON_USERS[type] || [];
   return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
-    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2 class="wtype-head">${typeIcon(type)}Effect</h2>${describe(effect)}` : ""}</div></div>
+    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2 class="wtype-head">${typeIcon(type)}Effect</h2>${describe(effect, "plain")}` : ""}${weaponHarmony(name)}</div></div>
     ${usedBy(users)}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
@@ -1608,7 +1661,7 @@ const resonanceRow = ([name, effect]) => `<tr>
       <div><a href="${resonanceHref(name)}">${esc(name)}</a><small>${esc(effect)}</small></div></div></td></tr>`;
 function resonancePage([name, effect]) {
   return `${backLink("/assets/resonances", "Weapon Resonance")}<h1>${esc(name)}</h1><p class="sub">Weapon Resonance</p>
-    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>Effect</h2>${describe(effect)}</div></div>
+    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>Effect</h2>${describe(effect, "resonance")}</div></div>
     ${usedIn(c => (c.matrix || []).includes(WEAPON_RES(name)))}`;
 }
 const cubRow = cub => `<tr>
@@ -1642,8 +1695,11 @@ function loadSkills() {
   script.onerror = () => { skillsState = "failed"; route(); };
   document.head.append(script);
 }
-// Each skill's icon is named after its type, in the character's skills folder
-const skillIcon = (name, type) => `${CHARS}/${charId(name)}/skills/${type}.png`;
+// Each skill's icon is named after its type, in the character's skills folder. A frame has several Leap or Uniframe
+// skills, so those are named after the skill, and the three Enhanced Uniframe skills share one icon across every Uniframe
+const UNIFRAME_SHARED = new Set(["Enhanced Speed Attack", "Enhanced Team", "Enhanced Finishing Move"]);
+const skillIcon = (name, type, skill) => UNIFRAME_SHARED.has(skill) ? `assets/icons/uniframe/${skill}.png`
+  : `${CHARS}/${charId(name)}/skills/${type === "Leap Skill" || type === "Uniframe Skill" ? skill : type}.png`;
 // The skills of a character with their icons and texts, for the Skills page and for the character page
 function skillList(ch) {
   if (skillsState !== "ready") {
@@ -1653,7 +1709,7 @@ function skillList(ch) {
   const skills = CHARACTER_SKILLS[ch.name];
   if (!skills) return `<p class="empty">No skill text for this character yet.</p>`;
   return `<div class="skills">${skills.map(([type, name, effect]) =>
-    `<section class="fx">${thumb(skillIcon(ch.name, type))}<div><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(effect)}</p></div></section>`).join("")}</div>`;
+    `<section class="fx">${thumb(skillIcon(ch.name, type, name))}<div><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(unmark(effect))}</p></div></section>`).join("")}</div>`;
 }
 const skillPage = ch => `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">Construct page</a></p>${skillList(ch)}`;
 function assetsPage(key, pick = "all") {
@@ -2807,7 +2863,8 @@ function timelineChart(view) {
     return { month, day: dayNumber(date) };
   }).filter(m => m.day > first && m.day < last && m.month);
   const lines = months.map(m => `<i class="mo" style="left:${at(m.day)}%"></i>`).join("") + years.map(year => `<i style="left:${at(dayNumber(`${year}-01-01`))}%"></i>`).join("") + marks.map(mark => `<i class="mark" style="left:${at(dayNumber(mark.date))}%"></i>`).join("");
-  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
+  // A short reign is stretched to 40px and the next one would cover most of it: short ones go on top, so both stay easy to click
+  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}${at(first + r.end - r.start) < 5 ? " short" : ""}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
   // A line from a character down to whoever replaced them from the next class of the line
   const link = (r, row, lanes) => {
     const rows = lanes.findIndex(lane => lane.role === r.next?.role) - row;
@@ -2960,7 +3017,6 @@ const SKILL_GROUPS = [
   ["Special", ["Core", "Signature", "QTE"]],
   ["Common", ["Leader", "Class", "Awakening"]],
   ["Evolution", ["SS-Rank", "SSS-Rank", "SSS+ Rank"]],
-  ["Harmony", ["Harmony Skill"]],
   ["Leap", ["Leap Skill"]],
   ["Uniframe", ["Uniframe Skill"]]
 ];
@@ -2971,17 +3027,30 @@ const SKILL_BASE = 18, SKILL_MAX = 35;
 let skillTab = "Basic", skillChar = null;
 const skillLevels = new Map();
 const scaledValue = (n, level) => level === SKILL_BASE ? n : String(parseFloat((n * (1 + (level - SKILL_BASE) / 34)).toFixed(2)));
-// Only the damage a skill deals scales. Reductions, energy, stacks and the Darkflow table stay as they are
+// Color marks copied from the game's own text by tools/fetch-colors.mjs: [r]...[/r] red, [b]...[/b] blue (see docs/cores-texto.md).
+// Before esc() they become private-use characters, which esc() leaves alone, and after it they become the site's colors
+const PH = [0xE000, 0xE001, 0xE002, 0xE003].map(c => String.fromCharCode(c)); // red open, red close, blue open, blue close
+const MARK = /\[(\/?)([rb])\]/g;
+const hasMarks = text => /\[[rb]\]/.test(text);
+const unmark = text => String(text).replace(MARK, "");
+const toPlaceholders = text => text.replace(MARK, (_, close, color) => PH[(color === "b" ? 2 : 0) + (close ? 1 : 0)]);
+const PH_ANY = new RegExp(`[${PH.join("")}]`, "g");
+const fromPlaceholders = safe => safe.replace(PH_ANY, c => [`<b class="hl">`, "</b>", `<b class="hlb">`, "</b>"][PH.indexOf(c)]);
+// Only the damage a skill deals scales. Reductions, energy, stacks and the Darkflow table stay as they are.
+// A value can sit inside a red mark, so the marks around each number are allowed
+const PH_RED = `[${PH[0]}${PH[1]}]?`;
+const SCALE_DEALS = new RegExp(String.raw`(\b[Dd]eal(?:s|ing)(?: a total of| an additional| additional)? )(${PH_RED}\d+(?:\.\d+)?%${PH_RED}(?:\s*\/\s*${PH_RED}\d+(?:\.\d+)?%${PH_RED})*)`, "g");
 function scaleLine(safe, level) {
   if (/stacks?:/i.test(safe)) return safe;
-  return safe.replace(/(\b[Dd]eal(?:s|ing)(?: a total of| an additional| additional)? )(\d+(?:\.\d+)?%(?:\s*\/\s*\d+(?:\.\d+)?%)*)/g,
-    (_, lead, list) => lead + list.replace(/\d+(?:\.\d+)?(?=%)/g, n => `<b class="sv">${scaledValue(+n, level)}</b>`));
+  return safe.replace(SCALE_DEALS, (_, lead, list) => lead + list.replace(/\d+(?:\.\d+)?(?=%)/g, n => `<b class="sv">${scaledValue(+n, level)}</b>`));
 }
-// Like the game: values and game terms (forms, modes, orbs, stacks) in red, the condition of a skill name in blue
+// Texts with no marks yet (a frame Huaxu doesn't have): close to the game, values and game terms (forms, modes, orbs, stacks) in red.
+// The game leaves how often something happens ("every 0.5s", "once every 0.1s") without color
 const SK_LEAD = "In|The|When|While|During|Upon|After|Before|If|On|At|Each|Every|Tap|Press|Hold|Then|And|Or|Gains?|Deals?|Switch(?:es|ing)?|Casting|Tapping|Pressing|Entering|Exiting|Triggers?|Consumes?|Grants?|Enters?|Exits?|Uses?|Leaving";
 const SK_TERM = new RegExp(String.raw`(?:\d+\s)?(?:(?!(?:${SK_LEAD})\b)[A-Z][\w'’-]*\s){0,2}(?:Form|Mode|Orbs?|Stacks?)\b`, "g");
-const SK_VALUE = /\d+(?:\.\d+)?(?:\s?\/\s?\d+(?:\.\d+)?)*(?:%|s\b)/g;
+const SK_VALUE = /(?<!\bevery )\d+(?:\.\d+)?(?:\s?\/\s?\d+(?:\.\d+)?)*(?:%|s\b)/g;
 function highlight(safe) {
+  if (safe.match(PH_ANY)) return fromPlaceholders(safe);
   // Values already scaled (<b class="sv">) stay as they are, and the tags of the rest are never touched
   return safe.split(/(<b class="sv">.*?<\/b>%?)/).map((part, i) => i % 2 ? part
     : part.replace(SK_VALUE, m => `<b class="hl">${m}</b>`).split(/(<[^>]+>)/).map((chunk, j) => j % 2 ? chunk : chunk.replace(SK_TERM, m => `<b class="hl">${m}</b>`)).join("")).join("");
@@ -2991,30 +3060,43 @@ function skillBody(text, scale, level) {
   const out = [];
   let list = [];
   const flush = () => { if (list.length) out.push(`<ul>${list.join("")}</ul>`); list = []; };
-  const fmt = line => highlight(scale ? scaleLine(esc(line), level) : esc(line));
+  // A text with the game's marks shows only those colors: a line the game leaves plain stays plain
+  const marked = hasMarks(text);
+  const fmt = line => {
+    const safe = scale ? scaleLine(esc(toPlaceholders(line)), level) : esc(toPlaceholders(line));
+    return marked ? fromPlaceholders(safe) : highlight(safe);
+  };
   for (const raw of text.split("\n")) {
-    const line = raw.trim();
+    const kept = raw.trim(), line = unmark(kept);
     if (!line) continue;
-    if (/^[-•]\s*/.test(line)) { list.push(`<li>${fmt(line.replace(/^[-•]\s*/, ""))}</li>`); continue; }
+    if (/^[-•]\s*/.test(line)) { list.push(`<li>${fmt(kept.replace(/^[-•]\s*/, ""))}</li>`); continue; }
     flush();
     // A heading is a short line with no full stop: "Move: Tap Basic Attack", "Move — Tap Basic Attack", "Move - Form + Tap" or a bare name
-    const split = line.match(/^(.+?)(?::\s+|\s?[—–]\s+)(.+)$/) || line.match(/^(.+?)\s-\s((?:Tap|Press|During|In|Upon|Not|Successful)b.*|.*\s\+\s.*)$/);
+    const split = line.match(/^(.+?)(?::\s+|\s?[—–]\s+)(.+)$/) || line.match(/^(.+?)\s-\s((?:Tap|Press|During|In|Upon|Not|Successful)\b.*|.*\s\+\s.*)$/);
     if (line.length <= 110 && !/[.!:,)]$/.test(line) && !/\.\s/.test(line.replace(/^Lv\.\s*\d+/, "")) && !/^[a-z]/.test(line) && (split || line.split(" ").length <= 6)) {
       const [, name, cond] = split || [null, line, ""];
       out.push(`<h4>${esc(name)}${cond ? `<span class="sep">: </span><span class="cond">${esc(cond)}</span>` : ""}</h4>`);
-    } else out.push(`<p>${fmt(line)}</p>`);
+    } else out.push(`<p>${fmt(kept)}</p>`);
   }
   flush();
   return out.join("");
 }
-// Plain effect texts (memories, weapons, resonances, C.U.B.s): several sentences become a bulleted list, values and game terms highlighted like the skills
-function describe(text) {
+// Plain effect texts: several sentences become a bulleted list. The colors follow the game (docs/cores-texto.md):
+// "plain" (memories, weapon effects, Harmony) has none; "resonance" colors only a status the text defines ("Corrosion: ...");
+// the rest (C.U.B.s) uses the game's marks, or the automatic colors while it has none
+function describe(text, kind = "") {
   const items = [];
   for (const raw of String(text).split("\n")) {
     const line = raw.trim().replace(/^[-•]\s*/, "");
-    if (line) items.push(...line.split(/(?<=[.!?])\s+(?=[A-Z])/));
+    if (line) items.push(...line.split(/(?<=[.!?])\s+(?=(?:\[[rb]\])?[A-Z])/));
   }
-  const html = items.map(item => highlight(esc(item)));
+  const status = kind === "resonance" ? [...new Set([...unmark(text).matchAll(/\b([A-Z][a-z]+)(?=:)/g)].map(m => m[1]))] : [];
+  const paint = item => {
+    if (kind === "plain") return esc(unmark(item));
+    if (kind === "resonance") return status.reduce((safe, word) => safe.replace(new RegExp(`\\b${word}\\b`, "g"), `<b class="hl">${word}</b>`), esc(unmark(item)));
+    return hasMarks(text) ? fromPlaceholders(esc(toPlaceholders(item))) : highlight(esc(item));
+  };
+  const html = items.map(paint);
   return `<div class="effect">${html.length > 1 ? `<ul>${html.map(item => `<li>${item}</li>`).join("")}</ul>` : `<p>${html[0] || ""}</p>`}</div>`;
 }
 function skillGroups(ch) {
@@ -3022,14 +3104,13 @@ function skillGroups(ch) {
   const known = new Set(SKILL_GROUPS.flatMap(([, types]) => types));
   return SKILL_GROUPS.map(([name, types]) => [name, skills.filter(s => types.includes(s[0]) || (name === "Common" && !known.has(s[0])))]).filter(([, list]) => list.length);
 }
-// Each skill that scales has its own level, kept while browsing. Harmony and Leap skills have no icon art yet
+// Each skill that scales has its own level, kept while browsing
 const skillKey = (ch, type) => `${ch.name}|${type}`;
 const skillLevelOf = (ch, type) => skillLevels.get(skillKey(ch, type)) ?? SKILL_BASE;
-const SKILL_NO_ICON = new Set(["Harmony Skill", "Leap Skill", "Uniframe Skill"]);
 function skillCard(ch, [type, name, effect]) {
   const scales = SKILL_SCALES.has(type), level = skillLevelOf(ch, type);
   const slider = scales ? `<label class="cx-level">Lv <b>${level}</b><input type="range" min="1" max="${SKILL_MAX}" value="${level}" data-sk-level="${esc(type)}" aria-label="${esc(name)} level"></label>` : "";
-  return `<section class="cx-skill" data-sk-type="${esc(type)}"><div class="cx-sk-top${SKILL_NO_ICON.has(type) ? " plain" : ""}">${SKILL_NO_ICON.has(type) ? "" : thumb(skillIcon(ch.name, type))}<div><p class="kind">${esc(type)}</p><h3>${esc(name)}</h3></div>${slider}</div><div class="cx-sk-body">${skillBody(effect, scales, level)}</div></section>`;
+  return `<section class="cx-skill" data-sk-type="${esc(type)}"><div class="cx-sk-top">${thumb(skillIcon(ch.name, type, name))}<div><p class="kind">${esc(type)}</p><h3>${esc(name)}</h3></div>${slider}</div><div class="cx-sk-body">${skillBody(effect, scales, level)}</div></section>`;
 }
 const skillCards = ch => (skillGroups(ch).find(([name]) => name === skillTab) || ["", []])[1].map(skill => skillCard(ch, skill)).join("");
 function skillsPanel(ch) {
@@ -3056,6 +3137,11 @@ $("#main").addEventListener("input", e => {
   const skill = CHARACTER_SKILLS[skillChar.name].find(s => s[0] === type);
   $(".cx-sk-body", card).innerHTML = skillBody(skill[2], true, level);
 });
+// The "N builds" button of a construct page. A #link would follow <base href="/"> to the home page, so it scrolls instead
+$("#main").addEventListener("click", e => {
+  const to = e.target.closest("[data-jump]")?.dataset.jump;
+  if (to) document.getElementById(to)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block: "start" });
+});
 // Up to three builds of one kind, newest first (the order of PAGES), with a link to the page that has them all
 const buildGroup = (title, builds, href) => builds.length
   ? `<div><h3>${title}</h3><div class="builds">${builds.slice(0, 3).map(buildRow).join("")}</div><a class="cx-more" href="${esc(href)}">See more builds ›</a></div>` : "";
@@ -3072,15 +3158,17 @@ function characterPage(ch) {
   const ofKind = kind => ch.builds.filter(b => b.href.startsWith(`/${kind}/`));
   const elementBuilds = ofKind("energy"), effectBuilds = ofKind("effect");
   const listPage = (kind, value, builds) => PAGES[`${kind}/${slug(value || "")}`] ? `/${kind}/${slug(value)}` : `/${builds[0] ? pagePath(builds[0].href) : kind}`;
+  // The builds sit below the skills: a button beside the details takes there at once
+  const jump = ch.builds.length ? `<button type="button" class="acard cx-jump" data-jump="cxBuilds"><b>${ch.builds.length} build${ch.builds.length === 1 ? "" : "s"}</b><span aria-hidden="true">↓</span></button>` : "";
   const builds = elementBuilds.length || effectBuilds.length
-    ? `<h2 class="grp">Builds</h2><div class="cx-builds">${buildGroup(`${esc(element)} builds`, elementBuilds, listPage("energy", element, elementBuilds))}${buildGroup(`${esc(effect)} builds`, effectBuilds, listPage("effect", effect, effectBuilds))}</div>`
+    ? `<h2 class="grp" id="cxBuilds">Builds</h2><div class="cx-builds">${buildGroup(`${esc(element)} builds`, elementBuilds, listPage("energy", element, elementBuilds))}${buildGroup(`${esc(effect)} builds`, effectBuilds, listPage("effect", effect, effectBuilds))}</div>`
     : `<section class="used"><h2>Builds</h2><p>No builds available yet.</p></section>`;
   // Wide screens: the portrait and the details stay on the left while the skills and builds use the rest of the width
   return `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1>
     <div class="cx-page">
       <aside class="cx-side"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div>
         <div class="cx-attrs">${attr("Rank", rank)}${attr("Class", type)}${attr("Element", element)}${attr("Effect", effect)}</div>
-        <div class="cx-gear">${gear}</div></aside>
+        <div class="cx-gear">${gear}${jump}</div></aside>
       <div class="cx-main"><h2 class="grp">Skills</h2>${skillsPanel(ch)}${builds}</div>
     </div>`;
 }
@@ -3522,7 +3610,9 @@ function route() {
   }
   // A link can name a team as a third part: /energy/dark/kurumi-adelyde-rosetta
   // A community team is named in the query instead: /energy/dark?team=c-12
-  const [kind, key, part] = location.pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  // A malformed address (/energy/%E0) can't be decoded: it shows as a page that does not exist
+  const decode = s => { try { return decodeURIComponent(s); } catch { return "\u0000"; } };
+  const [kind, key, part] = location.pathname.split("/").filter(Boolean).map(decode);
   const pick = part || (key && TEAM_LISTS[kind] && new URLSearchParams(location.search).get("team")) || undefined;
   const path = key ? `${kind}/${key}` : kind;
   const ids = (key && PAGES[path]) || [];
@@ -3583,7 +3673,7 @@ if (matchMedia("(hover:hover)").matches) {
   });
   for (const type of ["pointerdown", "scroll", "pagechange"]) addEventListener(type, () => { tip.hidden = true; }, true);
 } else {
-  // Touch screens have no hover: tapping an icon opens a sheet with the same text, and a link when it has a page
+  // Touch screens have no hover: tapping an icon opens a sheet with the same text, and a link when it has a page (except the C.U.B. skills of a build card, where a tap switches them off)
   const sheet = document.createElement("div");
   sheet.id = "sheet";
   sheet.hidden = true;
@@ -3602,7 +3692,7 @@ if (matchMedia("(hover:hover)").matches) {
   };
   addEventListener("click", e => {
     const el = e.target.closest("[data-tip]");
-    if (!el || el.matches(".portrait") || el.closest(".fcard.side, #edPicker") || el.matches(".ed-live [data-ed-drop], [data-ed-page], [data-ed-order-add], [data-ed-order-remove]")) return;
+    if (!el || el.matches(".portrait") || el.matches(".kit > .cell > .slot") && !el.closest(".ed-live") || el.closest(".fcard.side, #edPicker") || el.matches(".ed-live [data-ed-drop], [data-ed-page], [data-ed-order-add], [data-ed-order-remove]")) return;
     e.preventDefault();
     e.stopPropagation();
     const href = el.getAttribute("href");
@@ -3656,9 +3746,7 @@ function pageChanged() {
 addEventListener("click", e => {
   const mark = e.target.closest?.(".hero-mark[data-splash]");
   if (mark) {
-    const current = mark.dataset.splash;
-    const options = HOME_SPLASHES.filter(phrase => phrase !== current);
-    const phrase = options[Math.floor(Math.random() * options.length)];
+    const phrase = nextSplash();
     mark.dataset.splash = phrase;
     mark.nextElementSibling.innerHTML = splashMarkup(phrase);
     return;
@@ -3679,10 +3767,11 @@ function searchData() {
   if (searchItems) return searchItems;
   const items = [
     ...constructRoster().map(c => ({ label: c.name, kind: "Construct", href: characterHref(c.name), art: c.portrait })),
-    ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `Memory · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4") })),
-    ...WEAPONS.map(([owner, name, , file, , rank]) => ({ label: name, kind: owner ? `Weapon · ${owner}` : `${rank || weaponRank(name, file)}-star weapon`, href: weaponHref(name), art: file && weaponFile(file) })),
-    ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner || `Rank ${c.rank}`}`, href: cubHref(c.name), art: c.art })),
-    ...Object.keys(RESONANCE_EFFECTS).map(name => ({ label: name, kind: "Weapon Resonance", href: resonanceHref(name), art: WEAPON_RES(name) })),
+    // desc: the effect text, searched after the names ("Glaciation DMG", "Extra DMG Reduction")
+    ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `Memory · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4"), desc: (MEMORY_EFFECTS[name] || []).join(" ") })),
+    ...WEAPONS.map(([owner, name, , file, effect, rank]) => ({ label: name, kind: owner ? `Weapon · ${owner}` : `${rank || weaponRank(name, file)}-star weapon`, href: weaponHref(name), art: file && weaponFile(file), desc: effect || "" })),
+    ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner || `Rank ${c.rank}`}`, href: cubHref(c.name), art: c.art, desc: (CUB_SKILLS[c.art.split("/").at(-2)] || []).map(([, text]) => unmark(text)).join(" ") })),
+    ...Object.entries(RESONANCE_EFFECTS).map(([name, effect]) => ({ label: name, kind: "Weapon Resonance", href: resonanceHref(name), art: WEAPON_RES(name), desc: effect })),
     ...ENERGY.map(e => ({ label: e, kind: "Energy teams", href: `/energy/${slug(e)}`, art: `assets/energy-type/${e}.png` })),
     ...EFFECT.map(e => ({ label: e, kind: "Effect teams", href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
     ...SPECIAL_EFFECT.map(e => ({ label: e, kind: "Special Effect teams", href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
@@ -3695,18 +3784,20 @@ function searchData() {
     ...Object.entries(PAGES).flatMap(([path, ids]) => ids.flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name }]).map(v =>
       ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: buildHref(path, v.id), art: "" }))))
   ];
-  return searchItems = items.map(item => ({ ...item, text: plain(item.label), more: plain(item.kind).replace(/\./g, "") }));
+  return searchItems = items.map(item => ({ ...item, text: plain(item.label), more: plain(item.kind).replace(/\./g, ""), desc: plain(item.desc || "") }));
 }
 function searchFor(query) {
   const q = plain(query.trim());
   // The closer the name is to what was typed, the higher it goes: the whole name, its start, the start of a word, any part of it, then the description
-  const closeness = item => item.text === q ? 0 : item.text.startsWith(q) ? 1 : item.text.split(/[^a-z0-9]+/).some(word => word.startsWith(q)) ? 2 : item.text.includes(q) ? 3 : item.more.includes(q) ? 4 : 9;
+  // A match only in the effect text (3+ letters typed) comes last, after any name
+  const closeness = item => item.text === q ? 0 : item.text.startsWith(q) ? 1 : item.text.split(/[^a-z0-9]+/).some(word => word.startsWith(q)) ? 2 : item.text.includes(q) ? 3 : item.more.includes(q) ? 4 : q.length > 2 && item.desc.includes(q) ? 8 : 9;
   // Teams come after the rest: most have a character's name, and would push out that character's weapon and C.U.B.
   const score = item => {
     const close = closeness(item);
-    return close && close < 9 && item.more.startsWith("team") ? close + 3 : close;
+    return close && close < 8 && item.more.startsWith("team") ? close + 3 : close;
   };
-  return searchData().map(item => [score(item), item]).filter(([s]) => s < 9).sort((a, b) => a[0] - b[0] || a[1].text.length - b[1].text.length).slice(0, 8).map(([, item]) => item);
+  return searchData().map(item => [score(item), item]).filter(([s]) => s < 9).sort((a, b) => a[0] - b[0] || a[1].text.length - b[1].text.length).slice(0, 8)
+    .map(([s, item]) => s === 8 ? { ...item, kind: `${item.kind} · in effect` } : item);
 }
 const searchBox = $("#searchBox"), searchResults = $("#searchResults");
 function showSearch() {

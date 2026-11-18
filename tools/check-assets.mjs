@@ -16,7 +16,7 @@ const DATA_END = "const $ = (s, r = document)";
 function loadData() {
   const app = read("app.js"), end = app.indexOf(DATA_END);
   if (end < 0) throw new Error(`não achei a linha "${DATA_END}" no app.js; atualize DATA_END em tools/check-assets.mjs`);
-  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, MEMORY_RELEASE, CONSTRUCTS, LEADER_SKILLS, WEAPONS, WEAPON_STATS, CHARACTER_SKILLS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
+  const names = "COMPS, PAGES, MEMORY_TABS, MEM_INDEX, MEMORY_EFFECTS, MEMORY_STATS, MEMORY_RELEASE, CONSTRUCTS, LEADER_SKILLS, WEAPONS, WEAPON_STATS, WEAPON_HARMONY, CHARACTER_SKILLS, ENERGY, EFFECT, SPECIAL_EFFECT, CHARS, memFile, memSet";
   return vm.runInNewContext(`${read("data/assets-data.js")}\n${read("data/skills-data.js")}\n${app.slice(0, end)}\n;({ ${names} })`);
 }
 
@@ -83,13 +83,18 @@ function check() {
   }
   for (const [owner, name] of d.WEAPONS) if (owner && !d.CONSTRUCTS[owner]) errors.push(`dono da arma "${name}" sem dados em CONSTRUCTS (a página Weapons quebra): ${owner}`);
   for (const [owner, name] of d.WEAPONS) if (!d.WEAPON_STATS[name]) errors.push(`arma "${name}" (${owner}) não tem stats em WEAPON_STATS (a página Weapons quebra)`);
-  for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type] of skills) {
-    if (type === "Harmony Skill" || type === "Leap Skill" || type === "Uniframe Skill") continue; // sem arte ainda: a página mostra só o texto
-    use(`${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${type}.png`, `skill de ${name}`);
+  // Mesma regra do skillIcon do app.js: Leap e Uniframe pelo nome da skill; as 3 Enhanced são comuns a todos os Uniframe
+  const SHARED = new Set(["Enhanced Speed Attack", "Enhanced Team", "Enhanced Finishing Move"]);
+  for (const [name, skills] of Object.entries(d.CHARACTER_SKILLS)) for (const [type, skill] of skills) {
+    const file = type === "Leap Skill" || type === "Uniframe Skill" ? skill : type;
+    use(SHARED.has(skill) ? `assets/icons/uniframe/${skill}.png`
+      : `${d.CHARS}/${slug(name.replace(":", "")).replace(/[^a-z0-9-]/g, "")}/skills/${file}.png`, `skill de ${name}`);
   }
+  for (const [weapon, [, , icon]] of Object.entries(d.WEAPON_HARMONY)) use(`${d.CHARS}/${icon}`, `Harmony da arma ${weapon}`);
   for (const [name, [title, text]] of Object.entries(d.LEADER_SKILLS)) {
     const skill = d.CHARACTER_SKILLS[name]?.find(([type]) => type === "Leader");
-    if (skill?.[1] !== title || skill?.[2] !== text) errors.push(`LEADER_SKILLS["${name}"] difere de skills-data.js`);
+    // The color marks of tools/fetch-colors.mjs ([r]...[/r], [b]...[/b]) are only in skills-data.js
+    if (skill?.[1] !== title || skill?.[2].replace(/\[\/?[rb]\]/g, "") !== text) errors.push(`LEADER_SKILLS["${name}"] difere de skills-data.js`);
   }
   for (const { head, role, name } of vm.runInNewContext(`${read("data/timeline-data.js")}\n;TIMELINE`)) {
     use(head, `linha do tempo: ${name}`);

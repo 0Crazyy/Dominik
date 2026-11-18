@@ -126,6 +126,12 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .bsearch input{flex:1;min-width:0;height:44px;background:none;border:0;outline:0;color:var(--txt);font:14px "Quantico"}
 .bsearch input::placeholder{color:var(--mute)}
 .blist{display:grid;gap:6px}
+/* "Characters on this page", below the build list */
+.page-chars{max-width:1100px}
+.page-chars-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.page-chars-list a{display:grid;gap:6px;justify-items:center;padding:8px 6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;line-height:1.25;text-align:center;color:var(--txt)}
+.page-chars-list a:hover{border-color:#5a5a62;background:rgba(255,255,255,.06)}
+.page-chars-list .slot{width:56px;height:56px;border-radius:6px}
 .brow{display:flex;align-items:stretch;gap:14px;width:100%;padding:0 14px 0 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid transparent;border-radius:6px;color:var(--txt);font:inherit;text-align:left;cursor:pointer;overflow:hidden}
 .brow[hidden]{display:none}
 .brow:hover{border-color:#5a5a62;border-left-color:#d8d8dc;background:rgba(255,255,255,.06)}
@@ -141,6 +147,9 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 .brow-tags{display:flex;flex-wrap:wrap;gap:5px}
 .brow-tags i{padding:2px 7px;background:rgba(255,255,255,.08);border-radius:3px;font:700 10px "Quantico";font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:#c4c4ca}
 .brow-tags i.new{background:var(--red);color:#fff}
+/* The two teammates at the right end of a row, so a team can be found by its faces */
+.brow-mates{margin-left:auto;align-self:center;padding-left:8px}
+@media(max-width:420px){.brow-mates .slot{width:36px;height:36px}}
 #tip{position:fixed;z-index:30;max-width:340px;padding:6px 10px;background:#000000f0;border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 12px "Quantico";pointer-events:none}
 #tip b{display:block}
 #tip p{margin-top:4px;font-weight:400;line-height:1.45;color:#dcdaf0;white-space:pre-line}
@@ -347,7 +356,9 @@ html.locked{overflow:hidden}
 .filters{display:grid;margin-bottom:22px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
 .filter-bar .tool{margin-bottom:0}
-.filter-toggle{display:none;padding:8px 14px;background:#1c1c1e;border:1px solid var(--line);border-radius:999px;color:var(--txt);font:600 13px "Quantico"}
+/* The filters start closed behind this button on every screen, so the constructs show first */
+.filters:not(.open){display:none}
+.filter-toggle{display:block;padding:8px 14px;background:#1c1c1e;border:1px solid var(--line);border-radius:999px;color:var(--txt);font:600 13px "Quantico"}
 .filter-toggle:hover{background:#2a2a2e;border-color:#5a5a62}
 .filter-toggle[aria-expanded="true"]{background:#2a2a2e;border-color:var(--red);color:var(--red)}
 .filter-bar .tool[data-empty]{opacity:0;pointer-events:none;user-select:none}
@@ -720,6 +731,15 @@ a.slot:hover{border-color:#fff}
 .cub-skill+.cub-skill{margin-top:14px}
 .cub-skill .slot{aspect-ratio:1}
 .cub-skill[hidden]{display:none}
+/* Weapon page: the Harmonization levels, numbered like the game; level 2 holds the Harmony skill */
+.wh-levels{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.wh-levels>li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:12px;align-items:start}
+.wh-lv{display:grid;place-items:center;width:26px;height:26px;border:1px solid var(--side-line);border-radius:50%;background:var(--side-hover);color:var(--txt);font:700 12px "Quantico"}
+.wh-levels>li>div>h3{margin:3px 0 2px;font-size:14px;font-weight:700;color:#fff}
+.wh-levels>li>div>p{margin:0;font-size:13px;line-height:1.5;color:var(--mute)}
+.wh-levels .cub-skill{margin-top:12px;padding:12px;background:#ffffff08;border:1px solid var(--line);border-radius:6px}
+/* Weapon page: the Harmony skill, set apart from the weapon's own effect */
+.detail .fx h2.wh-head{margin:20px 0 12px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .el-tabs{display:flex;gap:6px;margin-bottom:12px}
 .el-tab{all:unset;box-sizing:border-box;width:44px;cursor:pointer;opacity:.55;border-radius:8px;outline:2px solid transparent;outline-offset:1px}
 .el-tab:hover{opacity:.85}
@@ -781,6 +801,8 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 #langBtn b{font-weight:400}
 #langBtn b.on{font-weight:700;color:var(--txt)}
 #langBtn:disabled{cursor:not-allowed;opacity:.55}
+/* Hidden until the Portuguese version is back (CLAUDE.md, Pendências) */
+#langBtn[hidden]{display:none}
 #teamsBtn:has(+[hidden] a.on),#assetsBtn:has(+[hidden] a.on),.sub:has(+[hidden] a.on){background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
 @media(min-width:761px) and (hover:hover){
 #pinBtn{display:flex;margin-top:2px;font-size:14px;font-weight:400;color:var(--mute)}
@@ -846,6 +868,18 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .mtable thead{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
 .mtable thead::before{content:"Sort by";margin-right:4px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .mtable thead tr{display:contents}
+/* Phones: the controls of the Assets tables take less height. Sort on one line that scrolls, the search full width,
+   and the element tabs as one strip of chips that scrolls sideways */
+@media(max-width:760px){
+.mtable thead{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.mtable thead::before{flex:none}
+.mtable th{flex:none}
+.tbl .tb-search{max-width:none}
+.sortbar.star-filter{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.sortbar.star-filter .tool{min-width:0;flex:none}
+.atabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.atabs a{flex:none;padding:8px 12px}
+}
 .mtable th,.mtable th:first-child,.mtable th.rel{display:block;position:static;width:auto;background:none;border:0}
 .mtable th button,.mtable th:first-child button,.mtable th.txt button{display:inline-flex;position:static;justify-content:center;gap:4px;width:auto;min-height:36px;padding:0 12px;background:#1c1c1e;border:1px solid var(--line);border-radius:999px;font-size:12px}
 .mtable th[aria-sort=ascending] button,.mtable th[aria-sort=descending] button{background:#d8d8dc;border-color:#d8d8dc;color:#0b0b0c}
@@ -967,6 +1001,7 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .tl-group h2 img{width:22px;height:22px;object-fit:contain}
 .tl-reign{position:absolute;top:5px;height:36px;min-width:40px;background:color-mix(in srgb,var(--c) 24%,transparent);border-left:2px solid var(--c);color:var(--txt)}
 .tl-reign.now{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 50%,transparent),color-mix(in srgb,var(--c) 18%,transparent))}
+.tl-reign.short{z-index:1}
 .tl-reign:hover{z-index:3;background:color-mix(in srgb,var(--c) 45%,transparent)}
 .tl-reign img{position:absolute;left:-2px;top:0;width:36px;height:36px;object-fit:cover;background:#0f0f10;border:1px solid var(--c)}
 .tl-reign:hover img{z-index:3}
@@ -1176,12 +1211,19 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .cx-attr small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .cx-attr span{font-weight:700}
 .cx-gear{display:grid;gap:10px}
+/* The C.U.B. card is a link (a.wpn, with the 96px column of the weapon list): same 56px icon column as the weapon type card */
+.cx-gear a.wpn{grid-template-columns:56px minmax(0,1fr);gap:0 14px}
+.cx-jump{justify-content:space-between;width:100%;font:inherit;color:var(--txt);cursor:pointer;text-align:left}
+.cx-jump b{font-size:15px}
+.cx-jump span{color:var(--red);font-size:18px}
+.cx-jump:hover{border-color:#5a5a62}
+#cxBuilds{scroll-margin-top:16px}
+@media(max-width:760px){#cxBuilds{scroll-margin-top:72px}} /* below the sticky top bar of phones */
 .cx-tabs{display:flex;flex-wrap:wrap;gap:8px}
 /* Columns and not a grid: the cards have very different heights, and this way they stack with no holes between them */
 .cx-skills{columns:420px;column-gap:12px;margin-top:12px}
 .cx-skill{break-inside:avoid;margin-bottom:12px;padding:14px 16px;background:var(--panel);border:1px solid var(--line)}
 .cx-sk-top{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center}
-.cx-sk-top.plain{grid-template-columns:minmax(0,1fr) auto}
 .cx-sk-top .slot{aspect-ratio:1}
 .cx-level{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute)}
 .cx-level b{min-width:2ch;color:var(--txt);text-align:right}
@@ -1260,7 +1302,8 @@ input[type=search]::-webkit-search-cancel-button:hover{opacity:1;background:line
 a.ctile{position:relative;display:block;overflow:hidden;border:1px solid var(--line);border-bottom:0;border-radius:8px;background:#111}
 a.ctile:hover{border-color:color-mix(in srgb,var(--c) 60%,#fff0);transform:translateY(-2px)}
 .ctile .slot{aspect-ratio:1/1.1;border:0;border-radius:0}
-.ctile .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.ctile .slot img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;filter:brightness(.8);transition:filter .15s}
+.ctile:hover .slot img{filter:none}
 .ct-top{position:absolute;top:5px;left:5px;display:flex;flex-direction:column;gap:4px}
 .ct-fx{position:absolute;top:5px;right:5px}
 .ct-b{display:grid;place-items:center;width:26px;height:26px;background:#000000a6;border:1px solid #ffffff2b;border-radius:50%}
@@ -1278,10 +1321,18 @@ a.ctile:hover{border-color:color-mix(in srgb,var(--c) 60%,#fff0);transform:trans
 .effect li{padding-left:12px;text-indent:-12px}
 .effect li::before{content:"- ";color:var(--mute)}
 .effect .hl{color:#ff6549;font-weight:600}
+/* Blue text of the game (conditions, rank requirements), from the [b] marks of tools/fetch-colors.mjs */
+.cx-sk-body .hlb,.effect .hlb{color:#4aa3ff;font-weight:600}
 .cub-skill .effect{margin-top:4px}
 
 /* Team Builder intro: one tip per line */
-.ed-help{display:grid;gap:6px;max-width:900px;margin:6px 0 22px;padding:0;list-style:none;color:var(--mute);line-height:1.5}
+.ed-help-box{max-width:900px;margin:6px 0 18px}
+.ed-help-box summary{display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--mute);font-size:14px;font-weight:700;list-style:none}
+.ed-help-box summary::-webkit-details-marker{display:none}
+.ed-help-box summary::before{content:"▸";color:var(--red);transition:transform .2s}
+.ed-help-box[open] summary::before{transform:rotate(90deg)}
+.ed-help-box summary:hover{color:var(--txt)}
+.ed-help{display:grid;gap:6px;max-width:900px;margin:10px 0 4px;padding:0;list-style:none;color:var(--mute);line-height:1.5}
 .ed-help li{padding-left:14px;text-indent:-14px}
 .ed-help li::before{content:"- ";color:var(--red)}
 .ed-page-option{grid-template-rows:34px 2.4em;align-content:start;height:76px}

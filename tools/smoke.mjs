@@ -107,8 +107,13 @@ async function checkPage(context, size, path, base, shot) {
     if (shot) {
       const name = path.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home";
       // Chromium refuses captures taller than about 16000px (the Memories list on a phone), so a long page is cut there
-      const height = await page.evaluate(() => document.documentElement.scrollHeight), width = page.viewportSize().width;
-      await page.screenshot({ path: join(SHOTS, size, `${name}.png`), fullPage: true, ...(height > 15000 && { fullPage: false, clip: { x: 0, y: 0, width, height: 15000 } }) });
+      // fullPage: true drew the side menu over and over on the construct pages, so the window is made as tall as the page instead
+      const view = page.viewportSize(), height = Math.min(15000, await page.evaluate(() => document.documentElement.scrollHeight));
+      await page.setViewportSize({ width: view.width, height: Math.max(view.height, height) });
+      // Two frames after the resize: before them the capture repeats the top of the page below the old window height
+      await page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+      await page.screenshot({ path: join(SHOTS, size, `${name}.png`) });
+      await page.setViewportSize(view);
     }
   } catch (e) {
     report(size, path, `não abriu: ${e.message.split("\n")[0]}`);

@@ -47,8 +47,8 @@ function parse(html) {
     const td = part.match(/<td[^>]*>([\s\S]*?)<\/td>/)?.[1];
     if (th === undefined || td === undefined) throw new Error(`aba "${type}" sem nome ou texto`);
     const name = text(th).replace(/\s+—\s+.*$/, "").trim();
-    // The site writes the leader skill as "Leader - Name"; the wiki has only the name
-    out.push([type, type === "Leader" ? `Leader - ${name}` : name, text(td)]);
+    // The site writes the leader skill as "Leader - Name"; some wiki pages already have the prefix and others don't
+    out.push([type, type === "Leader" ? `Leader - ${name.replace(/^Leader\s*-\s*/, "")}` : name, text(td)]);
   }
   return out;
 }
@@ -76,7 +76,8 @@ if (flag("--comparar")) {
     skills.forEach(s => {
       const o = old.find(x => x[0] === s[0]);
       if (!o) { console.log(`${name} / ${s[0]}: tipo novo na wiki`); diffs++; return; }
-      for (const k of [1, 2]) if (o[k] !== s[k]) { diffs++; console.log(`${name} / ${s[0]} [${k === 1 ? "nome" : "texto"}]\n  site: ${line(o[k]).slice(0, 220)}\n  wiki: ${line(s[k]).slice(0, 220)}`); }
+      // The color marks of tools/fetch-colors.mjs are not part of the wiki text
+      for (const k of [1, 2]) if (o[k].replace(/\[\/?[rb]\]/g, "") !== s[k]) { diffs++; console.log(`${name} / ${s[0]} [${k === 1 ? "nome" : "texto"}]\n  site: ${line(o[k]).slice(0, 220)}\n  wiki: ${line(s[k]).slice(0, 220)}`); }
     });
   }
   console.log(`\n${Object.keys(got).length} personagens comparados, ${diffs} diferença(s).`);

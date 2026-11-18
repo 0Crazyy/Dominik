@@ -27,7 +27,7 @@ Na primeira sessão em um computador, confira estes itens antes de qualquer tare
 | `data/updates-data.js` | Posts da página Updates, em Markdown, do mais novo para o mais antigo. Só carrega em `/updates`. Escrito à mão e só quando o usuário pedir um post (sem rotina nem script); o formato está no topo do arquivo |
 | `editor.js` | Team Builder (`/editor`). Só carrega nessa página, junto com o catálogo |
 | `data/catalog-data.js` | Gerado por `tools/make-catalog.mjs` (o deploy roda): o que um time do Team Builder pode ter. Não edite à mão |
-| `functions/api/` | API no Cloudflare Pages: `submit.js` recebe um time do Team Builder (Turnstile, limites por IP, fila), `teams.js` devolve os aprovados, `hidden.js` devolve os ids das builds oficiais que o painel ocultou (chave `hidden` do KV; o `loadCommunity()` do `app.js` as tira de `COMPS`/`PAGES` ao carregar), `admin.js` é por onde o bot do Discord aprova (segredo `ADMIN_KEY`; o bot fica em `../Dominik - bot/`). Só `/api/*` passa por aqui |
+| `functions/api/` | API no Cloudflare Pages: `submit.js` recebe um time do Team Builder (Turnstile, limites por IP, fila), `share.js` guarda e devolve os links curtos do Team Builder (`/editor?s=<código>`), `teams.js` devolve os aprovados, `hidden.js` devolve os ids das builds oficiais que o painel ocultou (chave `hidden` do KV; o `loadCommunity()` do `app.js` as tira de `COMPS`/`PAGES` ao carregar), `admin.js` é por onde o bot do Discord aprova (segredo `ADMIN_KEY`; o bot fica em `../Dominik - bot/`). Só `/api/*` passa por aqui |
 | `server/` | O que a API importa: `team.js` (validação, igual ao `edClean` do `editor.js`), `schema.sql` (tabelas do D1) e `catalog.js` (gerado por `make-catalog`) |
 | `tools/review-teams.mjs` | Aprova ou rejeita os times enviados, no terminal, e regrava a chave `teams` do KV que o site lê. `--aprovados` lista e remove; `--local` usa o banco do `wrangler pages dev` |
 | `tools/review-gui.mjs` + `review-gui.html` | O mesmo que `review-teams.mjs`, mas em um painel no navegador (`127.0.0.1:8799`, só local; a página é o `.html`, em inglês). Aprova, rejeita e tira times do ar; a aba "On the site" agrupa por página e inclui as builds oficiais do `app.js`, que ele só oculta (aba "Hidden" para reexibir), sem mexer no `app.js`. `--local` usa o banco do `wrangler pages dev` |
@@ -35,6 +35,8 @@ Na primeira sessão em um computador, confira estes itens antes de qualquer tare
 | `data/timeline-data.js` | Gerado por `tools/update-timeline.mjs`; não edite à mão |
 | `assets/` | Artes originais, e é para onde os caminhos do código apontam |
 | `assets-web/` | Cópias leves geradas por `tools/optimize-images.mjs`; `web()` no `app.js` troca o caminho ao renderizar. Nunca edite à mão |
+| `tools/fetch-colors.mjs` | Copia as cores do texto do jogo (via `api.huaxu.app`) para as skills e os CUBs como marcas `[r]...[/r]` e `[b]...[/b]`, sem mudar as palavras. O `app.js` (`highlight`, `skillBody`, `describe`) as mostra; texto sem marca usa a coloração automática. Regras em `docs/cores-texto.md` |
+| `docs/` | Pesquisas e relatórios fora do deploy: `calculo-de-dano.md`, `mecanicas-pgr.md`, `cores-texto.md`, `revisao-codigo.md`, `revisao-visual.md`, `ferramentas.md` |
 | `tools/style-ranks.py` | Aplica o relevo do SSS+ aos ícones de rank chapados e grava em `assets/rank/`. Instruções no topo do arquivo |
 | `.deploy/`, `.smoke/` | Saídas geradas, fora do git |
 
@@ -66,6 +68,7 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 - **Ícone do embed:** o Discord guarda a imagem do preview pelo endereço dela, e `?v=` no link da página não muda isso. Arte nova do embed precisa de nome de arquivo novo (hoje `assets/embed-icon-4.png`).
 - **`const $ = (s, r = document)`:** `check-assets`, `make-sitemap` e `make-embeds` usam essa linha para achar o fim dos dados. Se ela mudar, atualize esses scripts.
 - **Times da comunidade:** entram em `PAGES` e `COMPS` depois que a página carrega (`loadCommunity()` no `app.js`), com endereço `/energy/fire?team=c-12`, porque só os endereços escritos pelo `make-embeds` existem como arquivo. Mudou `edClean` no `editor.js`? Mude `cleanTeam` em `server/team.js` igual.
+- **Marcas de cor (`[r]`, `[b]`) nos textos de skills e CUBs:** só o `app.js` as transforma em cor. Qualquer outro uso desses textos (dica, prévia do Discord, comparação) precisa tirá-las: `unmark()` no `app.js`, e o mesmo `replace(/\[\/?[rb]\]/g, "")` em `tipAttr`, `make-embeds`, `check-assets` e `fetch-skills --comparar`.
 - **`SITE_FILES` em `tools/deploy.mjs`:** um arquivo novo do site só é publicado se estiver nessa lista.
 
 ## Combinados
@@ -76,7 +79,7 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 
 ## Pendências
 
-- **Tradução para português (pt-BR): pausada em 2026-11-15, fora do site.** O site está em inglês, como antes. A única sobra é o botão "EN | PT" no rodapé do menu (`#langBtn` no `index.html`), que está desativado (`disabled`, com dica "Portuguese version coming soon"). Ao retomar, o botão passa a funcionar quando o patch for aplicado.
+- **Tradução para português (pt-BR): pausada em 2026-11-15, fora do site.** O site está em inglês, como antes. A única sobra é o botão "EN | PT" no rodapé do menu (`#langBtn` no `index.html`), que está escondido (`hidden`) e desativado (`disabled`). Ao retomar, tire o `hidden`; o botão passa a funcionar quando o patch for aplicado.
   - Onde está: `drafts/traducao-pt/` (`README.md` com o passo a passo, `traducao-pt.patch`, `i18n.js` e `data-pt/ui.js`). A pasta não entra no deploy e não está no `.gitignore`: se for guardá-la no git, faça isso de propósito.
   - Já feito lá: detecção do idioma do navegador, botão, menu, busca, contadores, títulos, datas. Falta o resto da interface, o Team Builder, as descrições dos times e os dados (`assets-data`, `skills-data`, `calculator-data`, `updates-data`, `home-splashes`).
   - Antes de qualquer deploy com a tradução ligada, termine ou desligue a detecção automática: um navegador em português cairia em uma versão misturada.

@@ -1005,6 +1005,8 @@ const ED_ERRORS = {
   limit: "You sent several teams in a short time. Try again later.",
   full: "The review queue is full right now. Try again in a few days.",
   off: "Sending teams is not available right now.",
+  bad: "The site could not read this team. Reload the page and send again.",
+  restamped: "This page was open for too long. Wait a few seconds and send again.",
   network: "The team could not be sent. Check your connection and try again."
 };
 // Mirrors teamProblem() of server/team.js, so most mistakes are caught before the verification shows up
@@ -1057,9 +1059,24 @@ async function edSend() {
     $("#edSend").hidden = true;
     return edStatus("Team sent. It shows up on its page once it is reviewed.");
   }
-  if (result.error === "stale") edConfig = edLoadConfig();
+  // A new time stamp starts the 10 seconds the server waits for again, so the message says to wait
+  if (result.error === "stale") { edConfig = edLoadConfig(); return edStatus(ED_ERRORS.restamped); }
   edStatus(ED_ERRORS[result.error] || ED_ERRORS.network);
 }
+
+// The how-to opens by itself on the first visit only; after that it stays the way the visitor left it
+const ED_HELP_KEY = "dominik-editor-help";
+function edHelpOpen() {
+  try {
+    const kept = localStorage.getItem(ED_HELP_KEY);
+    if (kept === null) localStorage.setItem(ED_HELP_KEY, "closed");
+    return kept === null || kept === "open";
+  } catch { return false; }
+}
+addEventListener("toggle", e => {
+  if (!e.target.matches?.("[data-ed-help]")) return;
+  try { localStorage.setItem(ED_HELP_KEY, e.target.open ? "open" : "closed"); } catch { /* storage blocked: it opens closed next time */ }
+}, true);
 
 function teamBuilder() {
   edImport();
@@ -1069,6 +1086,7 @@ function teamBuilder() {
   // The cards go out as plain HTML with the page; editable slots are marked once they are in the document
   queueMicrotask(() => { edWire(); edPaint(); edStatus(message); });
   return `<h1>Team Builder</h1>
+    <details class="ed-help-box" data-ed-help${edHelpOpen() ? " open" : ""}><summary>How to use the Team Builder</summary>
     <ul class="ed-help">
       <li>Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it.</li>
       <li>Click one C.U.B. skill and then another to swap their positions, or drag it onto the other. Drag Leader and Starter to another card.</li>
@@ -1078,7 +1096,7 @@ function teamBuilder() {
       <li>Each position has Notes and Rotation tabs below the cards. Build a rotation by tapping moves, or switch to "Edit as text".</li>
       <li>The team stays saved in this browser, and you can share it as a link or an image.</li>
       <li>You can also send it to the site: after a review, it shows up on its page with the other builds.</li>
-    </ul>
+    </ul></details>
     <form id="edForm" class="ed" autocomplete="off">
       <fieldset id="edTeam" class="ed-team">${edTeamBody(edDraft)}</fieldset>
       <div id="edStatus" class="ed-status" role="status" aria-live="polite"></div>

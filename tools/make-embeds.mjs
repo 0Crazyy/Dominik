@@ -60,7 +60,8 @@ const memoryArt = ([name, , ext]) => ext ? memFile(name, "1-4") : "";
 const weaponArt = ([, , , file]) => file ? (file.startsWith("assets/") ? file : `${CHARS}/${file}`) : "";
 
 const pages = new Map();
-const add = (path, title, description, picture = DEFAULT_IMAGE) => pages.set(path, { title, description, picture });
+// The color marks of tools/fetch-colors.mjs ([r]...[/r], [b]...[/b]) never reach a link preview
+const add = (path, title, description, picture = DEFAULT_IMAGE) => pages.set(path, { title, description: description.replace(/\[\/?[rb]\]/g, ""), picture });
 
 /* ---------- teams ---------- */
 const roster = cards => cards.map(c => `${c.name}${c.role.includes("captain") ? " (Captain)" : ""}${c.memories ? ` - ${memorySummary(c.memories)}` : ""}`).join("\n");

@@ -79,7 +79,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
     .bind(ipHash, now - HOUR, now - DAY).first();
   if (after.pending > MAX_PENDING || after.hour > PER_HOUR || after.day > PER_DAY) {
     await env.DB.prepare("DELETE FROM teams WHERE hash = ?").bind(hash).run();
-    return json({ error: after.pending > MAX_PENDING ? "full" : "limit" }, 503);
+    return after.pending > MAX_PENDING ? json({ error: "full" }, 503) : json({ error: "limit" }, 429);
   }
   if (env.DISCORD_WEBHOOK_URL) {
     const content = `New team to review (#${added.meta.last_row_id}): **${team.name.replace(/[*_`~|\\@#<>]/g, "")}** on ${team.page}, ${seen.pending + 1} waiting.`;

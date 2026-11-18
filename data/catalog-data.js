@@ -63,9 +63,12 @@ const CATALOG = {
    "class": "Attacker",
    "skillArt": {
     "Basic Attack": "assets/characters/lee-palefire/skills/Basic Attack.png",
+    "Bipolar Expansion": "assets/characters/lee-palefire/skills/Bipolar Expansion.png",
     "Blue Orb": "assets/characters/lee-palefire/skills/Blue Orb.png",
+    "Center Axis Relock": "assets/characters/lee-palefire/skills/Center Axis Relock.png",
     "Class": "assets/characters/lee-palefire/skills/Class.png",
     "Core": "assets/characters/lee-palefire/skills/Core.png",
+    "Flaming Cyclone": "assets/characters/lee-palefire/skills/Flaming Cyclone.png",
     "QTE": "assets/characters/lee-palefire/skills/QTE.png",
     "Red Orb": "assets/characters/lee-palefire/skills/Red Orb.png",
     "Signature": "assets/characters/lee-palefire/skills/Signature.png",
@@ -255,9 +258,12 @@ const CATALOG = {
     "Blue Orb": "assets/characters/lucia-dawn/skills/Blue Orb.png",
     "Class": "assets/characters/lucia-dawn/skills/Class.png",
     "Core": "assets/characters/lucia-dawn/skills/Core.png",
+    "Glow Lotus Blade": "assets/characters/lucia-dawn/skills/Glow Lotus Blade.png",
     "QTE": "assets/characters/lucia-dawn/skills/QTE.png",
     "Red Orb": "assets/characters/lucia-dawn/skills/Red Orb.png",
     "Signature": "assets/characters/lucia-dawn/skills/Signature.png",
+    "Thunder Kill Realm": "assets/characters/lucia-dawn/skills/Thunder Kill Realm.png",
+    "Vortex Flurry": "assets/characters/lucia-dawn/skills/Vortex Flurry.png",
     "Yellow Orb": "assets/characters/lucia-dawn/skills/Yellow Orb.png"
    }
   },
@@ -311,9 +317,12 @@ const CATALOG = {
     "Blue Orb": "assets/characters/liv-luminance/skills/Blue Orb.png",
     "Class": "assets/characters/liv-luminance/skills/Class.png",
     "Core": "assets/characters/liv-luminance/skills/Core.png",
+    "Divine Rage Field": "assets/characters/liv-luminance/skills/Divine Rage Field.png",
     "QTE": "assets/characters/liv-luminance/skills/QTE.png",
     "Red Orb": "assets/characters/liv-luminance/skills/Red Orb.png",
+    "Sacred Chain": "assets/characters/liv-luminance/skills/Sacred Chain.png",
     "Signature": "assets/characters/liv-luminance/skills/Signature.png",
+    "Spiritual Prayer Dance": "assets/characters/liv-luminance/skills/Spiritual Prayer Dance.png",
     "Yellow Orb": "assets/characters/liv-luminance/skills/Yellow Orb.png"
    }
   },
@@ -393,10 +402,13 @@ const CATALOG = {
    "skillArt": {
     "Basic Attack": "assets/characters/nanami-pulse/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/nanami-pulse/skills/Blue Orb.png",
+    "Burning Hearts": "assets/characters/nanami-pulse/skills/Burning Hearts.png",
     "Class": "assets/characters/nanami-pulse/skills/Class.png",
     "Core": "assets/characters/nanami-pulse/skills/Core.png",
+    "Primordial Blast": "assets/characters/nanami-pulse/skills/Primordial Blast.png",
     "QTE": "assets/characters/nanami-pulse/skills/QTE.png",
     "Red Orb": "assets/characters/nanami-pulse/skills/Red Orb.png",
+    "Searing Flames": "assets/characters/nanami-pulse/skills/Searing Flames.png",
     "Signature": "assets/characters/nanami-pulse/skills/Signature.png",
     "Yellow Orb": "assets/characters/nanami-pulse/skills/Yellow Orb.png"
    }
@@ -419,13 +431,16 @@ const CATALOG = {
    "element": "Physical",
    "class": "Attacker",
    "skillArt": {
+    "Abyssal Slash — Shredstorm": "assets/characters/lucia-crimson-abyss/skills/Abyssal Slash — Shredstorm.png",
     "Basic Attack": "assets/characters/lucia-crimson-abyss/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/lucia-crimson-abyss/skills/Blue Orb.png",
     "Class": "assets/characters/lucia-crimson-abyss/skills/Class.png",
     "Core": "assets/characters/lucia-crimson-abyss/skills/Core.png",
+    "Crimson Flow": "assets/characters/lucia-crimson-abyss/skills/Crimson Flow.png",
     "QTE": "assets/characters/lucia-crimson-abyss/skills/QTE.png",
     "Red Orb": "assets/characters/lucia-crimson-abyss/skills/Red Orb.png",
     "Signature": "assets/characters/lucia-crimson-abyss/skills/Signature.png",
+    "Will of Anatta": "assets/characters/lucia-crimson-abyss/skills/Will of Anatta.png",
     "Yellow Orb": "assets/characters/lucia-crimson-abyss/skills/Yellow Orb.png"
    }
   },
@@ -478,9 +493,12 @@ const CATALOG = {
     "Basic Attack": "assets/characters/watanabe-astral/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/watanabe-astral/skills/Blue Orb.png",
     "Class": "assets/characters/watanabe-astral/skills/Class.png",
+    "Collapsed Origin": "assets/characters/watanabe-astral/skills/Collapsed Origin.png",
     "Core": "assets/characters/watanabe-astral/skills/Core.png",
+    "Meteor Reverberation": "assets/characters/watanabe-astral/skills/Meteor Reverberation.png",
     "QTE": "assets/characters/watanabe-astral/skills/QTE.png",
     "Red Orb": "assets/characters/watanabe-astral/skills/Red Orb.png",
+    "Satellite Blade": "assets/characters/watanabe-astral/skills/Satellite Blade.png",
     "Signature": "assets/characters/watanabe-astral/skills/Signature.png",
     "Yellow Orb": "assets/characters/watanabe-astral/skills/Yellow Orb.png"
    }
@@ -509,7 +527,10 @@ const CATALOG = {
     "Core": "assets/characters/bianca-veritas/skills/Core.png",
     "QTE": "assets/characters/bianca-veritas/skills/QTE.png",
     "Red Orb": "assets/characters/bianca-veritas/skills/Red Orb.png",
+    "Signature - Lightning Bloom": "assets/characters/bianca-veritas/skills/Signature - Lightning Bloom.png",
     "Signature": "assets/characters/bianca-veritas/skills/Signature.png",
+    "Swift Archer": "assets/characters/bianca-veritas/skills/Swift Archer.png",
+    "Thundering Clash": "assets/characters/bianca-veritas/skills/Thundering Clash.png",
     "Yellow Orb": "assets/characters/bianca-veritas/skills/Yellow Orb.png"
    }
   },
@@ -619,9 +640,12 @@ const CATALOG = {
     "Blue Orb": "assets/characters/vera-rozen/skills/Blue Orb.png",
     "Class": "assets/characters/vera-rozen/skills/Class.png",
     "Core": "assets/characters/vera-rozen/skills/Core.png",
+    "Illusive Disruption": "assets/characters/vera-rozen/skills/Illusive Disruption.png",
     "QTE": "assets/characters/vera-rozen/skills/QTE.png",
     "Red Orb": "assets/characters/vera-rozen/skills/Red Orb.png",
+    "Scorching Peril": "assets/characters/vera-rozen/skills/Scorching Peril.png",
     "Signature": "assets/characters/vera-rozen/skills/Signature.png",
+    "Void of Darkness": "assets/characters/vera-rozen/skills/Void of Darkness.png",
     "Yellow Orb": "assets/characters/vera-rozen/skills/Yellow Orb.png"
    }
   },
@@ -647,6 +671,8 @@ const CATALOG = {
     "Blue Orb": "assets/characters/camu-crocotta/skills/Blue Orb.png",
     "Class": "assets/characters/camu-crocotta/skills/Class.png",
     "Core": "assets/characters/camu-crocotta/skills/Core.png",
+    "Fatal Shadow": "assets/characters/camu-crocotta/skills/Fatal Shadow.png",
+    "Predator's Charge": "assets/characters/camu-crocotta/skills/Predator's Charge.png",
     "QTE": "assets/characters/camu-crocotta/skills/QTE.png",
     "Red Orb": "assets/characters/camu-crocotta/skills/Red Orb.png",
     "Signature": "assets/characters/camu-crocotta/skills/Signature.png",
@@ -675,8 +701,11 @@ const CATALOG = {
     "Blue Orb": "assets/characters/rosetta-rigor/skills/Blue Orb.png",
     "Class": "assets/characters/rosetta-rigor/skills/Class.png",
     "Core": "assets/characters/rosetta-rigor/skills/Core.png",
+    "Eradication of Sins": "assets/characters/rosetta-rigor/skills/Eradication of Sins.png",
     "QTE": "assets/characters/rosetta-rigor/skills/QTE.png",
+    "Raging Surge": "assets/characters/rosetta-rigor/skills/Raging Surge.png",
     "Red Orb": "assets/characters/rosetta-rigor/skills/Red Orb.png",
+    "Shining Wings": "assets/characters/rosetta-rigor/skills/Shining Wings.png",
     "Signature": "assets/characters/rosetta-rigor/skills/Signature.png",
     "Yellow Orb": "assets/characters/rosetta-rigor/skills/Yellow Orb.png"
    }
@@ -705,7 +734,9 @@ const CATALOG = {
     "Core": "assets/characters/qu-pavo/skills/Core.png",
     "QTE": "assets/characters/qu-pavo/skills/QTE.png",
     "Red Orb": "assets/characters/qu-pavo/skills/Red Orb.png",
+    "Severed Sky": "assets/characters/qu-pavo/skills/Severed Sky.png",
     "Signature": "assets/characters/qu-pavo/skills/Signature.png",
+    "Viridescent Gust": "assets/characters/qu-pavo/skills/Viridescent Gust.png",
     "Yellow Orb": "assets/characters/qu-pavo/skills/Yellow Orb.png"
    }
   },
@@ -899,6 +930,8 @@ const CATALOG = {
     "Blue Orb": "assets/characters/selena-tempest/skills/Blue Orb.png",
     "Class": "assets/characters/selena-tempest/skills/Class.png",
     "Core": "assets/characters/selena-tempest/skills/Core.png",
+    "Hymn to Muse": "assets/characters/selena-tempest/skills/Hymn to Muse.png",
+    "Modulated Timbre": "assets/characters/selena-tempest/skills/Modulated Timbre.png",
     "QTE": "assets/characters/selena-tempest/skills/QTE.png",
     "Red Orb": "assets/characters/selena-tempest/skills/Red Orb.png",
     "Signature": "assets/characters/selena-tempest/skills/Signature.png",
@@ -980,12 +1013,15 @@ const CATALOG = {
    "class": "Tank",
    "skillArt": {
     "Basic Attack": "assets/characters/vera-garnet/skills/Basic Attack.png",
+    "Blazing Spear": "assets/characters/vera-garnet/skills/Blazing Spear.png",
     "Blue Orb": "assets/characters/vera-garnet/skills/Blue Orb.png",
     "Class": "assets/characters/vera-garnet/skills/Class.png",
     "Core": "assets/characters/vera-garnet/skills/Core.png",
     "QTE": "assets/characters/vera-garnet/skills/QTE.png",
     "Red Orb": "assets/characters/vera-garnet/skills/Red Orb.png",
     "Signature": "assets/characters/vera-garnet/skills/Signature.png",
+    "Thundering Crash": "assets/characters/vera-garnet/skills/Thundering Crash.png",
+    "Thunderous Lunge": "assets/characters/vera-garnet/skills/Thunderous Lunge.png",
     "Yellow Orb": "assets/characters/vera-garnet/skills/Yellow Orb.png"
    }
   },
@@ -1011,9 +1047,11 @@ const CATALOG = {
     "Blue Orb": "assets/characters/roland-flambeau/skills/Blue Orb.png",
     "Class": "assets/characters/roland-flambeau/skills/Class.png",
     "Core": "assets/characters/roland-flambeau/skills/Core.png",
+    "Curtain Call": "assets/characters/roland-flambeau/skills/Curtain Call.png",
     "QTE": "assets/characters/roland-flambeau/skills/QTE.png",
     "Red Orb": "assets/characters/roland-flambeau/skills/Red Orb.png",
     "Signature": "assets/characters/roland-flambeau/skills/Signature.png",
+    "Tango Chainblade": "assets/characters/roland-flambeau/skills/Tango Chainblade.png",
     "Yellow Orb": "assets/characters/roland-flambeau/skills/Yellow Orb.png"
    }
   },
@@ -1036,12 +1074,15 @@ const CATALOG = {
    "class": "Amplifier",
    "skillArt": {
     "Basic Attack": "assets/characters/liv-empyrea/skills/Basic Attack.png",
+    "Blessing and Retribution": "assets/characters/liv-empyrea/skills/Blessing and Retribution.png",
     "Blue Orb": "assets/characters/liv-empyrea/skills/Blue Orb.png",
     "Class": "assets/characters/liv-empyrea/skills/Class.png",
     "Core": "assets/characters/liv-empyrea/skills/Core.png",
+    "Devout Promise": "assets/characters/liv-empyrea/skills/Devout Promise.png",
     "QTE": "assets/characters/liv-empyrea/skills/QTE.png",
     "Red Orb": "assets/characters/liv-empyrea/skills/Red Orb.png",
     "Signature": "assets/characters/liv-empyrea/skills/Signature.png",
+    "Splendorous Rite": "assets/characters/liv-empyrea/skills/Splendorous Rite.png",
     "Yellow Orb": "assets/characters/liv-empyrea/skills/Yellow Orb.png"
    }
   },
@@ -1095,9 +1136,11 @@ const CATALOG = {
     "Blue Orb": "assets/characters/pulao-dragontoll/skills/Blue Orb.png",
     "Class": "assets/characters/pulao-dragontoll/skills/Class.png",
     "Core": "assets/characters/pulao-dragontoll/skills/Core.png",
+    "Dragon Claw Spin": "assets/characters/pulao-dragontoll/skills/Dragon Claw Spin.png",
     "QTE": "assets/characters/pulao-dragontoll/skills/QTE.png",
     "Red Orb": "assets/characters/pulao-dragontoll/skills/Red Orb.png",
     "Signature": "assets/characters/pulao-dragontoll/skills/Signature.png",
+    "Whirlwind Strike": "assets/characters/pulao-dragontoll/skills/Whirlwind Strike.png",
     "Yellow Orb": "assets/characters/pulao-dragontoll/skills/Yellow Orb.png"
    }
   },
@@ -1149,8 +1192,10 @@ const CATALOG = {
    "skillArt": {
     "Basic Attack": "assets/characters/haicma-starveil/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/haicma-starveil/skills/Blue Orb.png",
+    "CA - Diamond Dust": "assets/characters/haicma-starveil/skills/CA - Diamond Dust.png",
     "Class": "assets/characters/haicma-starveil/skills/Class.png",
     "Core": "assets/characters/haicma-starveil/skills/Core.png",
+    "EX - Glacial Burial": "assets/characters/haicma-starveil/skills/EX - Glacial Burial.png",
     "QTE": "assets/characters/haicma-starveil/skills/QTE.png",
     "Red Orb": "assets/characters/haicma-starveil/skills/Red Orb.png",
     "Signature": "assets/characters/haicma-starveil/skills/Signature.png",
@@ -1179,9 +1224,12 @@ const CATALOG = {
     "Blue Orb": "assets/characters/karenina-scire/skills/Blue Orb.png",
     "Class": "assets/characters/karenina-scire/skills/Class.png",
     "Core": "assets/characters/karenina-scire/skills/Core.png",
+    "Faint Light": "assets/characters/karenina-scire/skills/Faint Light.png",
+    "Mass-Energy Conversion": "assets/characters/karenina-scire/skills/Mass-Energy Conversion.png",
     "QTE": "assets/characters/karenina-scire/skills/QTE.png",
     "Red Orb": "assets/characters/karenina-scire/skills/Red Orb.png",
     "Signature": "assets/characters/karenina-scire/skills/Signature.png",
+    "Vision Edge": "assets/characters/karenina-scire/skills/Vision Edge.png",
     "Yellow Orb": "assets/characters/karenina-scire/skills/Yellow Orb.png"
    }
   },
@@ -1207,9 +1255,11 @@ const CATALOG = {
     "Blue Orb": "assets/characters/noan-arca/skills/Blue Orb.png",
     "Class": "assets/characters/noan-arca/skills/Class.png",
     "Core": "assets/characters/noan-arca/skills/Core.png",
+    "Fang-shattering Wolf": "assets/characters/noan-arca/skills/Fang-shattering Wolf.png",
     "QTE": "assets/characters/noan-arca/skills/QTE.png",
     "Red Orb": "assets/characters/noan-arca/skills/Red Orb.png",
     "Signature": "assets/characters/noan-arca/skills/Signature.png",
+    "Voltaic Burst": "assets/characters/noan-arca/skills/Voltaic Burst.png",
     "Yellow Orb": "assets/characters/noan-arca/skills/Yellow Orb.png"
    }
   },
@@ -1234,10 +1284,13 @@ const CATALOG = {
     "Basic Attack": "assets/characters/bianca-stigmata/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/bianca-stigmata/skills/Blue Orb.png",
     "Class": "assets/characters/bianca-stigmata/skills/Class.png",
+    "Cold Illumination": "assets/characters/bianca-stigmata/skills/Cold Illumination.png",
     "Core": "assets/characters/bianca-stigmata/skills/Core.png",
     "QTE": "assets/characters/bianca-stigmata/skills/QTE.png",
     "Red Orb": "assets/characters/bianca-stigmata/skills/Red Orb.png",
+    "Shower of Dawnlight": "assets/characters/bianca-stigmata/skills/Shower of Dawnlight.png",
     "Signature": "assets/characters/bianca-stigmata/skills/Signature.png",
+    "Spinning Flare": "assets/characters/bianca-stigmata/skills/Spinning Flare.png",
     "Yellow Orb": "assets/characters/bianca-stigmata/skills/Yellow Orb.png"
    }
   },
@@ -1347,9 +1400,12 @@ const CATALOG = {
     "Blue Orb": "assets/characters/lucia-crimson-weave/skills/Blue Orb.png",
     "Class": "assets/characters/lucia-crimson-weave/skills/Class.png",
     "Core": "assets/characters/lucia-crimson-weave/skills/Core.png",
+    "Flashstorm": "assets/characters/lucia-crimson-weave/skills/Flashstorm.png",
     "QTE": "assets/characters/lucia-crimson-weave/skills/QTE.png",
     "Red Orb": "assets/characters/lucia-crimson-weave/skills/Red Orb.png",
     "Signature": "assets/characters/lucia-crimson-weave/skills/Signature.png",
+    "Thunderforge": "assets/characters/lucia-crimson-weave/skills/Thunderforge.png",
+    "Unmanifest Will": "assets/characters/lucia-crimson-weave/skills/Unmanifest Will.png",
     "Yellow Orb": "assets/characters/lucia-crimson-weave/skills/Yellow Orb.png"
    }
   },
@@ -1459,6 +1515,9 @@ const CATALOG = {
     "Blue Orb": "assets/characters/alisa-echo/skills/Blue Orb.png",
     "Class": "assets/characters/alisa-echo/skills/Class.png",
     "Core": "assets/characters/alisa-echo/skills/Core.png",
+    "Dark Icethorns": "assets/characters/alisa-echo/skills/Dark Icethorns.png",
+    "Infinite Chord": "assets/characters/alisa-echo/skills/Infinite Chord.png",
+    "Judgmental Apocalypse": "assets/characters/alisa-echo/skills/Judgmental Apocalypse.png",
     "QTE": "assets/characters/alisa-echo/skills/QTE.png",
     "Red Orb": "assets/characters/alisa-echo/skills/Red Orb.png",
     "Signature": "assets/characters/alisa-echo/skills/Signature.png",
@@ -1543,6 +1602,9 @@ const CATALOG = {
     "Blue Orb": "assets/characters/watanabe-epitaph/skills/Blue Orb.png",
     "Class": "assets/characters/watanabe-epitaph/skills/Class.png",
     "Core": "assets/characters/watanabe-epitaph/skills/Core.png",
+    "Darkflame Invasion": "assets/characters/watanabe-epitaph/skills/Darkflame Invasion.png",
+    "Incinerating Firestorm": "assets/characters/watanabe-epitaph/skills/Incinerating Firestorm.png",
+    "Purgatorial Breakthrough": "assets/characters/watanabe-epitaph/skills/Purgatorial Breakthrough.png",
     "QTE": "assets/characters/watanabe-epitaph/skills/QTE.png",
     "Red Orb": "assets/characters/watanabe-epitaph/skills/Red Orb.png",
     "Signature": "assets/characters/watanabe-epitaph/skills/Signature.png",
@@ -1623,13 +1685,16 @@ const CATALOG = {
    "element": "Nihil",
    "class": "Annihilator",
    "skillArt": {
+    "Ascendant Overlook": "assets/characters/luna-oblivion/skills/Ascendant Overlook.png",
     "Basic Attack": "assets/characters/luna-oblivion/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/luna-oblivion/skills/Blue Orb.png",
     "Class": "assets/characters/luna-oblivion/skills/Class.png",
     "Core": "assets/characters/luna-oblivion/skills/Core.png",
+    "Nihil Break": "assets/characters/luna-oblivion/skills/Nihil Break.png",
     "QTE": "assets/characters/luna-oblivion/skills/QTE.png",
     "Red Orb": "assets/characters/luna-oblivion/skills/Red Orb.png",
     "Signature": "assets/characters/luna-oblivion/skills/Signature.png",
+    "String Moonfall": "assets/characters/luna-oblivion/skills/String Moonfall.png",
     "Yellow Orb": "assets/characters/luna-oblivion/skills/Yellow Orb.png"
    }
   },
@@ -1683,9 +1748,12 @@ const CATALOG = {
     "Blue Orb": "assets/characters/hanying-solacetune/skills/Blue Orb.png",
     "Class": "assets/characters/hanying-solacetune/skills/Class.png",
     "Core": "assets/characters/hanying-solacetune/skills/Core.png",
+    "Lunar Shadow": "assets/characters/hanying-solacetune/skills/Lunar Shadow.png",
+    "Moon Banquet": "assets/characters/hanying-solacetune/skills/Moon Banquet.png",
     "QTE": "assets/characters/hanying-solacetune/skills/QTE.png",
     "Red Orb": "assets/characters/hanying-solacetune/skills/Red Orb.png",
     "Signature": "assets/characters/hanying-solacetune/skills/Signature.png",
+    "Spring Thaw": "assets/characters/hanying-solacetune/skills/Spring Thaw.png",
     "Yellow Orb": "assets/characters/hanying-solacetune/skills/Yellow Orb.png"
    }
   },
@@ -1736,10 +1804,13 @@ const CATALOG = {
    "class": "Attacker",
    "skillArt": {
     "Basic Attack": "assets/characters/lucia-pyroath/skills/Basic Attack.png",
+    "Blazing Cleave": "assets/characters/lucia-pyroath/skills/Blazing Cleave.png",
     "Blue Orb": "assets/characters/lucia-pyroath/skills/Blue Orb.png",
     "Class": "assets/characters/lucia-pyroath/skills/Class.png",
     "Core": "assets/characters/lucia-pyroath/skills/Core.png",
     "QTE": "assets/characters/lucia-pyroath/skills/QTE.png",
+    "Radiant Covenant": "assets/characters/lucia-pyroath/skills/Radiant Covenant.png",
+    "Radiant Splendor": "assets/characters/lucia-pyroath/skills/Radiant Splendor.png",
     "Red Orb": "assets/characters/lucia-pyroath/skills/Red Orb.png",
     "Signature": "assets/characters/lucia-pyroath/skills/Signature.png",
     "Yellow Orb": "assets/characters/lucia-pyroath/skills/Yellow Orb.png"
@@ -1791,6 +1862,8 @@ const CATALOG = {
    "element": "Lightning",
    "class": "Tank",
    "skillArt": {
+    "Astral Cataclysm": "assets/characters/nanami-startrail/skills/Astral Cataclysm.png",
+    "Astral Expanse": "assets/characters/nanami-startrail/skills/Astral Expanse.png",
     "Basic Attack": "assets/characters/nanami-startrail/skills/Basic Attack.png",
     "Blue Orb": "assets/characters/nanami-startrail/skills/Blue Orb.png",
     "Class": "assets/characters/nanami-startrail/skills/Class.png",
@@ -1798,6 +1871,7 @@ const CATALOG = {
     "QTE": "assets/characters/nanami-startrail/skills/QTE.png",
     "Red Orb": "assets/characters/nanami-startrail/skills/Red Orb.png",
     "Signature": "assets/characters/nanami-startrail/skills/Signature.png",
+    "Thunder Synchrony": "assets/characters/nanami-startrail/skills/Thunder Synchrony.png",
     "Yellow Orb": "assets/characters/nanami-startrail/skills/Yellow Orb.png"
    }
   },
