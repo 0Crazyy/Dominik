@@ -79,7 +79,9 @@ O smoke não julga aparência. Para mudanças visuais, abra com `Read` os prints
 
 ## Pendências
 
-- **Tradução para português (pt-BR): pausada em 2026-11-15, fora do site.** O site está em inglês, como antes. A única sobra é o botão "EN | PT" no rodapé do menu (`#langBtn` no `index.html`), que está escondido (`hidden`) e desativado (`disabled`). Ao retomar, tire o `hidden`; o botão passa a funcionar quando o patch for aplicado.
-  - Onde está: `drafts/traducao-pt/` (`README.md` com o passo a passo, `traducao-pt.patch`, `i18n.js` e `data-pt/ui.js`). A pasta não entra no deploy e não está no `.gitignore`: se for guardá-la no git, faça isso de propósito.
-  - Já feito lá: detecção do idioma do navegador, botão, menu, busca, contadores, títulos, datas. Falta o resto da interface, o Team Builder, as descrições dos times e os dados (`assets-data`, `skills-data`, `calculator-data`, `updates-data`, `home-splashes`).
-  - Antes de qualquer deploy com a tradução ligada, termine ou desligue a detecção automática: um navegador em português cairia em uma versão misturada.
+- **Tradução para português (pt-BR): em andamento, desligada.** Nenhuma tradução vai para o deploy. `const I18N_ENABLED = false` no `i18n.js` deixa o site só em inglês e o botão "EN | PT" do menu bloqueado; `tools/deploy.mjs` não copia `data/pt/` e para se o `i18n.js` publicado não estiver com `false`. Para ver o português no site local: `?lang=pt` em `localhost`/`127.0.0.1` (só funciona nessa máquina). O texto em inglês é a chave: `t("...")`, `tn(n, "{n} build")`, `tRot()` para passos de rotação. Regras no topo de `i18n.js` e `data/pt/ui.js`.
+  - Feito: toda a interface do `app.js` e do `editor.js` (`data/pt/ui.js`), frases da home (`splashes.js`), notas e rotações dos times (`teams.js`), memórias, armas, ressonâncias, Weapon Harmony e Leader Skills (`assets.js`), CUBs (`cubs.js`) e os posts de Novidades (`updates.js`, carrega só em `/updates`). O título da aba fica igual nos dois idiomas.
+  - Mudou um texto em inglês (nota de build, efeito, post)? A entrada em `data/pt/` deixa de bater e o texto aparece em inglês até ser traduzido de novo.
+  - Falta: as skills. Ficam fora do deploy, em `drafts/traducao-pt/` (prontas: Leia: Fortunaster e Adelyde: Anabasis; passo a passo e ferramentas no `README.md` de lá). A escala por nível do `app.js` (`SCALE_DEALS`) já reconhece "causa X%". Opcional: embeds do Discord em pt.
+  - `npm run smoke -- --pt` abre cada página com `?lang=pt` (só páginas; os testes de clique procuram texto em inglês). Sem `--pt` o smoke força inglês.
+  - Para ligar no site publicado: termine o que falta, troque para `I18N_ENABLED = true` e tire do `deploy.mjs` a exclusão de `data/pt/` e a checagem do `false`.

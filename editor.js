@@ -76,7 +76,7 @@ function edMoreSplit(options, current, keepClosed = false) {
   return { ordered: [...options.filter(option => !option.more), ...extra], open: !keepClosed && extra.some(option => option.value === current), count: extra.length };
 }
 const edMoreButton = (count, open) => count
-  ? `<button type="button" class="ed-picker-more" data-ed-more aria-expanded="${open}">${open ? "Show fewer" : `Others (${count})`}</button>` : "";
+  ? `<button type="button" class="ed-picker-more" data-ed-more aria-expanded="${open}">${open ? t("Show fewer") : t("Others ({n})", { n: count })}</button>` : "";
 const edSkillOrder = value => Array.isArray(value) && value.length === ED_CUB_SKILL_ORDER.length
   && value.every(index => Number.isInteger(index) && index >= 0 && index < ED_CUB_SKILL_ORDER.length)
   && new Set(value).size === ED_CUB_SKILL_ORDER.length ? value.slice() : ED_CUB_SKILL_ORDER.slice();
@@ -209,8 +209,8 @@ const edDecode = code => JSON.parse(new TextDecoder().decode(Uint8Array.from(ato
 // The short link (/editor?s=<code>) is made by /api/share. If it can't be made, the long link above still works
 async function edCopyLink() {
   const long = `${location.origin}/editor#t=${edEncode(edDraft)}`;
-  const copy = (link, ok) => navigator.clipboard?.writeText(link).then(() => edStatus(ok), () => edStatus(`Copy this link: ${link}`))
-    ?? edStatus(`Copy this link: ${link}`);
+  const copy = (link, ok) => navigator.clipboard?.writeText(link).then(() => edStatus(ok), () => edStatus(t("Copy this link: {link}", { link })))
+    ?? edStatus(t("Copy this link: {link}", { link }));
   if (!edDraft.cards.some(c => c.char)) return copy(long, "Link copied.");
   edStatus("Making the link...");
   const result = await fetch("/api/share", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ team: edDraft }) })
@@ -316,60 +316,60 @@ function edOrderBody(team) {
   const slotOf = token => team.cards.findIndex(c => edShortName(c) === token);
   const chips = tokens.map((token, n) => {
     const i = slotOf(token), ch = i >= 0 ? edChar(team.cards[i].char) : null;
-    return `<button type="button" class="ed-order-chip ed-${ED_BARS[Math.max(i, 0)]}" data-ed-order-remove="${n}" aria-label="Remove ${esc(token)} (step ${n + 1})"${tipAttr(token, "Click to remove")}>
+    return `<button type="button" class="ed-order-chip ed-${ED_BARS[Math.max(i, 0)]}" data-ed-order-remove="${n}" aria-label="${esc(t("Remove {name} (step {n})", { name: token, n: n + 1 }))}"${tipAttr(token, t("Click to remove"))}>
       <b>${n + 1}</b>${ch ? pic(ch.portrait) : ""}<span>${esc(token)}</span></button>`;
   }).join(`<i class="ed-order-arrow" aria-hidden="true">→</i>`);
   const adds = team.cards.map((c, i) => {
     const ch = edChar(c.char);
     return `<button type="button" class="ed-order-add ed-${ED_BARS[i]}" data-ed-order-add="${i}"${ch ? "" : " disabled"}
-      aria-label="Add ${esc(ch ? edShortName(c) : `${ED_SLOTS[i]} slot`)} to the rotation"${tipAttr(ch ? edShortName(c) : "", "Add to the rotation")}>
+      aria-label="${esc(t("Add {name} to the rotation", { name: ch ? edShortName(c) : t("{slot} slot", { slot: ED_SLOTS[i] }) }))}"${tipAttr(ch ? edShortName(c) : "", t("Add to the rotation"))}>
       ${ch ? pic(ch.portrait) : `<span class="ed-order-empty" aria-hidden="true">+</span>`}<span>${esc(ch ? edShortName(c) : ED_SLOTS[i])}</span></button>`;
   }).join("");
-  return `<div class="ed-order-line" aria-live="polite">${chips || `<span class="ed-order-hint">Tap a character below to build the order they swap in.</span>`}</div>
+  return `<div class="ed-order-line" aria-live="polite">${chips || `<span class="ed-order-hint">${t("Tap a character below to build the order they swap in.")}</span>`}</div>
     <div class="ed-order-bar"><div class="ed-order-adds">${adds}</div>
-    <button type="button" class="ed-order-tool" data-ed-order-undo${tokens.length ? "" : " disabled"}>↶ Undo</button>
-    <button type="button" class="ed-order-tool" data-ed-order-clear${tokens.length ? "" : " disabled"}>Clear</button></div>`;
+    <button type="button" class="ed-order-tool" data-ed-order-undo${tokens.length ? "" : " disabled"}>↶ ${t("Undo")}</button>
+    <button type="button" class="ed-order-tool" data-ed-order-clear${tokens.length ? "" : " disabled"}>${t("Clear")}</button></div>`;
 }
 function edPageBody(team) {
   const dir = kind => kind === "Energy" ? "energy-type" : "effects";
   return Object.entries(edGroupBy(CATALOG.pages, p => p.kind)).map(([kind, list]) => `<div class="ed-page-group">
-    <small>${esc(kind)}</small><div class="ed-page-options">${list.map(p => `<button type="button" class="ed-page-option${p.path === team.page ? " on" : ""}"
-      data-ed-page="${esc(p.path)}" aria-pressed="${p.path === team.page}"${tipAttr(p.name, kind)}>${menuIcon(dir(kind), p.name)}<span>${esc(p.name)}</span></button>`).join("")}</div></div>`).join("");
+    <small>${esc(t(kind))}</small><div class="ed-page-options">${list.map(p => `<button type="button" class="ed-page-option${p.path === team.page ? " on" : ""}"
+      data-ed-page="${esc(p.path)}" aria-pressed="${p.path === team.page}"${tipAttr(p.name, t(kind))}>${menuIcon(dir(kind), p.name)}<span>${esc(p.name)}</span></button>`).join("")}</div></div>`).join("");
 }
 const edTagsBody = team => ED_TAGS.map(tag => `<button type="button" class="ed-tag${team.tags.includes(tag) ? " on" : ""}"
   data-ed-tag="${tag}" aria-pressed="${team.tags.includes(tag)}">${tag}</button>`).join("");
 // Leader and Starter list the characters by name, so this part is drawn again when a character changes
 function edRolesBody(team) {
-  const picks = [0, 1, 2].map(i => [String(i), edShortName(team.cards[i]) || `${ED_SLOTS[i]} slot`]);
-  return `<h2 class="ed-team-heading">Battle positions</h2>
+  const picks = [0, 1, 2].map(i => [String(i), edShortName(team.cards[i]) || t("{slot} slot", { slot: ED_SLOTS[i] })]);
+  return `<h2 class="ed-team-heading">${t("Battle positions")}</h2>
       ${edField("Leader", edSelect("captain", edOptions(picks, String(team.captain))))}
       ${edField("Starter", edSelect("starter", edOptions(picks, String(team.starter))))}`;
 }
 function edTeamBody(team) {
-  return `<legend>Team</legend><div class="ed-team-layout">
-    <section class="ed-team-info" aria-label="Team details">
-      <label class="ed-team-name"><span>Team name</span>
+  return `<legend>${t("Team")}</legend><div class="ed-team-layout">
+    <section class="ed-team-info" aria-label="${t("Team details")}">
+      <label class="ed-team-name"><span>${t("Team name")}</span>
         <input name="name" maxlength="${ED_LIMITS.name}" value="${esc(team.name)}" placeholder="Rosetta Darkflow" autocomplete="off"></label>
-      <div class="ed-team-block"><h2 class="ed-team-heading">Tags</h2><div id="edTags" class="ed-tags">${edTagsBody(team)}</div></div>
-      <div class="ed-team-block"><h2 class="ed-team-heading">Page</h2>
+      <div class="ed-team-block"><h2 class="ed-team-heading">${t("Tags")}</h2><div id="edTags" class="ed-tags">${edTagsBody(team)}</div></div>
+      <div class="ed-team-block"><h2 class="ed-team-heading">${t("Page")}</h2>
         <input type="hidden" name="page" value="${esc(team.page)}"><div id="edPageChoice" class="ed-page-groups">${edPageBody(team)}</div></div>
-      <div class="ed-team-block"><h2 class="ed-team-heading">Team rotation</h2>
+      <div class="ed-team-block"><h2 class="ed-team-heading">${t("Team rotation")}</h2>
         <input type="hidden" name="order" value="${esc(team.order)}"><div id="edOrder">${edOrderBody(team)}</div></div>
     </section>
     <div class="ed-team-side">
-      <section id="edRoles" class="ed-team-roles" aria-label="Battle positions">${edRolesBody(team)}</section>
-      <section class="ed-team-actions" aria-label="Share and send">
-        <h2 class="ed-team-heading">Share</h2>
-        <button type="button" class="tool ed-primary" data-ed="send">Submit for review</button>
-        <button type="button" class="tool" data-ed="link">Copy link</button>
-        <button type="button" class="tool" data-export>Export image</button>
-        <button type="button" class="tool ed-danger" data-ed="reset">Start over</button>
+      <section id="edRoles" class="ed-team-roles" aria-label="${t("Battle positions")}">${edRolesBody(team)}</section>
+      <section class="ed-team-actions" aria-label="${t("Share and send")}">
+        <h2 class="ed-team-heading">${t("Share")}</h2>
+        <button type="button" class="tool ed-primary" data-ed="send">${t("Submit for review")}</button>
+        <button type="button" class="tool" data-ed="link">${t("Copy link")}</button>
+        <button type="button" class="tool" data-export>${t("Export image")}</button>
+        <button type="button" class="tool ed-danger" data-ed="reset">${t("Start over")}</button>
         <div id="edSend" class="ed-send" hidden>
-          <p class="ed-hint">Your team goes to a review queue. Once approved, it shows up on its page as a community build.</p>
-          <label class="ed-field"><span>Your name · optional</span><input id="edAuthor" maxlength="32" autocomplete="off"></label>
+          <p class="ed-hint">${t("Your team goes to a review queue. Once approved, it shows up on its page as a community build.")}</p>
+          <label class="ed-field"><span>${t("Your name · optional")}</span><input id="edAuthor" maxlength="32" autocomplete="off"></label>
           <label class="ed-trap" aria-hidden="true">Website<input id="edWebsite" tabindex="-1" autocomplete="off"></label>
           <div id="edCaptcha"></div>
-          <button type="button" class="tool ed-primary" data-ed="confirm" disabled>Send team</button>
+          <button type="button" class="tool ed-primary" data-ed="confirm" disabled>${t("Send team")}</button>
         </div>
       </section>
     </div>
@@ -426,8 +426,8 @@ function edPickerOptions(kind, i, side) {
       : fit.has(name) ? [2, fit.get(name).order] : [3, 0];
     const list = CATALOG.memories.map((name, index) => ({
       value: name, label: name, art: MEM_INDEX.get(name).ext ? memFile(name, "1-4") : "",
-      info: (signatures.has(name) ? `Signature memory of ${signatures.get(name)}\n\n` : "") + edMemInfo(name),
-      badge: signatures.has(name) ? "Signature" : worn.has(name) ? `In ${worn.get(name)} build${worn.get(name) > 1 ? "s" : ""}` : "",
+      info: (signatures.has(name) ? `${t("Signature memory of {name}", { name: signatures.get(name) })}\n\n` : "") + edMemInfo(name),
+      badge: signatures.has(name) ? "Signature" : worn.has(name) ? tn(worn.get(name), "In {n} build", "In {n} builds") : "",
       fit: fit.get(name)?.label || "", order: [...rank(name), index]
     })).sort((a, b) => a.order[0] - b.order[0] || a.order[1] - b.order[1] || a.order[2] - b.order[2]);
     // Up front: this character's signature, memories already in this team, the few the site's builds of this character use most,
@@ -515,26 +515,26 @@ function edShowPicker(kind, i, slot, side, anchor) {
   const c = edDraft.cards[i], options = edPickerOptions(kind, i, side);
   const current = edPickerCurrent(kind, c, slot, side);
   const title = kind === "memres"
-    ? `${ED_SLOTS[i]} · Memory ${slot + 1} · ${side === "bottom" ? "Bottom" : "Upper"} resonance`
-    : `${ED_SLOTS[i]} · ${kind === "mem" ? `Memory ${slot + 1}` : ED_PICKER_LABELS[kind]}`;
+    ? `${ED_SLOTS[i]} · ${t("Memory {n}", { n: slot + 1 })} · ${t(side === "bottom" ? "Bottom resonance" : "Upper resonance")}`
+    : `${ED_SLOTS[i]} · ${kind === "mem" ? t("Memory {n}", { n: slot + 1 }) : t(ED_PICKER_LABELS[kind])}`;
   const choices = [
     ...(kind === "char" || kind === "mem" || kind === "cub" || kind === "weapon" || kind === "mx" || kind === "wh"
-      ? [{ value: "", label: "None" }] : []),
+      ? [{ value: "", label: t("None") }] : []),
     ...options
   ];
   edPickerTarget = { kind, card: i, slot, side };
   const split = edMoreSplit(choices, current, kind === "char");
-  picker.innerHTML = `<div class="ed-picker-head"><strong>${esc(title)}</strong><small>Choose an icon</small></div>
-    <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="Close">×</button>
-    <input id="edPickerSearch" type="search" placeholder="Search ${esc(ED_PICKER_LABELS[kind])}" aria-label="Search ${esc(ED_PICKER_LABELS[kind])}" autocomplete="off">
-    <div id="edPickerOptions" class="ed-picker-options" role="group" aria-label="${esc(title)} options">
+  picker.innerHTML = `<div class="ed-picker-head"><strong>${esc(title)}</strong><small>${t("Choose an icon")}</small></div>
+    <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="${t("Close")}">×</button>
+    <input id="edPickerSearch" type="search" placeholder="${esc(t("Search {name}", { name: t(ED_PICKER_LABELS[kind]) }))}" aria-label="${esc(t("Search {name}", { name: t(ED_PICKER_LABELS[kind]) }))}" autocomplete="off">
+    <div id="edPickerOptions" class="ed-picker-options" role="group" aria-label="${esc(t("{name} options", { name: title }))}">
       ${split.ordered.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}${option.badge ? " hot" : option.fit ? " fit" : ""}${option.more ? " more" : ""}"${option.more && !split.open ? " hidden" : ""}
         data-ed-picker-value="${esc(option.value)}" data-ed-picker-search="${esc(`${option.label} ${option.info || ""}`.toLowerCase())}"
         aria-pressed="${option.value === current}"${tipAttr(option.label, option.info || "")}>
         ${option.badge || option.fit ? `<em class="ed-badge">${esc(option.badge || option.fit)}</em>` : ""}
         ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}${option.stars ? starOverlay(Number(option.stars)) : ""}<span>${esc(option.label)}</span></button>`).join("")}
       ${edMoreButton(split.count, split.open)}
-    </div><p class="ed-picker-empty" hidden>No options match this search.</p>`;
+    </div><p class="ed-picker-empty" hidden>${t("No options match this search.")}</p>`;
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
   picker.hidden = false;
   edPositionPicker(picker, stage, anchor);
@@ -543,7 +543,7 @@ function edShowPicker(kind, i, slot, side, anchor) {
 // A resonance as a row button shows it: its icon and its name
 const ED_RES_FAINT = ["Random", "None"]; // resonances that matter little: shown dimmed
 let edApplyAll = { top: false, bottom: false };
-const edResChip = (ch, name) => `<span class="ed-res-chip${ED_RES_FAINT.includes(name) ? " faint" : ""}">${pic(edMemResArt(ch, name))}<span>${esc(name)}</span></span>`;
+const edResChip = (ch, name) => `<span class="ed-res-chip${ED_RES_FAINT.includes(name) ? " faint" : ""}">${pic(edMemResArt(ch, name))}<span>${esc(t(name))}</span></span>`;
 // One resonance chosen in the menu. With "apply to all" on for that side, the six memories of the card take it
 function edSetMemRes(card, slot, side, value) {
   const c = edDraft.cards[card], at = side === "bottom" ? 1 : 0;
@@ -564,22 +564,22 @@ function edShowResonanceMenu(i, anchor, selectedSlot = -1, side = "") {
   edPickerTarget = { kind: "memresmenu", card: i, slot: selectedSlot, side };
   anchor.setAttribute("aria-expanded", "true");
   picker.className = `ed-picker ed-res-menu${choosing ? " has-options" : ""}`;
-  picker.innerHTML = `<div class="ed-picker-head"><strong>${ED_SLOTS[i]} · Memory resonances</strong><small>Choose a memory and resonance side</small></div>
-    <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="Close">×</button>
+  picker.innerHTML = `<div class="ed-picker-head"><strong>${ED_SLOTS[i]} · ${t("Memory resonances")}</strong><small>${t("Choose a memory and resonance side")}</small></div>
+    <button type="button" class="ed-picker-close" data-ed-picker-close aria-label="${t("Close")}">×</button>
     <div class="ed-res-menu-list">${c.memRes.map(([upper, bottom], slot) => `<section class="ed-res-menu-row">
-      <strong>Memory ${slot + 1}</strong>
-      <button type="button" data-ed-mem-side="top" data-ed-mem-slot="${slot}" aria-pressed="${choosing && selectedSlot === slot && side === "top"}" aria-label="Memory ${slot + 1}, Upper resonance">
-        <small>UPPER</small>${edResChip(ch, upper)}</button>
-      <button type="button" data-ed-mem-side="bottom" data-ed-mem-slot="${slot}" aria-pressed="${choosing && selectedSlot === slot && side === "bottom"}" aria-label="Memory ${slot + 1}, Bottom resonance">
-        <small>BOTTOM</small>${edResChip(ch, bottom)}</button>
+      <strong>${t("Memory {n}", { n: slot + 1 })}</strong>
+      <button type="button" data-ed-mem-side="top" data-ed-mem-slot="${slot}" aria-pressed="${choosing && selectedSlot === slot && side === "top"}" aria-label="${t("Memory {n}", { n: slot + 1 })}, ${t("Upper resonance")}">
+        <small>${t("UPPER")}</small>${edResChip(ch, upper)}</button>
+      <button type="button" data-ed-mem-side="bottom" data-ed-mem-slot="${slot}" aria-pressed="${choosing && selectedSlot === slot && side === "bottom"}" aria-label="${t("Memory {n}", { n: slot + 1 })}, ${t("Bottom resonance")}">
+        <small>${t("BOTTOM")}</small>${edResChip(ch, bottom)}</button>
     </section>`).join("")}</div>`;
   if (choosing) picker.insertAdjacentHTML("beforeend", `<div class="ed-res-menu-options">
-    <div class="ed-res-menu-choice-head"><strong>Memory ${selectedSlot + 1} · ${side === "bottom" ? "Bottom" : "Upper"} resonance</strong>
-      <label class="ed-res-menu-all"><input type="checkbox" data-ed-apply-all="${side === "bottom" ? "bottom" : "top"}"${edApplyAll[side === "bottom" ? "bottom" : "top"] ? " checked" : ""}> Apply to all 6</label></div>
-    <div class="ed-picker-options" role="group" aria-label="Memory ${selectedSlot + 1}, ${side === "bottom" ? "Bottom" : "Upper"} resonance options">
+    <div class="ed-res-menu-choice-head"><strong>${t("Memory {n}", { n: selectedSlot + 1 })} · ${t(side === "bottom" ? "Bottom resonance" : "Upper resonance")}</strong>
+      <label class="ed-res-menu-all"><input type="checkbox" data-ed-apply-all="${side === "bottom" ? "bottom" : "top"}"${edApplyAll[side === "bottom" ? "bottom" : "top"] ? " checked" : ""}> ${t("Apply to all 6")}</label></div>
+    <div class="ed-picker-options" role="group" aria-label="${t("Memory {n}", { n: selectedSlot + 1 })}, ${t(side === "bottom" ? "Bottom resonance" : "Upper resonance")}">
       ${split.ordered.map(option => `<button type="button" class="ed-picker-option${option.value === current ? " on" : ""}${option.more ? " more" : ""}"${option.more && !split.open ? " hidden" : ""}
         data-ed-memres-value="${esc(option.value)}" aria-pressed="${option.value === current}"${tipAttr(option.label, option.info || "")}>
-        ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}<span>${esc(option.label)}</span>${option.sub ? `<small>${esc(option.sub)}</small>` : ""}</button>`).join("")}
+        ${option.art ? pic(option.art) : `<span class="ed-picker-noart" aria-hidden="true">×</span>`}<span>${esc(t(option.label))}</span>${option.sub ? `<small>${esc(t(option.sub))}</small>` : ""}</button>`).join("")}
       ${edMoreButton(split.count, split.open)}
     </div></div>`);
   picker.querySelectorAll("img").forEach(img => { img.draggable = false; });
@@ -603,13 +603,17 @@ function edFilterPicker(query) {
 function edResonanceSummary(values) {
   const counts = new Map();
   values.forEach(name => counts.set(name, (counts.get(name) || 0) + 1));
-  return [...counts].map(([name, count]) => `${count}× ${name}`).join(" · ");
+  return [...counts].map(([name, count]) => `${count}× ${t(name)}`).join(" · ");
 }
+// The six resonances of each side of a card, counted: shown in the box beside the memories
+const edResTotals = c => `<div class="ed-res-total"><small>${t("Upper")} · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[0])))}</span></div>
+      <div class="ed-res-total"><small>${t("Bottom")} · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[1])))}</span></div>`;
+const edResLabel = c => t("Memory resonances. Upper: {upper}. Bottom: {bottom}.", { upper: edResonanceSummary(c.memRes.map(pair => pair[0])), bottom: edResonanceSummary(c.memRes.map(pair => pair[1])) });
 
 /* stage: the three cards as the site draws them, with every icon slot an editor target */
 function edStageBody() {
   const theme = edTheme(edDraft), views = edDraft.cards.map((c, i) => edCardView(c, i, edDraft));
-  shownTeam = { id: "", title: edDraft.name.trim() || "Untitled team", cards: edCards(edDraft), theme };
+  shownTeam = { id: "", title: edDraft.name.trim() || t("Untitled team"), cards: edCards(edDraft), theme };
   // #compBox is what the sliding cards measure, as on team pages
   return `<div id="compBox">${pager(views)}<section class="comp ed-live" style="--c1:${theme.c1};--c2:${theme.c2};--cp:${theme.cp}">${views.map(card).join("")}</section></div><div id="edPicker" class="ed-picker" hidden></div>`;
 }
@@ -679,7 +683,7 @@ function edWire() {
     el.dataset.edCard = i;
     el.removeAttribute("tabindex");
     el.removeAttribute("role");
-    el.setAttribute("aria-label", `Edit the ${ED_SLOTS[i]} slot`);
+    el.setAttribute("aria-label", t("Edit the {slot} slot", { slot: ED_SLOTS[i] }));
     const mark = (node, drop, slot, side) => {
       if (!node) return;
       node.dataset.edDrop = drop;
@@ -688,24 +692,24 @@ function edWire() {
       node.draggable = false;
       node.tabIndex = 0;
       node.setAttribute("role", "button");
-      const labels = { char: "character", rank: "rank", weapon: "weapon", wh: "Weapon Harmony",
-          mem: `Memory ${Number(slot) + 1}`, mx: `Weapon resonance ${Number(slot) + 1}`, cub: "C.U.B.",
-          cubskill: `C.U.B. skill ${Number(slot) + 1}` };
+      const labels = { char: t("character"), rank: t("rank"), weapon: t("weapon"), wh: "Weapon Harmony",
+          mem: t("Memory {n}", { n: Number(slot) + 1 }), mx: t("Weapon resonance {n}", { n: Number(slot) + 1 }), cub: "C.U.B.",
+          cubskill: t("C.U.B. skill {n}", { n: Number(slot) + 1 }) };
       // An accessible name has to include the text the slot shows (an empty slot shows "Construct", a weapon its name)
       const shown = node.textContent.trim().replace(/\s+/g, " ");
-      node.setAttribute("aria-label", `${shown ? `${shown}, ` : ""}${labels[drop]} selector`);
-      node.title = `Choose ${labels[drop]}`;
-      if (drop === "mem" || drop === "mx") node.title += ". Drag it onto another slot of this card to swap them";
+      node.setAttribute("aria-label", `${shown ? `${shown}, ` : ""}${t("{name} selector", { name: labels[drop] })}`);
+      node.title = t("Choose {name}", { name: labels[drop] });
+      if (drop === "mem" || drop === "mx") node.title += t(". Drag it onto another slot of this card to swap them");
     };
     const c = edDraft.cards[i], cardMemories = $(".mem", el);
     const memoryGroup = document.createElement("div");
     memoryGroup.className = "ed-memory-group";
     cardMemories.before(memoryGroup);
     memoryGroup.insertAdjacentHTML("beforeend", `<button type="button" class="ed-memory-resonance-button" data-ed-memres-menu="${i}"
-      aria-haspopup="dialog" aria-controls="edPicker" aria-expanded="false">Memory Resonances</button>`);
+      aria-haspopup="dialog" aria-controls="edPicker" aria-expanded="false">${t("Memory Resonances")}</button>`);
     memoryGroup.append(cardMemories);
     mark($(".portrait", el), "char");
-    if (c.char) $(".portrait", el).title = "Choose character, or drag it onto another card to swap positions";
+    if (c.char) $(".portrait", el).title = t("Choose character, or drag it onto another card to swap positions");
     mark($(".rank", el), "rank");
     const wp = el.querySelectorAll(".wp > .slot"), ch = edChar(c.char);
     if (ch && edWeaponOptions(ch.name).length) mark(wp[0], "weapon");
@@ -713,12 +717,11 @@ function edWire() {
     mark(wp[1], "wh");
     el.querySelectorAll(".mem .slot").forEach((s, k) => {
       mark(s, "mem", k);
-      s.setAttribute("aria-label", `Memory ${k + 1}`);
+      s.setAttribute("aria-label", t("Memory {n}", { n: k + 1 }));
     });
     el.querySelectorAll(".mx .slot").forEach((s, k) => mark(s, "mx", k));
     const res = $(".res", el);
-    res.innerHTML = `<div class="ed-res-total"><small>Upper · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[0])))}</span></div>
-      <div class="ed-res-total"><small>Bottom · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[1])))}</span></div>`;
+    res.innerHTML = edResTotals(c);
     const cubSlot = $(".kit > .slot", el);
     mark(cubSlot, "cub");
     const cub = CATALOG.characters.find(candidate => candidate.construct === c.cub);
@@ -728,20 +731,28 @@ function edWire() {
       skill.dataset.edCubSkillIndex = k;
       skill.setAttribute("aria-pressed", String(edCubSkillPick?.card === i && edCubSkillPick.index === k));
       skill.classList.toggle("ed-cub-skill-selected", edCubSkillPick?.card === i && edCubSkillPick.index === k);
-      skill.title = `C.U.B. skill ${k + 1}. Drag it onto another skill to swap positions, or click it twice to grey it out (not unlocked).`;
+      skill.title = t("C.U.B. skill {n}. Drag it onto another skill to swap positions, or right-click it (or press and hold) to grey it out (not unlocked).", { n: k + 1 });
     });
+    // A picked skill gets its actions in plain sight, so a touch screen needs no hidden gesture to grey it out
+    if (cub?.skills.length && edCubSkillPick?.card === i) {
+      const off = c.cubOff[c.cubSkills[edCubSkillPick.index]];
+      $(".kit", el).insertAdjacentHTML("beforeend", `<div class="ed-cub-actions" role="group" aria-label="${t("C.U.B. skill {n}", { n: edCubSkillPick.index + 1 })}">
+        <span>${t(matchMedia("(pointer:coarse)").matches ? "Skill {n} · tap another skill to swap" : "Skill {n} · click another skill to swap", { n: edCubSkillPick.index + 1 })}</span>
+        <button type="button" data-ed-cub-action="off">${t(off ? "Use again" : "Grey out")}</button>
+        <button type="button" data-ed-cub-action="cancel">${t("Cancel")}</button></div>`);
+    }
     el.querySelectorAll(".tag.captain,.tag.starter").forEach(tag => {
       const roleName = tag.classList.contains("captain") ? "captain" : "starter";
       tag.dataset.edRole = roleName;
-      tag.title = `Drag to move ${roleName === "captain" ? "Leader" : "Starter"} to another position`;
+      tag.title = t("Drag to move {role} to another position", { role: roleName === "captain" ? "Leader" : "Starter" });
     });
     // Swapping two positions: one button on each edge two cards share, or on phones, where one card shows at a time, arrows inside it
     if (i < ED_BARS.length - 1) el.insertAdjacentHTML("beforeend", `<button type="button" class="ed-swap" data-ed-move="${i}" data-ed-to="${i + 1}"
-      aria-label="Swap ${ED_SLOTS[i]} and ${ED_SLOTS[i + 1]}" title="Swap ${ED_SLOTS[i]} and ${ED_SLOTS[i + 1]}, with their equipment">⇄</button>`);
+      aria-label="${t("Swap {a} and {b}", { a: ED_SLOTS[i], b: ED_SLOTS[i + 1] })}" title="${t("Swap {a} and {b}, with their equipment", { a: ED_SLOTS[i], b: ED_SLOTS[i + 1] })}">⇄</button>`);
     el.insertAdjacentHTML("beforeend", `<div class="ed-move">${[i - 1, i + 1].filter(to => ED_BARS[to]).map(to => `<button type="button"
-      class="ed-move-${to < i ? "left" : "right"}" data-ed-move="${i}" data-ed-to="${to}" aria-label="Move to ${ED_SLOTS[to]}"
-      title="Move to ${ED_SLOTS[to]}, with the equipment">${to < i ? "‹" : "›"}</button>`).join("")}</div>`);
-    res.setAttribute("aria-label", `Memory resonances. Upper: ${edResonanceSummary(c.memRes.map(pair => pair[0]))}. Bottom: ${edResonanceSummary(c.memRes.map(pair => pair[1]))}.`);
+      class="ed-move-${to < i ? "left" : "right"}" data-ed-move="${i}" data-ed-to="${to}" aria-label="${t("Move to {slot}", { slot: ED_SLOTS[to] })}"
+      title="${t("Move to {slot}, with the equipment", { slot: ED_SLOTS[to] })}">${to < i ? "‹" : "›"}</button>`).join("")}</div>`);
+    res.setAttribute("aria-label", edResLabel(c));
   });
 }
 // On phones the cards slide: drawing them again keeps the one on screen, or shows "follow" (where a card just moved)
@@ -797,7 +808,7 @@ const edStatus = text => {
   const box = $("#edStatus");
   if (!box) return;
   clearTimeout(edStatusTimer);
-  box.textContent = text;
+  box.textContent = text && t(text);
   box.classList.toggle("on", !!text);
   if (text) edStatusTimer = setTimeout(() => box.classList.remove("on"), 7000);
 };
@@ -834,9 +845,9 @@ let edTab = ["notes", "notes", "notes"];
 const edRotIcon = (ch, text) => rotationIcon(ch?.name, text);
 function edRotPalette(i) {
   const ch = edChar(edDraft.cards[i].char);
-  return ED_ROT_GROUPS.map(([label, names]) => `<div class="ed-rot-group"><small>${label}</small><div>${names.map(name => {
+  return ED_ROT_GROUPS.map(([label, names]) => `<div class="ed-rot-group"><small>${t(label)}</small><div>${names.map(name => {
     const move = ROTATION_MOVES.find(m => m.name === name);
-    return `<button type="button" class="ed-rot-move" data-rot-act="add" data-rot-i="${i}" data-rot-move="${esc(name)}" aria-label="Add ${esc(name)}">
+    return `<button type="button" class="ed-rot-move" data-rot-act="add" data-rot-i="${i}" data-rot-move="${esc(name)}" aria-label="${esc(t("Add {name}", { name }))}">
       ${edRotIcon(ch, move.word) || `<span class="ed-rot-glyph" aria-hidden="true">+</span>`}<span>${esc(name)}</span></button>`;
   }).join("")}</div></div>`).join("");
 }
@@ -844,44 +855,44 @@ function edRotPalette(i) {
 function edRotTurnsBody(i) {
   const c = edDraft.cards[i], ch = edChar(c.char), turns = edRotParse(c.rotation);
   const active = Math.min(edRotActive[i] ?? turns.length - 1, turns.length - 1);
-  const btn = (act, t, s, label, inner, extra = "") => `<button type="button" class="ed-rot-btn" data-rot-act="${act}" data-rot-i="${i}" data-rot-t="${t}" data-rot-s="${s}" aria-label="${label}"${extra}>${inner}</button>`;
-  const body = turns.map((turn, t) => `<section class="ed-rot-turn${t === active ? " on" : ""}">
-    <div class="ed-rot-turn-head">${turn.name === null ? `<span>Steps</span>` : `<input class="ed-rot-name" data-rot-name data-rot-i="${i}" data-rot-t="${t}" value="${esc(turn.name)}" maxlength="60" aria-label="Turn name" autocomplete="off">`}
-      ${btn("pick", t, 0, "Add the next steps to this turn", t === active ? "Adding here" : "Add here", ` aria-pressed="${t === active}"`)}
-      ${btn("drop", t, 0, "Remove this turn", "✕")}</div>
+  const btn = (act, ti, s, label, inner, extra = "") => `<button type="button" class="ed-rot-btn" data-rot-act="${act}" data-rot-i="${i}" data-rot-t="${ti}" data-rot-s="${s}" aria-label="${label}"${extra}>${inner}</button>`;
+  const body = turns.map((turn, ti) => `<section class="ed-rot-turn${ti === active ? " on" : ""}">
+    <div class="ed-rot-turn-head">${turn.name === null ? `<span>${t("Steps")}</span>` : `<input class="ed-rot-name" data-rot-name data-rot-i="${i}" data-rot-t="${ti}" value="${esc(turn.name)}" maxlength="60" aria-label="${t("Turn name")}" autocomplete="off">`}
+      ${btn("pick", ti, 0, t("Add the next steps to this turn"), t(ti === active ? "Adding here" : "Add here"), ` aria-pressed="${ti === active}"`)}
+      ${btn("drop", ti, 0, t("Remove this turn"), "✕")}</div>
     <ol>${turn.steps.map((text, s) => {
       const step = edStepParse(text), last = turn.steps.length - 1;
       return `<li class="ed-rot-step"><b>${s + 1}</b>${edRotIcon(ch, text)}
-        ${step ? `<span class="ed-rot-text">${esc(text)}</span>` : `<input class="ed-rot-text" data-rot-text data-rot-i="${i}" data-rot-t="${t}" data-rot-s="${s}" value="${esc(text)}" maxlength="120" aria-label="Step ${s + 1}" autocomplete="off">`}
+        ${step ? `<span class="ed-rot-text">${esc(tRot(text))}</span>` : `<input class="ed-rot-text" data-rot-text data-rot-i="${i}" data-rot-t="${ti}" data-rot-s="${s}" value="${esc(text)}" maxlength="120" aria-label="${t("Step {n}", { n: s + 1 })}" autocomplete="off">`}
         <span class="ed-rot-tools">
-        ${step?.move.press ? btn("hold", t, s, `Hold: ${step.hold ? "on" : "off"}`, "Hold", ` aria-pressed="${step.hold}"`) : ""}
-        ${step ? btn("less", t, s, "Fewer times", "−", step.count > 1 ? "" : " disabled") + btn("more", t, s, "More times", "+") : ""}
-        ${btn("up", t, s, "Move up", "↑", s ? "" : " disabled")}${btn("down", t, s, "Move down", "↓", s < last ? "" : " disabled")}${btn("del", t, s, "Remove step", "✕")}</span></li>`;
+        ${step?.move.press ? btn("hold", ti, s, t(step.hold ? "Hold: on" : "Hold: off"), t("Hold"), ` aria-pressed="${step.hold}"`) : ""}
+        ${step ? btn("less", ti, s, t("Fewer times"), "−", step.count > 1 ? "" : " disabled") + btn("more", ti, s, t("More times"), "+") : ""}
+        ${btn("up", ti, s, t("Move up"), "↑", s ? "" : " disabled")}${btn("down", ti, s, t("Move down"), "↓", s < last ? "" : " disabled")}${btn("del", ti, s, t("Remove step"), "✕")}</span></li>`;
     }).join("")}</ol></section>`).join("");
-  const steps = turns.flatMap(t => t.steps).length;
-  const preview = ch && steps ? `<div class="rotation ed-rot-preview"><h3>On the card</h3>${rotationBox({ name: ch.name, rotation: { order: edDraft.order, turns: edTurns(c.rotation), source: null } })}</div>` : "";
-  return `${body || `<p class="ed-hint">Tap a move above to start the rotation.</p>`}
-    <button type="button" class="tool ed-rot-addturn" data-rot-act="turn" data-rot-i="${i}">+ Turn</button>${preview}`;
+  const steps = turns.flatMap(turn => turn.steps).length;
+  const preview = ch && steps ? `<div class="rotation ed-rot-preview"><h3>${t("On the card")}</h3>${rotationBox({ name: ch.name, rotation: { order: edDraft.order, turns: edTurns(c.rotation), source: null } })}</div>` : "";
+  return `${body || `<p class="ed-hint">${t("Tap a move above to start the rotation.")}</p>`}
+    <button type="button" class="tool ed-rot-addturn" data-rot-act="turn" data-rot-i="${i}">+ ${t("Turn")}</button>${preview}`;
 }
 function edRotBody(i) {
   const c = edDraft.cards[i];
   return `<div class="ed-rot" data-ed-rot="${i}">
-    <div class="ed-rot-palette" role="group" aria-label="Add a move">${edRotPalette(i)}</div>
-    <div class="ed-rot-free"><input data-rot-free="${i}" maxlength="120" placeholder="Other step…" aria-label="Other step" autocomplete="off">
-      <button type="button" class="tool" data-rot-act="free" data-rot-i="${i}">Add</button></div>
+    <div class="ed-rot-palette" role="group" aria-label="${t("Add a move")}">${edRotPalette(i)}</div>
+    <div class="ed-rot-free"><input data-rot-free="${i}" maxlength="120" placeholder="${t("Other step…")}" aria-label="${t("Other step")}" autocomplete="off">
+      <button type="button" class="tool" data-rot-act="free" data-rot-i="${i}">${t("Add")}</button></div>
     <div id="edRotTurns${i}" class="ed-rot-turns">${edRotTurnsBody(i)}</div>
     <div id="edRotLive${i}" class="ed-rot-live" role="status" aria-live="polite"></div>
-    <details class="ed-rot-text-edit"><summary>Edit as text</summary>
-      ${edField("One step per line, # starts a turn", `<textarea name="c${i}.rotation" rows="10" maxlength="${ED_LIMITS.rotation}" placeholder="${esc(ED_ROTATION_HINT)}">${esc(c.rotation)}</textarea>`)}</details></div>`;
+    <details class="ed-rot-text-edit"><summary>${t("Edit as text")}</summary>
+      ${edField(t("One step per line, # starts a turn"), `<textarea name="c${i}.rotation" rows="10" maxlength="${ED_LIMITS.rotation}" placeholder="${esc(ED_ROTATION_HINT)}">${esc(c.rotation)}</textarea>`)}</details></div>`;
 }
 /* Each position keeps its Notes and Rotation below the team cards, in two tabs so the page stays short. Both stay in the form */
 function edDetailBody() {
   return edDraft.cards.map((c, i) => {
-    const ch = edChar(c.char), tab = (key, label) => `<button type="button" class="${edTab[i] === key ? "on" : ""}" data-ed-tab="${key}" data-ed-tab-i="${i}" aria-pressed="${edTab[i] === key}">${label}</button>`;
+    const ch = edChar(c.char), tab = (key, label) => `<button type="button" class="${edTab[i] === key ? "on" : ""}" data-ed-tab="${key}" data-ed-tab-i="${i}" aria-pressed="${edTab[i] === key}">${t(label)}</button>`;
     return `<fieldset class="ed-card ed-detail ed-${ED_BARS[i]}">
-      <legend>${ED_SLOTS[i]} · ${esc(ch?.name || "No character")}</legend>
+      <legend>${ED_SLOTS[i]} · ${esc(ch?.name || t("No character"))}</legend>
       <div class="ed-tabs">${tab("notes", "Notes")}${tab("rotation", "Rotation")}</div><div class="ed-detail-fields">
-    <div data-ed-pane="notes"${edTab[i] === "notes" ? "" : " hidden"}>${edField("Notes", `<textarea name="c${i}.desc" rows="8" maxlength="${ED_LIMITS.desc}" placeholder="Why this build, and what to change at other ranks">${esc(c.desc)}</textarea>`)}</div>
+    <div data-ed-pane="notes"${edTab[i] === "notes" ? "" : " hidden"}>${edField(t("Notes"), `<textarea name="c${i}.desc" rows="8" maxlength="${ED_LIMITS.desc}" placeholder="${t("Why this build, and what to change at other ranks")}">${esc(c.desc)}</textarea>`)}</div>
     <div data-ed-pane="rotation"${edTab[i] === "rotation" ? "" : " hidden"}>${edRotBody(i)}</div>
       </div></fieldset>`;
   }).join("");
@@ -891,12 +902,12 @@ function edRotEdit(i, change, say, focus) {
   const turns = edRotParse(edDraft.cards[i].rotation);
   change(turns);
   const text = edRotText(turns);
-  if (text.length > ED_LIMITS.rotation) return edStatus(`A rotation can have up to ${ED_LIMITS.rotation} characters.`);
+  if (text.length > ED_LIMITS.rotation) return edStatus(t("A rotation can have up to {n} characters.", { n: ED_LIMITS.rotation }));
   const field = $("#edForm").elements[`c${i}.rotation`];
   field.value = text;
   field.dispatchEvent(new Event("input", { bubbles: true })); // the form handler saves and redraws the turns
   const live = $(`#edRotLive${i}`);
-  if (live && say) live.textContent = say;
+  if (live && say) live.textContent = t(say);
   for (const selector of [focus].flat()) {
     const target = selector && $(`#edRotTurns${i} ${selector}`);
     if (target && !target.disabled) return target.focus({ preventScroll: true });
@@ -909,7 +920,7 @@ function edRotAdd(i, text) {
     at = Math.min(edRotActive[i] ?? turns.length - 1, turns.length - 1);
     turns[at].steps.push(text);
     edRotActive[i] = at;
-  }, `${text} added`);
+  }, t("{text} added", { text: tRot(text) }));
 }
 
 /* applying a selection */
@@ -1038,7 +1049,7 @@ async function edOpenSend() {
   const box = $("#edCaptcha");
   if (!box || box.childElementCount) return;
   edToken = "";
-  edWidget = window.turnstile.render(box, { sitekey: config.siteKey, theme: "dark",
+  edWidget = window.turnstile.render(box, { sitekey: config.siteKey, theme: "dark", language: LANG === "pt" ? "pt-br" : "en",
     callback: token => { edToken = token; edSendButton(true); },
     "expired-callback": () => { edToken = ""; edSendButton(false); },
     "error-callback": () => { edToken = ""; edSendButton(false); edStatus(ED_ERRORS.captcha); } });
@@ -1064,6 +1075,16 @@ async function edSend() {
   edStatus(ED_ERRORS[result.error] || ED_ERRORS.network);
 }
 
+const ED_HELP = [
+  "Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it.",
+  "Click one C.U.B. skill and then another to swap their positions, or drag it onto the other. Right-click a C.U.B. skill, or press and hold it on a touch screen, to grey it out as not unlocked. Drag Leader and Starter to another card.",
+  "Drag a portrait onto another card, or use the arrows between the cards, to swap two positions with all their equipment.",
+  "Use the Memory Resonances button on the memory box to set each memory's Upper and Bottom resonance.",
+  "Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot.",
+  "Each position has Notes and Rotation tabs below the cards. Build a rotation by tapping moves, or switch to \"Edit as text\".",
+  "The team stays saved in this browser, and you can share it as a link or an image.",
+  "You can also send it to the site: after a review, it shows up on its page with the other builds."
+];
 // The how-to opens by itself on the first visit only; after that it stays the way the visitor left it
 const ED_HELP_KEY = "dominik-editor-help";
 function edHelpOpen() {
@@ -1085,18 +1106,9 @@ function teamBuilder() {
   edMessage = "";
   // The cards go out as plain HTML with the page; editable slots are marked once they are in the document
   queueMicrotask(() => { edWire(); edPaint(); edStatus(message); });
-  return `<h1>Team Builder</h1>
-    <details class="ed-help-box" data-ed-help${edHelpOpen() ? " open" : ""}><summary>How to use the Team Builder</summary>
-    <ul class="ed-help">
-      <li>Click any equipment slot to search and choose from its icons. Right-click an equipped item to remove it.</li>
-      <li>Click one C.U.B. skill and then another to swap their positions, or drag it onto the other. Drag Leader and Starter to another card.</li>
-      <li>Drag a portrait onto another card, or use the arrows between the cards, to swap two positions with all their equipment.</li>
-      <li>Use the Memory Resonances button on the memory box to set each memory's Upper and Bottom resonance.</li>
-      <li>Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot.</li>
-      <li>Each position has Notes and Rotation tabs below the cards. Build a rotation by tapping moves, or switch to "Edit as text".</li>
-      <li>The team stays saved in this browser, and you can share it as a link or an image.</li>
-      <li>You can also send it to the site: after a review, it shows up on its page with the other builds.</li>
-    </ul></details>
+  return `<h1>${t("Team Builder")}</h1>
+    <details class="ed-help-box" data-ed-help${edHelpOpen() ? " open" : ""}><summary>${t("How to use the Team Builder")}</summary>
+    <ul class="ed-help">${ED_HELP.map(line => `<li>${esc(t(line))}</li>`).join("")}</ul></details>
     <form id="edForm" class="ed" autocomplete="off">
       <fieldset id="edTeam" class="ed-team">${edTeamBody(edDraft)}</fieldset>
       <div id="edStatus" class="ed-status" role="status" aria-live="polite"></div>
@@ -1240,7 +1252,63 @@ addEventListener("click", e => {
 }, true);
 // No native dragging of the card art
 addEventListener("dragstart", e => { if (e.target.closest?.("#edStage")) e.preventDefault(); });
+/* Greying out a C.U.B. skill (not unlocked): right-click with a mouse, press and hold on a touch screen,
+   or pick the same skill twice, which also works from the keyboard */
+function edToggleCubSkill(card, index) {
+  const off = edDraft.cards[card].cubOff, skill = edDraft.cards[card].cubSkills[index];
+  off[skill] = !off[skill];
+  edCubSkillPick = null;
+  edSave();
+  edRender();
+  edStatus(off[skill] ? "C.U.B. skill greyed out: not unlocked." : "C.U.B. skill back in use.");
+}
+const edCubSkillAt = node => {
+  const skill = node?.closest?.("#edStage [data-ed-cub-skill-index]");
+  const card = Number(skill?.closest(".card")?.dataset.edCard), index = Number(skill?.dataset.edCubSkillIndex);
+  return skill && edDraft.cards[card] && Number.isInteger(index) ? { skill, card, index } : null;
+};
+let edHold = null, edHeldAt = 0;
+const edEndHold = () => {
+  if (!edHold) return;
+  clearTimeout(edHold.timer);
+  edHold.skill.classList.remove("ed-holding");
+  edHold = null;
+};
+addEventListener("pointerdown", e => {
+  if (e.pointerType !== "touch") return;
+  const at = edCubSkillAt(e.target);
+  if (!at) return;
+  edEndHold();
+  at.skill.classList.add("ed-holding");
+  edHold = { ...at, x: e.clientX, y: e.clientY, timer: setTimeout(() => {
+    const { card, index } = edHold;
+    edEndHold();
+    edHeldAt = Date.now();
+    navigator.vibrate?.(15);
+    edToggleCubSkill(card, index);
+  }, 450) };
+});
+addEventListener("pointermove", e => {
+  // Scrolling or swiping the cards is not a hold
+  if (edHold && Math.hypot(e.clientX - edHold.x, e.clientY - edHold.y) > 8) edEndHold();
+});
+addEventListener("pointerup", edEndHold);
+addEventListener("pointercancel", edEndHold);
+// The tap that ends a hold doesn't also pick the skill
+addEventListener("click", e => {
+  if (Date.now() - edHeldAt > 800 || !edCubSkillAt(e.target)) return;
+  edHeldAt = 0;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+}, true);
 addEventListener("contextmenu", e => {
+  const cubSkill = edCubSkillAt(e.target);
+  if (cubSkill) {
+    // A long press on a phone opens this menu too: the hold above already did the work
+    e.preventDefault();
+    if (e.button === 2 && Date.now() - edHeldAt > 800) edToggleCubSkill(cubSkill.card, cubSkill.index);
+    return;
+  }
   if (e.button !== 2) return;
   const drop = e.target.closest?.("#edStage [data-ed-drop]");
   if (!drop || !["char", "mem", "weapon", "wh", "mx", "cub"].includes(drop.dataset.edDrop)) return;
@@ -1295,9 +1363,8 @@ addEventListener("click", e => {
     edStatus("");
     const cardEl = $(`#edStage .card[data-ed-card="${card}"]`), c = edDraft.cards[card];
     const res = $(".res", cardEl);
-    res.innerHTML = `<div class="ed-res-total"><small>Upper · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[0])))}</span></div>
-      <div class="ed-res-total"><small>Bottom · 6</small><span>${esc(edResonanceSummary(c.memRes.map(pair => pair[1])))}</span></div>`;
-    res.setAttribute("aria-label", `Memory resonances. Upper: ${edResonanceSummary(c.memRes.map(pair => pair[0]))}. Bottom: ${edResonanceSummary(c.memRes.map(pair => pair[1]))}.`);
+    res.innerHTML = edResTotals(c);
+    res.setAttribute("aria-label", edResLabel(c));
     return edShowResonanceMenu(card, $(`#edStage [data-ed-memres-menu="${card}"]`), slot, side);
   }
   if (edPickerTarget && picker && !picker.contains(e.target)) {
@@ -1317,6 +1384,13 @@ addEventListener("click", e => {
     }
     return edShowResonanceMenu(card, resonanceMenuButton);
   }
+  const cubAction = e.target.closest?.("#edStage [data-ed-cub-action]");
+  if (cubAction && edCubSkillPick) {
+    if (cubAction.dataset.edCubAction === "off") return edToggleCubSkill(edCubSkillPick.card, edCubSkillPick.index);
+    edCubSkillPick = null;
+    edRender();
+    return edStatus("");
+  }
   const cubSkill = e.target.closest?.("#edStage [data-ed-cub-skill-index]");
   if (cubSkill) {
     const card = Number(cubSkill.closest(".card")?.dataset.edCard);
@@ -1330,17 +1404,16 @@ addEventListener("click", e => {
         edStatus("C.U.B. skill positions updated.");
       } else {
         // Clicking the chosen skill again (a double click) greys it out, or brings it back
-        const off = edDraft.cards[card].cubOff, skill = edDraft.cards[card].cubSkills[index];
-        off[skill] = !off[skill];
-        edSave();
-        edStatus(off[skill] ? "C.U.B. skill greyed out: not unlocked." : "C.U.B. skill back in use.");
+        return edToggleCubSkill(card, index);
       }
       edCubSkillPick = null;
       edRender();
     } else {
       edCubSkillPick = { card, index };
       edRender();
-      edStatus("Click another skill to swap, the same one again to grey it out, or drag it onto another skill.");
+      edStatus(matchMedia("(pointer:coarse)").matches
+        ? "Tap another skill to swap them, or Grey out if it isn't unlocked."
+        : "Click another skill to swap, or drag it onto another skill. Right-click a skill to grey it out.");
     }
     return;
   }
@@ -1349,7 +1422,7 @@ addEventListener("click", e => {
     const open = moreButton.getAttribute("aria-expanded") !== "true", extra = moreButton.parentElement.querySelectorAll(".ed-picker-option.more");
     extra.forEach(option => { option.hidden = !open; });
     moreButton.setAttribute("aria-expanded", String(open));
-    moreButton.textContent = open ? "Show fewer" : `Others (${extra.length})`;
+    moreButton.textContent = open ? t("Show fewer") : t("Others ({n})", { n: extra.length });
     return;
   }
   const pickerChoice = e.target.closest?.("[data-ed-picker-value]");
@@ -1368,7 +1441,7 @@ addEventListener("click", e => {
   const button = e.target.closest?.("[data-ed]");
   if (button) {
     if (button.dataset.ed === "reset") {
-      if (!confirm("Clear this team and start over?")) return;
+      if (!confirm(t("Clear this team and start over?"))) return;
       edDraft = edBlank();
       edSave();
       edPickerTarget = null;
@@ -1448,9 +1521,9 @@ addEventListener("click", e => {
   }
   const b = e.target.closest("[data-rot-act]");
   if (!b || b.disabled) return;
-  const i = Number(b.dataset.rotI), t = Number(b.dataset.rotT), s = Number(b.dataset.rotS), act = b.dataset.rotAct;
-  const at = `[data-rot-act="${act}"][data-rot-t="${t}"][data-rot-s="${s}"]`;
-  const edit = (change, say, focus) => edRotEdit(i, turns => change(turns, turns[t]?.steps), say, focus);
+  const i = Number(b.dataset.rotI), ti = Number(b.dataset.rotT), s = Number(b.dataset.rotS), act = b.dataset.rotAct;
+  const at = `[data-rot-act="${act}"][data-rot-t="${ti}"][data-rot-s="${s}"]`;
+  const edit = (change, say, focus) => edRotEdit(i, turns => change(turns, turns[ti]?.steps), say, focus);
   const redraw = () => { $(`#edRotTurns${i}`).innerHTML = edRotTurnsBody(i); };
   if (act === "add") return edRotAdd(i, edStepText({ move: ROTATION_MOVES.find(m => m.name === b.dataset.rotMove), hold: false, count: 1 }));
   if (act === "free") {
@@ -1462,9 +1535,9 @@ addEventListener("click", e => {
   if (act === "turn") {
     return edRotEdit(i, turns => { turns.push({ name: `Turn ${turns.length + 1}`, steps: [] }); edRotActive[i] = turns.length - 1; }, "Turn added");
   }
-  if (act === "pick") { edRotActive[i] = t; redraw(); return $(`#edRotTurns${i} .ed-rot-turn.on [data-rot-act="pick"]`)?.focus(); }
+  if (act === "pick") { edRotActive[i] = ti; redraw(); return $(`#edRotTurns${i} .ed-rot-turn.on [data-rot-act="pick"]`)?.focus(); }
   if (act === "drop") {
-    return edRotEdit(i, turns => { turns.splice(t, 1); edRotActive[i] = null; }, "Turn removed");
+    return edRotEdit(i, turns => { turns.splice(ti, 1); edRotActive[i] = null; }, "Turn removed");
   }
   const withStep = change => edit((turns, steps) => { const step = edStepParse(steps[s]); if (step) steps[s] = edStepText(change(step)); }, "", at);
   if (act === "hold") return withStep(step => ({ ...step, hold: !step.hold }));
@@ -1472,11 +1545,11 @@ addEventListener("click", e => {
   if (act === "more") return withStep(step => ({ ...step, count: step.count + 1 }));
   if (act === "up" || act === "down") {
     const to = s + (act === "up" ? -1 : 1);
-    return edit((turns, steps) => { [steps[s], steps[to]] = [steps[to], steps[s]]; }, `Step moved to ${to + 1}`,
-      [`[data-rot-act="${act}"][data-rot-t="${t}"][data-rot-s="${to}"]`, `[data-rot-act="${act === "up" ? "down" : "up"}"][data-rot-t="${t}"][data-rot-s="${to}"]`]);
+    return edit((turns, steps) => { [steps[s], steps[to]] = [steps[to], steps[s]]; }, t("Step moved to {n}", { n: to + 1 }),
+      [`[data-rot-act="${act}"][data-rot-t="${ti}"][data-rot-s="${to}"]`, `[data-rot-act="${act === "up" ? "down" : "up"}"][data-rot-t="${ti}"][data-rot-s="${to}"]`]);
   }
   if (act === "del") {
-    return edit((turns, steps) => { steps.splice(s, 1); }, "Step removed", [`[data-rot-act="del"][data-rot-t="${t}"][data-rot-s="${s}"]`, `[data-rot-act="pick"][data-rot-t="${t}"]`]);
+    return edit((turns, steps) => { steps.splice(s, 1); }, "Step removed", [`[data-rot-act="del"][data-rot-t="${ti}"][data-rot-s="${s}"]`, `[data-rot-act="pick"][data-rot-t="${ti}"]`]);
   }
 });
 // Typing into a turn name or a free step is applied once the field is left

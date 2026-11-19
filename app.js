@@ -646,15 +646,15 @@ const cubActiveFor = (src, element) => src && CUB_ELEMENTS.includes(element) && 
 // The skills a card shows: the Active one in the element of the character in the card
 const cardSkills = c => (c.skills || []).map(src => cubActiveFor(src, CONSTRUCTS[c.name]?.[1]));
 // "active" is how many pieces of this set a card wears: the bonuses it reaches start with a check mark, which the tooltip draws highlighted
-const memoryInfo = (name, active = 0) => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2 <= active ? "✓ " : ""}${(i + 1) * 2} pcs: ${text}`).join("\n\n");
+const memoryInfo = (name, active = 0) => MEMORY_EFFECTS[name].map((text, i) => `${(i + 1) * 2 <= active ? "✓ " : ""}${t("{n} pcs: {text}", { n: (i + 1) * 2, text: t(text) })}`).join("\n\n");
 // What an icon does, when known: shown under its name
 function iconInfo(src = "") {
   const memory = src.match(/Memoria - (.+) (?:1-4|2-5|3-6)\.\w+$/)?.[1], skill = src.match(/CUB - Skill (\d)\.\w+$/)?.[1];
   const active = src.match(/CUB - Active (\w+)\.\w+$/)?.[1];
   if (memory) return memoryInfo(memory);
-  if (active) return swapElement(cubSkill(src, 1)?.[1], active);
-  if (skill) return cubSkill(src, skill)?.[1] || "";
-  return RESONANCE_EFFECTS[iconName(src)] || MEMORY_RESONANCE_EFFECTS[iconName(src)] || "";
+  if (active) return swapElement(t(cubSkill(src, 1)?.[1] || ""), active);
+  if (skill) return t(cubSkill(src, skill)?.[1] || "");
+  return t(RESONANCE_EFFECTS[iconName(src)] || MEMORY_RESONANCE_EFFECTS[iconName(src)] || "");
 }
 // Tooltips are plain text: the color marks of the skill and C.U.B. texts come off
 const tipAttr = (name, info) => (name ? ` data-tip="${esc(name)}"` : "") + (name && info ? ` data-info="${esc(String(info).replace(/\[\/?[rb]\]/g, ""))}"` : "");
@@ -684,11 +684,11 @@ const STAR_BARS = {
   5: "assets/overlay/UI-Supply-5Star.png",
   6: "assets/overlay/UI-Supply-6Star.png"
 };
-const STARS_BAR = STAR_BARS[6], WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", BAR_RATIO = 230 / 2048;
-const starOverlay = rank => pic(STAR_BARS[rank] || STARS_BAR, `class="stars" alt="${rank || 6} stars"`);
+const STARS_BAR = STAR_BARS[6], WH_BAR = "assets/overlay/UI-Weapon-Harmony.png", WH_STARS_BAR = "assets/overlay/UI-Weapon-Harmony-Stars.png", BAR_RATIO = 230 / 2048;
+const starOverlay = rank => pic(STAR_BARS[rank] || STARS_BAR, `class="stars" alt="${t("{n} stars", { n: rank || 6 })}"`);
 const STARS = starOverlay(6);
-// With a Weapon Harmony chosen, the weapon icon wears the same red bar as the harmony
-const whOverlay = pic(WH_BAR, 'class="stars" alt="Weapon Harmony"');
+// With a Weapon Harmony chosen, the weapon icon wears a red 6-star bar instead of the plain one
+const whOverlay = pic(WH_STARS_BAR, 'class="stars" alt="Weapon Harmony"');
 // A rank A C.U.B. has 5 stars, an S rank one 6 (EXTRA_CUBS lists the rank A ones)
 const CUB_RANK_A = new Set(EXTRA_CUBS.filter(c => c[2] === "A").map(([name, , , , dir]) => `${dir}/CUB - ${name}.png`));
 const cubStars = art => CUB_RANK_A.has(art) ? starOverlay(5) : STARS;
@@ -713,9 +713,9 @@ const ICON_FIT = {
 const menuIcon = (dir, e) => pic(`assets/${dir}/${e}.png`, `alt=""${ICON_FIT[e] ? ` style="transform:${ICON_FIT[e]}"` : ""}`);
 const group = (label, key, arr, iconDir) =>
   `<button class="sub" data-grp="${key}" aria-expanded="false"><svg class="ico" aria-hidden="true"><use href="#i-${key}"/></svg>${label} <i>▾</i></button>` +
-  `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">Nothing here yet</p>`}</div>`;
-menu.innerHTML = group(TEAM_LISTS.energy.label, "energy", ENERGY, "energy-type") + group(TEAM_LISTS.effect.label, "effect", EFFECT, "effects") +
-  group(TEAM_LISTS.special.label, "special", SPECIAL_EFFECT, "effects");
+  `<div class="subList" data-list="${key}" hidden>${arr.map(e => `<a href="/${key}/${slug(e)}">${menuIcon(iconDir, e)}${e}</a>`).join("") || `<p class="subEmpty">${t("Nothing here yet")}</p>`}</div>`;
+menu.innerHTML = group(t(TEAM_LISTS.energy.label), "energy", ENERGY, "energy-type") + group(t(TEAM_LISTS.effect.label), "effect", EFFECT, "effects") +
+  group(t(TEAM_LISTS.special.label), "special", SPECIAL_EFFECT, "effects");
 // A list of the side menu glides open and shut at one pace, so the group closing and the one opening balance out. Only clicks animate: a page opening its own group doesn't
 const MENU_SLIDE = { duration: 280, easing: "cubic-bezier(.4,0,.2,1)" };
 function slideMenu(el, open, animate) {
@@ -855,22 +855,25 @@ function rotationIcon(name, text) {
   const word = text.match(ROTATION_WORD)?.[0];
   return ROTATION_ICON[word] ? pic(ROTATION_ICON[word]) : ROTATION_ART[word] && name ? pic(skillIcon(name, ROTATION_ART[word])) : "";
 }
+// A rotation step or turn as written ("Tap Red Orb 2x", "Turn 1: Start"): its own entry in the dictionary, or else only its first word.
+// The icon is still found in the English text
+const tRot = (text = "") => LANG !== "pt" || I18N_PT[text] ? t(text) : text.replace(/^(Tap|Hold|Turn)(?= )/, word => t(word));
 function rotationLine(name, text) {
-  return `<span class="rot-line">${rotationIcon(name, text)}<span>${esc(text)}</span></span>`;
+  return `<span class="rot-line">${rotationIcon(name, text)}<span>${esc(tRot(text))}</span></span>`;
 }
 function rotationBox(c) {
-  const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(turn)}</h4>
-    <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(note)}</p>` : ""}`).join("");
+  const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(tRot(turn))}</h4>
+    <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(t(note))}</p>` : ""}`).join("");
   // A rotation with source: null (one written in the Team Builder) shows no source link
   const source = c.rotation.source === undefined ? { label: "Spider 2B's Leia guide", href: LEIA_GUIDE } : c.rotation.source;
-  return `<p class="rot-order">${esc(c.rotation.order)}</p>${turns}${source ? `<a class="rot-source" href="${esc(source.href)}" target="_blank" rel="noopener noreferrer">Source: ${esc(source.label)}</a>` : ""}`;
+  return `<p class="rot-order">${esc(t(c.rotation.order))}</p>${turns}${source ? `<a class="rot-source" href="${esc(source.href)}" target="_blank" rel="noopener noreferrer">${esc(t("Source: {label}", { label: t(source.label) }))}</a>` : ""}`;
 }
 // With a rotation, the text box of the card gets a tab for each. A card with no notes opens on the rotation
 function cardNotes(c) {
-  if (!c.rotation) return `<p class="desc">${esc(c.desc)}</p>`;
+  if (!c.rotation) return `<p class="desc">${esc(t(c.desc))}</p>`;
   const tab = (key, label, on) => `<button type="button" class="${on ? "on" : ""}" data-note="${key}" aria-pressed="${on}">${label}</button>`;
-  return `<div class="notes"><div class="note-tabs">${c.desc ? tab("desc", "Notes", true) : ""}${tab("rotation", "Rotation", !c.desc)}</div>
-    ${c.desc ? `<p class="desc" data-pane="desc">${esc(c.desc)}</p>` : ""}<div class="desc rotation" data-pane="rotation"${c.desc ? " hidden" : ""}>${rotationBox(c)}</div></div>`;
+  return `<div class="notes"><div class="note-tabs">${c.desc ? tab("desc", t("Notes"), true) : ""}${tab("rotation", t("Rotation"), !c.desc)}</div>
+    ${c.desc ? `<p class="desc" data-pane="desc">${esc(t(c.desc))}</p>` : ""}<div class="desc rotation" data-pane="rotation"${c.desc ? " hidden" : ""}>${rotationBox(c)}</div></div>`;
 }
 function showNote(tab) {
   const box = tab.closest(".notes");
@@ -889,15 +892,15 @@ function card(c) {
     const art = piece.startsWith("assets/") ? piece : "", name = memoryName(piece);
     return slot(art, name, `<span class="n">${i + 1}</span>`, name, memoryHref(name), memoryInfo(name, worn.filter(other => other === name).length + (c.wh === name ? 2 : 0)));
   };
-  const tags = c.role.split(" ").filter(Boolean).map(t => `<span class="tag ${t}"${t === "captain" ? tipAttr(...(LEADER_SKILLS[c.name] || [])) : ""}>${TAG_LABEL[t] || t.toUpperCase()}</span>`).join("");
+  const tags = c.role.split(" ").filter(Boolean).map(role => `<span class="tag ${role}"${role === "captain" ? tipAttr(LEADER_SKILLS[c.name]?.[0], t(LEADER_SKILLS[c.name]?.[1] || "")) : ""}>${TAG_LABEL[role] || role.toUpperCase()}</span>`).join("");
   const cub = c.construct ? cubHref(iconName(c.construct)) : "";
   // A skill icon leads to the character's skills; "Any ATK" is not a skill of theirs
   const skillSlot = src => slot(src, "", "", undefined, src?.includes("/Skill - ") ? skillHref(c.name) : "");
   const resonance = src => src ? resonanceHref(iconName(src)) : "";
-  return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="Expand ${esc(c.name)}"><div class="cin">
+  return `<article class="card c-${c.bar}" tabindex="0" role="button" aria-label="${esc(t("Expand {name}", { name: c.name }))}"><div class="cin">
     <h3><a href="${characterHref(c.name)}">${esc(c.name)}</a></h3>
-    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : "Class"}</div>
-      <div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : "Construct"}</div>
+    <div class="top"><div class="sym slot"${tipAttr(c.symbol && iconName(c.symbol))}>${c.symbol ? pic(c.symbol) : t("Class")}</div>
+      <div class="portrait slot"${tipAttr(c.portrait && c.name)}>${c.portrait ? pic(c.portrait, `alt="${esc(c.name)}"`) : t("Construct")}</div>
       <div class="rank"${tipAttr(c.name && iconName(rankArt(c)))}>${c.name ? pic(rankArt(c), 'alt="rank"') : ""}</div></div>
     <div class="box">
       <div class="mem">${n(6, i => memory((c.memories || [])[i], i)).join("")}</div>
@@ -976,11 +979,11 @@ function openFocus(src) {
   stage.style.cssText = comp.style.cssText;
   stage.setAttribute("role", "dialog");
   stage.setAttribute("aria-modal", "true");
-  stage.setAttribute("aria-label", "Character card");
-  stage.innerHTML = `<button class="ctl close" aria-label="Close">×</button>
-    <button class="ctl prev" aria-label="Previous character">‹</button>
-    <button class="ctl next" aria-label="Next character">›</button>
-    <button class="ctl export" data-export-active>Export image</button>`;
+  stage.setAttribute("aria-label", t("Character card"));
+  stage.innerHTML = `<button class="ctl close" aria-label="${t("Close")}">×</button>
+    <button class="ctl prev" aria-label="${t("Previous character")}">‹</button>
+    <button class="ctl next" aria-label="${t("Next character")}">›</button>
+    <button class="ctl export" data-export-active>${t("Export image")}</button>`;
   // Same proportions as the card on the page (--u in style.css), so nothing jumps on the first frame of the move
   const unit = FOCUS_W * Math.min(1, src.offsetWidth / 360) / src.offsetWidth;
   const clones = sources.map(s => {
@@ -1086,8 +1089,8 @@ $("#main").addEventListener("click", e => {
   const copy = e.target.closest("[data-copy]");
   if (copy) {
     navigator.clipboard?.writeText(copy.dataset.copy).then(() => {
-      copy.textContent = "Copied!";
-      setTimeout(() => { copy.textContent = "Copy"; }, 1500);
+      copy.textContent = t("Copied!");
+      setTimeout(() => { copy.textContent = t("Copy"); }, 1500);
     });
     return;
   }
@@ -1207,7 +1210,7 @@ function heroBelt() {
   // The list runs twice so the loop has no visible seam; the track moves exactly half its width
   // data-start is a random point in the loop (5s per character), so each visit begins somewhere else; the loop itself runs in the belt code below
   const start = (Math.random() * chars.length * 5).toFixed(1);
-  return `<div class="hero-art" role="navigation" aria-label="Constructs"><div class="hero-track" style="--n:${chars.length}" data-start="${start}">${chars.map(c => link(c)).join("")}${chars.map(c => link(c, true)).join("")}</div></div>`;
+  return `<div class="hero-art" role="navigation" aria-label="${t("Constructs")}"><div class="hero-track" style="--n:${chars.length}" data-start="${start}">${chars.map(c => link(c)).join("")}${chars.map(c => link(c, true)).join("")}</div></div>`;
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
@@ -1217,23 +1220,23 @@ function homeLinks() {
     artIcons.has(icon)
       ? `<span class="ico ico-art ico-${icon}" aria-hidden="true"></span>`
       : `<svg class="ico" aria-hidden="true"><use href="#i-${icon}"/></svg>`
-  }</span><span class="hl-tx"><b>${name}</b><small>${text}</small></span></a>`;
-  const count = (list, one, many = `${one}s`) => `${list.length} ${list.length === 1 ? one : many}`;
+  }</span><span class="hl-tx"><b>${t(name)}</b><small>${text}</small></span></a>`;
+  const count = (list, one) => tn(list.length, one);
   const cubs = cubList(), memories = Object.values(MEMORY_TABS).flat(), resonances = Object.keys(RESONANCE_EFFECTS);
   const tools = [
-    ["Planner", "/calculator", "calculator", "Plan your Black Cards across patches and check your pull odds."],
-    ["Meta Timeline", "/timeline", "timeline", "See how long each frame held its place and who may be replaced next."],
-    ["Team Builder", "/editor", "editor", "Put a team together, see its cards and share it as a link or an image."]
+    ["Planner", "/calculator", "calculator", t("Plan your Black Cards across patches and check your pull odds.")],
+    ["Meta Timeline", "/timeline", "timeline", t("See how long each frame held its place and who may be replaced next.")],
+    ["Team Builder", "/editor", "editor", t("Put a team together, see its cards and share it as a link or an image.")]
   ];
   const data = [
-    ["Constructs", "/constructs", "constructs", count(Object.keys(CONSTRUCTS), "construct")],
-    ["Memories", "/assets/memories", "memories", count(memories, "set")],
-    ["Weapons", "/assets/weapons", "weapons", count(WEAPONS, "weapon")],
-    ["Weapon Resonance", "/assets/resonances", "resonance", count(resonances, "resonance")],
-    ["C.U.B.s", "/assets/cubs", "cubs", count(cubs, "C.U.B.")]
+    ["Constructs", "/constructs", "constructs", count(Object.keys(CONSTRUCTS), "{n} construct")],
+    ["Memories", "/assets/memories", "memories", count(memories, "{n} set")],
+    ["Weapons", "/assets/weapons", "weapons", count(WEAPONS, "{n} weapon")],
+    ["Weapon Resonance", "/assets/resonances", "resonance", count(resonances, "{n} resonance")],
+    ["C.U.B.s", "/assets/cubs", "cubs", count(cubs, "{n} C.U.B.")]
   ];
-  return `<h2 class="grp">Tools</h2><div class="home-links tools">${tools.map(link).join("")}</div>
-    <h2 class="grp">Game data</h2><div class="home-links data">${data.map(link).join("")}</div>`;
+  return `<h2 class="grp">${t("Tools")}</h2><div class="home-links tools">${tools.map(link).join("")}</div>
+    <h2 class="grp">${t("Game data")}</h2><div class="home-links data">${data.map(link).join("")}</div>`;
 }
 // Teams are named after the patch of their newest character, so a team named after the patch running today is new. The tag leaves by itself when that patch ends
 const isNewTeam = id => CALC_PATCHES.some(p => patchTime(p, calcToday()) && p.patch.toLowerCase() === COMPS[id].name.toLowerCase());
@@ -1275,6 +1278,7 @@ function nextSplash() {
 }
 function splashMarkup(phrase) {
   let splashChar = 0;
+  phrase = t(phrase);
   const typed = text => Array.from(text, char => `<span style="animation-delay:${splashChar++ * 30}ms">${esc(char)}</span>`).join("");
   return phrase.split(/(\*\*.+?\*\*)/g).map(part => {
     const bold = part.startsWith("**") && part.endsWith("**");
@@ -1282,30 +1286,34 @@ function splashMarkup(phrase) {
     return bold ? `<strong>${text}</strong>` : text;
   }).join("");
 }
-function home() {
+// The tiles of the home page, with the number of teams on each page. Drawn apart so the community teams can update them alone
+function homeGrid() {
   const tile = (e, p, iconDir, color = TILE_COLOR[e]) => {
     if (!e) return `<span class="tile-gap">N/A</span>`;
     const ids = PAGES[`${p}/${slug(e)}`] || [], count = ids.reduce((sum, id) => sum + (COMPS[id].variants || [0]).length, 0);
     const fresh = ids.find(isNewTeam), key = fresh && `tile:${p}/${slug(e)}:${COMPS[fresh].name}`, tag = key && !isSeen(key);
     return `<a class="tile${count ? "" : " none"}" style="--c:${color}" href="/${p}/${slug(e)}"${tag ? ` data-new="${esc(key)}"` : ""}>
-      ${pic(`assets/${iconDir}/${e}.png`, 'class="t-bg" alt=""')}
+      <span class="t-bg" aria-hidden="true" style="--art:url('${esc(web(`assets/${iconDir}/${e}.png`))}')"></span>
       <span class="t-ic">${menuIcon(iconDir, e)}</span>
-      <span class="t-tx"><b>${e}</b><small>${count ? `${count} team${count > 1 ? "s" : ""}` : "No teams yet"}</small></span>
-      ${tag ? `<span class="t-new">New</span>` : ""}
+      <span class="t-tx"><b>${e}</b><small>${count ? tn(count, "{n} team") : t("No teams yet")}</small></span>
+      ${tag ? `<span class="t-new">${t("New")}</span>` : ""}
     </a>`;
   };
   // Cells go column by column: the row names, then each energy with its effects
-  const labels = Object.values(TEAM_LISTS).map(l => `<h2 class="home-label">${l.label}</h2>`).join("");
+  const labels = Object.values(TEAM_LISTS).map(l => `<h2 class="home-label">${t(l.label)}</h2>`).join("");
   const columns = ENERGY.map(e => tile(e, "energy", "energy-type") + tile(ENERGY_EFFECT[e], "effect", "effects", TILE_COLOR[e]) + tile(ENERGY_SPECIAL[e], "special", "effects", TILE_COLOR[e])).join("");
+  return `<div class="home-grid">${labels}${columns}</div>`;
+}
+function home() {
   const splash = nextSplash();
   return `<section class="hero">
       <div class="hero-tx">
-        <button class="hero-mark" type="button" aria-label="Show another phrase" data-splash="${esc(splash)}"><img src="assets-web/logo.webp" alt=""></button>
+        <button class="hero-mark" type="button" aria-label="${t("Show another phrase")}" data-splash="${esc(splash)}"><img src="assets-web/logo.webp" alt=""></button>
         <p class="hero-splash">${splashMarkup(splash)}</p>
       </div>
       ${heroBelt()}
     </section>
-    <div class="home-grid">${labels}${columns}</div>
+    ${homeGrid()}
     ${homeLinks()}`;
 }
 // A team page lists its builds, newest patch first, with a search box above. Each build has a page of its own with the
@@ -1316,10 +1324,10 @@ let shown = "", chosen = "";
 const pageBuilds = path => PAGES[path].flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name, cards: COMPS[id].cards }])
   .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, author: v.author, date: v.date, cards: v.cards })));
 // "2026-11-15" as "Nov 15, 2026"; empty for a build without a date
-const postedOn = date => /^\d{4}-\d\d-\d\d$/.test(date || "") ? new Date(date + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "";
-const byLine = (author, date) => [author && `by ${esc(author)}`, postedOn(date) && `<time datetime="${esc(date)}">${postedOn(date)}</time>`].filter(Boolean).join(" · ");
+const postedOn = date => /^\d{4}-\d\d-\d\d$/.test(date || "") ? new Date(date + "T12:00:00Z").toLocaleDateString(loc("en-US"), { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "";
+const byLine = (author, date) => [author && t("by {name}", { name: esc(author) }), postedOn(date) && `<time datetime="${esc(date)}">${postedOn(date)}</time>`].filter(Boolean).join(" · ");
 // The patch and the group, without repeating the patch when a build has no group of its own
-const buildTags = (comp, group, key) => `${key ? `<i class="new">New</i>` : ""}${[COMPS[comp].name, group !== COMPS[comp].name && group].filter(Boolean).map(t => `<i>${esc(t)}</i>`).join("")}`;
+const buildTags = (comp, group, key) => `${key ? `<i class="new">${t("New")}</i>` : ""}${[COMPS[comp].name, group !== COMPS[comp].name && group].filter(Boolean).map(t => `<i>${esc(t)}</i>`).join("")}`;
 function listRow(path, b) {
   const { name: patch } = COMPS[b.comp];
   // The captain leads the row, as the build's main character
@@ -1329,19 +1337,21 @@ function listRow(path, b) {
   return `<a class="brow" href="${buildHref(path, b.variant || b.comp)}" data-search="${esc(search)}"${tag ? ` data-new="${esc(tag)}"` : ""}>
     <span class="brow-art">${main.portrait ? pic(main.portrait) : ""}</span>
     <span class="brow-tx"><b>${esc(b.name)}</b>${b.author || b.date ? `<span class="brow-by">${byLine(b.author, b.date)}</span>` : ""}
-      <small><em>${esc(main.name)}</em> with ${mates.map(c => esc(c.name.split(":")[0])).join(" and ")}</small>
+      <small>${t("{main} with {mates}", { main: `<em>${esc(main.name)}</em>`, mates: mates.map(c => esc(c.name.split(":")[0])).join(t(" and ")) })}</small>
       <span class="brow-tags">${buildTags(b.comp, b.group, tag)}</span></span>
     <span class="b-mates brow-mates" aria-hidden="true">${mates.map(c => `<span class="slot">${c.portrait ? pic(c.portrait) : ""}</span>`).join("")}</span>
   </a>`;
 }
 function buildList(path) {
   const builds = pageBuilds(path);
-  return `<div class="picker"><label class="bsearch"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" placeholder="Search ${builds.length} build${builds.length === 1 ? "" : "s"}" aria-label="Search builds by name, patch or character"></label>
+  return `<div class="picker"><label class="bsearch"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" placeholder="${esc(tn(builds.length, "Search {n} build", "Search {n} builds"))}" aria-label="${t("Search builds by name, patch or character")}"></label>
     <div class="blist">${builds.map(b => listRow(path, b)).join("")}</div>
-    <p class="empty" hidden>No builds match this search.</p></div>`;
+    <p class="empty" hidden>${t("No builds match this search.")}</p></div>`;
 }
 const noticeTimeLeft = () => Date.parse(NEW_CHARACTER_NOTICE.until) - Date.now();
-const notice = cards => noticeTimeLeft() > 0 && cards.some(c => c.name === NEW_CHARACTER_NOTICE.name) ? `<p class="notice" role="note">${esc(NEW_CHARACTER_NOTICE.text)}</p>` : "";
+const notice = cards => noticeTimeLeft() > 0 && cards.some(c => c.name === NEW_CHARACTER_NOTICE.name) ? `<p class="notice" role="note">${esc(t(NEW_CHARACTER_NOTICE.text))}</p>` : "";
+// The category of a page (Assets, Energy...), small above its title
+const eyebrow = text => `<p class="eyebrow">${text}</p>`;
 let shownTeam = null; // the build on screen, for the export button
 const pickedVariant = sel => COMPS[sel].variants?.find(x => x.id === chosen);
 const pickedCards = sel => sel && (COMPS[sel].variants ? pickedVariant(sel)?.cards : COMPS[sel].cards);
@@ -1349,30 +1359,30 @@ const pickedCards = sel => sel && (COMPS[sel].variants ? pickedVariant(sel)?.car
 const teamNotice = sel => { const cards = pickedCards(sel); return cards ? notice(cards) : ""; };
 // Only shows while the cards slide: who is in the team, and a way to change card without swiping
 function pager(cards) {
-  const member = (c, i) => `<button class="pg-${c.bar}" data-slide="${i}" aria-label="Show ${esc(c.name)}">${c.portrait ? pic(c.portrait) : ""}<span>${esc(c.name.split(":")[0])}</span></button>`;
-  return `<div class="pager" role="group" aria-label="Team members"><button class="pg-step" data-slide-step="-1" aria-label="Previous character">‹</button>${cards.map(member).join("")}<button class="pg-step" data-slide-step="1" aria-label="Next character">›</button></div>`;
+  const member = (c, i) => `<button class="pg-${c.bar}" data-slide="${i}" aria-label="${esc(t("Show {name}", { name: c.name }))}">${c.portrait ? pic(c.portrait) : ""}<span>${esc(c.name.split(":")[0])}</span></button>`;
+  return `<div class="pager" role="group" aria-label="${t("Team members")}"><button class="pg-step" data-slide-step="-1" aria-label="${t("Previous character")}">‹</button>${cards.map(member).join("")}<button class="pg-step" data-slide-step="1" aria-label="${t("Next character")}">›</button></div>`;
 }
 function compBody(sel) {
   const shownCards = pickedCards(sel);
   if (!shownCards) return "";
   shownTeam = { id: sel, title: [COMPS[sel].name, pickedVariant(sel)?.name].filter(Boolean).join(" · "), cards: shownCards };
-  return `<div class="comp-tools"><button class="tool" data-export>Export image</button></div>` + pager(shownCards) + comp(sel, shownCards);
+  return `<div class="comp-tools"><button class="tool" data-export>${t("Export image")}</button></div>` + pager(shownCards) + comp(sel, shownCards);
 }
 function team(path, pick) {
   const [kind, key] = path.split("/");
   const list = TEAM_LISTS[kind]?.items.find(e => slug(e) === key);
-  if (!list) return `<p class="empty">Page not found.</p>`;
+  if (!list) return `<p class="empty">${t("Page not found.")}</p>`;
   const ids = PAGES[path] || [];
   if (pick) {
-    const back = `<div class="backs"><a class="back" href="/${path}">‹ ${esc(list)} builds</a></div>`;
-    if (!shown) return `${back}<p class="empty">Build not found.</p>`;
+    const back = `<div class="backs"><a class="back" href="/${path}">‹ ${esc(t("{name} builds", { name: list }))}</a></div>`;
+    if (!shown) return `${back}<p class="empty">${t("Build not found.")}</p>`;
     const v = pickedVariant(shown), name = v?.name || COMPS[shown].name, by = byLine(v?.author, v?.date);
     return `<div id="noticeBox">${teamNotice(shown)}</div>${back}<h1>${esc(name)}</h1>
-      <p class="sub">${esc(list)} · ${TEAM_LISTS[kind].label}</p>${by ? `<p class="brow-by">${by}</p>` : ""}<p class="brow-tags build-tags">${buildTags(shown, v?.group, "")}</p>
+      <p class="sub">${esc(list)} · ${t(TEAM_LISTS[kind].label)}</p>${by ? `<p class="brow-by">${by}</p>` : ""}<p class="brow-tags build-tags">${buildTags(shown, v?.group, "")}</p>
       <div id="compBox">${compBody(shown)}</div>`;
   }
-  const head = `<h1>${list}</h1><p class="sub">${TEAM_LISTS[kind].label}</p>`;
-  if (!ids.length) return head + `<p class="empty">No teams yet.</p>`;
+  const head = `${eyebrow(t(TEAM_LISTS[kind].label))}<h1>${list}</h1>`;
+  if (!ids.length) return head + `<p class="empty">${t("No teams yet.")}</p>`;
   return head + buildList(path) + pageCharacters(path);
 }
 // Below the list: every character in the builds of the page, each a link to its construct page
@@ -1380,7 +1390,7 @@ function pageCharacters(path) {
   const seen = new Map();
   for (const b of pageBuilds(path)) for (const c of b.cards) if (c.name && !seen.has(c.name)) seen.set(c.name, c);
   if (!seen.size) return "";
-  return `<section class="page-chars"><h2 class="grp">Characters on this page</h2><div class="page-chars-list">${[...seen.values()].map(c =>
+  return `<section class="page-chars"><h2 class="grp">${t("Characters on this page")}</h2><div class="page-chars-list">${[...seen.values()].map(c =>
     `<a href="${characterHref(c.name)}" title="${esc(c.name)}"><span class="slot">${c.portrait ? pic(c.portrait, `alt=""`) : ""}</span><span>${esc(c.name)}</span></a>`).join("")}</div></section>`;
 }
 
@@ -1432,8 +1442,8 @@ const typeIcon = type => {
 };
 const weaponRows = tab => WEAPONS.filter(w => (tab === "All" || CONSTRUCTS[weaponOwner(w)]?.[1] === tab)
   && (!weaponStars || weaponRank(w[1], w[3], w[5]) === Number(weaponStars)));
-const weaponStarBar = () => `<div class="sortbar star-filter" id="starFilter" role="group" aria-label="Weapon rank"><span>Rank</span>${["", ...weaponStarList()].map(n =>
-  `<button class="tool${String(n) === weaponStars ? " on" : ""}" data-stars="${n}" aria-pressed="${String(n) === weaponStars}">${n ? `${n}<b class="star s${n}">★︎</b>` : "All"}</button>`).join("")}</div>`;
+const weaponStarBar = () => `<div class="sortbar star-filter" id="starFilter" role="group" aria-label="${t("Weapon rank")}"><span>${t("Rank")}</span>${["", ...weaponStarList()].map(n =>
+  `<button class="tool${String(n) === weaponStars ? " on" : ""}" data-stars="${n}" aria-pressed="${String(n) === weaponStars}">${n ? `${n}<b class="star s${n}">★︎</b>` : t("All")}</button>`).join("")}</div>`;
 // The two orders of a column: Name goes A to Z first, the others start from the highest value
 const columnSorts = column => column === "Name" ? ["az", "za"] : [`${column}-high`, `${column}-low`];
 function nextSort(table, column) {
@@ -1454,7 +1464,7 @@ const memoryStats = name => { const [ATK, DEF, CRIT, HP] = MEMORY_STATS[name]; r
 const memoryRow = ([name, boost, ext]) => `<tr>
     <td><div class="mt-name"><div class="mt-art">${thumb(ext && memFile(name, "1-4"), starsOf(name))}</div>
       <div><a href="${memoryHref(name)}">${esc(name)}</a><small>${esc(boost)}</small></div></div></td>
-    ${MEMORY_STATS[name].map((value, i) => `<td data-label="${STAT_NAMES[i]}">${value}</td>`).join("")}${MEMORY_PATCH[name] ? `<td class="txt rel" data-label="Release">${esc(MEMORY_PATCH[name])}</td>` : patchCell(SIGNATURE_OWNER[name])}</tr>`;
+    ${MEMORY_STATS[name].map((value, i) => `<td data-label="${STAT_NAMES[i]}">${value}</td>`).join("")}${MEMORY_PATCH[name] ? `<td class="txt rel" data-label="${t("Release")}">${esc(MEMORY_PATCH[name])}</td>` : patchCell(SIGNATURE_OWNER[name])}</tr>`;
 const weaponFile = file => file && (file.startsWith("assets/") ? file : `${CHARS}/${file}`);
 const weaponThumb = (file, name, rank = "") => thumb(weaponFile(file), file ? starsOf(name, file, rank) : "");
 // A character without a build has no page to link to
@@ -1463,7 +1473,7 @@ const ownerLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">$
 const patchOf = frame => FRAME_PATCH[frame] || TIMELINE.find(c => c.name === frame)?.patch || "";
 // The frame each signature memory belongs to. Memories with no frame (Liliana, Wilde, Klenova, Poincare and the early generic ones) show a dash
 const SIGNATURE_OWNER = Object.fromEntries(Object.entries(SIGNATURE_MEMORY).map(([frame, memory]) => [memory, frame]));
-const patchCell = frame => `<td class="txt rel" data-label="Release">${esc(patchOf(frame)) || "—"}</td>`;
+const patchCell = frame => `<td class="txt rel" data-label="${t("Release")}">${esc(patchOf(frame)) || "—"}</td>`;
 const weaponRow = ([owner, name, type, file, , rank]) => {
   const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
   const subtitle = owner
@@ -1501,8 +1511,8 @@ function openTable(table, rows) {
   const sort = new URLSearchParams(location.search).get("sort");
   if (["Name", "Release", ...SORT_TABLES[table].columns].flatMap(columnSorts).includes(sort)) tableSort[table] = sort;
   setQuery(sortQuery(table));
-  const label = { memories: "memories", weapons: "weapons", cubs: "C.U.B.s", resonances: "weapon resonances" }[table];
-  return `<div class="tbl"><input class="cx-search tb-search" type="search" placeholder="Search ${label}" aria-label="Search ${label}" data-table-search="${table}">
+  const label = t({ memories: "Search memories", weapons: "Search weapons", cubs: "Search C.U.B.s", resonances: "Search weapon resonances" }[table]);
+  return `<div class="tbl"><input class="cx-search tb-search" type="search" placeholder="${label}" aria-label="${label}" data-table-search="${table}">
     <div id="sortTable" data-table="${table}">${sortTable(table)}</div></div>`;
 }
 function sortTable(table) {
@@ -1511,19 +1521,19 @@ function sortTable(table) {
   const sortHead = column => {
     const on = state(column), arrow = ["", "▼", "▲"][on];
     const aria = !on ? "none" : (on === 1) === (column === "Name") ? "ascending" : "descending";
-    return `<th scope="col" aria-sort="${aria}"${column === "Release" ? ` class="txt rel"` : ""}><button data-sort="${column}">${column}<i>${arrow}</i></button></th>`;
+    return `<th scope="col" aria-sort="${aria}"${column === "Release" ? ` class="txt rel"` : ""}><button data-sort="${column}">${t(column)}<i>${arrow}</i></button></th>`;
   };
   // Text columns (who uses it, element) leave the phone layout, where the subtitle under the name says the same
-  const head = [sortHead("Name"), ...plain.map(label => `<th scope="col" class="txt wide">${label}</th>`), ...columns.map(sortHead), ...(releaseColumn ? [sortHead("Release")] : [])].join("");
+  const head = [sortHead("Name"), ...plain.map(label => `<th scope="col" class="txt wide">${t(label)}</th>`), ...columns.map(sortHead), ...(releaseColumn ? [sortHead("Release")] : [])].join("");
   const release = state("Release");
-  const bar = noRelease || releaseColumn ? "" : `<div class="sortbar"><span>Sort by</span><button class="tool${release ? " on" : ""}" data-sort="Release" aria-pressed="${!!release}" title="${["Sort by release order", "Newest first", "Oldest first"][release]}">Release<i>${["", "▼", "▲"][release]}</i></button></div>`;
+  const bar = noRelease || releaseColumn ? "" : `<div class="sortbar"><span>${t("Sort by")}</span><button class="tool${release ? " on" : ""}" data-sort="Release" aria-pressed="${!!release}" title="${t(["Sort by release order", "Newest first", "Oldest first"][release])}">${t("Release")}<i>${["", "▼", "▲"][release]}</i></button></div>`;
   return `${bar}
     <table class="mtable"><thead><tr>${head}</tr></thead><tbody>${sortedRows(table).map(row).join("")}</tbody></table>`;
 }
 // Element tabs get the element's icon, and Support the icon of the Support class
-const tabIcon = t => ENERGY.includes(t) ? menuIcon("energy-type", t) : t === "Support" ? pic(classIcon("Support")) : "";
-const assetTabs = (base, tabs, tab, label) => `<div class="atabs" role="navigation" aria-label="${label}">${tabs.map(t =>
-  `<a href="/assets/${base}/${slug(t)}"${t === tab ? ` class="on" aria-current="page"` : ""}>${tabIcon(t) ? `<span class="chip-icon">${tabIcon(t)}</span>` : ""}${t}</a>`).join("")}</div>`;
+const tabIcon = name => ENERGY.includes(name) ? menuIcon("energy-type", name) : name === "Support" ? pic(classIcon("Support")) : "";
+const assetTabs = (base, tabs, tab, label) => `<div class="atabs" role="navigation" aria-label="${t(label)}">${tabs.map(name =>
+  `<a href="/assets/${base}/${slug(name)}"${name === tab ? ` class="on" aria-current="page"` : ""}>${tabIcon(name) ? `<span class="chip-icon">${tabIcon(name)}</span>` : ""}${t(name)}</a>`).join("")}</div>`;
 // Constructs page: newest first. The filters stay while browsing and go in the address (?element=Ice), so a link keeps them
 const CONSTRUCT_FILTERS = ["Element", "Class", "Rank", "Effect"];
 const constructFilter = {};
@@ -1545,7 +1555,7 @@ const filterIcon = (group, value) => group === "Element" ? menuIcon("energy-type
     : ["S", "A", "B"].includes(value) ? pic(`assets/rank-letters/${value}.png`) : `<b>${esc(value)}</b>`;
 function constructFilters() {
   const active = CONSTRUCT_FILTERS.filter(group => constructFilter[group]).length;
-  const bar = `<div class="filter-bar"><input class="cx-search" type="search" placeholder="Search constructs" aria-label="Search constructs" value="${esc(constructSearch)}" data-construct-search><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">Filters${active ? ` (${active})` : ""}</button><button class="tool" data-clear-filters${active ? "" : " data-empty"} aria-disabled="${!active}">Clear filters</button></div>`;
+  const bar = `<div class="filter-bar"><input class="cx-search" type="search" placeholder="${t("Search constructs")}" aria-label="${t("Search constructs")}" value="${esc(constructSearch)}" data-construct-search><button class="tool filter-toggle" data-toggle-filters aria-expanded="${filtersOpen}">${t("Filters")}${active ? ` (${active})` : ""}</button><button class="tool" data-clear-filters${active ? "" : " data-empty"} aria-disabled="${!active}">${t("Clear filters")}</button></div>`;
   return `${bar}<div class="filters${filtersOpen ? " open" : ""}">${CONSTRUCT_FILTERS.map(group => {
     const tally = new Map();
     for (const c of constructRoster()) { const v = constructValue(c, group); if (v) tally.set(v, (tally.get(v) || 0) + 1); }
@@ -1555,9 +1565,9 @@ function constructFilters() {
       const on = (constructFilter[group] || "") === value;
       const style = group === "Element" && value ? ` style="--c:${TILE_COLOR[value] || ""}"` : "";
       const icon = value ? `<span class="chip-icon">${filterIcon(group, value)}</span>` : "";
-      return `<button class="tool chip${on ? " on" : ""}"${style} data-filter="${group}" data-value="${esc(value)}" aria-pressed="${on}"${group === "Rank" && value ? ` aria-label="Rank ${esc(value)} ${tally.get(value)}"` : ""}>${icon}${group === "Rank" && value ? "" : esc(label)}${value ? ` <small class="chip-n">${tally.get(value)}</small>` : ""}</button>`;
+      return `<button class="tool chip${on ? " on" : ""}"${style} data-filter="${group}" data-value="${esc(value)}" aria-pressed="${on}"${group === "Rank" && value ? ` aria-label="${t("Rank {n}", { n: esc(value) })} ${tally.get(value)}"` : ""}>${icon}${group === "Rank" && value ? "" : esc(value ? label : t(label))}${value ? ` <small class="chip-n">${tally.get(value)}</small>` : ""}</button>`;
     };
-    return `<div class="filter filter-${group.toLowerCase()}" role="group" aria-label="${group}"><span>${group}</span><div class="filter-bar-tools">${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div></div>`;
+    return `<div class="filter filter-${group.toLowerCase()}" role="group" aria-label="${t(group)}"><span>${t(group)}</span><div class="filter-bar-tools">${chip("All", "")}${values.map(v => chip(v, v)).join("")}</div></div>`;
   }).join("")}</div>`;
 }
 // A tile per construct: the portrait with its name over it, the class and element icons on the
@@ -1567,14 +1577,14 @@ function constructCards() {
   const term = constructSearch.trim().toLowerCase();
   const list = constructRoster().filter(c => CONSTRUCT_FILTERS.every(group => !constructFilter[group] || constructValue(c, group) === constructFilter[group]) && (!term || c.name.toLowerCase().includes(term)))
     .sort((a, b) => CONSTRUCTS[b.name][0] - CONSTRUCTS[a.name][0]);
-  const count = `<p class="cx-count">${list.length} construct${list.length === 1 ? "" : "s"}, newest first</p>`;
-  if (!list.length) return `${count}<p class="sub">No constructs match these filters.</p>`;
+  const count = `<p class="cx-count">${tn(list.length, "{n} construct, newest first", "{n} constructs, newest first")}</p>`;
+  if (!list.length) return `${count}<p class="sub">${t("No constructs match these filters.")}</p>`;
   const badge = (group, value) => value ? `<span class="ct-b" title="${esc(value)}"><span class="chip-icon">${filterIcon(group, value)}</span></span>` : "";
   const tile = c => {
     const [, element, type, rank, effect] = CONSTRUCTS[c.name];
     const [who, ...frame] = c.name.split(": ");
-    const info = [c.name, [type, element, effect].filter(Boolean).join(" · "), c.builds.length ? `${c.builds.length} build${c.builds.length === 1 ? "" : "s"}` : "No builds yet"].join("\n");
-    return `<a class="ctile" href="${characterHref(c.name)}" style="--c:${TILE_COLOR[element] || "#5a5a62"}" title="${esc(info)}" aria-label="${esc(`${c.name.replace(": ", " ")}, ${type}, ${element}${effect ? `, ${effect}` : ""}, ${rank}-Rank`)}">
+    const info = [c.name, [type, element, effect].filter(Boolean).join(" · "), c.builds.length ? tn(c.builds.length, "{n} build") : t("No builds yet")].join("\n");
+    return `<a class="ctile" href="${characterHref(c.name)}" style="--c:${TILE_COLOR[element] || "#5a5a62"}" title="${esc(info)}" aria-label="${esc(`${c.name.replace(": ", " ")}, ${type}, ${element}${effect ? `, ${effect}` : ""}, ${t("Rank {n}", { n: rank })}`)}">
       <div class="slot">${c.portrait ? pic(c.portrait, 'alt=""') : ""}</div>
       <span class="ct-top">${badge("Class", type)}${badge("Element", element)}</span><span class="ct-fx">${badge("Effect", effect)}</span>
       <span class="ct-name"><b>${esc(who)}</b>${frame.length ? ` <small>${esc(frame.join(": "))}</small>` : ""}</span></a>`;
@@ -1601,7 +1611,7 @@ function showFilters(focus) {
 const statRow = stats => `<dl class="stats">${Object.entries(stats).map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>`;
 // Top of a detail page. Coming from a team, it also leads back to that exact build
 let buildReturn = "";
-const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ Back to build</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
+const backLink = (href, label) => `<div class="backs">${buildReturn ? `<a class="back-build" href="${esc(buildReturn)}">‹ ${t("Back to build")}</a>` : ""}<a class="back" href="${href}">‹ ${label}</a></div>`;
 // Every build where a card passes the test, for the bottom of a detail page
 // The characters that use a piece of equipment, shown by portrait. Those are frame names from CONSTRUCTS
 function usedBy(names) {
@@ -1610,7 +1620,7 @@ function usedBy(names) {
     const [, element, role] = CONSTRUCTS[name];
     return `<a href="${characterHref(name)}">${pic(roster.get(name).portrait)}<span><b>${esc(name)}</b><small>${esc([element, role].join(" · "))}</small></span></a>`;
   }).join("");
-  return links ? `<section class="used"><h2>Used by</h2><div class="used-list">${links}</div></section>` : "";
+  return links ? `<section class="used"><h2>${t("Used by")}</h2><div class="used-list">${links}</div></section>` : "";
 }
 // Every character with a build where a card passes the test
 const usedIn = test => usedBy(characters().filter(ch => ch.builds.some(b => test(b.card))).map(ch => ch.name));
@@ -1628,11 +1638,11 @@ function usedMemory(name) {
 }
 function memoryPage([name, boost, ext]) {
   const { tab } = MEM_INDEX.get(name);
-  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${(i + 1) * 2} pcs</h2>${describe(text, "plain")}`).join("");
-  return `${backLink(`/assets/memories/${slug(tab)}`, `${tab} memories`)}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
+  const effects = MEMORY_EFFECTS[name].map((text, i) => `<h2>${t("{n} pcs", { n: (i + 1) * 2 })}</h2>${describe(t(text), "plain")}`).join("");
+  return `${backLink(`/assets/memories/${slug(tab)}`, t("{tab} memories", { tab: t(tab) }))}<h1>${esc(name)}</h1><p class="sub">${esc(boost)}</p>
     <div class="detail${memArts(name).length ? " solo" : ""}">${memArts(name).length ? "" : `<div class="mem">${memoryArt(name, ext)}</div>`}
-      <div class="fx">${statRow(memoryStats(name))}<p class="note">HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.</p>${effects}</div></div>
-    ${memArts(name).length ? `<section class="mem-arts"><h2>Art</h2><div class="mem-arts-list">${memArts(name).map((src, i) => `<div class="mem-art-col"><p class="mem-art-head">${["1 / 4", "2 / 5", "3 / 6"][i]}</p>${ext ? `<div class="mt-art">${thumb(memSet(name)[i], starsOf(name))}</div>` : ""}${pic(src, `alt="${esc(name)} art"`)}</div>`).join("")}</div></section>` : ""}
+      <div class="fx">${statRow(memoryStats(name))}<p class="note">${t("HP and CRIT are on slots 1, 2 and 3. ATK and DEF are on slots 4, 5 and 6.")}</p>${effects}</div></div>
+    ${memArts(name).length ? `<section class="mem-arts"><h2>${t("Art")}</h2><div class="mem-arts-list">${memArts(name).map((src, i) => `<div class="mem-art-col"><p class="mem-art-head">${["1 / 4", "2 / 5", "3 / 6"][i]}</p>${ext ? `<div class="mt-art">${thumb(memSet(name)[i], starsOf(name))}</div>` : ""}${pic(src, `alt="${esc(t("{name} art", { name }))}"`)}</div>`).join("")}</div></section>` : ""}
     ${usedMemory(name)}`;
 }
 // The Harmonization levels of a signature weapon, from WEAPON_HARMONY in assets-data.js. Level 2 unlocks the Harmony skill, shown inside it
@@ -1640,48 +1650,48 @@ function weaponHarmony(weapon) {
   const harmony = WEAPON_HARMONY[weapon];
   if (!harmony) return "";
   const [skill, effect, icon, levels] = harmony;
-  const skillHtml = `<div class="cub-skill">${thumb(`${CHARS}/${icon}`)}<div><h2>${esc(skill)}</h2>${describe(effect, "plain")}</div></div>`;
-  const rows = levels.map(([name, text], i) => `<li><span class="wh-lv">${i + 1}</span><div><h3>${esc(name)}</h3><p>${esc(text)}</p>${i === 1 ? skillHtml : ""}</div></li>`);
-  return `<h2 class="wh-head">Harmonization</h2><ol class="wh-levels">${rows.join("")}</ol>`;
+  const skillHtml = `<div class="cub-skill">${thumb(`${CHARS}/${icon}`)}<div><h2>${esc(skill)}</h2>${describe(t(effect), "plain")}</div></div>`;
+  const rows = levels.map(([name, text], i) => `<li><span class="wh-lv">${i + 1}</span><div><h3>${esc(name)}</h3><p>${esc(t(text))}</p>${i === 1 ? skillHtml : ""}</div></li>`);
+  return `<h2 class="wh-head">${t("Harmonization")}</h2><ol class="wh-levels">${rows.join("")}</ol>`;
 }
 function weaponPage([owner, name, type, file, effect, rank]) {
   const [ATK, CRIT] = WEAPON_STATS[name];
   const listedOwner = owner || FIVE_STAR_WEAPON_OWNERS[name];
   const subtitle = listedOwner
     ? [type, listedOwner].filter(Boolean).join(" · ")
-    : [type, `${rank || weaponRank(name, file)}-star weapon`].filter(Boolean).join(" · ");
+    : [type, t("{n}-star weapon", { n: rank || weaponRank(name, file) })].filter(Boolean).join(" · ");
   // A weapon belongs to one frame, except the types listed in WEAPON_USERS that are shared by several
   const users = listedOwner ? [listedOwner] : WEAPON_USERS[type] || [];
-  return `${backLink("/assets/weapons", "Weapons")}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
-    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2 class="wtype-head">${typeIcon(type)}Effect</h2>${describe(effect, "plain")}` : ""}${weaponHarmony(name)}</div></div>
+  return `${backLink("/assets/weapons", t("Weapons"))}<h1>${esc(name)}</h1><p class="sub">${esc(subtitle)}</p>
+    <div class="detail wpn-detail">${weaponThumb(file, name, rank)}<div class="fx">${statRow({ ATK, CRIT })}${effect ? `<h2 class="wtype-head">${typeIcon(type)}${t("Effect")}</h2>${describe(t(effect), "plain")}` : ""}${weaponHarmony(name)}</div></div>
     ${usedBy(users)}`;
 }
 const resonanceRow = ([name, effect]) => `<tr>
     <td><div class="mt-name"><div class="mt-art wpn-art">${thumb(WEAPON_RES(name))}</div>
-      <div><a href="${resonanceHref(name)}">${esc(name)}</a><small>${esc(effect)}</small></div></div></td></tr>`;
+      <div><a href="${resonanceHref(name)}">${esc(name)}</a><small>${esc(t(effect))}</small></div></div></td></tr>`;
 function resonancePage([name, effect]) {
-  return `${backLink("/assets/resonances", "Weapon Resonance")}<h1>${esc(name)}</h1><p class="sub">Weapon Resonance</p>
-    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>Effect</h2>${describe(effect, "resonance")}</div></div>
+  return `${backLink("/assets/resonances", t("Weapon Resonance"))}<h1>${esc(name)}</h1><p class="sub">${t("Weapon Resonance")}</p>
+    <div class="detail wpn-detail">${thumb(WEAPON_RES(name))}<div class="fx"><h2>${t("Effect")}</h2>${describe(t(effect), "resonance")}</div></div>
     ${usedIn(c => (c.matrix || []).includes(WEAPON_RES(name)))}`;
 }
 const cubRow = cub => `<tr>
     <td><div class="mt-name"><div class="mt-art cub-art">${thumb(cub.art, cub.rank === "A" ? starOverlay(5) : STARS)}</div>
-      <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small><span class="desk">Rank ${cub.rank}</span><span class="mob">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank}`} · ${esc(cub.element)}</span></small></div></div></td>
-    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${CUB_PATCH[cub.name] ? `<td class="txt rel" data-label="Release">${esc(CUB_PATCH[cub.name])}</td>` : patchCell(cub.owner)}</tr>`;
+      <div><a href="${cubHref(cub.name)}">${esc(cub.name)}</a><small><span class="desk">${t("Rank {n}", { n: cub.rank })}</span><span class="mob">${cub.owner ? ownerLink(cub.owner) : t("Rank {n}", { n: cub.rank })} · ${esc(cub.element)}</span></small></div></div></td>
+    <td class="txt wide">${cub.owner ? ownerLink(cub.owner) : "—"}</td><td class="txt wide">${esc(cub.element)}</td>${CUB_PATCH[cub.name] ? `<td class="txt rel" data-label="${t("Release")}">${esc(CUB_PATCH[cub.name])}</td>` : patchCell(cub.owner)}</tr>`;
 // The Active skill with a picker for the element it is cast in: one block per element, only the chosen one shown
 function activeSkill(cub, folder, name, effect) {
   const ext = cub.skills[0]?.match(/\.(\w+)$/)?.[1] || "png", chosen = CUB_ELEMENTS.includes(cub.element) ? cub.element : CUB_ELEMENTS[0];
   const tab = element => `<button type="button" class="el-tab${element === chosen ? " on" : ""}" data-cub-element="${element}" aria-pressed="${element === chosen}" aria-label="${element}">${thumb(`${cub.art.split("/").slice(0, -1).join("/")}/CUB - Active ${element}.${ext}`)}</button>`;
-  return `<div class="cub-active"><div class="el-tabs" role="group" aria-label="Element of the carrier">${CUB_ELEMENTS.map(tab).join("")}</div>${CUB_ELEMENTS.map(element =>
-    `<div class="cub-skill" data-element="${element}"${element === chosen ? "" : " hidden"}>${thumb(`${cub.art.split("/").slice(0, -1).join("/")}/CUB - Active ${element}.${ext}`)}<div><h2>${esc(swapElement(name, element))}</h2>${describe(swapElement(effect, element))}</div></div>`).join("")}</div>`;
+  return `<div class="cub-active"><div class="el-tabs" role="group" aria-label="${t("Element of the carrier")}">${CUB_ELEMENTS.map(tab).join("")}</div>${CUB_ELEMENTS.map(element =>
+    `<div class="cub-skill" data-element="${element}"${element === chosen ? "" : " hidden"}>${thumb(`${cub.art.split("/").slice(0, -1).join("/")}/CUB - Active ${element}.${ext}`)}<div><h2>${esc(swapElement(name, element))}</h2>${describe(swapElement(t(effect), element))}</div></div>`).join("")}</div>`;
 }
 function cubPage(cub) {
   const folder = cub.art.split("/").at(-2), skills = CUB_SKILLS[folder] || [];
   // Some builds show their CUB skills in another order, so each icon is found by its file number
   const icon = i => cub.skills.find(src => src.includes(`${folder}/CUB - Skill ${i + 1}.`));
-  return `${backLink("/assets/cubs", "C.U.B.s")}<h1>${esc(cub.name)}</h1><p class="sub">${cub.owner ? ownerLink(cub.owner) : `Rank ${cub.rank} C.U.B.`} · ${esc(cub.element)}</p>
+  return `${backLink("/assets/cubs", "C.U.B.s")}<h1>${esc(cub.name)}</h1><p class="sub">${cub.owner ? ownerLink(cub.owner) : t("Rank {n} C.U.B.", { n: cub.rank })} · ${esc(cub.element)}</p>
     <div class="detail wpn-detail">${thumb(cub.art)}<div class="fx">${skills.map(([name, effect], i) => i === 0 && CUB_ACTIVE.includes(folder) ? activeSkill(cub, folder, name, effect) :
-      `<div class="cub-skill">${icon(i) ? thumb(icon(i)) : ""}<div><h2>${esc(name)}</h2>${describe(effect)}</div></div>`).join("") || "<p>No skill text yet.</p>"}</div></div>
+      `<div class="cub-skill">${icon(i) ? thumb(icon(i)) : ""}<div><h2>${esc(name)}</h2>${describe(t(effect))}</div></div>`).join("") || `<p>${t("No skill text yet.")}</p>`}</div></div>
     ${cub.owner ? usedBy([cub.owner]) : usedIn(c => c.construct === cub.art)}`;
 }
 // skills-data.js is long, so it only loads when a skill page opens
@@ -1704,16 +1714,16 @@ const skillIcon = (name, type, skill) => UNIFRAME_SHARED.has(skill) ? `assets/ic
 function skillList(ch) {
   if (skillsState !== "ready") {
     loadSkills();
-    return `<p class="empty">${skillsState === "failed" ? "Could not load the skills. Reload the page to try again." : "Loading skills..."}</p>`;
+    return `<p class="empty">${t(skillsState === "failed" ? "Could not load the skills. Reload the page to try again." : "Loading skills...")}</p>`;
   }
   const skills = CHARACTER_SKILLS[ch.name];
-  if (!skills) return `<p class="empty">No skill text for this character yet.</p>`;
+  if (!skills) return `<p class="empty">${t("No skill text for this character yet.")}</p>`;
   return `<div class="skills">${skills.map(([type, name, effect]) =>
-    `<section class="fx">${thumb(skillIcon(ch.name, type, name))}<div><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(unmark(effect))}</p></div></section>`).join("")}</div>`;
+    `<section class="fx">${thumb(skillIcon(ch.name, type, name))}<div><p class="kind">${esc(type)}</p><h2>${esc(name)}</h2><p>${esc(unmark(t(effect)))}</p></div></section>`).join("")}</div>`;
 }
-const skillPage = ch => `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">Construct page</a></p>${skillList(ch)}`;
+const skillPage = ch => `${backLink("/constructs", t("Constructs"))}<h1>${esc(ch.name)}</h1><p class="sub"><a href="${characterHref(ch.name)}">${t("Construct page")}</a></p>${skillList(ch)}`;
 function assetsPage(key, pick = "all") {
-  const notFound = `<p class="empty">Page not found.</p>`;
+  const notFound = `<p class="empty">${t("Page not found.")}</p>`;
   if (key === "memory") {
     const set = Object.values(MEMORY_TABS).flat().find(([name]) => linkId(name) === pick);
     return set ? memoryPage(set) : notFound;
@@ -1734,12 +1744,12 @@ function assetsPage(key, pick = "all") {
     const ch = constructRoster().find(c => charId(c.name) === pick);
     return ch ? skillPage(ch) : notFound;
   }
-  if (key === "resonances") return `<h1>Weapon Resonance</h1><p class="sub">Assets</p>${openTable("resonances", Object.entries(RESONANCE_EFFECTS))}`;
+  if (key === "resonances") return `${eyebrow(t("Assets"))}<h1>${t("Weapon Resonance")}</h1>${openTable("resonances", Object.entries(RESONANCE_EFFECTS))}`;
   if (key === "cubs") {
     const tabs = ["All", ...ENERGY], tab = tabs.find(t => slug(t) === pick);
     if (!tab) return notFound;
     shownRows.cubs = tab === "All" ? cubList() : cubList().filter(c => c.element === tab);
-    return `<h1>C.U.B.s</h1><p class="sub">Assets</p>
+    return `${eyebrow(t("Assets"))}<h1>C.U.B.s</h1>
     <div class="assets">${assetTabs("cubs", tabs, tab, "C.U.B. element")}
       ${openTable("cubs", shownRows.cubs)}</div>`;
   }
@@ -1748,7 +1758,7 @@ function assetsPage(key, pick = "all") {
     if (!tab) return notFound;
     const stars = new URLSearchParams(location.search).get("stars");
     weaponStars = weaponStarList().map(String).includes(stars) ? stars : "";
-    return `<h1>Weapons</h1><p class="sub">Assets</p>
+    return `${eyebrow(t("Assets"))}<h1>${t("Weapons")}</h1>
     <div class="assets">${assetTabs("weapons", tabs, tab, "Weapon element")}
       <div>${weaponStarBar()}${openTable("weapons", weaponRows(tab))}</div></div>`;
   }
@@ -1757,7 +1767,7 @@ function assetsPage(key, pick = "all") {
   if (!tab) return notFound;
   const sets = tab === "All" ? Object.values(MEMORY_TABS).flat() : MEMORY_TABS[tab];
   shownRows.memories = sets;
-  return `<h1>Memories</h1><p class="sub">Assets</p>
+  return `${eyebrow(t("Assets"))}<h1>${t("Memories")}</h1>
     <div class="assets">${assetTabs("memories", tabs, tab, "Memory type")}
       ${openTable("memories", shownRows.memories)}</div>`;
 }
@@ -1765,7 +1775,7 @@ function assetsPage(key, pick = "all") {
 /* ---------- character pages ---------- */
 function charactersPage() {
   readFilters();
-  return `<h1>Constructs</h1><p class="sub">Every playable construct</p><div id="constructs">${constructsView()}</div>`;
+  return `<h1>${t("Constructs")}</h1><p class="sub">${t("Every playable construct")}</p><div id="constructs">${constructsView()}</div>`;
 }
 // Credits page. No art = the first letter of the name in a circle; art goes in assets/credits
 const CREDITS = [
@@ -1777,30 +1787,32 @@ const CREDITS = [
 const KOFI = "https://ko-fi.com/ofcrazy";
 const DISCORD_INVITE = "https://discord.gg/cMmqgRaKGq";
 const creditRow = ({ name, text, href, art, support }) => `<li><span class="credit-art">${art ? pic(art) : esc(name[0].toUpperCase())}</span>
-  <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(text)}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>` : ""}</span></li>`;
+  <span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : `<strong>${esc(name)}</strong>`} ${esc(t(text))}${support ? ` · <a href="${esc(support)}" target="_blank" rel="noopener noreferrer">${t("Support on Ko-fi")}</a>` : ""}</span></li>`;
 const MADE_WITH = [
-  { name: "Claude", art: "assets/credits/made-with/claude.png" },
-  { name: "VSC", art: "assets/credits/made-with/vscode.png" },
-  { name: "Cloudflare", art: "assets/credits/made-with/cloudflare.png" },
-  { name: "Node.js", art: "assets/credits/made-with/nodejs.png" }
+  { name: "Claude", info: "AI coding assistant. It wrote code around the designs and organised existing data, like builds, skills and the patch history. The layout, the look and the art direction were made by hand.", art: "assets/credits/made-with/claude.png" },
+  { name: "VSC", info: "Visual Studio Code, the editor where the site is written.", art: "assets/credits/made-with/vscode.png" },
+  { name: "Cloudflare", info: "Hosts the site and runs the Team Builder's submissions and short links.", art: "assets/credits/made-with/cloudflare.png" },
+  { name: "Node.js", info: "Runs the development tools: checks, image optimisation and data updates.", art: "assets/credits/made-with/nodejs.png" }
 ];
-const creditsPage = () => `<div class="credits-page"><h1>Credits</h1><p class="sub">Found a wrong build, or have a question or suggestion? Send me a message. The people behind the data and art are credited below.</p>
+const creditsPage = () => `<div class="credits-page"><h1>${t("Credits")}</h1><p class="sub">${t("Found a wrong build, or have a question or suggestion? Send me a message. The people behind the data and art are credited below.")}</p>
   <div class="contact">
     <section class="contact-card">
       <p class="contact-label">Discord</p>
-      <div class="contact-name"><span class="credit-art big">${pic("assets/credits/crazy117.png")}</span><strong>crazy117</strong><button class="tool" data-copy="crazy117">Copy</button></div>
-      <a class="tool contact-kofi" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">${pic("assets/credits/discord.png")}Join the Discord server</a>
-      <a class="tool contact-kofi" href="${KOFI}" target="_blank" rel="noopener noreferrer">${pic("assets/credits/kofi.png")}Support me on Ko-fi</a>
+      <div class="contact-name"><span class="credit-art big">${pic("assets/credits/crazy117.png")}</span><strong>crazy117</strong><button class="tool" data-copy="crazy117">${t("Copy")}</button></div>
+      <div class="contact-links">
+        <a class="tool contact-kofi" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">${pic("assets/credits/discord.png")}${t("Join the Discord server")}</a>
+        <a class="tool contact-kofi icon-only" href="${KOFI}" target="_blank" rel="noopener noreferrer" aria-label="${t("Support me on Ko-fi")}" title="${t("Support me on Ko-fi")}">${pic("assets/credits/kofi.png")}</a>
+      </div>
     </section>
     <section class="contact-card">
-      <p class="contact-label">Credits</p>
+      <p class="contact-label">${t("Credits")}</p>
       <ul>${CREDITS.map(creditRow).join("")}</ul>
     </section>
   </div>
-  <p class="legal">Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.</p>
+  <p class="legal">${t("Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.")}</p>
   <section class="made-with">
-    <p class="contact-label">Made with:</p>
-    <ul>${MADE_WITH.map(({ name, art }) => `<li>${pic(art, `alt="${esc(name)}"`)}<span>${esc(name)}</span></li>`).join("")}</ul>
+    <p class="contact-label">${t("Made with:")}</p>
+    <ul>${MADE_WITH.map(({ name, info, art }) => `<li${tipAttr(name, t(info))}>${pic(art, `alt="${esc(name)}"`)}<span>${esc(name)}</span></li>`).join("")}</ul>
   </section></div>`;
 
 /* ---------- Updates: posts written in Markdown (data/updates-data.js), which only loads when the page opens ---------- */
@@ -1808,7 +1820,9 @@ let updatesState = "";
 function loadUpdates() {
   if (updatesState) return;
   updatesState = "loading";
-  loadScript("data/updates-data.js").then(() => { updatesState = "ready"; }, () => { updatesState = "failed"; }).then(route);
+  // In Portuguese the translated posts come along; if they fail, the posts still show in English
+  const pt = LANG === "pt" ? loadScript("data/pt/updates.js").catch(() => {}) : null;
+  Promise.all([loadScript("data/updates-data.js"), pt]).then(() => { updatesState = "ready"; }, () => { updatesState = "failed"; }).then(() => route());
 }
 // The text is escaped first, so a post can never add HTML. Only https links and links inside the site are kept
 const mdInline = s => esc(s)
@@ -1854,20 +1868,20 @@ function mdPost(body) {
     return `<details class="upd-sec"><summary>${mdInline(title)}</summary><div class="upd-sec-body">${mdBlocks(rest.join("\n"))}</div></details>`;
   }).join("");
 }
-const updateDate = date => new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+const updateDate = date => new Date(`${date}T00:00:00Z`).toLocaleDateString(loc("en-US"), { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
 function updatesPage() {
-  const head = `<h1>Updates</h1><p class="sub">Changes made to the site.</p>`;
+  const head = `<h1>${t("Updates")}</h1><p class="sub">${t("Changes made to the site.")}</p>`;
   loadUpdates();
-  if (updatesState !== "ready") return `${head}<p class="empty">${updatesState === "failed" ? "Could not load the updates. Reload the page to try again." : "Loading..."}</p>`;
+  if (updatesState !== "ready") return `${head}<p class="empty">${t(updatesState === "failed" ? "Could not load the updates. Reload the page to try again." : "Loading...")}</p>`;
   const target = decodeURIComponent(location.hash.slice(1));
   return `${head}<div class="upd-list">${UPDATES.map((post, i) => `<article class="upd" id="${esc(post.id)}">
     <details class="upd-post"${i === 0 || post.id === target ? " open" : ""}>
       <summary>
-        <div class="upd-meta"><span class="upd-type">${esc(post.type)}</span><time datetime="${esc(post.date)}">${updateDate(post.date)}</time><span class="upd-toggle"><span class="upd-more">Expand</span><span class="upd-less">Collapse</span></span></div>
-        <h2>${esc(post.title)}</h2>
-        <p class="upd-sum">${esc(post.summary)}</p>
+        <div class="upd-meta"><span class="upd-type">${esc(t(post.type))}</span><time datetime="${esc(post.date)}">${updateDate(post.date)}</time><span class="upd-toggle"><span class="upd-more">${t("Expand")}</span><span class="upd-less">${t("Collapse")}</span></span></div>
+        <h2>${esc(t(post.title))}</h2>
+        <p class="upd-sum">${esc(t(post.summary))}</p>
       </summary>
-      <div class="upd-body">${mdPost(post.body)}</div>
+      <div class="upd-body">${mdPost(t(post.body))}</div>
     </details>
   </article>`).join("")}</div>`;
 }
@@ -1927,10 +1941,10 @@ const CALC_SPENDING = [
   { key: "resonance", name: "6★ Resonance", note: "150 Shards each" },
   { key: "shards", name: "Frame shards", note: "804 Vouchers each" }
 ];
-// Eneba prices before checkout fees: [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
-const RC_PRICES_DATE = "8 Nov 2026";
-const RC_PACKS = [[5, 4.40, 1.07], [28, 22.57, 4.34], [34, 27.76, 5.29], [59, 45.93, 8.62], [71, 54.59, 10.20], [119, 90.92, 16.86], [299, 229.36, 42.20], [600, 458.64, 84.16]];
-const RC_STORE = "https://www.eneba.com/top-up-punishing-gray-raven-android-rainbow-cards-global";
+// Codashop prices of the Android packs (BRL from its Brazilian page, USD from its US page): [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
+const RC_PRICES_DATE = "18 Nov 2026";
+const RC_PACKS = [[5, 4.99, 0.99], [28, 25.99, 4.99], [34, 31.99, 5.99], [59, 52.99, 9.99], [71, 62.99, 11.99], [119, 104.99, 19.99], [299, 264.99, 49.99], [600, 529.99, 99.99]];
+const RC_STORE = { USD: "https://www.codashop.com/en-us/punishing-gray-raven", BRL: "https://www.codashop.com/pt-br/punishing-gray-raven" };
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
 // A collab gives free pulls, so its first frame and weapon are cheaper. It pays in BC only, and tickets carry over untouched
 const COLLAB_COST = { S: 10500, A: 2500, firstFrame: 6300, firstWeapon: 4000 };
@@ -2157,8 +2171,8 @@ function calcRun() {
   });
 }
 const whole = value => Math.max(0, Math.floor(Number(value)) || 0);
-const amount = n => n.toLocaleString("en-US");
-const shortDate = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const amount = n => n.toLocaleString(loc("en-US"));
+const shortDate = iso => new Date(`${iso}T00:00`).toLocaleDateString(loc("en-GB"), { day: "numeric", month: "short", year: "numeric" });
 const passCost = plan => CALC_PASSES.reduce((total, { key, rc }) => total + (plan[key] || 0) * rc, 0);
 // The store sells packs, not loose cards, so this is the cheapest mix that reaches the amount
 function packCost(rc, column) {
@@ -2166,25 +2180,25 @@ function packCost(rc, column) {
   for (let n = 1; n <= rc; n++) best[n] = Math.min(...RC_PACKS.map(pack => pack[column] + best[Math.max(0, n - pack[0])]));
   return best[rc];
 }
-const rcPrice = rc => rc ? `≈ ${packCost(rc, 2).toLocaleString("en-US", { style: "currency", currency: "USD" })} · ${packCost(rc, 1).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} on Eneba` : "";
+const rcPrice = rc => rc ? t("≈ {usd} · {brl} on Codashop", { usd: packCost(rc, 2).toLocaleString(loc("en-US"), { style: "currency", currency: "USD" }), brl: packCost(rc, 1).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) }) : "";
 const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
 const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
-const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(c.name)}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
-const frameLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || "Frame to be confirmed");
+const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(t(c.name))}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
+const frameLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || t("Frame to be confirmed"));
 // What a pass gives, as small currency icons with amounts: on purchase, once a day, or over the Tactical Assessment levels
-const coinIcon = key => { const { name, art } = CURRENCIES.find(c => c.key === key); return `<span class="calc-mini" title="${esc(name)}">${pic(art, `alt="${esc(name)}"`)}</span>`; };
+const coinIcon = key => { const { name, art } = CURRENCIES.find(c => c.key === key); return `<span class="calc-mini" title="${esc(t(name))}">${pic(art, `alt="${esc(t(name))}"`)}</span>`; };
 const rewardList = gains => Object.entries(gains).filter(([, n]) => n).map(([c, n]) => `<span class="calc-reward">${coinIcon(c)}${amount(n)}</span>`).join("");
 function passLegend({ upfront, daily, days, intel }) {
   const part = (when, gains) => `<span class="calc-legend-part"><i>${when}</i>${rewardList(gains)}</span>`;
-  return `<span class="calc-legend">${intel ? part(`Lv 1–${INTEL_TOP}`, upfront) : part("Now", upfront) + (daily ? part(`Daily ×${days}`, daily) : "")}</span>`;
+  return `<span class="calc-legend">${intel ? part(`Lv 1–${INTEL_TOP}`, upfront) : part(t("Now"), upfront) + (daily ? part(t("Daily ×{n}", { n: days }), daily) : "")}</span>`;
 }
 // The belt: one stop per patch, in order, with the BC it leaves and the RC spent in it. Picking a stop shows that patch's card
-const dayMonth = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+const dayMonth = iso => new Date(`${iso}T00:00`).toLocaleDateString(loc("en-GB"), { day: "numeric", month: "short" });
 function patchStop(patch, today, picked) {
   const time = patchTime(patch, today);
-  const name = patch.collab ? esc(patch.frame || "Frame to be confirmed") : esc(patch.patch);
+  const name = patch.collab ? esc(patch.frame || t("Frame to be confirmed")) : esc(patch.patch);
   const when = patch.collab ? "Collab" : `${dayMonth(patch.start)} – ${dayMonth(patch.end)}`;
-  const tag = time ? `<span class="calc-tag">Now</span>` : patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : "";
+  const tag = time ? `<span class="calc-tag">${t("Now")}</span>` : patch.predicted ? `<span class="calc-tag guess">${t("Predicted")}</span>` : "";
   return `<button class="calc-stop${patch.collab ? " collab" : ""}${patch.predicted ? " guess" : ""}" type="button" role="tab" data-pick="${esc(calcId(patch))}" aria-selected="${picked}" tabindex="${picked ? 0 : -1}">
     <span class="calc-stop-top"><b>${name}</b>${tag}</span><small>${when}</small>
     <span class="calc-stop-bc">${calcIcon(CURRENCIES[0].art)}<output data-stop-bc></output></span><small data-stop-rc></small>
@@ -2192,44 +2206,47 @@ function patchStop(patch, today, picked) {
 }
 function patchCard(patch, today, picked) {
   const plan = calc.plans[calcId(patch)] || {}, time = patchTime(patch, today), owned = time ? ownedIn(patch) : {};
-  const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(name)}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="Less: ${esc(name)}">−</button>${numberBox(`data-plan="${key}"`, plan[key], name)}<button type="button" data-step="${step}" aria-label="More: ${esc(name)}">+</button></span>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
+  const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(t(name))}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="${esc(t("Less: {name}", { name: t(name) }))}">−</button>${numberBox(`data-plan="${key}"`, plan[key], t(name))}<button type="button" data-step="${step}" aria-label="${esc(t("More: {name}", { name: t(name) }))}">+</button></span>${note ? `<small>${esc(t(note))}</small>` : ""}</div>`;
   // A paid tier already bought in this patch can't be bought again: it shows as owned, and pays only its levels still to come
   const passes = CALC_PASSES.map(pass => {
     const { key, name, art, rc, max } = pass;
     // A Tactical Assessment pass is one checkbox: in the patch running now it means already bought, in the others, to buy
     const intel = INTEL_PASSES.some(p => p.key === key);
-    const control = intel ? `<input type="checkbox" data-state="${key}"${(time ? owned[key] : plan[key]) ? " checked" : ""} aria-label="${esc(name)}${time ? ": already bought" : ""}">`
+    const control = intel ? `<input type="checkbox" data-state="${key}"${(time ? owned[key] : plan[key]) ? " checked" : ""} aria-label="${esc(name)}${time ? t(": already bought") : ""}">`
       : max > 1 ? `<select data-plan="${key}" aria-label="${esc(name)}">${Array.from({ length: max + 1 }, (_, n) => `<option${n === (plan[key] || 0) ? " selected" : ""}>${n}</option>`).join("")}</select>`
         : `<input type="checkbox" data-plan="${key}"${plan[key] ? " checked" : ""} aria-label="${esc(name)}">`;
     // A daily pass bought before today: its day is the same in every card, since its remaining days run before any copy planned
     const bought = DAILY_PASSES.some(p => p.key === key)
-      ? `<span class="calc-pass-own">Already bought on<input type="date" data-own="${key}" max="${today}" value="${esc(calc.owned[key] || "")}" aria-label="${esc(name)}: day it was bought"></span>` : "";
-    return `<label class="calc-pass${intel ? " intel" : ""}">${calcIcon(art)}<span class="calc-pass-tx"><b>${esc(name)} <small>${rc} RC${max > 1 ? " each" : ""}</small></b>${passLegend(pass)}</span>${control}${bought}</label>`;
+      ? `<span class="calc-pass-own">${t("Already bought on")}<input type="date" data-own="${key}" max="${today}" value="${esc(calc.owned[key] || "")}" aria-label="${esc(t("{name}: day it was bought", { name }))}"></span>` : "";
+    return `<label class="calc-pass${intel ? " intel" : ""}">${calcIcon(art)}<span class="calc-pass-tx"><b>${esc(name)} <small>${rc} RC${max > 1 ? t(" each") : ""}</small></b>${passLegend(pass)}</span>${control}${bought}</label>`;
   }).join("");
   const head = patch.collab
-    ? `<h3>${frameLink(patch.frame)}</h3><p>Collab banner · no income of its own, and tickets don't apply</p>`
-    : `<h3>${esc(patch.patch)}${time ? `<span class="calc-tag">Day ${time.day} of ${time.days}</span>` : ""}${patch.predicted ? `<span class="calc-tag guess">Predicted</span>` : ""}</h3>
-      <p class="calc-meta"><span>${shortDate(patch.start)} to ${shortDate(patch.end)}</span><span>${time?.days ?? planDays(patch, today)} days</span><span>${patch.patch === patch.frame ? "" : frameLink(patch.frame)}</span></p>`;
+    ? `<h3>${frameLink(patch.frame)}</h3><p>${t("Collab banner · no income of its own, and tickets don't apply")}</p>`
+    : `<h3>${esc(patch.patch)}${time ? `<span class="calc-tag">${t("Day {day} of {days}", time)}</span>` : ""}${patch.predicted ? `<span class="calc-tag guess">${t("Predicted")}</span>` : ""}</h3>
+      <p class="calc-meta"><span>${t("{from} to {to}", { from: shortDate(patch.start), to: shortDate(patch.end) })}</span><span>${tn(time?.days ?? planDays(patch, today), "{n} day")}</span><span>${patch.patch === patch.frame ? "" : frameLink(patch.frame)}</span></p>`;
   const income = time && patch.daily
-    ? `<p class="calc-label">Income left</p><ul class="calc-hint calc-left"><li>${time.daysLeft} of ${time.days} days of dailies</li><li>${time.weeksLeft} of ${time.weeks} weekly resets</li>${time.cycles.map(cycle => `<li>${cycle.left} of ${cycle.total} ${cycle.name} resets</li>`).join("")}<li>${patch.events.filter(event => event.end >= today).length} of ${patch.events.length} timed events</li></ul>`
+    ? `<p class="calc-label">${t("Income left")}</p><ul class="calc-hint calc-left"><li>${t("{left} of {total} days of dailies", { left: time.daysLeft, total: time.days })}</li><li>${t("{left} of {total} weekly resets", { left: time.weeksLeft, total: time.weeks })}</li>${time.cycles.map(cycle => `<li>${t("{left} of {total} {name} resets", cycle)}</li>`).join("")}<li>${t("{left} of {total} timed events", { left: patch.events.filter(event => event.end >= today).length, total: patch.events.length })}</li></ul>`
     : "";
   return `<section class="calc-patch${patch.collab ? " collab" : ""}" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
-    ${patch.collab ? "" : `<div class="calc-income" role="group" aria-label="${time ? "Income left" : "Patch income"}" title="Includes the passes picked in this card"><small>${time ? "Left" : "Income"}</small>${CURRENCIES.map(c => `<div class="calc-gain" title="${esc(c.name)}">${calcIcon(c.art)}<output data-gain="${c.key}" aria-label="${esc(c.name)}"></output></div>`).join("")}</div>`}
-    <div class="calc-patch-main">
-      <div class="calc-head"><div>${head}</div>${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>Repeat this plan in later patches</button>`}</div>
-      ${income}
-      <div class="calc-cols">
-        ${patch.collab ? "" : `<div><p class="calc-label">Passes</p><div class="calc-passes">${passes}</div><label class="calc-own level calc-level"><span>Tactical Assessment level<small>${time ? "Where you are now" : "Where you expect to be when this patch starts"}</small></span>${numberBox(`data-plan="level" max="${INTEL_TOP}"`, plan.level, "Tactical Assessment level")}</label></div>`}
-        <div><p class="calc-label">Spending</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div></div>
+    ${patch.collab ? "" : `<div class="calc-income" role="group" aria-label="${t(time ? "Income left" : "Patch income")}" title="${t("Includes the passes picked in this card")}"><small>${t(time ? "Left" : "Income")}</small>${CURRENCIES.map(c => `<div class="calc-gain" title="${esc(t(c.name))}">${calcIcon(c.art)}<output data-gain="${c.key}" aria-label="${esc(t(c.name))}"></output></div>`).join("")}</div>`}
+    <div class="calc-cols">
+      <div>
+        <div class="calc-head"><div>${head}</div></div>
+        ${patch.collab ? "" : `<p class="calc-label">${t("Passes")}</p><div class="calc-passes">${passes}</div><label class="calc-own level calc-level"><span>${t("Tactical Assessment level")}<small>${t(time ? "Where you are now" : "Where you expect to be when this patch starts")}</small></span>${numberBox(`data-plan="level" max="${INTEL_TOP}"`, plan.level, t("Tactical Assessment level"))}</label>
+        <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
       </div>
-      ${patch.collab ? "" : `<div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
+      <div class="calc-side">
+        ${income}
+        <p class="calc-label">${t("Spending")}</p><div class="calc-fields">${CALC_SPENDING.map(field).join("")}</div>
+        <div class="calc-patch-actions">${patch.collab ? "" : `<button class="tool calc-copy" type="button" data-calc-copy>${t("Repeat this plan in later patches")}</button>`}<button class="tool calc-clear-patch" type="button" data-calc-clear-patch>${t("Clear this patch")}</button></div>
+      </div>
     </div>
   </section>`;
 }
 // One row of the final balance column: what each patch leaves. Picking a row picks that patch
 const finalRow = (patch, picked) => `<button class="calc-final-row" type="button" data-pick="${esc(calcId(patch))}" aria-current="${picked}">
   <b>${esc(patch.collab ? patch.frame || "Collab" : patch.patch)}</b>
-  <span class="calc-final-coins">${CURRENCIES.map(c => `<span class="calc-final-coin" title="${esc(c.name)}">${calcIcon(c.art)}<output data-left="${c.key}" aria-label="${esc(c.name)}"></output></span>`).join("")}</span>
+  <span class="calc-final-coins">${CURRENCIES.map(c => `<span class="calc-final-coin" title="${esc(t(c.name))}">${calcIcon(c.art)}<output data-left="${c.key}" aria-label="${esc(t(c.name))}"></output></span>`).join("")}</span>
 </button>`;
 // The stop picked last time, or the first one when that patch has already left the plan
 const pickedId = patches => patches.some(p => calcId(p) === calc.pick) ? calc.pick : calcId(patches[0]);
@@ -2267,19 +2284,19 @@ function showCalc() {
     const bc = $("[data-stop-bc]", stops[i]);
     bc.textContent = amount(left.bc);
     bc.classList.toggle("short", left.bc < 0);
-    $("[data-stop-rc]", stops[i]).textContent = passCost(plan) ? `${passCost(plan)} RC on passes` : "No passes";
+    $("[data-stop-rc]", stops[i]).textContent = passCost(plan) ? t("{n} RC on passes", { n: passCost(plan) }) : t("No passes");
     const cost = $("[data-rc]", cards[i]);
     if (cost) cost.textContent = `${passCost(plan)} RC`;
     const price = $("[data-rc-price]", cards[i]);
     if (price) price.textContent = rcPrice(passCost(plan));
     const monthly = $("[data-monthly]", cards[i]);
     if (monthly) monthly.textContent = DAILY_PASSES.filter(({ key }) => passDays[key]).map(({ key, name }) =>
-      `${name}: ${passDays[key]} days in this patch${passLeft[key] ? `, ${passLeft[key]} more after it` : ""}`).join(" · ");
+      `${name}: ${tn(passDays[key], "{n} day in this patch", "{n} days in this patch")}${passLeft[key] ? t(", {n} more after it", { n: passLeft[key] }) : ""}`).join(" · ");
   });
   const bought = CALC_PASSES.map(({ key, name }) => [name, run.reduce((total, { plan }) => total + (plan[key] || 0), 0)]).filter(([, count]) => count);
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0);
   $("#calcBarRc").textContent = `${amount(totalRc)} RC`;
-  $("#calcBarPrice").textContent = rcPrice(totalRc) || "No passes picked yet";
+  $("#calcBarPrice").textContent = rcPrice(totalRc) || t("No passes picked yet");
   $("#calcBarPrice").title = bought.map(([name, count]) => `${count}× ${name}`).join("\n");
   const lastBc = run.at(-1).left.bc;
   $("#calcBarBc").textContent = `${amount(lastBc)} BC`;
@@ -2288,15 +2305,15 @@ function showCalc() {
   const tone = early >= 0.66 ? "high" : early >= 0.33 ? "mid" : "low";
   const progress = Math.min(calc.pulls, pity) / pity;
   $("#calcOdds").innerHTML = `<div class="calc-hero ${tone}">
-      <small>Chance before pity</small>
+      <small>${t("Chance before pity")}</small>
       <b>${(early * 100).toFixed(2)}%</b>
-      <div class="calc-meter" role="img" aria-label="${calc.pulls} of ${pity} pulls to pity"><span></span></div>
-      <div class="calc-meter-note"><span>${calc.pulls >= pity ? `Pity reached: guaranteed by pull ${pity}` : `${pity - calc.pulls} to pity`}</span><span>${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}% per pull</span></div>
+      <div class="calc-meter" role="img" aria-label="${t("{n} of {pity} pulls to pity", { n: calc.pulls, pity })}"><span></span></div>
+      <div class="calc-meter-note"><span>${calc.pulls >= pity ? t("Pity reached: guaranteed by pull {n}", { n: pity }) : t("{n} to pity", { n: pity - calc.pulls })}</span><span>${t("{n}% per pull", { n: (rate * 100).toFixed(2).replace(/\.?0+$/, "") })}</span></div>
     </div>
     <div class="calc-stats">`
-    + calcStat("Pity hits", `${Math.floor(calc.pulls / pity)}×`, `Every ${pity} pulls · ${pity - calc.pulls % pity} to the next`)
-    + calcStat("Expected", `${Math.round(average)} pulls`, `About ${amount(Math.round(averageCost / 10) * 10)} BC`)
-    + calcStat("Nearly Guaranteed", `${noPity} pulls`, `${NEARLY_SURE * 100}% chance without pity`)
+    + calcStat(t("Pity hits"), `${Math.floor(calc.pulls / pity)}×`, t("Every {pity} pulls · {n} to the next", { pity, n: pity - calc.pulls % pity }))
+    + calcStat(t("Expected"), tn(Math.round(average), "{n} pull"), t("About {n} BC", { n: amount(Math.round(averageCost / 10) * 10) }))
+    + calcStat(t("Nearly Guaranteed"), tn(noPity, "{n} pull"), t("{n}% chance without pity", { n: NEARLY_SURE * 100 }))
     + `</div>`;
   $("#calcOdds .calc-meter span").style.width = `${progress * 100}%`;
 }
@@ -2314,110 +2331,113 @@ function syncRail() {
 }
 // Phones keep the explanations closed, and only one patch open, so the page stays short
 const calcPhone = matchMedia("(max-width:760px)");
-const calcMore = (title, content) => `<details class="calc-more"${calcPhone.matches ? "" : " open"}><summary>${title}</summary>${content}</details>`;
-const calcNotes = notes => `<dl class="calc-info">${notes.map(([title, text]) => `<div><dt>${title}</dt><dd>${text}</dd></div>`).join("")}</dl>`;
+const calcMore = (title, content) => `<details class="calc-more"${calcPhone.matches ? "" : " open"}><summary>${t(title)}</summary>${content}</details>`;
+const calcNotes = notes => `<dl class="calc-info">${notes.map(([title, text]) => `<div><dt>${t(title)}</dt><dd>${text}</dd></div>`).join("")}</dl>`;
 function ownedBox(now) {
   if (!now) return "";
   const today = calcToday(), day = dayNumber(today);
   const round = ({ key, name }) => `<label class="calc-check"><input type="checkbox" data-round="${key}"${calc.owned.done?.[key] === roundDay(key, day) ? " checked" : ""}><span>${esc(name)}</span></label>`;
   const modes = ROUND_MODES.filter(mode => roundPay(now, mode, patchTime(now, today)));
-  return `<p class="calc-label">Already bought</p><p class="calc-hint">Only what these still pay from today on is added, in ${esc(now.patch)}. Set the Tactical Assessment level, the passes and the day each was bought in the patch card.</p>
+  return `<p class="calc-label">${t("Already bought")}</p><p class="calc-hint">${t("Only what these still pay from today on is added, in {patch}. Set the Tactical Assessment level, the passes and the day each was bought in the patch card.", { patch: esc(now.patch) })}</p>
     <div class="calc-owned">
-    ${modes.length ? `<small class="calc-own-head">Already done this round</small><div class="calc-own-checks">${modes.map(round).join("")}</div>` : ""}</div>`;
+    ${modes.length ? `<small class="calc-own-head">${t("Already done this round")}</small><div class="calc-own-checks">${modes.map(round).join("")}</div>` : ""}</div>`;
 }
 // The menu behind the "Events List" button: the timed events of each patch, to tick the ones already done
 function eventsMenu(patches) {
-  const gainChips = gains => CURRENCIES.filter(c => gains[c.key]).map(c => `<span class="calc-ev-gain" title="${c.name}">${calcIcon(c.art)}${amount(gains[c.key])}</span>`).join("");
-  const toggle = (event, set, label, tip) => `<button type="button" data-event="${esc(event.id)}" data-ev-set="${set}" title="${tip}" aria-pressed="${calc.doneEvents[event.id] === (set === "skip" ? "skip" : true)}">${label}</button>`;
-  const row = event => `<div class="calc-ev"><span>${esc(event.name)}<small>Ends ${esc(event.end)}</small></span><span class="calc-ev-gains">${gainChips(event.gains)}</span><span class="calc-ev-state" role="group" aria-label="${esc(event.name)}">${toggle(event, "done", "Done", "Already did it")}${toggle(event, "skip", "Skip", "Won't do it")}</span></div>`;
+  const gainChips = gains => CURRENCIES.filter(c => gains[c.key]).map(c => `<span class="calc-ev-gain" title="${t(c.name)}">${calcIcon(c.art)}${amount(gains[c.key])}</span>`).join("");
+  // An event that already ended is out of the count by itself, so Done and Skip are locked on it
+  const today = calcToday(), ended = event => event.end < today;
+  const toggle = (event, set, label, tip) => ended(event)
+    ? `<button type="button" data-ev-set="${set}" disabled aria-pressed="false" title="${t("This event has ended: its rewards are already out of the count")}">${label}</button>`
+    : `<button type="button" data-event="${esc(event.id)}" data-ev-set="${set}" title="${tip}" aria-pressed="${calc.doneEvents[event.id] === (set === "skip" ? "skip" : true)}">${label}</button>`;
+  const row = event => `<div class="calc-ev${ended(event) ? " ended" : ""}"><span>${esc(event.name)}<small>${t(ended(event) ? "Ended {date}" : "Ends {date}", { date: esc(event.end) })}</small></span><span class="calc-ev-gains">${gainChips(event.gains)}</span><span class="calc-ev-state" role="group" aria-label="${esc(event.name)}">${toggle(event, "done", t("Done"), t("Already did it"))}${toggle(event, "skip", t("Skip"), t("Won't do it"))}</span></div>`;
   const group = (title, events) => events.length ? `<p class="calc-ev-group">${title}</p>${events.map(row).join("")}` : "";
   const sections = patches.filter(p => !p.collab && !p.forecast).map(p => ({ patch: p, events: patchEvents(p) })).filter(s => s.events.length);
-  return `<dialog class="calc-events" id="calcEvents" aria-label="Events List">
-    <div class="calc-ev-head"><h2>Events List</h2><button class="tool" type="button" data-events-close aria-label="Close">✕</button></div>
-    <p class="calc-hint">Mark each timed event as Done or Skip (you won't do it). Either way its rewards are taken out of that patch, so they aren't counted twice. The list follows the spreadsheet, so new, changed and removed events show up after each update.</p>
+  return `<dialog class="calc-events" id="calcEvents" aria-label="${t("Events List")}">
+    <div class="calc-ev-head"><h2>${t("Events List")}</h2><button class="tool" type="button" data-events-close aria-label="${t("Close")}">✕</button></div>
+    <p class="calc-hint">${t("Mark each timed event as Done or Skip (you won't do it). Either way its rewards are taken out of that patch, so they aren't counted twice. The list follows the spreadsheet, so new, changed and removed events show up after each update.")}</p>
     ${sections.map(({ patch, events }) => `<section class="calc-ev-patch" data-ev-patch="${esc(calcId(patch))}">
       <h3>${esc(calcId(patch))}<small data-ev-count></small></h3>
-      ${group("Recurring", events.filter(e => e.recurring))}${group("Limited", events.filter(e => !e.recurring))}
-    </section>`).join("") || `<p class="calc-hint">No events in the coming patches yet.</p>`}
+      ${group(t("Recurring"), events.filter(e => e.recurring))}${group(t("Limited"), events.filter(e => !e.recurring))}
+    </section>`).join("") || `<p class="calc-hint">${t("No events in the coming patches yet.")}</p>`}
   </dialog>`;
 }
 // "X done · Y skipped" for each patch in the menu, and the total on the button
 function syncEvents() {
   let total = 0;
   document.querySelectorAll("#calcEvents [data-ev-patch]").forEach(section => {
-    const rows = [...section.querySelectorAll(".calc-ev")], mark = row => calc.doneEvents[row.querySelector("[data-event]").dataset.event];
+    const rows = [...section.querySelectorAll(".calc-ev:not(.ended)")], mark = row => calc.doneEvents[row.querySelector("[data-event]").dataset.event];
     const done = rows.filter(row => mark(row) === true).length, skipped = rows.filter(row => mark(row) === "skip").length;
     total += done + skipped;
-    section.querySelectorAll("[data-ev-set]").forEach(button => button.setAttribute("aria-pressed", calc.doneEvents[button.dataset.event] === (button.dataset.evSet === "skip" ? "skip" : true)));
-    section.querySelector("[data-ev-count]").textContent = ` · ${done} of ${rows.length} done${skipped ? `, ${skipped} skipped` : ""}`;
+    section.querySelectorAll("[data-ev-set][data-event]").forEach(button => button.setAttribute("aria-pressed", calc.doneEvents[button.dataset.event] === (button.dataset.evSet === "skip" ? "skip" : true)));
+    section.querySelector("[data-ev-count]").textContent = ` · ${t("{n} of {total} done", { n: done, total: rows.length })}${skipped ? t(", {n} skipped", { n: skipped }) : ""}`;
   });
   const count = $("#calcEventsCount");
   if (count) count.textContent = total ? ` (${total})` : "";
 }
 function calculatorPage() {
-  const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(name)}<small>${esc(note)}</small></span></label>`;
-  const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${name}</button>`;
-  const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${what}</span></div>`;
-  const sideNav = (to, label) => `<button class="calc-side-nav" type="button" data-belt="${to}" aria-label="${label}"${picked === calcId(to === "prev" ? patches[0] : patches.at(-1)) ? " disabled" : ""}><span aria-hidden="true">${to === "prev" ? "‹" : "›"}</span><small>${label}</small></button>`;
+  const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(t(name))}<small>${esc(t(note))}</small></span></label>`;
+  const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${t(name)}</button>`;
+  const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${t(what)}</span></div>`;
+  const sideNav = (to, label) => `<button class="calc-side-nav" type="button" data-belt="${to}" aria-label="${t(label)}"${picked === calcId(to === "prev" ? patches[0] : patches.at(-1)) ? " disabled" : ""}><span aria-hidden="true">${to === "prev" ? "‹" : "›"}</span><small>${t(label)}</small></button>`;
   const today = calcToday(), patches = calcPlan(), picked = calc.pick = pickedId(patches);
   return `<div id="calc">
     <div class="calc-title">
-      <div><h1>Planner</h1><p class="sub">Plan your Black Cards across patches. Same math as my <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a>, made with Sidewayz.</p></div>
+      <div><h1>${t("Planner")}</h1><p class="sub">${t("Plan your Black Cards across patches. Same math as my {link}, made with Sidewayz.", { link: `<a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">${t("Tickets Income spreadsheet")}</a>` })}</p></div>
       <div class="calc-top">
         <div class="calc-tabs">${tab("plan", "Planner")}${tab("pull", "Pull chance")}</div>
       </div>
       <div class="calc-bar"${calc.tab === "plan" ? "" : " hidden"}>
         <span class="calc-bar-item">${calcIcon(RC_ART)}<span><output id="calcBarRc"></output><small id="calcBarPrice"></small></span></span>
-        <span class="calc-bar-item">${calcIcon(CURRENCIES[0].art)}<span><output id="calcBarBc"></output><small>BC left after the last patch</small></span></span>
+        <span class="calc-bar-item">${calcIcon(CURRENCIES[0].art)}<span><output id="calcBarBc"></output><small>${t("BC left after the last patch")}</small></span></span>
       </div>
     </div>
     <div data-calc-panel="plan"${calc.tab === "plan" ? "" : " hidden"}>
       <div class="calc-board">
         <section class="calc-card calc-balance">
-          <div class="calc-head"><div><h3>Starting balance</h3><p>What you have right now</p></div></div>
-          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, c.name))}</div>
+          <div class="calc-head"><div><h3>${t("Starting balance")}</h3><p>${t("What you have right now")}</p></div></div>
+          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, t(c.name)))}</div>
           ${ownedBox(runningPatch(patches, today))}
           <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
-          <button class="tool calc-events-open" type="button" data-events-open>Events List<span id="calcEventsCount"></span></button>
-          <button class="tool calc-clear" type="button" data-calc-clear>Clear all</button>
+          <button class="tool calc-events-open" type="button" data-events-open>${t("Events List")}<span id="calcEventsCount"></span></button>
+          <button class="tool calc-clear" type="button" data-calc-clear>${t("Clear all")}</button>
         </section>
         <div class="calc-center">
           ${sideNav("prev", "Previous patch")}
           <section class="calc-card calc-stage">
             <div class="calc-rail">
-              <p class="calc-label" title="Each stop shows the BC left after that patch. Pick one to plan it.">Patches</p>
-              <button class="calc-rail-step" type="button" data-rail="-1" aria-label="Scroll the patches back">‹</button>
-              <div class="calc-rail-track"><span class="calc-rail-thumb"></span></div>
-              <button class="calc-rail-step" type="button" data-rail="1" aria-label="Scroll the patches forward">›</button>
+              <button class="calc-rail-step" type="button" data-rail="-1" aria-label="${t("Scroll the patches back")}">‹</button>
+              <div class="calc-rail-track" title="${t("Each stop shows the BC left after that patch. Pick one to plan it.")}"><span class="calc-rail-thumb"></span></div>
+              <button class="calc-rail-step" type="button" data-rail="1" aria-label="${t("Scroll the patches forward")}">›</button>
             </div>
-            <div class="calc-belt"><div class="calc-track" role="tablist" aria-label="Patches">${patches.map(p => patchStop(p, today, calcId(p) === picked)).join("")}</div></div>
+            <div class="calc-belt"><div class="calc-track" role="tablist" aria-label="${t("Patches")}">${patches.map(p => patchStop(p, today, calcId(p) === picked)).join("")}</div></div>
             ${patches.map(p => patchCard(p, today, calcId(p) === picked)).join("")}
           </section>
           ${sideNav("next", "Next patch")}
         </div>
         <section class="calc-card calc-final">
-          <div class="calc-final-head"><h3>Final balance</h3><button class="tool" type="button" data-calc-export>Export image</button></div>
+          <div class="calc-final-head"><h3>${t("Final balance")}</h3><button class="tool" type="button" data-calc-export>${t("Export image")}</button></div>
           <div class="calc-final-list">${patches.map(p => finalRow(p, calcId(p) === picked)).join("")}</div>
         </section>
       </div>
       <div class="calc-notes">
         ${calcMore("How it's calculated", `<section class="calc-card">${calcNotes([
-          ["Worst-case costs", "A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500). Its rank, S or A, comes from the spreadsheet, or from the forecast for later patches."],
-          ["Current patch", "Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC."],
-          ["Daily passes", `Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`],
-          ["Tactical Assessment", `Basic Intel is free and counts in every patch. Encrypted and Top-Secret Pass pay their rewards over levels 1 to ${INTEL_TOP}. Type the level you have reached in each patch's card: Basic Intel and a pass bought in that patch pay only the levels above it, so use 0 for a patch you start from scratch.`],
-          ["Already bought", "A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. In the patch running now, Basic Intel and a Tactical Assessment pass marked as already bought pay only the levels above yours, and that pass can't be planned again. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done."],
-          ["Patch income", "Only the highest difficulty of each mode counts."],
-          ["RC prices", `From <a href="${RC_STORE}" target="_blank" rel="noopener noreferrer">Eneba</a> on ${RC_PRICES_DATE}: the cheapest mix of its packs, before checkout fees. They change often, so treat them as an estimate.`]
+          ["Worst-case costs", t("A frame counts as 60/60 pulls (15,000) and a weapon as 30/30 (7,500). Its rank, S or A, comes from the spreadsheet, or from the forecast for later patches.")],
+          ["Current patch", t("Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC.")],
+          ["Daily passes", t(`Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`)],
+          ["Tactical Assessment", t(`Basic Intel is free and counts in every patch. Encrypted and Top-Secret Pass pay their rewards over levels 1 to {top}. Type the level you have reached in each patch's card: Basic Intel and a pass bought in that patch pay only the levels above it, so use 0 for a patch you start from scratch.`, { top: INTEL_TOP })],
+          ["Already bought", t("A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. In the patch running now, Basic Intel and a Tactical Assessment pass marked as already bought pay only the levels above yours, and that pass can't be planned again. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done.")],
+          ["Patch income", t("Only the highest difficulty of each mode counts.")],
+          ["RC prices", t("From Codashop ({us} · {br}) on {date}: the cheapest mix of its packs, at the lowest price each pack is listed for. They change often, so treat them as an estimate.", { us: `<a href="${RC_STORE.USD}" target="_blank" rel="noopener noreferrer">US</a>`, br: `<a href="${RC_STORE.BRL}" target="_blank" rel="noopener noreferrer">${t("Brazil")}</a>`, date: RC_PRICES_DATE })]
         ])}</section>`)}
         ${calcMore("Predicted patches", `<section class="calc-card">
-          <p class="calc-text">The calculator always looks 9 patches past the last one in the spreadsheet. Each of them repeats the same period of the year before, with no collabs and no one-off compensation. Expect this much variation per patch:</p>
+          <p class="calc-text">${t("The calculator always looks 9 patches past the last one in the spreadsheet. Each of them repeats the same period of the year before, with no collabs and no one-off compensation. Expect this much variation per patch:")}</p>
           <div class="calc-margins">
             ${margin("low", "±5%", "Black Cards (±510) and C.U.B. Tickets")}
             ${margin("mid", "±20-30%", "Vouchers, Construct Tickets and Shards")}
             ${margin("high", "±50%+", "Limited and Weapon Tickets, which depend on each year's events")}
           </div>
-          <p class="calc-text">Over a full year, Black Cards stay within about ±3.5% (±3,200). Based on how far 8 real patches landed from the same period a year before.</p>
+          <p class="calc-text">${t("Over a full year, Black Cards stay within about ±3.5% (±3,200). Based on how far 8 real patches landed from the same period a year before.")}</p>
         </section>`)}
       </div>
     </div>
@@ -2425,18 +2445,18 @@ function calculatorPage() {
     <div class="calc-pull-page" data-calc-panel="pull"${calc.tab === "pull" ? "" : " hidden"}>
       <section class="calc-card">
         <div class="calc-fields calc-pull">
-          <label class="calc-field"><span>Banner</span><select data-pull-kind aria-label="Banner">${Object.keys(PULL_ODDS).map(k => `<option${k === calc.pullKind ? " selected" : ""}>${esc(k)}</option>`).join("")}</select></label>
-          <label class="calc-field"><span>Pulls</span>${numberBox("data-pulls", calc.pulls, "Pulls")}</label>
+          <label class="calc-field"><span>${t("Banner")}</span><select data-pull-kind aria-label="${t("Banner")}">${Object.keys(PULL_ODDS).map(k => `<option${k === calc.pullKind ? " selected" : ""}>${esc(k)}</option>`).join("")}</select></label>
+          <label class="calc-field"><span>${t("Pulls")}</span>${numberBox("data-pulls", calc.pulls, t("Pulls"))}</label>
         </div>
-        <div class="calc-quick" aria-label="Quick pulls"><button class="tool" type="button" data-pulls-add="10">+10</button><button class="tool" type="button" data-pulls-add="30">+30</button><button class="tool" type="button" data-pulls-add="pity">To pity</button><button class="tool" type="button" data-pulls-add="0">Clear</button></div>
+        <div class="calc-quick" aria-label="${t("Quick pulls")}"><button class="tool" type="button" data-pulls-add="10">+10</button><button class="tool" type="button" data-pulls-add="30">+30</button><button class="tool" type="button" data-pulls-add="pity">${t("To pity")}</button><button class="tool" type="button" data-pulls-add="0">${t("Clear")}</button></div>
         <div class="calc-odds" id="calcOdds"></div>
       </section>
       ${calcMore("What the numbers mean", `<section class="calc-card">${calcNotes([
-        ["Chance before pity", "The odds of getting it from luck alone. It stops growing one pull before pity, because the next pull is guaranteed."],
-        ["Pity hits", "How many times pity triggers in these pulls if luck never comes first. Getting it early restarts the count."],
-        ["Expected", "What one copy takes on average once pity is counted, at 250 BC per pull."],
-        ["Nearly Guaranteed", `How many pulls a ${NEARLY_SURE * 100}% chance would take if pity didn't exist.`],
-        ["Method", `The rate is treated as flat until pity. Expected and Nearly Guaranteed adapt <a href="${ODDS_METHOD}" target="_blank" rel="noopener noreferrer">FINNER's numbers</a> from Warframe.`]
+        ["Chance before pity", t("The odds of getting it from luck alone. It stops growing one pull before pity, because the next pull is guaranteed.")],
+        ["Pity hits", t("How many times pity triggers in these pulls if luck never comes first. Getting it early restarts the count.")],
+        ["Expected", t("What one copy takes on average once pity is counted, at 250 BC per pull.")],
+        ["Nearly Guaranteed", t("How many pulls a {n}% chance would take if pity didn't exist.", { n: NEARLY_SURE * 100 })],
+        ["Method", t("The rate is treated as flat until pity. Expected and Nearly Guaranteed adapt {link} from Warframe.", { link: `<a href="${ODDS_METHOD}" target="_blank" rel="noopener noreferrer">${t("FINNER's numbers")}</a>` })]
       ])}</section>`)}
     </div>
   </div>`;
@@ -2551,6 +2571,15 @@ $("#main").addEventListener("click", e => {
     saveCalc();
     redrawCalc();
   }
+  // Clears only the picked patch. Daily pass dates stay, since every card shares them
+  const clearPatch = e.target.closest("[data-calc-clear-patch]");
+  if (clearPatch) {
+    const id = clearPatch.closest(".calc-patch").dataset.id;
+    delete calc.plans[id];
+    if (calc.owned.patch === id) for (const { key } of INTEL_PASSES) calc.owned[key] = 0;
+    saveCalc();
+    redrawCalc();
+  }
   if (tab) {
     calc.tab = tab.dataset.calcTab;
     saveCalc();
@@ -2623,9 +2652,9 @@ document.addEventListener("click", e => {
   const box = document.createElement("div");
   box.className = "art-zoom";
   box.setAttribute("role", "dialog");
-  box.setAttribute("aria-label", "Memory art, close up");
+  box.setAttribute("aria-label", t("Memory art, close up"));
   const nav = arts.length > 1;
-  box.innerHTML = `<img alt="">${nav ? `<button type="button" class="prev" aria-label="Previous art">‹</button><button type="button" class="next" aria-label="Next art">›</button>` : ""}<button type="button" class="close" aria-label="Close">×</button>`;
+  box.innerHTML = `<img alt="">${nav ? `<button type="button" class="prev" aria-label="${t("Previous art")}">‹</button><button type="button" class="next" aria-label="${t("Next art")}">›</button>` : ""}<button type="button" class="close" aria-label="${t("Close")}">×</button>`;
   const show = step => { at = (at + step + arts.length) % arts.length; const big = box.querySelector("img"); big.src = arts[at].dataset.full; big.alt = arts[at].alt; };
   const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
   const onKey = k => {
@@ -2725,10 +2754,10 @@ function loadEditor() {
 }
 function editorPage() {
   if (editorState === "ready") return teamBuilder();
-  const head = `<h1>Team Builder</h1>`;
-  if (editorState === "failed") return `${head}<p class="empty">The Team Builder failed to load. Reload the page to try again.</p>`;
+  const head = `<h1>${t("Team Builder")}</h1>`;
+  if (editorState === "failed") return `${head}<p class="empty">${t("The Team Builder failed to load. Reload the page to try again.")}</p>`;
   loadEditor().catch(() => {}).then(() => { if (location.pathname === "/editor") route(); });
-  return `${head}<p class="empty">Loading...</p>`;
+  return `${head}<p class="empty">${t("Loading...")}</p>`;
 }
 
 /* ---------- community teams: approved teams sent from the Team Builder, read from /api/teams ---------- */
@@ -2747,7 +2776,7 @@ function addCommunity(list) {
     }
     const author = typeof item.author === "string" ? item.author.slice(0, 32) : "";
     const date = Number.isFinite(item.created) ? new Date(item.created).toISOString().slice(0, 10) : undefined;
-    COMPS[comp].variants.push({ id, name: team.name.trim() || "Untitled team", author: author || undefined, date, cards });
+    COMPS[comp].variants.push({ id, name: team.name.trim() || t("Untitled team"), author: author || undefined, date, cards });
     added++;
   }
   return added;
@@ -2770,6 +2799,7 @@ function hideOfficial(ids) {
 function loadCommunity() {
   const get = url => fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
   Promise.all([get("/api/hidden"), get("/api/teams")]).then(async ([hidden, list]) => {
+    const before = pageSignatures();
     let changed = Array.isArray(hidden) && hideOfficial(hidden.filter(id => typeof id === "string")) > 0;
     if (Array.isArray(list) && list.length) {
       try { await loadEditor(); if (addCommunity(list)) changed = true; } catch { /* the editor did not load: official builds only */ }
@@ -2777,10 +2807,30 @@ function loadCommunity() {
     if (!changed) return;
     characterList = null;
     searchItems = null;
-    // Only pages that list builds are drawn again: the others have nothing new to show
-    const kind = location.pathname.split("/")[1];
-    if (!kind || TEAM_LISTS[kind] || kind === "constructs") route();
+    redrawCommunity(before);
   });
+}
+// What each page lists, to tell which pages the community teams changed
+const pageSignatures = () => Object.fromEntries(Object.entries(PAGES).map(([path, ids]) =>
+  [path, JSON.stringify(ids.map(id => [id, (COMPS[id]?.variants || []).map(v => v.id)]))]));
+// Draws again only what the community teams changed on the page on screen. Drawing the whole page again
+// looks like a second load: images reappear, and the home page restarts its animation with a new phrase
+function redrawCommunity(before) {
+  const [kind, key, part] = location.pathname.split("/").filter(Boolean);
+  if (!kind) {
+    const grid = $(".home-grid"), next = document.createElement("template");
+    next.innerHTML = homeGrid();
+    if (grid) morph(grid, next.content.firstElementChild);
+    return;
+  }
+  if (kind === "constructs") return route(true);
+  if (!TEAM_LISTS[kind] || !key) return;
+  const path = `${kind}/${key}`;
+  if (before[path] === pageSignatures()[path]) return;
+  // A build open on its own page stays as it is while it still exists
+  const pick = part || new URLSearchParams(location.search).get("team");
+  if (pick && shown && COMPS[shown] && (!COMPS[shown].variants || COMPS[shown].variants.some(v => v.id === chosen))) return;
+  route(true);
 }
 
 /* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */
@@ -2796,7 +2846,7 @@ const TL_VIEWS = {
 // The characters a tab counts: its rank, and collabs only when the option is on
 const tlFrames = view => TIMELINE.filter(c => c.rank === view.rank && (timelineCollabs || !c.collab));
 const TL_ZOOMS = [1, 2, 4, 8, 16];
-const TL_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const TL_MONTHS = LANG === "pt" ? ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"] : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 // Effects with no color of their own on the home page
 const tlColor = group => TILE_COLOR[group] || { Disruption: TILE_COLOR.Nihil, Raydiance: "#e6bd52" }[group];
 const TL_SKIP = "Lee: Entropy", TL_SKIP_NOTE = "19 days between Lee: Entropy and Lucia: Crimson Abyss";
@@ -2817,7 +2867,7 @@ const TL_CN_HISTORY = "https://wiki.biligame.com/zspms/%E6%88%98%E5%8F%8C%E5%A4%
 const TL_SYNC = "2025-11-13";
 let timelineView = "element", timelineGroup = "", timelineRole = "", timelineRank = "longest", timelineNow = false, timelineCollabs = false, timelineZoom = 1;
 const TL_ROW = 46, TL_RANKED = 6;
-const monthYear = iso => new Date(`${iso}T00:00`).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+const monthYear = iso => new Date(`${iso}T00:00`).toLocaleDateString(loc("en-GB"), { month: "short", year: "numeric" });
 const roleArt = role => CLASS_ART[role] || classIcon(role);
 // A reign lasts until the next frame of the same class line. With no newer one, it is still running
 function timelineLanes(view, group) {
@@ -2828,16 +2878,16 @@ function timelineLanes(view, group) {
     return { ...c, start, end, days: end - start, next };
   }) })).filter(lane => lane.reigns.length);
 }
-const reignInfo = r => `Released in ${r.patch} · ${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"} · ${amount(r.days)} days${r.next ? ` · replaced by ${r.next.name}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : " · still in place"}${r.collab ? " · collab" : ""}${TL_FREE[r.name] ? ` · free from ${TL_FREE[r.name]}` : ""}`;
+const reignInfo = r => `${t("Released in {patch}", r)} · ${t("{from} to {to}", { from: monthYear(r.date), to: r.next ? monthYear(r.next.date) : t("today") })} · ${t("{n} days", { n: amount(r.days) })}${r.next ? ` · ${t("replaced by {name}", r.next)}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : ` · ${t("still in place")}`}${r.collab ? " · collab" : ""}${TL_FREE[r.name] ? ` · ${t("free from {where}", { where: t(TL_FREE[r.name]) })}` : ""}`;
 // Expected replacement of whoever holds a class now, by "group|class", filled by timelineBody (see the forecast there)
 let tlForecast = new Map();
 function forecastNote(group, role) {
   const r = tlForecast.get(group + "|" + role);
   if (!r) return "";
   const today = dayNumber(calcToday()), left = r.expected - today;
-  const text = left > 0 ? "Next ≈ " + monthYear(new Date(r.expected * 864e5).toISOString().slice(0, 10)) : "Replacement overdue";
-  const tip = left > 0 ? "in about " + amount(left) + " days" : amount(-left) + " days past the class average";
-  return `<small class="tl-next${left > 0 ? "" : " late"}" title="Estimate: ${esc(r.name)} released + average ${esc(role)} line life (${amount(Math.round(r.average))} days), ${tip}">${text}</small>`;
+  const text = left > 0 ? t("Next ≈ {date}", { date: monthYear(new Date(r.expected * 864e5).toISOString().slice(0, 10)) }) : t("Replacement overdue");
+  const tip = left > 0 ? t("in about {n} days", { n: amount(left) }) : t("{n} days past the class average", { n: amount(-left) });
+  return `<small class="tl-next${left > 0 ? "" : " late"}" title="${esc(t("Estimate: {name} released + average {role} line life ({n} days), {tip}", { name: r.name, role, n: amount(Math.round(r.average)), tip }))}">${text}</small>`;
 }
 const reignHref = name => CONSTRUCTS[name] ? ` href="${characterHref(name)}"` : "";
 // What the page shows after the filters. The numbers at the top always use every character
@@ -2850,8 +2900,8 @@ function timelineShown(view) {
 // The day each class first appeared, and the day the Global server caught up with this one
 function timelineMarks(view) {
   const frames = tlFrames(view);
-  const debuts = TL_ROLES.filter(role => frames.some(c => c.role === role)).map(role => ({ date: frames.find(c => c.role === role).date, text: `${role} debut` })).filter(mark => mark.date > frames[0].date);
-  return [...debuts, { date: TL_SYNC, text: "Global/CN sync" }].sort((x, y) => x.date.localeCompare(y.date));
+  const debuts = TL_ROLES.filter(role => frames.some(c => c.role === role)).map(role => ({ date: frames.find(c => c.role === role).date, text: t("{role} debut", { role }) })).filter(mark => mark.date > frames[0].date);
+  return [...debuts, { date: TL_SYNC, text: t("Global/CN sync") }].sort((x, y) => x.date.localeCompare(y.date));
 }
 function timelineChart(view) {
   const start = tlFrames(view)[0].date, first = dayNumber(start), last = dayNumber(calcToday()), marks = timelineMarks(view);
@@ -2864,7 +2914,7 @@ function timelineChart(view) {
   }).filter(m => m.day > first && m.day < last && m.month);
   const lines = months.map(m => `<i class="mo" style="left:${at(m.day)}%"></i>`).join("") + years.map(year => `<i style="left:${at(dayNumber(`${year}-01-01`))}%"></i>`).join("") + marks.map(mark => `<i class="mark" style="left:${at(dayNumber(mark.date))}%"></i>`).join("");
   // A short reign is stretched to 40px and the next one would cover most of it: short ones go on top, so both stay easy to click
-  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}${at(first + r.end - r.start) < 5 ? " short" : ""}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
+  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}${at(first + r.end - r.start) < 5 ? " short" : ""}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">${t("Free")}</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
   // A line from a character down to whoever replaced them from the next class of the line
   const link = (r, row, lanes) => {
     const rows = lanes.findIndex(lane => lane.role === r.next?.role) - row;
@@ -2878,7 +2928,7 @@ function timelineChart(view) {
   </div></div>`;
 }
 function timelineList(view) {
-  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">Free</em>` : ""}</b><small>${esc(r.patch)}</small><small>${monthYear(r.date)} to ${r.next ? monthYear(r.next.date) : "today"}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${amount(r.days)} days</em></a>`;
+  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">${t("Free")}</em>` : ""}</b><small>${esc(r.patch)}</small><small>${t("{from} to {to}", { from: monthYear(r.date), to: r.next ? monthYear(r.next.date) : t("today") })}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${t("{n} days", { n: amount(r.days) })}</em></a>`;
   return `<div class="tl-list"><p class="tl-chips">${timelineMarks(view).map(mark => `<span>${monthYear(mark.date)} · ${esc(mark.text)}</span>`).join("")}</p>
     ${timelineShown(view).map(({ group, lanes }, i) => `<details class="tl-fold" style="--c:${tlColor(group)}"${i ? "" : " open"}><summary>${menuIcon(view.dir, group)}${esc(group)}</summary>
       ${lanes.map(({ role, reigns }) => `<p class="tl-lane">${pic(roleArt(role))}${esc(role)}${forecastNote(group, role)}</p>${[...reigns].reverse().map(item).join("")}`).join("")}</details>`).join("")}</div>`;
@@ -2889,7 +2939,7 @@ function timelineBody() {
   // Only replaced characters have a final number, and the launch-window gap between Lee and Alpha says nothing about the meta
   const done = reigns.filter(r => r.next && r.name !== TL_SKIP);
   const mean = list => list.reduce((total, r) => total + r.days, 0) / list.length;
-  const days = n => `${amount(Math.round(n))} days`;
+  const days = n => t("{n} days", { n: amount(Math.round(n)) });
   const byLength = [...done].sort((x, y) => y.days - x.days);
   const groups = view.groups().map(group => [group, done.filter(r => r.group === group)]).filter(([, list]) => list.length)
     .map(([group, list]) => ({ group, days: mean(list) })).sort((x, y) => y.days - x.days);
@@ -2913,46 +2963,53 @@ function timelineBody() {
   const forecast = (view.rank === "S" ? watch : []).map(r => ({ ...r, expected: r.start + Math.round(r.average) })).sort((x, y) => x.expected - y.expected);
   tlForecast = new Map(forecast.map(r => [r.group + "|" + r.role, r]));
   const nextOf = role => forecast.filter(r => r.role === role)[0];
-  const when = r => r.expected > today ? `about ${monthYear(dayDate(r.expected))}, in ${amount(r.expected - today)} days` : `overdue by ${amount(today - r.expected)} days`;
+  const when = r => r.expected > today ? t("about {date}, in {n} days", { date: monthYear(dayDate(r.expected)), n: amount(r.expected - today) }) : t("overdue by {n} days", { n: amount(today - r.expected) });
   // One ranking panel with a switch, so the page is not four boxes tall on a phone
   const people = list => list.map(r => [pic(r.head), r.name, days(r.days)]);
   const RANKINGS = {
-    longest: ["Longest", "Lasted the longest", () => people(byLength)],
-    shortest: ["Shortest", "Lasted the shortest", () => people([...byLength].reverse())],
-    place: ["In place", "Longest in place, not replaced yet", () => people(inPlace)],
-    group: [`By ${view.field}`, `Longest-lasting ${view.plural}, on average`, () => groups.map(g => [menuIcon(view.dir, g.group), g.group, days(g.days)])]
+    longest: [t("Longest"), t("Lasted the longest"), () => people(byLength)],
+    shortest: [t("Shortest"), t("Lasted the shortest"), () => people([...byLength].reverse())],
+    place: [t("In place"), t("Longest in place, not replaced yet"), () => people(inPlace)],
+    group: [t(`By ${view.field}`), t(`Longest-lasting ${view.plural}, on average`), () => groups.map(g => [menuIcon(view.dir, g.group), g.group, days(g.days)])]
   };
   const [, rankTitle, rankRows] = RANKINGS[timelineRank] || RANKINGS.longest;
-  const ranking = `<div class="tl-rank"><div class="tl-seg" role="group" aria-label="Ranking">${Object.entries(RANKINGS).map(([key, [label]]) => `<button class="tool${timelineRank === key ? " on" : ""}" type="button" data-tl-rank="${key}" aria-pressed="${timelineRank === key}">${esc(label)}</button>`).join("")}</div>
+  const ranking = `<div class="tl-rank"><div class="tl-seg" role="group" aria-label="${t("Ranking")}">${Object.entries(RANKINGS).map(([key, [label]]) => `<button class="tool${timelineRank === key ? " on" : ""}" type="button" data-tl-rank="${key}" aria-pressed="${timelineRank === key}">${esc(label)}</button>`).join("")}</div>
     <h3>${esc(rankTitle)}</h3><ol>${rankRows().slice(0, TL_RANKED).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol></div>`;
   // The next replacements the estimate expects, narrowed by the same filters as the chart
   const soon = forecast.filter(r => (!timelineGroup || r.group === timelineGroup) && (!timelineRole || r.role === timelineRole)).slice(0, 4);
   const soonCard = r => {
     const left = r.expected - today;
-    return `<div class="tl-soon${left > 0 ? "" : " late"}" title="${esc(r.name)}: ${when(r)}">${pic(r.head, `alt="${esc(r.name)}"`)}<span><b>${esc(r.name)}</b><small>${pic(roleArt(r.role), `alt="${esc(r.role)}" title="${esc(r.role)}"`)}${menuIcon(view.dir, r.group)}</small></span><em>${left > 0 ? "≈ " + monthYear(dayDate(r.expected)) : "Overdue"}<small>${left > 0 ? `${amount(left)} days` : `${amount(-left)} days past`}</small></em></div>`;
+    return `<div class="tl-soon${left > 0 ? "" : " late"}" title="${esc(r.name)}: ${when(r)}">${pic(r.head, `alt="${esc(r.name)}"`)}<span><b>${esc(r.name)}</b><small>${pic(roleArt(r.role), `alt="${esc(r.role)}" title="${esc(r.role)}"`)}${menuIcon(view.dir, r.group)}</small></span><em>${left > 0 ? "≈ " + monthYear(dayDate(r.expected)) : t("Overdue")}<small>${left > 0 ? t("{n} days", { n: amount(left) }) : t("{n} days past", { n: amount(-left) })}</small></em></div>`;
   };
   // Always four slots, so the boxes below do not move when a filter leaves fewer cards
-  const slots = Array.from({ length: 4 }, (_, i) => soon[i] ? soonCard(soon[i]) : `<div class="tl-soon empty">${i || soon.length ? "" : "No replacement expected for this filter"}</div>`);
-  const forecastPanel = view.rank === "S" ? `<div class="tl-soonbox"><h3>Next replacements, estimated</h3><div class="tl-soonlist">${slots.join("")}</div></div>` : "";
+  const slots = Array.from({ length: 4 }, (_, i) => soon[i] ? soonCard(soon[i]) : `<div class="tl-soon empty">${i || soon.length ? "" : t("No replacement expected for this filter")}</div>`);
+  const forecastPanel = view.rank === "S" ? `<div class="tl-soonbox"><h3>${t("Next replacements, estimated")}</h3><div class="tl-soonlist">${slots.join("")}</div></div>` : "";
   // Filters are icons, with the name on hover. Clicking the one that is on turns it off
   const iconButton = (attr, on, art, label) => `<button class="tool ico${on ? " on" : ""}" type="button" ${attr} title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${on}">${art}</button>`;
-  const groupFilters = `<button class="tool${timelineGroup ? "" : " on"}" type="button" data-tl-group="" aria-pressed="${!timelineGroup}">All</button>${view.groups().filter(group => reigns.some(r => r.group === group)).map(group => iconButton(`data-tl-group="${esc(group)}"`, timelineGroup === group, menuIcon(view.dir, group), group)).join("")}`;
+  const groupFilters = `<button class="tool${timelineGroup ? "" : " on"}" type="button" data-tl-group="" aria-pressed="${!timelineGroup}">${t("All")}</button>${view.groups().filter(group => reigns.some(r => r.group === group)).map(group => iconButton(`data-tl-group="${esc(group)}"`, timelineGroup === group, menuIcon(view.dir, group), group)).join("")}`;
   const roleFilters = TL_ROLES.filter(role => reigns.some(r => r.role === role)).map(role => iconButton(`data-tl-role="${esc(role)}"`, timelineRole === role, pic(roleArt(role), 'alt=""'), role)).join("");
   return `<div class="tl-summary">
     <div class="tl-records">${forecastPanel}${ranking}</div>
-    <details class="tl-averages"${calcPhone.matches ? "" : " open"}><summary>Average time until replaced, by class</summary>
-      ${averages.map(row => `<div class="tl-average${timelineRole && row.name !== timelineRole ? " dim" : ""}"${nextOf(row.name) ? ` title="Next: ${when(nextOf(row.name))}"` : ""}>${pic(roleArt(row.name))}<span>${esc(row.name)}<small>Since ${monthYear(row.first)} · ${row.replaced} replaced${nextOf(row.name) ? ` · next ${nextOf(row.name).expected > today ? "≈ " + monthYear(dayDate(nextOf(row.name).expected)) : "overdue"}` : ""}</small></span><b>${row.days ? days(row.days) : "None yet"}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
+    <details class="tl-averages"${calcPhone.matches ? "" : " open"}><summary>${t("Average time until replaced, by class")}</summary>
+      ${averages.map(row => `<div class="tl-average${timelineRole && row.name !== timelineRole ? " dim" : ""}"${nextOf(row.name) ? ` title="${esc(t("Next: {when}", { when: when(nextOf(row.name)) }))}"` : ""}>${pic(roleArt(row.name))}<span>${esc(row.name)}<small>${t("Since {date} · {n} replaced", { date: monthYear(row.first), n: row.replaced })}${nextOf(row.name) ? ` · ${t("next")} ${nextOf(row.name).expected > today ? "≈ " + monthYear(dayDate(nextOf(row.name).expected)) : t("overdue")}` : ""}</small></span><b>${row.days ? days(row.days) : t("None yet")}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
     </details>
   </div>
-  ${calcMore("How replacement works", `<p class="tl-rule">A character counts as replaced when a new ${view.rank}-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too.${view.rank === "S" ? ` The numbers above leave out the ${TL_SKIP_NOTE}. The watch is a guide, not a release date.` : " The dates of A-Rank frames and collabs come from the Fandom wiki."}${view.field === "effect" ? " Frames with no Effect are left out." : ""}${timelineCollabs ? " Collabs are counted like any other frame." : ""}</p>`)}
-  <div class="tl-tools"><div class="tl-filters" role="group" aria-label="${esc(view.field)}">${groupFilters}</div><div class="tl-filters" role="group" aria-label="Class">${roleFilters}</div>
-    <div class="tl-filters tl-opts"><button class="tool tog collab${timelineCollabs ? " on" : ""}" type="button" data-tl-collab aria-pressed="${timelineCollabs}" title="Count collab frames too">Collabs</button><button class="tool tog place${timelineNow ? " on" : ""}" type="button" data-tl-now aria-pressed="${timelineNow}" title="Only characters not replaced yet">In place</button></div>
-    <span class="tl-zoom"><button class="tool" type="button" data-tl-zoom="-1" aria-label="Zoom out"${timelineZoom === TL_ZOOMS[0] ? " disabled" : ""}>−</button><b>${timelineZoom}×</b><button class="tool" type="button" data-tl-zoom="1" aria-label="Zoom in"${timelineZoom === TL_ZOOMS.at(-1) ? " disabled" : ""}>+</button></span></div>
+  ${calcMore("How replacement works", `<p class="tl-rule">${t(`A character counts as replaced when a new {rank}-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too.`, { rank: view.rank })}${view.rank === "S" ? ` ${t("The numbers above leave out the {gap}. The watch is a guide, not a release date.", { gap: t(TL_SKIP_NOTE) })}` : ` ${t("The dates of A-Rank frames and collabs come from the Fandom wiki.")}`}${view.field === "effect" ? ` ${t("Frames with no Effect are left out.")}` : ""}${timelineCollabs ? ` ${t("Collabs are counted like any other frame.")}` : ""}</p>${timelineNotes()}`)}
+  <div class="tl-tools"><div class="tl-filters" role="group" aria-label="${esc(t(view.field === "effect" ? "Effect" : "Element"))}">${groupFilters}</div><div class="tl-filters" role="group" aria-label="${t("Class")}">${roleFilters}</div>
+    <div class="tl-filters tl-opts"><button class="tool tog collab${timelineCollabs ? " on" : ""}" type="button" data-tl-collab aria-pressed="${timelineCollabs}" title="${t("Count collab frames too")}">Collabs</button><button class="tool tog place${timelineNow ? " on" : ""}" type="button" data-tl-now aria-pressed="${timelineNow}" title="${t("Only characters not replaced yet")}">${t("In place")}</button></div>
+    <span class="tl-zoom"><button class="tool" type="button" data-tl-zoom="-1" aria-label="${t("Zoom out")}"${timelineZoom === TL_ZOOMS[0] ? " disabled" : ""}>−</button><b>${timelineZoom}×</b><button class="tool" type="button" data-tl-zoom="1" aria-label="${t("Zoom in")}"${timelineZoom === TL_ZOOMS.at(-1) ? " disabled" : ""}>+</button></span></div>
   ${timelineChart(view)}${timelineList(view)}`;
 }
+// The sources and rules of the page, kept under "How replacement works" so the top of the page goes straight to the data
+const timelineNotes = () => `<ul class="tl-notes">${[
+  t("Dates come from the {sheet} and the {wiki}, and Global release dates are not considered.", { sheet: `<a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">${t("Tickets Income spreadsheet")}</a>`, wiki: `<a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">${t("Chinese wiki")}</a>` }),
+  t("Uniframes are not counted, and collabs only when you turn on \"Collabs\"."),
+  t("\"Free\" marks frames you can get without pulling."),
+  t("Click a filter icon again to clear it.")
+].map(line => `<li>${line}</li>`).join("")}</ul>`;
 function timelinePage() {
-  const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${TL_VIEWS[key].name}</button>`;
-  return `<h1>Meta Timeline</h1><p class="sub">How long each character held their place in the meta on the Chinese server, the first to get each frame. Dates come from the <a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">Tickets Income spreadsheet</a> and the <a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">Chinese wiki</a>, and Global release dates are not considered. Uniframes are not counted, and collabs only when you turn on "Collabs". "Free" marks frames you can get without pulling. Click a filter icon again to clear it.</p>
+  const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${t(TL_VIEWS[key].name)}</button>`;
+  return `<h1>${t("Meta Timeline")}</h1><p class="sub">${t("How long each character held their place in the meta on the Chinese server, the first to get each frame.")}</p>
   <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}${tab("elementA")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
 }
 $("#main").addEventListener("click", e => {
@@ -3037,12 +3094,14 @@ const toPlaceholders = text => text.replace(MARK, (_, close, color) => PH[(color
 const PH_ANY = new RegExp(`[${PH.join("")}]`, "g");
 const fromPlaceholders = safe => safe.replace(PH_ANY, c => [`<b class="hl">`, "</b>", `<b class="hlb">`, "</b>"][PH.indexOf(c)]);
 // Only the damage a skill deals scales. Reductions, energy, stacks and the Darkflow table stay as they are.
-// A value can sit inside a red mark, so the marks around each number are allowed
+// A value can sit inside a red mark, so the marks around each number are allowed.
+// The Portuguese texts say "causa 200%" for "deals 200%", and write decimals with a comma
 const PH_RED = `[${PH[0]}${PH[1]}]?`;
-const SCALE_DEALS = new RegExp(String.raw`(\b[Dd]eal(?:s|ing)(?: a total of| an additional| additional)? )(${PH_RED}\d+(?:\.\d+)?%${PH_RED}(?:\s*\/\s*${PH_RED}\d+(?:\.\d+)?%${PH_RED})*)`, "g");
+const SCALE_DEALS = new RegExp(String.raw`(\b(?:[Dd]eal(?:s|ing)|[Cc]ausa(?:ndo)?)(?: a total of| an additional| additional| um total de| mais)? )(${PH_RED}\d+(?:[.,]\d+)?%${PH_RED}(?:\s*\/\s*${PH_RED}\d+(?:[.,]\d+)?%${PH_RED})*)`, "g");
 function scaleLine(safe, level) {
   if (/stacks?:/i.test(safe)) return safe;
-  return safe.replace(SCALE_DEALS, (_, lead, list) => lead + list.replace(/\d+(?:\.\d+)?(?=%)/g, n => `<b class="sv">${scaledValue(+n, level)}</b>`));
+  const shown = value => LANG === "pt" ? String(value).replace(".", ",") : value;
+  return safe.replace(SCALE_DEALS, (_, lead, list) => lead + list.replace(/\d+(?:[.,]\d+)?(?=%)/g, n => `<b class="sv">${shown(scaledValue(+n.replace(",", "."), level))}</b>`));
 }
 // Texts with no marks yet (a frame Huaxu doesn't have): close to the game, values and game terms (forms, modes, orbs, stacks) in red.
 // The game leaves how often something happens ("every 0.5s", "once every 0.1s") without color
@@ -3109,16 +3168,16 @@ const skillKey = (ch, type) => `${ch.name}|${type}`;
 const skillLevelOf = (ch, type) => skillLevels.get(skillKey(ch, type)) ?? SKILL_BASE;
 function skillCard(ch, [type, name, effect]) {
   const scales = SKILL_SCALES.has(type), level = skillLevelOf(ch, type);
-  const slider = scales ? `<label class="cx-level">Lv <b>${level}</b><input type="range" min="1" max="${SKILL_MAX}" value="${level}" data-sk-level="${esc(type)}" aria-label="${esc(name)} level"></label>` : "";
-  return `<section class="cx-skill" data-sk-type="${esc(type)}"><div class="cx-sk-top">${thumb(skillIcon(ch.name, type, name))}<div><p class="kind">${esc(type)}</p><h3>${esc(name)}</h3></div>${slider}</div><div class="cx-sk-body">${skillBody(effect, scales, level)}</div></section>`;
+  const slider = scales ? `<label class="cx-level">Lv <b>${level}</b><input type="range" min="1" max="${SKILL_MAX}" value="${level}" data-sk-level="${esc(type)}" aria-label="${esc(t("{name} level", { name }))}"></label>` : "";
+  return `<section class="cx-skill" data-sk-type="${esc(type)}"><div class="cx-sk-top">${thumb(skillIcon(ch.name, type, name))}<div><p class="kind">${esc(type)}</p><h3>${esc(name)}</h3></div>${slider}</div><div class="cx-sk-body">${skillBody(t(effect), scales, level)}</div></section>`;
 }
 const skillCards = ch => (skillGroups(ch).find(([name]) => name === skillTab) || ["", []])[1].map(skill => skillCard(ch, skill)).join("");
 function skillsPanel(ch) {
   if (skillsState !== "ready") return skillList(ch);
   const groups = skillGroups(ch);
-  if (!groups.length) return `<p class="empty">No skill text for this character yet.</p>`;
+  if (!groups.length) return `<p class="empty">${t("No skill text for this character yet.")}</p>`;
   if (!groups.some(([name]) => name === skillTab)) skillTab = groups[0][0];
-  return `<div class="cx-tabs">${groups.map(([name]) => `<button class="tool${name === skillTab ? " on" : ""}" type="button" data-sk-tab="${name}">${name}</button>`).join("")}</div>
+  return `<div class="cx-tabs">${groups.map(([name]) => `<button class="tool${name === skillTab ? " on" : ""}" type="button" data-sk-tab="${name}">${t(name)}</button>`).join("")}</div>
     <div class="cx-skills" id="cxSkillBody">${skillCards(ch)}</div>`;
 }
 $("#main").addEventListener("click", e => {
@@ -3135,7 +3194,7 @@ $("#main").addEventListener("input", e => {
   skillLevels.set(skillKey(skillChar, type), level);
   $("b", e.target.parentNode).textContent = level;
   const skill = CHARACTER_SKILLS[skillChar.name].find(s => s[0] === type);
-  $(".cx-sk-body", card).innerHTML = skillBody(skill[2], true, level);
+  $(".cx-sk-body", card).innerHTML = skillBody(t(skill[2]), true, level);
 });
 // The "N builds" button of a construct page. A #link would follow <base href="/"> to the home page, so it scrolls instead
 $("#main").addEventListener("click", e => {
@@ -3144,14 +3203,14 @@ $("#main").addEventListener("click", e => {
 });
 // Up to three builds of one kind, newest first (the order of PAGES), with a link to the page that has them all
 const buildGroup = (title, builds, href) => builds.length
-  ? `<div><h3>${title}</h3><div class="builds">${builds.slice(0, 3).map(buildRow).join("")}</div><a class="cx-more" href="${esc(href)}">See more builds ›</a></div>` : "";
+  ? `<div><h3>${title}</h3><div class="builds">${builds.slice(0, 3).map(buildRow).join("")}</div><a class="cx-more" href="${esc(href)}">${t("See more builds")} ›</a></div>` : "";
 function characterPage(ch) {
   skillChar = ch;
   const [, element, type, rank, effect] = CONSTRUCTS[ch.name];
   const weaponType = weaponTypeOf(ch.name), cub = cubList().find(c => c.owner === ch.name);
-  const attr = (group, value) => value ? `<div class="cx-attr"><span class="chip-icon">${filterIcon(group, value)}</span><div><small>${group}</small><span>${esc(group === "Rank" ? `${value}-Rank` : value)}</span></div></div>` : "";
+  const attr = (group, value) => value ? `<div class="cx-attr"><span class="chip-icon">${filterIcon(group, value)}</span><div><small>${t(group)}</small><span>${esc(group === "Rank" ? t("Rank {n}", { n: value }) : value)}</span></div></div>` : "";
   const gear = [
-    weaponType && `<div class="acard wpn wtype-card"><div class="slot">${typeIcon(weaponType)}</div><div><h3>${esc(weaponType)}</h3><p>Weapon type</p></div></div>`,
+    weaponType && `<div class="acard wpn wtype-card"><div class="slot">${typeIcon(weaponType)}</div><div><h3>${esc(weaponType)}</h3><p>${t("Weapon type")}</p></div></div>`,
     cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`
   ].filter(Boolean).join("");
   const pagePath = href => href.split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
@@ -3159,17 +3218,17 @@ function characterPage(ch) {
   const elementBuilds = ofKind("energy"), effectBuilds = ofKind("effect");
   const listPage = (kind, value, builds) => PAGES[`${kind}/${slug(value || "")}`] ? `/${kind}/${slug(value)}` : `/${builds[0] ? pagePath(builds[0].href) : kind}`;
   // The builds sit below the skills: a button beside the details takes there at once
-  const jump = ch.builds.length ? `<button type="button" class="acard cx-jump" data-jump="cxBuilds"><b>${ch.builds.length} build${ch.builds.length === 1 ? "" : "s"}</b><span aria-hidden="true">↓</span></button>` : "";
+  const jump = ch.builds.length ? `<button type="button" class="acard cx-jump" data-jump="cxBuilds"><b>${tn(ch.builds.length, "{n} build")}</b><span aria-hidden="true">↓</span></button>` : "";
   const builds = elementBuilds.length || effectBuilds.length
-    ? `<h2 class="grp" id="cxBuilds">Builds</h2><div class="cx-builds">${buildGroup(`${esc(element)} builds`, elementBuilds, listPage("energy", element, elementBuilds))}${buildGroup(`${esc(effect)} builds`, effectBuilds, listPage("effect", effect, effectBuilds))}</div>`
-    : `<section class="used"><h2>Builds</h2><p>No builds available yet.</p></section>`;
+    ? `<h2 class="grp" id="cxBuilds">${t("Builds")}</h2><div class="cx-builds">${buildGroup(esc(t("{name} builds", { name: element })), elementBuilds, listPage("energy", element, elementBuilds))}${buildGroup(esc(t("{name} builds", { name: effect })), effectBuilds, listPage("effect", effect, effectBuilds))}</div>`
+    : `<section class="used"><h2>${t("Builds")}</h2><p>${t("No builds available yet.")}</p></section>`;
   // Wide screens: the portrait and the details stay on the left while the skills and builds use the rest of the width
-  return `${backLink("/constructs", "Constructs")}<h1>${esc(ch.name)}</h1>
+  return `${backLink("/constructs", t("Constructs"))}<h1>${esc(ch.name)}</h1>
     <div class="cx-page">
       <aside class="cx-side"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div>
         <div class="cx-attrs">${attr("Rank", rank)}${attr("Class", type)}${attr("Element", element)}${attr("Effect", effect)}</div>
         <div class="cx-gear">${gear}${jump}</div></aside>
-      <div class="cx-main"><h2 class="grp">Skills</h2>${skillsPanel(ch)}${builds}</div>
+      <div class="cx-main"><h2 class="grp">${t("Skills")}</h2>${skillsPanel(ch)}${builds}</div>
     </div>`;
 }
 
@@ -3276,7 +3335,7 @@ function drawCard(g, c, art, cardColor, x, y, flare) {
   drawSlot(g, wpX, boxY + pad, wpW, weaponH);
   drawArt(g, art.get(c.weapon), wpX, boxY + pad, wpW, weaponH, { fit: "contain" });
   const barH = wpW * BAR_RATIO;
-  const weaponBar = c.wh ? art.get(WH_BAR) : art.get(STAR_BARS[weaponRank(WEAPONS.find(w => w[0] === c.name)?.[1], c.weapon, c.weaponRank)]);
+  const weaponBar = c.wh ? art.get(WH_STARS_BAR) : art.get(STAR_BARS[weaponRank(WEAPONS.find(w => w[0] === c.name)?.[1], c.weapon, c.weaponRank)]);
   if (weaponBar) drawArt(g, weaponBar, wpX, boxY + pad + weaponH - barH, wpW, barH, { fit: "contain" });
   if (c.weapon && resonanceCount(c)) {
     const s = 12 / 30, ax = wpX + wpW - 18, ay = boxY + pad + 6;
@@ -3346,7 +3405,7 @@ function drawCard(g, c, art, cardColor, x, y, flare) {
 }
 async function renderBuild(cards, { id, title, theme = COMPS[id] }) {
   await Promise.all([document.fonts.load(exportFont(16)), document.fonts.load(exportFont(13, 400))]);
-  const sources = [...new Set([...cards.flatMap(cardArt), ...Object.values(STAR_BARS), WH_BAR])];
+  const sources = [...new Set([...cards.flatMap(cardArt), ...Object.values(STAR_BARS), WH_BAR, WH_STARS_BAR])];
   const art = new Map(await Promise.all(sources.map(async src => [src, await loadImage(src)])));
   const width = EXPORT_PAD * 2 + cards.length * EXPORT_W;
   const height = EXPORT_HEAD + EXPORT_H + EXPORT_FOOT + 16;
@@ -3375,14 +3434,14 @@ function exportPreview(canvas, blob, fileName, opener) {
   box.id = "exportPreview";
   box.setAttribute("role", "dialog");
   box.setAttribute("aria-modal", "true");
-  box.setAttribute("aria-label", "Image preview");
+  box.setAttribute("aria-label", t("Image preview"));
   const size = blob.size > 1048576 ? `${(blob.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(blob.size / 1024))} KB`;
-  box.innerHTML = `<div class="xp-panel"><h2>Image preview</h2><div class="xp-frame"></div>
+  box.innerHTML = `<div class="xp-panel"><h2>${t("Image preview")}</h2><div class="xp-frame"></div>
     <p class="xp-meta">${esc(fileName)} · PNG · ${canvas.width}×${canvas.height} px · ${size}</p><p class="xp-status" role="status"></p>
-    <div class="xp-actions"><button type="button" class="tool ed-primary" data-xp="save">Save as…</button>
-      <button type="button" class="tool" data-xp="copy">Copy image</button><button type="button" class="tool" data-xp="close">Close</button></div></div>`;
+    <div class="xp-actions"><button type="button" class="tool ed-primary" data-xp="save">${t("Save as…")}</button>
+      <button type="button" class="tool" data-xp="copy">${t("Copy image")}</button><button type="button" class="tool" data-xp="close">${t("Close")}</button></div></div>`;
   $(".xp-frame", box).append(canvas);
-  const status = text => { $(".xp-status", box).textContent = text; };
+  const status = text => { $(".xp-status", box).textContent = t(text); };
   const close = () => {
     box.remove();
     removeEventListener("keydown", onKey, true);
@@ -3404,7 +3463,7 @@ function exportPreview(canvas, blob, fileName, opener) {
     if (action === "save") {
       if (!window.showSaveFilePicker) return download(); // browsers without the file dialog fall back to a plain download
       try {
-        const handle = await window.showSaveFilePicker({ suggestedName: fileName, types: [{ description: "PNG image", accept: { "image/png": [".png"] } }] });
+        const handle = await window.showSaveFilePicker({ suggestedName: fileName, types: [{ description: t("PNG image"), accept: { "image/png": [".png"] } }] });
         const file = await handle.createWritable();
         await file.write(blob);
         await file.close();
@@ -3429,7 +3488,7 @@ function exportPreview(canvas, blob, fileName, opener) {
 async function exportBuild(button, cards) {
   const label = button.textContent, team = shownTeam;
   button.disabled = true;
-  button.textContent = "Exporting...";
+  button.textContent = t("Exporting...");
   try {
     const canvas = await renderBuild(cards, team);
     const blob = await new Promise(done => canvas.toBlob(done, "image/png"));
@@ -3437,7 +3496,7 @@ async function exportBuild(button, cards) {
     exportPreview(canvas, blob, `${linkId(name.replace(/ · /g, " ").replace(":", ""))}.png`, button);
     button.textContent = label;
   } catch {
-    button.textContent = "Export failed";
+    button.textContent = t("Export failed");
     setTimeout(() => { button.textContent = label; }, 3000);
   }
   button.disabled = false;
@@ -3463,16 +3522,16 @@ function patchUsed({ patch, plan }, now, today) {
   const weapon = COST.weapon * (calc.calibration ? 2 : 1), collab = patch.collab, copies = count("copies"), weapons = count("weapons");
   const frameCost = collab ? COLLAB_COST.firstFrame + (copies - 1) * COLLAB_COST[patch.rank] : copies * COST[patch.rank];
   const weaponCost = collab ? COLLAB_COST.firstWeapon + (weapons - 1) * weapon : weapons * weapon;
-  if (copies) pay(collab ? art("bc") : art(patch.rank === "A" ? "construct" : "limited"), frameCost, `×${copies} Frame copies`);
-  if (weapons) pay(collab ? art("bc") : art("weapon"), weaponCost, `×${weapons} Weapons${calc.calibration ? " (calibration)" : ""}`);
+  if (copies) pay(collab ? art("bc") : art(patch.rank === "A" ? "construct" : "limited"), frameCost, `×${copies} ${t("Frame copies")}`);
+  if (weapons) pay(collab ? art("bc") : art("weapon"), weaponCost, `×${weapons} ${t("Weapons")}${calc.calibration ? t(" (calibration)") : ""}`);
   if (count("cubs")) pay(collab ? art("bc") : art("cub"), count("cubs") * COST.cub, `×${count("cubs")} C.U.B.s`);
-  if (count("custom")) pay(art("bc"), count("custom"), "Other BC spend");
-  if (count("resonance")) pay(art("shard"), count("resonance") * COST.resonance, `×${count("resonance")} 6★ Resonance`);
-  if (count("shards")) pay(art("voucher"), count("shards") * COST.frameShard, `×${count("shards")} Frame shards`);
+  if (count("custom")) pay(art("bc"), count("custom"), t("Other BC spend"));
+  if (count("resonance")) pay(art("shard"), count("resonance") * COST.resonance, `×${count("resonance")} ${t("6★ Resonance")}`);
+  if (count("shards")) pay(art("voucher"), count("shards") * COST.frameShard, `×${count("shards")} ${t("Frame shards")}`);
   const note = text => notes.push(text);
-  if (!collab && levelOf(patch)) note(`Tactical Assessment level ${levelOf(patch)}`);
+  if (!collab && levelOf(patch)) note(t("Tactical Assessment level {n}", { n: levelOf(patch) }));
   const marks = collab ? [] : patchEvents(patch).map(event => calc.doneEvents[event.id]).filter(Boolean), skipped = marks.filter(mark => mark === "skip").length;
-  if (marks.length) note(`Events: ${marks.length - skipped} done, ${skipped} skipped (rewards left out)`);
+  if (marks.length) note(t("Events: {done} done, {skipped} skipped (rewards left out)", { done: marks.length - skipped, skipped }));
   // Only the patch running now can hold what was bought or done before today
   if (patch === now) {
     const owned = ownedIn(now), isoDate = date => /^\d{4}-\d{2}-\d{2}$/.test(date || "");
@@ -3480,9 +3539,9 @@ function patchUsed({ patch, plan }, now, today) {
       ...DAILY_PASSES.filter(({ key }) => isoDate(calc.owned[key])).map(({ key, name: label }) => `${label} (${shortDate(calc.owned[key])})`),
       ...INTEL_PASSES.filter(({ key }) => owned[key]).map(({ name: label }) => label)
     ];
-    if (bought.length) note(`Already bought: ${bought.join(", ")}`);
+    if (bought.length) note(t("Already bought: {list}", { list: bought.join(", ") }));
     const rounds = ROUND_MODES.filter(({ key }) => calc.owned.done?.[key] && calc.owned.done[key] === roundDay(key, dayNumber(today))).map(({ name: label }) => label);
-    if (rounds.length) note(`Rounds done: ${rounds.join(", ")}`);
+    if (rounds.length) note(t("Rounds done: {list}", { list: rounds.join(", ") }));
   }
   return { spend: out, notes };
 }
@@ -3510,10 +3569,10 @@ async function renderCalc() {
   g.fillRect(0, 0, w, height);
   drawText(g, "BC Planner", pad, 46, exportFont(26), "#fff", "left");
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0), lastBc = run.at(-1).left.bc;
-  drawText(g, `${amount(totalRc)} RC on passes · ${amount(lastBc)} BC left after the last patch`, pad, 72, exportFont(13, 400), "#c4c4ca", "left");
+  drawText(g, `${t("{n} RC on passes", { n: amount(totalRc) })} · ${t("{n} BC left after the last patch", { n: amount(lastBc) })}`, pad, 72, exportFont(13, 400), "#c4c4ca", "left");
   // Key for the colours: balances show what each patch added or took, costs are always taken
-  drawText(g, "- spent", w - pad, 72, exportFont(13), CALC_RED, "right");
-  drawText(g, "+ gained", w - pad - 74, 72, exportFont(13), CALC_GREEN, "right");
+  drawText(g, t("- spent"), w - pad, 72, exportFont(13), CALC_RED, "right");
+  drawText(g, t("+ gained"), w - pad - 74, 72, exportFont(13), CALC_GREEN, "right");
   const colX = i => pad + name + 20 + i * ((w - pad * 2 - name - 20) / CURRENCIES.length) + (w - pad * 2 - name - 20) / CURRENCIES.length / 2;
   // Currency icons over the columns
   const top = head;
@@ -3547,7 +3606,7 @@ async function renderCalc() {
       drawText(g, fitText(g, text, w - pad * 2 - 24), pad + 12, y + row + (spendRows ? 10 : 14) + spendRows * lineH + i * noteH, g.font, "#c4c4ca", "left");
     });
   };
-  line(top + 36, "Starting balance", null, start);
+  line(top + 36, t("Starting balance"), null, start);
   let y = top + 36 + row, before = start;
   for (const { entry: { patch, left }, h, ...used } of rows) {
     const title = patch.collab ? patch.frame || "Collab" : patch.patch, values = CURRENCIES.map(({ key }) => left[key]);
@@ -3556,22 +3615,22 @@ async function renderCalc() {
     y += h;
   }
   // How the plan was counted, which the rows above can't say
-  drawText(g, `Calibration mode ${calc.calibration ? "on" : "off"} · Missing Shards bought with Vouchers ${calc.useVouchers ? "yes" : "no"} · Tickets are spent first and BC covers any shortfall`, pad, tableEnd + 18, exportFont(11, 400), "#a4a4aa", "left");
-  drawText(g, `Plan made on ${shortDate(today)}`, pad, tableEnd + 36, exportFont(11, 400), "#a4a4aa", "left");
+  drawText(g, t(`Calibration mode ${calc.calibration ? "on" : "off"} · Missing Shards bought with Vouchers ${calc.useVouchers ? "yes" : "no"} · Tickets are spent first and BC covers any shortfall`), pad, tableEnd + 18, exportFont(11, 400), "#a4a4aa", "left");
+  drawText(g, t("Plan made on {date}", { date: shortDate(today) }), pad, tableEnd + 36, exportFont(11, 400), "#a4a4aa", "left");
   drawText(g, "dominiko.pages.dev/calculator", w - pad, height - 18, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
 async function exportCalc(button) {
   const label = button.textContent;
   button.disabled = true;
-  button.textContent = "Exporting...";
+  button.textContent = t("Exporting...");
   try {
     const canvas = await renderCalc();
     const blob = await new Promise(done => canvas.toBlob(done, "image/png"));
     exportPreview(canvas, blob, "bc-planner.png", button);
     button.textContent = label;
   } catch {
-    button.textContent = "Export failed";
+    button.textContent = t("Export failed");
     setTimeout(() => { button.textContent = label; }, 3000);
   }
   button.disabled = false;
@@ -3589,7 +3648,32 @@ function swap(update) {
 }
 // Written here because each address has its own title in the HTML, from tools/make-embeds.mjs
 const SITE_TITLE = "Dominik - Punishing: Gray Raven Builds & Plans";
-function route() {
+// Turns what is on screen into new markup, changing only what differs: images and animations that stay the same keep running.
+// A child that matches an old one exactly is kept; one of the same tag and address (href) is updated in place; the rest are new
+function morph(from, to) {
+  const pool = [...from.childNodes];
+  const take = test => { const i = pool.findIndex(test); return i < 0 ? null : pool.splice(i, 1)[0]; };
+  let at = from.firstChild;
+  for (const node of [...to.childNodes]) {
+    let keep = take(old => old.isEqualNode(node));
+    if (!keep && node.nodeType === 1) {
+      keep = take(old => old.nodeName === node.nodeName && old.getAttribute("href") === node.getAttribute("href") && old.id === node.id);
+      if (keep) {
+        for (const { name } of [...keep.attributes]) if (!node.hasAttribute(name)) keep.removeAttribute(name);
+        for (const { name, value } of [...node.attributes]) if (keep.getAttribute(name) !== value) keep.setAttribute(name, value);
+        morph(keep, node);
+      }
+    }
+    if (!keep && node.nodeType === 3) keep = take(old => old.nodeType === 3);
+    if (keep?.nodeType === 3) keep.nodeValue = node.nodeValue;
+    keep ||= node;
+    if (keep !== at) from.insertBefore(keep, at);
+    else at = at.nextSibling;
+  }
+  pool.forEach(old => old.remove());
+}
+// patch: change only what differs on the page instead of drawing it again (the community teams arriving after the first draw)
+function route(patch = false) {
   // Older addresses of the Constructs page
   if (/^\/(characters|assets\/skills)\/?$/.test(location.pathname)) {
     history.replaceState(null, "", `/constructs${location.search}`);
@@ -3625,8 +3709,13 @@ function route() {
     history.replaceState(null, "", `${characterHref(character.name)}${location.search}`);
     pageUrl = location.href;
   }
-  main.innerHTML = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">Page not found.</p>`) : charactersPage()) : kind === "credits" ? creditsPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
+  const html = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">${t("Page not found.")}</p>`) : charactersPage()) : kind === "credits" ? creditsPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
     : path ? team(path, pick) : home();
+  if (patch) {
+    const next = document.createElement("template");
+    next.innerHTML = html;
+    morph(main, next.content);
+  } else main.innerHTML = html;
   theme(shown || null);
   if (kind === "editor" && editorState === "ready") edPaint();
   if (kind === "calculator") { showCalc(); centerStop(false); syncRail(); }
@@ -3644,6 +3733,8 @@ function route() {
     for (const row of rows) row.hidden = !words.every(w => row.dataset.search.includes(w));
     $(".empty", picker).hidden = rows.some(row => !row.hidden);
   };
+  // A search typed before the page was patched still filters the new rows
+  if (box.value) box.oninput();
 }
 // Tooltip text, one block per paragraph. A paragraph that starts with a check mark is an active set bonus and is drawn highlighted
 const setTipInfo = (node, text) => node.replaceChildren(...text.split("\n\n").map(part => {
@@ -3679,8 +3770,8 @@ if (matchMedia("(hover:hover)").matches) {
   sheet.hidden = true;
   sheet.setAttribute("role", "dialog");
   sheet.setAttribute("aria-modal", "true");
-  sheet.setAttribute("aria-label", "Details");
-  sheet.innerHTML = `<div class="sheet-panel"><button class="sheet-close" aria-label="Close">×</button><h2></h2><p></p><a class="sheet-link">View page</a></div>`;
+  sheet.setAttribute("aria-label", t("Details"));
+  sheet.innerHTML = `<div class="sheet-panel"><button class="sheet-close" aria-label="${t("Close")}">×</button><h2></h2><p></p><a class="sheet-link">${t("View page")}</a></div>`;
   document.body.append(sheet);
   const title = $("h2", sheet), info = $("p", sheet), link = $(".sheet-link", sheet), close = $(".sheet-close", sheet);
   let opener = null;
@@ -3765,24 +3856,26 @@ const plain = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCas
 let searchItems = null;
 function searchData() {
   if (searchItems) return searchItems;
+  // In Portuguese an effect text is searched in both languages, and a page by its English name too
+  const both = text => LANG === "pt" && text ? `${t(text)} ${text}` : text;
   const items = [
-    ...constructRoster().map(c => ({ label: c.name, kind: "Construct", href: characterHref(c.name), art: c.portrait })),
+    ...constructRoster().map(c => ({ label: c.name, kind: t("Construct"), href: characterHref(c.name), art: c.portrait })),
     // desc: the effect text, searched after the names ("Glaciation DMG", "Extra DMG Reduction")
-    ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `Memory · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4"), desc: (MEMORY_EFFECTS[name] || []).join(" ") })),
-    ...WEAPONS.map(([owner, name, , file, effect, rank]) => ({ label: name, kind: owner ? `Weapon · ${owner}` : `${rank || weaponRank(name, file)}-star weapon`, href: weaponHref(name), art: file && weaponFile(file), desc: effect || "" })),
-    ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner || `Rank ${c.rank}`}`, href: cubHref(c.name), art: c.art, desc: (CUB_SKILLS[c.art.split("/").at(-2)] || []).map(([, text]) => unmark(text)).join(" ") })),
-    ...Object.entries(RESONANCE_EFFECTS).map(([name, effect]) => ({ label: name, kind: "Weapon Resonance", href: resonanceHref(name), art: WEAPON_RES(name), desc: effect })),
-    ...ENERGY.map(e => ({ label: e, kind: "Energy teams", href: `/energy/${slug(e)}`, art: `assets/energy-type/${e}.png` })),
-    ...EFFECT.map(e => ({ label: e, kind: "Effect teams", href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
-    ...SPECIAL_EFFECT.map(e => ({ label: e, kind: "Special Effect teams", href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
-    ...Object.keys(MEMORY_TABS).map(tab => ({ label: `${tab} memories`, kind: "Memories", href: `/assets/memories/${slug(tab)}`, art: "" })),
+    ...Object.values(MEMORY_TABS).flat().map(([name, boost, ext]) => ({ label: name, kind: `${t("Memory")} · ${boost}`, href: memoryHref(name), art: ext && memFile(name, "1-4"), desc: (MEMORY_EFFECTS[name] || []).map(both).join(" ") })),
+    ...WEAPONS.map(([owner, name, , file, effect, rank]) => ({ label: name, kind: owner ? `${t("Weapon")} · ${owner}` : t("{n}-star weapon", { n: rank || weaponRank(name, file) }), href: weaponHref(name), art: file && weaponFile(file), desc: both(effect || "") })),
+    ...cubList().map(c => ({ label: c.name, kind: `C.U.B. · ${c.owner || t("Rank {n}", { n: c.rank })}`, href: cubHref(c.name), art: c.art, desc: (CUB_SKILLS[c.art.split("/").at(-2)] || []).map(([, text]) => unmark(both(text))).join(" ") })),
+    ...Object.entries(RESONANCE_EFFECTS).map(([name, effect]) => ({ label: name, kind: t("Weapon Resonance"), href: resonanceHref(name), art: WEAPON_RES(name), desc: both(effect) })),
+    ...ENERGY.map(e => ({ label: e, kind: t("Energy teams"), href: `/energy/${slug(e)}`, art: `assets/energy-type/${e}.png` })),
+    ...EFFECT.map(e => ({ label: e, kind: t("Effect teams"), href: `/effect/${slug(e)}`, art: `assets/effects/${e}.png` })),
+    ...SPECIAL_EFFECT.map(e => ({ label: e, kind: t("Special Effect teams"), href: `/special/${slug(e)}`, art: `assets/effects/${e}.png` })),
+    ...Object.keys(MEMORY_TABS).map(tab => ({ label: t("{tab} memories", { tab: t(tab) }), kind: t("Memories"), href: `/assets/memories/${slug(tab)}`, art: "", desc: both(`${tab} memories`) })),
     ...[["Constructs", "/constructs"], ["Memories", "/assets/memories"], ["Weapons", "/assets/weapons"], ["Weapon Resonance", "/assets/resonances"], ["C.U.B.s", "/assets/cubs"], ["Updates", "/updates"], ["Credits", "/credits"]]
-      .map(([label, href]) => ({ label, kind: "Page", href, art: "" })),
-    { label: "Planner", kind: "Tool", href: "/calculator", art: `${CALC_ART}/black-card.png` },
-    { label: "Meta Timeline", kind: "Tool", href: "/timeline", art: classIcon("Attacker") },
-    { label: "Team Builder", kind: "Tool", href: "/editor", art: "" },
+      .map(([label, href]) => ({ label: t(label), kind: t("Page"), href, art: "", desc: both(label) })),
+    { label: t("Planner"), kind: t("Tool"), href: "/calculator", art: `${CALC_ART}/black-card.png`, desc: both("Planner") },
+    { label: t("Meta Timeline"), kind: t("Tool"), href: "/timeline", art: classIcon("Attacker"), desc: both("Meta Timeline") },
+    { label: t("Team Builder"), kind: t("Tool"), href: "/editor", art: "", desc: both("Team Builder") },
     ...Object.entries(PAGES).flatMap(([path, ids]) => ids.flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name }]).map(v =>
-      ({ label: v.name, kind: `Team · ${COMPS[id].name}`, href: buildHref(path, v.id), art: "" }))))
+      ({ label: v.name, kind: t("Team · {name}", { name: COMPS[id].name }), href: buildHref(path, v.id), art: "", team: true }))))
   ];
   return searchItems = items.map(item => ({ ...item, text: plain(item.label), more: plain(item.kind).replace(/\./g, ""), desc: plain(item.desc || "") }));
 }
@@ -3794,10 +3887,10 @@ function searchFor(query) {
   // Teams come after the rest: most have a character's name, and would push out that character's weapon and C.U.B.
   const score = item => {
     const close = closeness(item);
-    return close && close < 8 && item.more.startsWith("team") ? close + 3 : close;
+    return close && close < 8 && item.team ? close + 3 : close;
   };
   return searchData().map(item => [score(item), item]).filter(([s]) => s < 9).sort((a, b) => a[0] - b[0] || a[1].text.length - b[1].text.length).slice(0, 8)
-    .map(([s, item]) => s === 8 ? { ...item, kind: `${item.kind} · in effect` } : item);
+    .map(([s, item]) => s === 8 ? { ...item, kind: `${item.kind} · ${t("in effect")}` } : item);
 }
 const searchBox = $("#searchBox"), searchResults = $("#searchResults");
 function showSearch() {
@@ -3806,7 +3899,7 @@ function showSearch() {
   if (!query) return;
   const found = searchFor(query);
   searchResults.innerHTML = found.map(item => `<a class="sr" href="${esc(item.href)}">${item.art ? pic(item.art) : `<i class="sr-art"></i>`}<span><b>${esc(item.label)}</b><small>${esc(item.kind)}</small></span></a>`).join("")
-    || `<p class="sr-none">No results.</p>`;
+    || `<p class="sr-none">${t("No results.")}</p>`;
 }
 function clearSearch() {
   searchBox.value = "";

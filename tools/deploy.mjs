@@ -5,13 +5,13 @@
 // Run it with: node tools/deploy.mjs     (--stage-only copies the files and stops before publishing)
 // Once per computer: npx wrangler@4 login. Once ever: npx wrangler@4 pages project create dominiko --production-branch main
 import { spawnSync } from "node:child_process";
-import { cpSync, rmSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { cpSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STAGE = join(ROOT, ".deploy");
-const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "editor.js", "data", "assets", "assets-web"];
+const SITE_FILES = ["_headers", "_redirects", "404.html", "robots.txt", "sitemap.xml", "index.html", "style.css", "app.js", "i18n.js", "editor.js", "data", "assets", "assets-web"];
 
 const run = (command, args) => {
   const { status } = spawnSync(command, args, { cwd: ROOT, stdio: "inherit", shell: true });
@@ -28,7 +28,12 @@ if (!stageOnly) ["tools/update-prices.mjs", "tools/update-calculator.mjs", "tool
 run("node", ["tools/make-catalog.mjs"]);
 run("node", ["tools/check-assets.mjs"]);
 rmSync(STAGE, { recursive: true, force: true });
-for (const file of SITE_FILES) cpSync(join(ROOT, file), join(STAGE, file), { recursive: true });
+// The Portuguese translation is not finished: data/pt/ stays out and the published i18n.js is switched off (English only, no language button)
+const DRAFT_PATHS = [join(ROOT, "data", "pt")];
+for (const file of SITE_FILES) cpSync(join(ROOT, file), join(STAGE, file), { recursive: true, filter: src => !DRAFT_PATHS.some(path => src === path || src.startsWith(path + sep)) });
+const i18n = readFileSync(join(STAGE, "i18n.js"), "utf8").replace("const I18N_ENABLED = true;", "const I18N_ENABLED = false;");
+if (i18n.split("const I18N_ENABLED = false;").length !== 2) { console.error("ERRO   i18n.js sem a linha \"const I18N_ENABLED = false;\": o deploy parou para não publicar a tradução."); process.exit(1); }
+writeFileSync(join(STAGE, "i18n.js"), i18n);
 run("node", ["tools/make-embeds.mjs"]);
 if (stageOnly) process.exit(0);
 run("npx", ["--yes", "wrangler@4", "pages", "deploy", ".deploy", "--project-name", "dominiko", "--branch", "main", "--commit-dirty=true"]);

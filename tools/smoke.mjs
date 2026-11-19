@@ -3,6 +3,7 @@
 // pages that come up empty, sideways scrolling and the main clicks that stop working. Desktop and phone sizes, every page of sitemap.xml.
 // Run it with: npm run smoke                       (once per computer: npm install)
 //              node tools/smoke.mjs timeline energy/fire    (only these pages, with screenshots, and no click tests; "home" is the home page)
+//              add --pt to any of these to open the site in Portuguese (?lang=pt, as a Brazilian browser). The click tests look for English text, so --pt skips them
 // Screenshots go to .smoke/. They are for looking at: nothing here judges how a page looks.
 //              node tools/smoke.mjs --a11y [pages]   (adds an axe accessibility scan of each page; a separate report that never changes the exit code)
 // Exit code 1 = something is broken. Pages added since the last deploy are not in sitemap.xml: name them as above.
@@ -89,7 +90,8 @@ async function checkPage(context, size, path, base, shot) {
   const page = await context.newPage();
   watch(page, size, path, base);
   try {
-    await page.goto(base + path, { waitUntil: "load" });
+    // The translation is off (I18N_ENABLED in i18n.js): --pt opens it with ?lang=pt, which only the local site accepts
+    await page.goto(base + path + (PT ? "?lang=pt" : ""), { waitUntil: "load" });
     await settle(page);
     const width = SIZES[size].viewport.width;
     const state = await page.evaluate(width => {
@@ -198,7 +200,10 @@ const FLOWS = {
     const before = await totals();
     await page.click("[data-events-open]");
     await page.waitForSelector("#calcEvents[open]");
-    const done = page.locator('#calcEvents [data-ev-set="done"]').first(), skip = page.locator('#calcEvents [data-ev-set="skip"]').first();
+    // Events that already ended have Done and Skip locked, so the test takes the first one still running
+    if (await page.locator("#calcEvents .calc-ev.ended [data-ev-set]:not([disabled])").count())
+      throw new Error("um evento encerrado ainda deixa marcar Done ou Skip");
+    const done = page.locator('#calcEvents .calc-ev:not(.ended) [data-ev-set="done"]').first(), skip = page.locator('#calcEvents .calc-ev:not(.ended) [data-ev-set="skip"]').first();
     await done.click();
     await page.click("[data-events-close]");
     if (await totals() === before) throw new Error("marcar um evento não mudou o ganho do patch");
@@ -520,7 +525,7 @@ const FLOWS = {
 };
 
 async function checkFlow(browser, size, name, base) {
-  const context = await browser.newContext({ ...SIZES[size], baseURL: base });
+  const context = await browser.newContext({ ...SIZES[size], ...LOCALE, baseURL: base });
   context.setDefaultTimeout(8000);
   const page = await context.newPage();
   watch(page, size, `clique "${name}"`, base);
@@ -538,8 +543,11 @@ async function pool(jobs) {
   await Promise.all(Array.from({ length: WORKERS }, next));
 }
 
+// --pt: the browser says it speaks Brazilian Portuguese, so this also tests that the site opens in Portuguese by itself.
+// Without it the browser says English, whatever the language of this computer
+const PT = process.argv.includes("--pt"), LOCALE = { locale: PT ? "pt-BR" : "en-US" };
 // Git Bash rewrites /timeline into a Windows path, so addresses are written without the first slash
-const chosen = process.argv.slice(2).filter(arg => arg !== "--a11y").map(arg => {
+const chosen = process.argv.slice(2).filter(arg => arg !== "--a11y" && arg !== "--pt").map(arg => {
   if (arg.includes(":")) { console.error(`Endereço inválido: ${arg}. Escreva sem a barra inicial, assim: timeline`); process.exit(2); }
   return arg === "home" ? "/" : `/${arg.replace(/^\/+/, "")}`;
 });
@@ -554,10 +562,10 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch({ channel: process.env.SMOKE_BROWSER || "msedge" });
 
 try {
-  const contexts = Object.fromEntries(await Promise.all(Object.keys(SIZES).map(async size => [size, await browser.newContext(SIZES[size])])));
+  const contexts = Object.fromEntries(await Promise.all(Object.keys(SIZES).map(async size => [size, await browser.newContext({ ...SIZES[size], ...LOCALE })])));
   const jobs = Object.keys(SIZES).flatMap(size => [
     ...paths.map(path => () => checkPage(contexts[size], size, path, base, chosen.length > 0 || SHOT_PAGES.includes(path))),
-    ...(chosen.length || A11Y ? [] : Object.keys(FLOWS).map(name => () => checkFlow(browser, size, name, base)))
+    ...(chosen.length || A11Y || PT ? [] : Object.keys(FLOWS).map(name => () => checkFlow(browser, size, name, base)))
   ]);
   const total = jobs.length;
   await pool(jobs);
