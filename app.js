@@ -2009,8 +2009,8 @@ function saveCalc() {
   try { localStorage.setItem(CALC_KEY, JSON.stringify(calc)); }
   catch { /* Private windows can refuse storage: the page still works, it just won't remember */ }
 }
-// "owned" is what was bought before today: the day each daily pass was bought, and for the patch running now ("patch"),
-// the paid tiers of Tactical Assessment already bought. The Tactical Assessment level is typed in each patch's card (plans[id].level)
+// "owned" is what was bought or done before today: the day each daily pass was bought, and the rounds already played ("done").
+// The Tactical Assessment level and paid tiers are typed in each patch's card (plans[id])
 const newCalc = () => ({ balance: {}, plans: {}, owned: {}, pick: "", tab: "plan", calibration: false, useVouchers: true, pullKind: Object.keys(PULL_ODDS)[0], pulls: 0, doneEvents: {} });
 let calc = { ...newCalc(), ...readCalc() };
 // Plans saved while patches were folding cards still carry which ones were open
@@ -2024,6 +2024,12 @@ if (calc.owned.level && calc.owned.patch) {
   calc.plans[calc.owned.patch].level ||= calc.owned.level;
 }
 delete calc.owned.level;
+// A paid tier of Tactical Assessment used to be marked as already bought in the patch running then, at no cost: it becomes a purchase in that patch's card
+for (const { key } of INTEL_PASSES) {
+  if (calc.owned[key] && calc.owned.patch) (calc.plans[calc.owned.patch] ||= {})[key] = 1;
+  delete calc.owned[key];
+}
+delete calc.owned.patch;
 // Events marked as done, by eventId(): an id the sheet no longer lists is simply never matched
 calc.doneEvents ||= {};
 const calcId = patch => patch.patch || patch.frame;
@@ -2107,8 +2113,6 @@ function patchEvents(patch) {
     return { ...event, id: `${calcId(patch)}|${name}${n > 1 ? `#${n}` : ""}`, recurring: recurringNames.has(eventName(event)) };
   });
 }
-// What was typed in "Already bought" for the patch running now. Typed in an earlier patch, it no longer applies
-const ownedIn = patch => patch && calc.owned.patch === calcId(patch) ? calc.owned : {};
 // The Tactical Assessment level reached in a patch: where you are now in the one running, or where you expect to be when you buy in a later one
 const levelOf = patch => Math.min(calc.plans[calcId(patch)]?.level || 0, INTEL_TOP);
 // The spreadsheet counts all of Basic Intel in each patch. In the patch running now, only the levels above the one typed in are still to come
@@ -2137,18 +2141,13 @@ function boughtDaysLeft(date, days, today) {
   return Math.max(0, Math.min(dayNumber(date), dayNumber(today)) + days - dayNumber(today));
 }
 // Each patch starts with what the one before it left. Copies of the same daily pass run one after the other, and what doesn't fit moves on.
-// A daily pass bought before today runs first. A paid tier already bought in the patch running now pays only its levels still to come
+// A daily pass bought before today runs first
 function calcRun() {
-  const today = calcToday(), patches = calcPlan(), now = runningPatch(patches, today), owned = ownedIn(now);
+  const today = calcToday(), patches = calcPlan();
   let balance = Object.fromEntries(CURRENCIES.map(({ key }) => [key, calc.balance[key] || 0]));
   const queued = Object.fromEntries(DAILY_PASSES.map(({ key, days }) => [key, boughtDaysLeft(calc.owned[key], days, today)]));
   return patches.map(patch => {
     const plan = { ...calc.plans[calcId(patch)] }, passDays = {}, passLeft = {}, extra = {}, level = levelOf(patch);
-    if (patch === now) for (const { key, intel } of INTEL_PASSES) {
-      if (!owned[key]) continue;
-      plan[key] = 0;
-      for (const [c, n] of Object.entries(intelGains(intel, level))) extra[c] = (extra[c] || 0) + n;
-    }
     // A paid tier bought in a patch only pays the levels above the one reached by then
     if (level && !patch.collab) for (const { key, intel } of INTEL_PASSES) {
       if (!plan[key]) continue;
@@ -2205,14 +2204,13 @@ function patchStop(patch, today, picked) {
   </button>`;
 }
 function patchCard(patch, today, picked) {
-  const plan = calc.plans[calcId(patch)] || {}, time = patchTime(patch, today), owned = time ? ownedIn(patch) : {};
+  const plan = calc.plans[calcId(patch)] || {}, time = patchTime(patch, today);
   const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(t(name))}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="${esc(t("Less: {name}", { name: t(name) }))}">−</button>${numberBox(`data-plan="${key}"`, plan[key], t(name))}<button type="button" data-step="${step}" aria-label="${esc(t("More: {name}", { name: t(name) }))}">+</button></span>${note ? `<small>${esc(t(note))}</small>` : ""}</div>`;
-  // A paid tier already bought in this patch can't be bought again: it shows as owned, and pays only its levels still to come
   const passes = CALC_PASSES.map(pass => {
     const { key, name, art, rc, max } = pass;
-    // A Tactical Assessment pass is one checkbox: in the patch running now it means already bought, in the others, to buy
+    // A Tactical Assessment pass is one checkbox, to buy in this patch. It pays only the levels above the one typed in the card
     const intel = INTEL_PASSES.some(p => p.key === key);
-    const control = intel ? `<input type="checkbox" data-state="${key}"${(time ? owned[key] : plan[key]) ? " checked" : ""} aria-label="${esc(name)}${time ? t(": already bought") : ""}">`
+    const control = intel ? `<input type="checkbox" data-state="${key}"${plan[key] ? " checked" : ""} aria-label="${esc(name)}">`
       : max > 1 ? `<select data-plan="${key}" aria-label="${esc(name)}">${Array.from({ length: max + 1 }, (_, n) => `<option${n === (plan[key] || 0) ? " selected" : ""}>${n}</option>`).join("")}</select>`
         : `<input type="checkbox" data-plan="${key}"${plan[key] ? " checked" : ""} aria-label="${esc(name)}">`;
     // A daily pass bought before today: its day is the same in every card, since its remaining days run before any copy planned
@@ -2426,7 +2424,7 @@ function calculatorPage() {
           ["Current patch", t("Dailies shrink with the days left, weeklies with the Monday resets left, Norman Revival Plan and Clash Reflection with their own resets left (every other Thursday, taking turns), and timed events leave after their last day. Today's dailies and running events count in full, even if you already collected them. Every reset happens at 05:00 UTC.")],
           ["Daily passes", t(`Monthly Pass A and C and the Weapon Resonance bundle pay part when bought and the rest once a day for 30 days. A second copy of the same pass adds 30 more days, not more per day. Days that don't fit move to the next patch. Serum and other rewards the calculator doesn't track are left out.`)],
           ["Tactical Assessment", t(`Basic Intel is free and counts in every patch. Encrypted and Top-Secret Pass pay their rewards over levels 1 to {top}. Type the level you have reached in each patch's card: Basic Intel and a pass bought in that patch pay only the levels above it, so use 0 for a patch you start from scratch.`, { top: INTEL_TOP })],
-          ["Already bought", t("A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. In the patch running now, Basic Intel and a Tactical Assessment pass marked as already bought pay only the levels above yours, and that pass can't be planned again. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done.")],
+          ["Already bought", t("A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done.")],
           ["Patch income", t("Only the highest difficulty of each mode counts.")],
           ["RC prices", t("From Codashop ({us} · {br}) on {date}: the cheapest mix of its packs, at the lowest price each pack is listed for. They change often, so treat them as an estimate.", { us: `<a href="${RC_STORE.USD}" target="_blank" rel="noopener noreferrer">US</a>`, br: `<a href="${RC_STORE.BRL}" target="_blank" rel="noopener noreferrer">${t("Brazil")}</a>`, date: RC_PRICES_DATE })]
         ])}</section>`)}
@@ -2473,13 +2471,8 @@ $("#main").addEventListener("input", e => {
   const { balance, plan, option, own, state, round } = el.dataset;
   if (balance) calc.balance[balance] = whole(el.value);
   else if (state) {
-    // One checkbox per paid tier: ticked, it is bought before today in the patch running now, and to be bought in any other
-    const id = el.closest(".calc-patch").dataset.id, now = runningPatch(calcPlan(), calcToday());
-    if (now && calcId(now) === id) {
-      if (calc.owned.patch !== id) Object.assign(calc.owned, { patch: id }, ...INTEL_PASSES.map(({ key }) => ({ [key]: 0 })));
-      calc.owned[state] = Number(el.checked);
-    }
-    (calc.plans[id] ||= {})[state] = now && calcId(now) === id ? 0 : Number(el.checked);
+    // One checkbox per paid tier, to buy in that patch
+    (calc.plans[el.closest(".calc-patch").dataset.id] ||= {})[state] = Number(el.checked);
     saveCalc();
     return redrawCalc();
   }
@@ -2564,8 +2557,6 @@ $("#main").addEventListener("click", e => {
     delete plan.rank;
     // The level is where each patch starts, so it isn't repeated
     delete plan.level;
-    // In the patch running now, a Tactical Assessment pass is kept as already bought (plan holds 0): later patches repeat it as a purchase
-    if (ownedIn(runningPatch(calcPlan(), calcToday()))?.patch === id) for (const { key } of INTEL_PASSES) plan[key] = calc.owned[key] ? 1 : 0;
     const patches = calcPlan().filter(p => !p.collab);
     for (const patch of patches.slice(patches.findIndex(p => calcId(p) === id) + 1)) calc.plans[calcId(patch)] = { ...plan };
     saveCalc();
@@ -2576,7 +2567,6 @@ $("#main").addEventListener("click", e => {
   if (clearPatch) {
     const id = clearPatch.closest(".calc-patch").dataset.id;
     delete calc.plans[id];
-    if (calc.owned.patch === id) for (const { key } of INTEL_PASSES) calc.owned[key] = 0;
     saveCalc();
     redrawCalc();
   }
@@ -3534,11 +3524,8 @@ function patchUsed({ patch, plan }, now, today) {
   if (marks.length) note(t("Events: {done} done, {skipped} skipped (rewards left out)", { done: marks.length - skipped, skipped }));
   // Only the patch running now can hold what was bought or done before today
   if (patch === now) {
-    const owned = ownedIn(now), isoDate = date => /^\d{4}-\d{2}-\d{2}$/.test(date || "");
-    const bought = [
-      ...DAILY_PASSES.filter(({ key }) => isoDate(calc.owned[key])).map(({ key, name: label }) => `${label} (${shortDate(calc.owned[key])})`),
-      ...INTEL_PASSES.filter(({ key }) => owned[key]).map(({ name: label }) => label)
-    ];
+    const isoDate = date => /^\d{4}-\d{2}-\d{2}$/.test(date || "");
+    const bought = DAILY_PASSES.filter(({ key }) => isoDate(calc.owned[key])).map(({ key, name: label }) => `${label} (${shortDate(calc.owned[key])})`);
     if (bought.length) note(t("Already bought: {list}", { list: bought.join(", ") }));
     const rounds = ROUND_MODES.filter(({ key }) => calc.owned.done?.[key] && calc.owned.done[key] === roundDay(key, dayNumber(today))).map(({ name: label }) => label);
     if (rounds.length) note(t("Rounds done: {list}", { list: rounds.join(", ") }));

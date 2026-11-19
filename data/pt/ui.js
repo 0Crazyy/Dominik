@@ -193,7 +193,6 @@ Object.assign(I18N_PT, {
   "Predicted": "Previsto",
   "Less: {name}": "Menos: {name}",
   "More: {name}": "Mais: {name}",
-  ": already bought": ": já comprado",
   "Already bought on": "Já comprado em",
   "{name}: day it was bought": "{name}: dia da compra",
   " each": " cada",
@@ -289,8 +288,8 @@ Object.assign(I18N_PT, {
   "Tactical Assessment": "Tactical Assessment",
   "Basic Intel is free and counts in every patch. Encrypted and Top-Secret Pass pay their rewards over levels 1 to {top}. Type the level you have reached in each patch's card: Basic Intel and a pass bought in that patch pay only the levels above it, so use 0 for a patch you start from scratch.":
     "O Basic Intel é grátis e conta em todo patch. Encrypted e Top-Secret Pass pagam as recompensas dos níveis 1 a {top}. Digite o nível que você alcançou no card de cada patch: o Basic Intel e um passe comprado naquele patch pagam só os níveis acima dele, então use 0 para um patch que você começa do zero.",
-  "A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. In the patch running now, Basic Intel and a Tactical Assessment pass marked as already bought pay only the levels above yours, and that pass can't be planned again. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done.":
-    "Um passe diário comprado antes de hoje paga só os dias que ainda faltam, e eles correm antes de qualquer cópia planejada agora: informe o dia na linha dele no primeiro card de patch. No patch atual, o Basic Intel e um passe do Tactical Assessment marcado como já comprado pagam só os níveis acima do seu, e esse passe não pode ser planejado de novo. Uma rodada de Warzone, Phantom Pain Cage, Norman Revival Plan ou Clash Reflection que já resetou ainda pode ser jogada, então conta como renda restante até você marcá-la como feita.",
+  "A daily pass bought before today pays only its days still to come, and they run before any copy planned now: set the day in its row in the first patch card. A round of Warzone, Phantom Pain Cage, Norman Revival Plan or Clash Reflection that already reset can still be played, so it counts as income left until you tick it as done.":
+    "Um passe diário comprado antes de hoje paga só os dias que ainda faltam, e eles correm antes de qualquer cópia planejada agora: informe o dia na linha dele no primeiro card de patch. Uma rodada de Warzone, Phantom Pain Cage, Norman Revival Plan ou Clash Reflection que já resetou ainda pode ser jogada, então conta como renda restante até você marcá-la como feita.",
   "Only the highest difficulty of each mode counts.": "Só conta a dificuldade mais alta de cada modo.",
   "RC prices": "Preços de RC",
   "From Codashop ({us} · {br}) on {date}: the cheapest mix of its packs, at the lowest price each pack is listed for. They change often, so treat them as an estimate.":
