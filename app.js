@@ -3418,20 +3418,34 @@ async function renderBuild(cards, { id, title, theme = COMPS[id] }) {
 }
 // The image opens in a preview first. Nothing is downloaded until the visitor chooses Save: the browser's file dialog then lets them
 // pick the folder and the name, and the image can be copied instead of saved
-function exportPreview(canvas, blob, fileName, opener) {
+// "options" adds controls over the image: "html" is their markup, and "change" redraws after one changes, returning the new { canvas, blob }
+function exportPreview(canvas, blob, fileName, opener, options) {
   $("#exportPreview")?.remove();
   const box = document.createElement("div");
   box.id = "exportPreview";
   box.setAttribute("role", "dialog");
   box.setAttribute("aria-modal", "true");
   box.setAttribute("aria-label", t("Image preview"));
-  const size = blob.size > 1048576 ? `${(blob.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(blob.size / 1024))} KB`;
-  box.innerHTML = `<div class="xp-panel"><h2>${t("Image preview")}</h2><div class="xp-frame"></div>
-    <p class="xp-meta">${esc(fileName)} · PNG · ${canvas.width}×${canvas.height} px · ${size}</p><p class="xp-status" role="status"></p>
+  box.innerHTML = `<div class="xp-panel"><h2>${t("Image preview")}</h2>${options ? `<div class="xp-options">${options.html}</div>` : ""}<div class="xp-frame"></div>
+    <p class="xp-meta"></p><p class="xp-status" role="status"></p>
     <div class="xp-actions"><button type="button" class="tool ed-primary" data-xp="save">${t("Save as…")}</button>
       <button type="button" class="tool" data-xp="copy">${t("Copy image")}</button><button type="button" class="tool" data-xp="close">${t("Close")}</button></div></div>`;
-  $(".xp-frame", box).append(canvas);
+  const show = () => {
+    const size = blob.size > 1048576 ? `${(blob.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(blob.size / 1024))} KB`;
+    $(".xp-frame", box).replaceChildren(canvas);
+    $(".xp-meta", box).textContent = `${fileName} · PNG · ${canvas.width}×${canvas.height} px · ${size}`;
+  };
+  show();
   const status = text => { $(".xp-status", box).textContent = t(text); };
+  if (options) box.addEventListener("change", async e => {
+    status("");
+    try {
+      ({ canvas, blob } = await options.change(e));
+      show();
+    } catch {
+      status("Export failed");
+    }
+  });
   const close = () => {
     box.remove();
     removeEventListener("keydown", onKey, true);
@@ -3493,9 +3507,11 @@ async function exportBuild(button, cards) {
 }
 
 /* ---------- export the planner as an image ---------- */
-// The plan in short: what you start with, then each patch with what it spends and what it leaves. Same canvas route as the builds
-const CALC_RED = "#ff6b6b", CALC_GREEN = "#5fd68a";
-const CALC_IMG = { w: 940, pad: 32, head: 96, row: 50, name: 200, line: 22, note: 18, cols: 3 };
+// One panel per patch, read left to right: what it buys, the balance it starts with, plus what it earns, minus what it spends,
+// and under it the balance it leaves, next to the one the patch before left. Same canvas route as the builds
+const CALC_RED = "#ff6b6b", CALC_GREEN = "#5fd68a", CALC_DIM = "#a4a4aa";
+// Sizes in px. Column x positions count from the panel's left edge; "line" is the height of one currency in a column
+const CALC_IMG = { w: 1180, pad: 32, head: 100, gap: 16, name: 220, list: 232, listW: 186, buys: 432, buysW: 172, cols: [622, 792, 962], colW: 122, top: 58, line: 30, pass: 34, foot: 84 };
 // Cuts text with an ellipsis until it fits "max" pixels, in the font already set on g
 function fitText(g, text, max) {
   if (g.measureText(text).width <= max) return text;
@@ -3503,24 +3519,36 @@ function fitText(g, text, max) {
   while (cut > 1 && g.measureText(`${text.slice(0, cut)}…`).width > max) cut--;
   return `${text.slice(0, cut)}…`;
 }
-// What went into one patch's numbers. "spend" is a list of cells, each a few segments: an icon with its amount (red, with a minus) and a dim caption for
-// what it bought. "notes" are plain lines. Passes cost RC. The rest is paid in tickets first, and BC covers what they can't
+// Splits text into lines that fit "max" pixels, in the font already set on g
+function wrapText(g, text, max) {
+  const lines = [];
+  for (const word of text.split(" ")) {
+    const last = lines.at(-1);
+    if (last !== undefined && g.measureText(`${last} ${word}`).width <= max) lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+  }
+  return lines;
+}
+// "17th December", or "17 de dezembro" in Portuguese
+function longDate(iso) {
+  const date = new Date(`${iso}T00:00`), day = date.getDate(), month = date.toLocaleDateString(loc("en-GB"), { month: "long" });
+  if (LANG === "pt") return `${day} de ${month}`;
+  const teen = day % 100 > 10 && day % 100 < 14;
+  return `${day}${teen ? "th" : ["th", "st", "nd", "rd"][day % 10] || "th"} ${month}`;
+}
+// What one patch's panel lists: what was bought ("items"), the passes paid in RC ("passes") and plain "notes"
 function patchUsed({ patch, plan }, now, today) {
-  const count = key => plan[key] || 0, art = key => CURRENCIES.find(c => c.key === key).art;
-  const out = [], notes = [], pay = (icon, value, caption) => out.push([{ icon, text: `-${amount(value)}`, neg: true }, { text: caption, dim: true }]);
-  for (const { key, rc, art: passArt } of CALC_PASSES) if (count(key)) out.push([{ icon: passArt, text: `×${count(key)}` }, { icon: RC_ART, text: `-${amount(count(key) * rc)} RC`, neg: true }]);
-  const weapon = COST.weapon * (calc.calibration ? 2 : 1), collab = patch.collab, copies = count("copies"), weapons = count("weapons");
-  const frameCost = collab ? COLLAB_COST.firstFrame + (copies - 1) * COLLAB_COST[patch.rank] : copies * COST[patch.rank];
-  const weaponCost = collab ? COLLAB_COST.firstWeapon + (weapons - 1) * weapon : weapons * weapon;
-  if (copies) pay(collab ? art("bc") : art(patch.rank === "A" ? "construct" : "limited"), frameCost, `×${copies} ${t("Frame copies")}`);
-  if (weapons) pay(collab ? art("bc") : art("weapon"), weaponCost, `×${weapons} ${t("Weapons")}${calc.calibration ? t(" (calibration)") : ""}`);
-  if (count("cubs")) pay(collab ? art("bc") : art("cub"), count("cubs") * COST.cub, `×${count("cubs")} C.U.B.s`);
-  if (count("custom")) pay(art("bc"), count("custom"), t("Other BC spend"));
-  if (count("resonance")) pay(art("shard"), count("resonance") * COST.resonance, `×${count("resonance")} ${t("6★ Resonance")}`);
-  if (count("shards")) pay(art("voucher"), count("shards") * COST.frameShard, `×${count("shards")} ${t("Frame shards")}`);
+  const count = key => plan[key] || 0, items = [], notes = [];
+  const passes = CALC_PASSES.filter(({ key }) => count(key)).map(({ key, rc, art }) => ({ art, n: count(key), rc: count(key) * rc }));
+  if (count("copies")) items.push(`×${count("copies")} ${t("Frame copies")}`);
+  if (count("weapons")) items.push(`×${count("weapons")} ${t("Weapons")}${calc.calibration ? t(" (calibration)") : ""}`);
+  if (count("cubs")) items.push(`×${count("cubs")} C.U.B.s`);
+  if (count("resonance")) items.push(`×${count("resonance")} ${t("6★ Resonance")}`);
+  if (count("shards")) items.push(`×${count("shards")} ${t("Frame shards")}`);
+  if (count("custom")) items.push(t("Other BC spend"));
   const note = text => notes.push(text);
-  if (!collab && levelOf(patch)) note(t("Tactical Assessment level {n}", { n: levelOf(patch) }));
-  const marks = collab ? [] : patchEvents(patch).map(event => calc.doneEvents[event.id]).filter(Boolean), skipped = marks.filter(mark => mark === "skip").length;
+  if (!patch.collab && levelOf(patch)) note(t("Tactical Assessment level {n}", { n: levelOf(patch) }));
+  const marks = patch.collab ? [] : patchEvents(patch).map(event => calc.doneEvents[event.id]).filter(Boolean), skipped = marks.filter(mark => mark === "skip").length;
   if (marks.length) note(t("Events: {done} done, {skipped} skipped (rewards left out)", { done: marks.length - skipped, skipped }));
   // Only the patch running now can hold what was bought or done before today
   if (patch === now) {
@@ -3530,80 +3558,111 @@ function patchUsed({ patch, plan }, now, today) {
     const rounds = ROUND_MODES.filter(({ key }) => calc.owned.done?.[key] && calc.owned.done[key] === roundDay(key, dayNumber(today))).map(({ name: label }) => label);
     if (rounds.length) note(t("Rounds done: {list}", { list: rounds.join(", ") }));
   }
-  return { spend: out, notes };
+  return { items, passes, notes };
 }
-async function renderCalc() {
+// "until" is the id of the last patch drawn; an id the plan no longer has draws them all
+async function renderCalc(until) {
   await Promise.all([document.fonts.load(exportFont(16)), document.fonts.load(exportFont(13, 400))]);
-  const run = calcRun(), start = CURRENCIES.map(({ key }) => calc.balance[key] || 0);
-  const icons = await Promise.all(CURRENCIES.map(({ art }) => loadImage(art)));
-  // Every icon the spending cells can show, loaded once
+  const all = calcRun(), stop = all.findIndex(({ patch }) => calcId(patch) === until), run = stop < 0 ? all : all.slice(0, stop + 1), today = calcToday(), now = runningPatch(run.map(entry => entry.patch), today);
+  // Every icon the panels can show, loaded once
   const arts = [...new Set([RC_ART, ...CALC_PASSES.map(pass => pass.art), ...CURRENCIES.map(c => c.art)])];
   const pics = Object.fromEntries(await Promise.all(arts.map(async src => [src, await loadImage(src)])));
-  const { w, pad, head, row, name, line: lineH, note: noteH } = CALC_IMG, cellW = (w - pad * 2 - 24) / CALC_IMG.cols;
-  // Each patch row grows with what it used, wrapped to the row width
-  const today = calcToday(), now = run[0] && patchTime(run[0].patch, today) ? run[0].patch : null;
-  const rows = run.map(entry => {
-    const { spend, notes } = patchUsed(entry, now, today), spendRows = Math.ceil(spend.length / CALC_IMG.cols);
-    return { entry, spend, notes, spendRows, h: row + (spend.length || notes.length ? 14 + spendRows * lineH + notes.length * noteH : 0) };
+  const { w, pad, head, gap, name, list, listW, buys, buysW, cols, colW, top, line, pass, foot } = CALC_IMG, panelW = w - pad * 2;
+  const canvas = document.createElement("canvas"), g = canvas.getContext("2d");
+  // Each panel is as tall as its longest column. What a patch spent is what it started with and earned, less what it left
+  let before = CURRENCIES.map(({ key }) => calc.balance[key] || 0);
+  const panels = run.map(entry => {
+    const { items, passes, notes } = patchUsed(entry, now, today);
+    g.font = exportFont(12, 400);
+    const noteLines = notes.flatMap(text => wrapText(g, text, listW));
+    const left = CURRENCIES.map(({ key }) => entry.left[key]);
+    const earned = CURRENCIES.map(({ key }) => entry.patch.collab ? 0 : (entry.patch.gains[key] || 0) + (entry.bonus[key] || 0));
+    const spent = left.map((value, i) => before[i] + earned[i] - value);
+    const listH = items.length * 28 + (noteLines.length ? 6 + noteLines.length * 17 : 0);
+    const body = Math.max(top + CURRENCIES.length * line, 30 + listH, top + passes.length * pass) + 16;
+    const panel = { patch: entry.patch, items, passes, noteLines, begin: before, earned, spent, left, body };
+    before = left;
+    return panel;
   });
-  const tableEnd = head + 36 + row + rows.reduce((total, { h }) => total + h, 0), height = tableEnd + 70;
-  const canvas = document.createElement("canvas");
+  const tableEnd = head + panels.reduce((total, { body }) => total + body + foot + gap, 0), height = tableEnd + 60;
   canvas.width = w * EXPORT_SCALE;
   canvas.height = height * EXPORT_SCALE;
-  const g = canvas.getContext("2d");
   g.scale(EXPORT_SCALE, EXPORT_SCALE);
   g.fillStyle = "#0b0b0c";
   g.fillRect(0, 0, w, height);
   drawText(g, "BC Planner", pad, 46, exportFont(26), "#fff", "left");
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0), lastBc = run.at(-1).left.bc;
   drawText(g, `${t("{n} RC on passes", { n: amount(totalRc) })} · ${t("{n} BC left after the last patch", { n: amount(lastBc) })}`, pad, 72, exportFont(13, 400), "#c4c4ca", "left");
-  // Key for the colours: balances show what each patch added or took, costs are always taken
-  drawText(g, t("- spent"), w - pad, 72, exportFont(13), CALC_RED, "right");
-  drawText(g, t("+ gained"), w - pad - 74, 72, exportFont(13), CALC_GREEN, "right");
-  const colX = i => pad + name + 20 + i * ((w - pad * 2 - name - 20) / CURRENCIES.length) + (w - pad * 2 - name - 20) / CURRENCIES.length / 2;
-  // Currency icons over the columns
-  const top = head;
-  CURRENCIES.forEach((c, i) => { if (icons[i]) g.drawImage(icons[i], colX(i) - 14, top - 4, 28, 28); });
-  const line = (y, title, before, values, { spend = [], notes = [], spendRows = 0, h = row } = {}) => {
-    g.fillStyle = "#ffffff10";
-    g.fillRect(pad, y, w - pad * 2, h - 4);
-    drawText(g, title, pad + 12, y + 24, exportFont(15), "#fff", "left");
-    // The balance, and under it what this patch added (green +) or took (red -)
-    values.forEach((value, i) => {
-      drawText(g, amount(value), colX(i), y + 24, exportFont(15), value < 0 ? CALC_RED : "#ececee");
-      const change = before ? value - before[i] : 0;
-      if (change) drawText(g, `${change > 0 ? "+" : "-"}${amount(Math.abs(change))}`, colX(i), y + 40, exportFont(11), change > 0 ? CALC_GREEN : CALC_RED);
+  const icon = (src, x, y, size) => drawArt(g, pics[src], x, y, size, size, { fit: "contain" });
+  const draw = ({ patch, items, passes, noteLines, begin, earned, spent, left, body }, x, y) => {
+    g.fillStyle = "#1b1b1d";
+    g.fillRect(x, y, panelW, body + foot);
+    g.strokeStyle = "#ffffff12";
+    g.strokeRect(x + .5, y + .5, panelW - 1, body + foot - 1);
+    // Name and dates, centered on the left
+    const title = patch.collab ? patch.frame || "Collab" : patch.patch;
+    const dates = patch.collab ? (patch.frame ? ["Collab"] : []) : [longDate(patch.start), "|", longDate(patch.end)];
+    // A long name takes two lines, and only a longer one is cut
+    g.font = exportFont(26);
+    const names = wrapText(g, title, name - 24), shown = names.length > 2 ? [names[0], fitText(g, names.slice(1).join(" "), name - 24)] : names;
+    const nameY = y + body / 2 - dates.length * 9 - (shown.length - 1) * 15 + 6;
+    shown.forEach((text, i) => drawText(g, text, x + name / 2, nameY + i * 30, g.font, "#fff"));
+    dates.forEach((text, i) => drawText(g, text, x + name / 2, nameY + (shown.length - 1) * 30 + 28 + i * 18, exportFont(14), "#c4c4ca"));
+    // What the patch buys, then the notes on how it was counted
+    items.forEach((text, i) => drawText(g, text, x + list, y + 40 + i * 28, exportFont(16, 400), "#c8c8ce", "left"));
+    noteLines.forEach((text, i) => drawText(g, text, x + list, y + 40 + items.length * 28 + (items.length ? 2 : -6) + i * 17, exportFont(12, 400), CALC_DIM, "left"));
+    // Column titles
+    const label = (text, cx) => drawText(g, text, cx, y + 34, exportFont(15), "#9a9aa0");
+    label(t("Currency Purchases"), x + buys + buysW / 2);
+    label(t("Patch Start"), x + cols[0] + colW / 2);
+    label(t("Patch Earnings"), x + cols[1] + colW / 2);
+    label(t("Expenses"), x + cols[2] + colW / 2);
+    // Passes: the pass and how many, then what they cost in RC
+    passes.forEach(({ art, n, rc }, i) => {
+      const cy = y + top + i * pass + pass / 2;
+      let px = x + buys + 4;
+      icon(art, px, cy - 14, 28);
+      px += 34;
+      drawText(g, `×${n}`, px, cy + 5, exportFont(15), "#ececee", "left");
+      px += 32;
+      icon(RC_ART, px, cy - 13, 26);
+      px += 32;
+      drawText(g, `-${amount(rc)} RC`, px, cy + 5, exportFont(15), CALC_RED, "left");
     });
-    if (!spend.length && !notes.length) return;
-    g.fillStyle = "#ffffff18";
-    g.fillRect(pad + 12, y + row - 4, w - pad * 2 - 24, 1);
-    // One cell per cost, so each amount sits with its own icon and name
-    spend.forEach((segments, i) => {
-      let x = pad + 12 + (i % CALC_IMG.cols) * cellW;
-      const base = y + row + 14 + Math.floor(i / CALC_IMG.cols) * lineH;
-      for (const { icon, text, dim, neg } of segments) {
-        if (icon && pics[icon]) { g.drawImage(pics[icon], x, base - 14, 18, 18); x += 22; }
-        g.font = exportFont(12, dim ? 400 : 700);
-        drawText(g, text, x, base, g.font, dim ? "#a4a4aa" : neg ? CALC_RED : "#ececee", "left");
-        x += g.measureText(text).width + 8;
-      }
+    // Start + earnings - expenses, one currency per line
+    const column = (values, at, show) => CURRENCIES.forEach((c, i) => {
+      const cy = y + top + i * line + line / 2, [text, color] = show(values[i]);
+      icon(c.art, x + at, cy - 12, 24);
+      drawText(g, text, x + at + 32, cy + 5, exportFont(15), color, "left");
     });
-    notes.forEach((text, i) => {
-      g.font = exportFont(11, 400);
-      drawText(g, fitText(g, text, w - pad * 2 - 24), pad + 12, y + row + (spendRows ? 10 : 14) + spendRows * lineH + i * noteH, g.font, "#c4c4ca", "left");
+    column(begin, cols[0], value => [amount(value), value < 0 ? CALC_RED : "#ececee"]);
+    column(earned, cols[1], value => [amount(value), "#ececee"]);
+    column(spent, cols[2], value => value > 0 ? [`-${amount(value)}`, CALC_RED] : value < 0 ? [`+${amount(-value)}`, CALC_GREEN] : ["0", "#ececee"]);
+    const signY = y + top + CURRENCIES.length * line / 2 + 7;
+    drawText(g, "+", x + (cols[0] + colW + cols[1]) / 2, signY, exportFont(22, 400), "#6c6c72");
+    drawText(g, "-", x + (cols[1] + colW + cols[2]) / 2, signY, exportFont(22, 400), "#6c6c72");
+    // Under a line, the balance the patch leaves, and how far it moved from the one the patch before left
+    g.fillStyle = "#ffffff1c";
+    g.fillRect(x + 16, y + body, panelW - 32, 1);
+    const fy = y + body + foot / 2;
+    drawText(g, t("Final balance").toUpperCase(), x + name / 2, fy - 6, exportFont(15), "#77777d");
+    g.font = exportFont(9, 400);
+    wrapText(g, t("( Compared to final balance of previous patch )"), name - 70).forEach((text, i) => drawText(g, text, x + name / 2, fy + 8 + i * 11, g.font, "#77777d"));
+    const cell = (panelW - name) / CURRENCIES.length;
+    left.forEach((value, i) => {
+      const cx = x + name + cell * (i + .5), change = value - begin[i];
+      drawText(g, amount(value), cx, fy + 2, exportFont(20), value < 0 ? CALC_RED : "#fff");
+      if (change) drawText(g, `${change > 0 ? "+" : "-"}${amount(Math.abs(change))}`, cx, fy + 22, exportFont(13), change > 0 ? CALC_GREEN : CALC_RED);
     });
   };
-  line(top + 36, t("Starting balance"), null, start);
-  let y = top + 36 + row, before = start;
-  for (const { entry: { patch, left }, h, ...used } of rows) {
-    const title = patch.collab ? patch.frame || "Collab" : patch.patch, values = CURRENCIES.map(({ key }) => left[key]);
-    line(y, title.length > 22 ? `${title.slice(0, 21)}…` : title, before, values, { ...used, h });
-    before = values;
-    y += h;
+  let y = head;
+  for (const panel of panels) {
+    draw(panel, pad, y);
+    y += panel.body + foot + gap;
   }
-  // How the plan was counted, which the rows above can't say
-  drawText(g, t(`Calibration mode ${calc.calibration ? "on" : "off"} · Missing Shards bought with Vouchers ${calc.useVouchers ? "yes" : "no"} · Tickets are spent first and BC covers any shortfall`), pad, tableEnd + 18, exportFont(11, 400), "#a4a4aa", "left");
-  drawText(g, t("Plan made on {date}", { date: shortDate(today) }), pad, tableEnd + 36, exportFont(11, 400), "#a4a4aa", "left");
+  // How the plan was counted, which the panels can't say
+  drawText(g, t(`Calibration mode ${calc.calibration ? "on" : "off"} · Missing Shards bought with Vouchers ${calc.useVouchers ? "yes" : "no"} · Tickets are spent first and BC covers any shortfall`), pad, tableEnd + 8, exportFont(11, 400), CALC_DIM, "left");
+  drawText(g, t("Plan made on {date}", { date: shortDate(today) }), pad, tableEnd + 26, exportFont(11, 400), CALC_DIM, "left");
   drawText(g, "dominiko.pages.dev/calculator", w - pad, height - 18, exportFont(13, 400), "#c4c4ca", "right");
   return canvas;
 }
@@ -3612,9 +3671,20 @@ async function exportCalc(button) {
   button.disabled = true;
   button.textContent = t("Exporting...");
   try {
-    const canvas = await renderCalc();
-    const blob = await new Promise(done => canvas.toBlob(done, "image/png"));
-    exportPreview(canvas, blob, "bc-planner.png", button);
+    // The last patch in the image, picked in the preview and kept for the next export
+    const ids = calcRun().map(({ patch }) => calcId(patch));
+    if (!ids.includes(calc.exportUntil)) calc.exportUntil = ids.at(-1);
+    const draw = async () => {
+      const canvas = await renderCalc(calc.exportUntil);
+      return { canvas, blob: await new Promise(done => canvas.toBlob(done, "image/png")) };
+    };
+    const { canvas, blob } = await draw();
+    const html = `<label class="xp-field"><span>${t("Export up to")}</span><select data-xp-until>${ids.map(id => `<option value="${esc(id)}"${id === calc.exportUntil ? " selected" : ""}>${esc(id)}</option>`).join("")}</select></label>`;
+    exportPreview(canvas, blob, "bc-planner.png", button, { html, change: e => {
+      calc.exportUntil = e.target.value;
+      saveCalc();
+      return draw();
+    } });
     button.textContent = label;
   } catch {
     button.textContent = t("Export failed");
