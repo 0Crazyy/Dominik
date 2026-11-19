@@ -1942,7 +1942,7 @@ const CALC_SPENDING = [
   { key: "shards", name: "Frame shards", note: "804 Vouchers each" }
 ];
 // Codashop prices of the Android packs (BRL from its Brazilian page, USD from its US page): [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
-const RC_PRICES_DATE = "18 Nov 2026";
+const RC_PRICES_DATE = "19 Nov 2026";
 const RC_PACKS = [[5, 4.99, 0.99], [28, 25.99, 4.99], [34, 31.99, 5.99], [59, 52.99, 9.99], [71, 62.99, 11.99], [119, 104.99, 19.99], [299, 264.99, 49.99], [600, 529.99, 99.99]];
 const RC_STORE = { USD: "https://www.codashop.com/en-us/punishing-gray-raven", BRL: "https://www.codashop.com/pt-br/punishing-gray-raven" };
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
