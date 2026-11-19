@@ -3574,12 +3574,12 @@ async function renderCalc(until) {
   const panels = run.map(entry => {
     const { items, passes, notes } = patchUsed(entry, now, today);
     g.font = exportFont(12, 400);
-    const noteLines = notes.flatMap(text => wrapText(g, text, listW));
+    const noteLines = notes.flatMap(text => wrapText(g, text, listW - 10));
     const left = CURRENCIES.map(({ key }) => entry.left[key]);
     const earned = CURRENCIES.map(({ key }) => entry.patch.collab ? 0 : (entry.patch.gains[key] || 0) + (entry.bonus[key] || 0));
     const spent = left.map((value, i) => before[i] + earned[i] - value);
     const listH = items.length * 28 + (noteLines.length ? 6 + noteLines.length * 17 : 0);
-    const body = Math.max(top + CURRENCIES.length * line, 30 + listH, top + passes.length * pass) + 16;
+    const body = Math.max(top + CURRENCIES.length * line, top + 8 + listH, top + passes.length * pass) + 16;
     const panel = { patch: entry.patch, items, passes, noteLines, begin: before, earned, spent, left, body };
     before = left;
     return panel;
@@ -3594,7 +3594,15 @@ async function renderCalc(until) {
   const totalRc = run.reduce((total, { plan }) => total + passCost(plan), 0), lastBc = run.at(-1).left.bc;
   drawText(g, `${t("{n} RC on passes", { n: amount(totalRc) })} · ${t("{n} BC left after the last patch", { n: amount(lastBc) })}`, pad, 72, exportFont(13, 400), "#c4c4ca", "left");
   const icon = (src, x, y, size) => drawArt(g, pics[src], x, y, size, size, { fit: "contain" });
-  const draw = ({ patch, items, passes, noteLines, begin, earned, spent, left, body }, x, y) => {
+  // The three balance columns share one box. Each is as wide as the widest value in any panel, so they line up from panel to panel,
+  // and what is left is split evenly between them, where the + and − go
+  const showStart = value => [amount(value), value < 0 ? CALC_RED : "#ececee"], showEarned = value => [amount(value), "#ececee"];
+  const showSpent = value => value > 0 ? [`-${amount(value)}`, CALC_RED] : value < 0 ? [`+${amount(-value)}`, CALC_GREEN] : ["0", "#ececee"];
+  g.font = exportFont(15);
+  const widest = Math.max(...panels.flatMap(p => [...p.begin.map(showStart), ...p.earned.map(showEarned), ...p.spent.map(showSpent)]).map(([text]) => g.measureText(text).width));
+  const boxX = cols[0] - 8, boxW = cols[2] + colW + 8 - boxX, boxPad = 22, block = 32 + widest;
+  const space = Math.max(24, (boxW - boxPad * 2 - block * 3) / 2), blockX = i => boxX + boxPad + i * (block + space);
+  const draw =({ patch, items, passes, noteLines, begin, earned, spent, left, body }, x, y) => {
     g.fillStyle = "#1b1b1d";
     g.fillRect(x, y, panelW, body + foot);
     g.strokeStyle = "#ffffff12";
@@ -3608,15 +3616,23 @@ async function renderCalc(until) {
     const nameY = y + body / 2 - dates.length * 9 - (shown.length - 1) * 15 + 6;
     shown.forEach((text, i) => drawText(g, text, x + name / 2, nameY + i * 30, g.font, "#fff"));
     dates.forEach((text, i) => drawText(g, text, x + name / 2, nameY + (shown.length - 1) * 30 + 28 + i * 18, exportFont(14), "#c4c4ca"));
+    // A darker box under the three balance columns, with the same margin above the first line and below the last
+    g.fillStyle = "#0e0e10";
+    g.beginPath();
+    g.roundRect(x + boxX, y + top - 10, boxW, CURRENCIES.length * line + 20, 12);
+    g.fill();
+    g.strokeStyle = "#ffffff0d";
+    g.stroke();
     // What the patch buys, then the notes on how it was counted
-    items.forEach((text, i) => drawText(g, text, x + list, y + 40 + i * 28, exportFont(16, 400), "#c8c8ce", "left"));
-    noteLines.forEach((text, i) => drawText(g, text, x + list, y + 40 + items.length * 28 + (items.length ? 2 : -6) + i * 17, exportFont(12, 400), CALC_DIM, "left"));
+    g.font = exportFont(16, 400);
+    items.forEach((text, i) => drawText(g, fitText(g, text, listW - 10), x + list, y + top + 20 + i * 28, exportFont(16, 400), "#c8c8ce", "left"));
+    noteLines.forEach((text, i) => drawText(g, text, x + list, y + top + 20 + items.length * 28 + (items.length ? 2 : -6) + i * 17, exportFont(12, 400), CALC_DIM, "left"));
     // Column titles
     const label = (text, cx) => drawText(g, text, cx, y + 34, exportFont(15), "#9a9aa0");
     label(t("Currency Purchases"), x + buys + buysW / 2);
-    label(t("Patch Start"), x + cols[0] + colW / 2);
-    label(t("Patch Earnings"), x + cols[1] + colW / 2);
-    label(t("Expenses"), x + cols[2] + colW / 2);
+    label(t("Patch Start"), x + blockX(0) + block / 2);
+    label(t("Patch Earnings"), x + blockX(1) + block / 2);
+    label(t("Expenses"), x + blockX(2) + block / 2);
     // Passes: the pass and how many, then what they cost in RC
     passes.forEach(({ art, n, rc }, i) => {
       const cy = y + top + i * pass + pass / 2;
@@ -3635,12 +3651,13 @@ async function renderCalc(until) {
       icon(c.art, x + at, cy - 12, 24);
       drawText(g, text, x + at + 32, cy + 5, exportFont(15), color, "left");
     });
-    column(begin, cols[0], value => [amount(value), value < 0 ? CALC_RED : "#ececee"]);
-    column(earned, cols[1], value => [amount(value), "#ececee"]);
-    column(spent, cols[2], value => value > 0 ? [`-${amount(value)}`, CALC_RED] : value < 0 ? [`+${amount(-value)}`, CALC_GREEN] : ["0", "#ececee"]);
-    const signY = y + top + CURRENCIES.length * line / 2 + 7;
-    drawText(g, "+", x + (cols[0] + colW + cols[1]) / 2, signY, exportFont(22, 400), "#6c6c72");
-    drawText(g, "-", x + (cols[1] + colW + cols[2]) / 2, signY, exportFont(22, 400), "#6c6c72");
+    column(begin, blockX(0), showStart);
+    column(earned, blockX(1), showEarned);
+    column(spent, blockX(2), showSpent);
+    // The signs sit in the middle of the space between two columns, level with the middle line
+    const signY = y + top + CURRENCIES.length * line / 2 + 8;
+    drawText(g, "+", x + blockX(0) + block + space / 2, signY, exportFont(22), "#ececee");
+    drawText(g, "−", x + blockX(1) + block + space / 2, signY, exportFont(22), "#ececee");
     // Under a line, the balance the patch leaves, and how far it moved from the one the patch before left
     g.fillStyle = "#ffffff1c";
     g.fillRect(x + 16, y + body, panelW - 32, 1);
