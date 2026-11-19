@@ -520,10 +520,12 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-side-nav:disabled{opacity:.3;cursor:default}
 /* Starting balance: Black Cards across the top, the other six in pairs */
 .calc-money{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
-.calc-coin{display:grid;grid-template-columns:26px minmax(0,1fr);align-items:center;gap:3px 6px;min-width:0;padding:5px 7px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
+.calc-coin{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:4px 6px;min-width:0;padding:5px 7px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
 .calc-coin:first-child{grid-column:1/-1}
-.calc-coin .calc-icon{grid-row:2;width:26px;height:26px}
-.calc-coin small{grid-column:1/-1;overflow:hidden;font-size:11px;line-height:1.2;color:var(--mute);white-space:nowrap;text-overflow:ellipsis}
+/* Icon and name share the top row, so the box below gets the full width for six digits and the spin arrows */
+.calc-coin .calc-icon{width:22px;height:22px}
+.calc-coin input{grid-column:1/-1}
+.calc-coin small{min-width:0;font-size:11px;line-height:1.2;color:var(--mute);overflow-wrap:anywhere}
 #calc .calc-coin input{height:30px;padding:0 6px;font-size:14px}
 .calc-owned{display:grid;gap:6px}
 .calc-own{display:grid;grid-template-columns:minmax(0,1fr) 122px;align-items:center;gap:6px;font-size:12px;color:#dcdce0}

@@ -2181,7 +2181,7 @@ function packCost(rc, column) {
 }
 const rcPrice = rc => rc ? t("≈ {usd} · {brl} on Codashop", { usd: packCost(rc, 2).toLocaleString(loc("en-US"), { style: "currency", currency: "USD" }), brl: packCost(rc, 1).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) }) : "";
 const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
-const numberBox = (attr, value, label) => `<input type="number" inputmode="numeric" min="0" step="1" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
+const numberBox = (attr, value, label, step = 1) => `<input type="number" inputmode="numeric" min="0" step="${step}" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
 const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(t(c.name))}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
 const frameLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || t("Frame to be confirmed"));
 // What a pass gives, as small currency icons with amounts: on purchase, once a day, or over the Tactical Assessment levels
@@ -2394,7 +2394,7 @@ function calculatorPage() {
       <div class="calc-board">
         <section class="calc-card calc-balance">
           <div class="calc-head"><div><h3>${t("Starting balance")}</h3><p>${t("What you have right now")}</p></div></div>
-          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, t(c.name)))}</div>
+          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, t(c.name), 250))}</div>
           ${ownedBox(runningPatch(patches, today))}
           <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
           <button class="tool calc-events-open" type="button" data-events-open>${t("Events List")}<span id="calcEventsCount"></span></button>
