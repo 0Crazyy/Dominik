@@ -164,7 +164,7 @@ Object.assign(I18N_PT, {
     "Achou uma build errada, ou tem uma dúvida ou sugestão? Me mande uma mensagem. As pessoas por trás dos dados e da arte estão creditadas abaixo.",
   "Join the Discord server": "Entrar no servidor do Discord",
   "Support me on Ko-fi": "Me apoie no Ko-fi",
-  "Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.":
+  "Dominik is an independent, unofficial project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.":
     "Dominik é um projeto de fã não oficial e não tem ligação com a Kuro Games. Punishing: Gray Raven, seus personagens e sua arte pertencem aos respectivos donos.",
   "Made with:": "Feito com:",
   "creator of Huaxu, for the assets": "criador do Huaxu, pelos recursos",
@@ -714,7 +714,7 @@ Object.assign(I18N_PT, {
   "How Dominik handles your data, under Brazil's LGPD, the EU's GDPR and similar laws.": "Como o Dominik trata seus dados, de acordo com a LGPD, o GDPR da União Europeia e leis parecidas.",
   "Last updated: {date}": "Última atualização: {date}",
   "Who is responsible": "Quem é o responsável",
-  "Dominik is a fan site run by one person, known on Discord as crazy117, who decides how its data is used (the \"controller\" under Brazil's LGPD and the EU's GDPR). Questions and requests go to crazy117 on Discord; the contact is on the {credits} page.": "O Dominik é um site de fã mantido por uma pessoa, conhecida no Discord como crazy117, que decide como os dados são usados (o \"controlador\", na LGPD e no GDPR). Dúvidas e pedidos vão para crazy117 no Discord; o contato está na página {credits}.",
+  "Dominik is an independent site run by one person, known on Discord as crazy117, who decides how its data is used (the \"controller\" under Brazil's LGPD and the EU's GDPR). Questions and requests go to crazy117 on Discord; the contact is on the {credits} page.": "O Dominik é um site de fã mantido por uma pessoa, conhecida no Discord como crazy117, que decide como os dados são usados (o \"controlador\", na LGPD e no GDPR). Dúvidas e pedidos vão para crazy117 no Discord; o contato está na página {credits}.",
   "The site is not affiliated with Kuro Games.": "O site não tem ligação com a Kuro Games.",
   "What the site collects, and why": "O que o site coleta, e por quê",
   "Browsing needs no account, and the site itself keeps no record of who visits it.": "Navegar não exige conta, e o próprio site não guarda registro de quem o visita.",

@@ -358,6 +358,8 @@ function setPinned(on) {
 pinBtn.onclick = () => {
   const on = !side.classList.contains("pinned");
   setPinned(on);
+  // The switch only slides after a click, not when the saved choice is restored on load
+  pinBtn.classList.add("pin-anim");
   try { localStorage.setItem(PIN_KEY, on ? "1" : ""); }
   catch { /* the choice just lasts until the page closes */ }
 };
@@ -1352,7 +1354,7 @@ const creditsPage = () => `<div class="credits-page"><h1>${t("Credits")}</h1><p 
       <ul>${CREDITS.map(creditRow).join("")}</ul>
     </section>
   </div>
-  <p class="legal">${t("Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.")}</p>
+  <p class="legal">${t("Dominik is an independent, unofficial project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.")}</p>
   <section class="made-with">
     <p class="contact-label">${t("Made with:")}</p>
     <ul>${MADE_WITH.map(({ name, info, art }) => `<li${tipAttr(name, t(info))}>${pic(art, `alt="${esc(name)}"`)}<span>${esc(name)}</span></li>`).join("")}</ul>
@@ -1487,7 +1489,7 @@ const CALC_SPENDING = [
   { key: "shards", name: "Frame shards", note: "804 Vouchers each" }
 ];
 // Codashop prices of the Android packs (BRL from its Brazilian page, USD from its US page): [RC, BRL, USD]. tools/update-prices.mjs rewrites these two lines
-const RC_PRICES_DATE = "19 Nov 2026";
+const RC_PRICES_DATE = "23 Nov 2026";
 const RC_PACKS = [[5, 4.99, 0.99], [28, 25.99, 4.99], [34, 31.99, 5.99], [59, 52.99, 9.99], [71, 62.99, 11.99], [119, 104.99, 19.99], [299, 264.99, 49.99], [600, 529.99, 99.99]];
 const RC_STORE = { USD: "https://www.codashop.com/en-us/punishing-gray-raven", BRL: "https://www.codashop.com/pt-br/punishing-gray-raven" };
 const COST = { S: 15000, A: 2500, weapon: 7500, cub: 5000, frameShard: 804, resonance: 150, shardVouchers: 120 };
@@ -2569,7 +2571,7 @@ function adminPage() {
 const PRIVACY_UPDATED = "2026-11-23";
 const PRIVACY = [
   ["Who is responsible", [
-    "Dominik is a fan site run by one person, known on Discord as crazy117, who decides how its data is used (the \"controller\" under Brazil's LGPD and the EU's GDPR). Questions and requests go to crazy117 on Discord; the contact is on the {credits} page.",
+    "Dominik is an independent site run by one person, known on Discord as crazy117, who decides how its data is used (the \"controller\" under Brazil's LGPD and the EU's GDPR). Questions and requests go to crazy117 on Discord; the contact is on the {credits} page.",
     "The site is not affiliated with Kuro Games."
   ]],
   ["What the site collects, and why", [

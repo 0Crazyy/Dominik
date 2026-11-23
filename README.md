@@ -24,7 +24,7 @@
 
 ## About
 
-Dominik is a fan-made website for Punishing: Gray Raven players. It brings team compositions shared by its players, character builds and game data such as memories, weapons and C.U.B.s together in one place, along with tools for planning your pulls.
+Dominik is an independent, community-driven website for Punishing: Gray Raven players. It brings team compositions shared by its players, character builds and game data such as memories, weapons and C.U.B.s together in one place, along with tools for planning your pulls.
 
 ## Purpose
 
@@ -120,4 +120,4 @@ If the site helps you, you can [support it on Ko-fi](https://ko-fi.com/ofcrazy).
 
 ## Disclaimer
 
-Dominik is an unofficial fan project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.
+Dominik is an independent, unofficial project and is not affiliated with Kuro Games. Punishing: Gray Raven and its characters and art belong to their respective owners.
