@@ -6,8 +6,8 @@ Nada aqui foi instalado. Cada item diz o que faz, por que serve neste projeto e 
 
 | Ferramenta | Tipo | Por que aqui | Como instalar |
 |---|---|---|---|
-| **cloudflare/skills** (oficial da Cloudflare) | Skills do Claude Code | Ensina Pages, Functions, D1, KV e `wrangler` do jeito atual. O projeto tem API em `functions/api/` com D1 e KV; hoje o conhecimento vem só da memória do modelo. | No Claude Code: `/plugin marketplace add cloudflare/skills` |
-| **Cloudflare API MCP** (`https://mcp.cloudflare.com/mcp`, oficial) | Servidor MCP | Ler o D1/KV de produção (fila de times, chave `teams`/`hidden`), ver deploys e logs do Pages sem abrir o painel. Login por OAuth, então é o usuário quem conecta. | `claude mcp add --transport http cloudflare https://mcp.cloudflare.com/mcp` |
+| **cloudflare/skills** (oficial da Cloudflare) | Skills do Claude Code | Ensina Pages, Functions, D1 e `wrangler` do jeito atual. O projeto tem API em `functions/api/` com D1 e KV; hoje o conhecimento vem só da memória do modelo. | No Claude Code: `/plugin marketplace add cloudflare/skills` |
+| **Cloudflare API MCP** (`https://mcp.cloudflare.com/mcp`, oficial) | Servidor MCP | Ler o D1 de produção (times, contas, denúncias), ver deploys e logs do Pages sem abrir o painel. Login por OAuth, então é o usuário quem conecta. | `claude mcp add --transport http cloudflare https://mcp.cloudflare.com/mcp` |
 | **webapp-testing** (anthropics/skills) | Skill do Claude Code | Roteiro pronto para dirigir o site com Playwright e tirar prints; complementa o `tools/smoke.mjs` quando é preciso clicar em algo específico (Team Builder, export de imagem). | `npx skills add https://github.com/anthropics/skills --skill webapp-testing` |
 | **Skill do projeto `update-colors`** (nova, a escrever) | Skill local | Passo a passo de `docs/cores-texto.md`: rodar `tools/fetch-colors.mjs` com prévia, conferir os não achados, gravar. Evita esquecer as cores num personagem novo. | Arquivo em `.claude/skills/update-colors/SKILL.md` |
 

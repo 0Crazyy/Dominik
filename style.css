@@ -1,3 +1,30 @@
+/* Fonts served by the site itself (no Google Fonts: no visitor address goes to Google). Latin and Latin Extended only.
+   Barlow, Jura and Quantico are under the SIL Open Font License 1.1 (assets/fonts/OFL.txt). */
+/* Barlow 400 italic, latin-ext */
+@font-face { font-family: "Barlow"; font-style: italic; font-weight: 400; font-display: swap; src: url("/assets/fonts/barlow-400-italic-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* Barlow 400 italic, latin */
+@font-face { font-family: "Barlow"; font-style: italic; font-weight: 400; font-display: swap; src: url("/assets/fonts/barlow-400-italic-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Barlow 400, latin-ext */
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/barlow-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* Barlow 400, latin */
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/barlow-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Barlow 500, latin-ext */
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 500; font-display: swap; src: url("/assets/fonts/barlow-500-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* Barlow 500, latin */
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 500; font-display: swap; src: url("/assets/fonts/barlow-500-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Barlow 600, latin-ext */
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 600; font-display: swap; src: url("/assets/fonts/barlow-600-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* Barlow 600, latin */
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 600; font-display: swap; src: url("/assets/fonts/barlow-600-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Jura 400, latin-ext */
+@font-face { font-family: "Jura"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/jura-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* Jura 400, latin */
+@font-face { font-family: "Jura"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/jura-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Quantico 400, latin */
+@font-face { font-family: "Quantico"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/quantico-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Quantico 700, latin */
+@font-face { font-family: "Quantico"; font-style: normal; font-weight: 700; font-display: swap; src: url("/assets/fonts/quantico-700-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
 :root{--prose:"Barlow",system-ui,sans-serif;--side-line:#cf142447;--side-hover:#cf142426;--side-on:#cf142438;--u:min(1px,100cqi/360);--bg:#0b0b0c;--panel:#161617;--line:#2e2e31;--txt:#ececee;--mute:#9a9aa0;--acc:#7c7c84;--red:#cf1424;
 --bar-blue:linear-gradient(90deg,#08367a,#19c4ff,#08367a);--bar-red:linear-gradient(90deg,#7d0e0e,#ff5a5a,#7d0e0e);--bar-gold:linear-gradient(90deg,#7a4a08,#ffc400,#7a4a08);--edge-blue:linear-gradient(90deg,#1368ff,#45e6ff,#1368ff);--edge-red:linear-gradient(90deg,#ff2020,#ffb0a8,#ff2020);--edge-gold:linear-gradient(90deg,#ff9d00,#fff06a,#ff9d00)}
 *{box-sizing:border-box;margin:0}
@@ -29,7 +56,7 @@ nav a:hover,nav button:hover{background:var(--side-hover)}
 nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
 #side :focus-visible{outline-color:var(--red)}
 .ico{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-/* Constructs, Memories, Weapon Resonance and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
+/* Constructs, Memories, Weapons, Weapon Resonance and C.U.B.s use drawn art instead of a stroke. As a mask, the art keeps the colour of the link, like the icons drawn in index.html */
 .ico-art{-webkit-mask:var(--art) center/contain no-repeat;mask:var(--art) center/contain no-repeat;background:currentColor}
 .ico-constructs{--art:url(assets-web/icons/constructs.webp?v=3)}
 /* The Teams art is tall and narrow, so it is enlarged to match the visual weight of the others */
@@ -37,6 +64,7 @@ nav a.on{background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#ff
 .ico-cubs{--art:url(assets-web/icons/cubs.webp?v=2)}
 .ico-resonance{--art:url(assets-web/icons/resonance.webp?v=2)}
 .ico-memories{--art:url(assets-web/icons/memories.webp?v=2)}
+.ico-weapons{--art:url(assets-web/icons/weapons.webp?v=4)}
 nav button i{margin-left:auto;font-style:normal;transition:transform .2s}
 nav button[aria-expanded=true] i{transform:rotate(180deg)}
 #teamsMenu{padding-left:10px}
@@ -47,6 +75,12 @@ nav button[aria-expanded=true] i{transform:rotate(180deg)}
 .subList img{width:22px;height:22px;flex:none;object-fit:contain}
 .subEmpty{padding:7px 12px 7px 16px;font-size:13px;color:var(--mute)}
 #main{--pad:32px;flex:1;min-width:0;padding:var(--pad)}
+/* The box around each page (route() in app.js): centered once the screen is wider than the page. The width follows the
+   widest block of the page, so text pages center as a column and a 1920px screen keeps the full width */
+.page{max-width:var(--page-w,1800px);margin-inline:auto}
+.page[data-page=timeline],.page[data-page=calculator]{--page-w:1640px}
+.page:is([data-page=updates],[data-page=credits]){--page-w:900px}
+.page:is([data-page=privacy],[data-page=account]){--page-w:760px}
 #menuBtn{display:none}
 .wpn-detail:not(:has(img)){grid-template-columns:minmax(0,1fr)}
 .wpn-detail>.slot:not(:has(img)){display:none}
@@ -188,7 +222,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 ::view-transition-old(side){display:none}
 ::view-transition-new(side){animation:none}
 .card{container-type:inline-size;flex:1 1 0;min-width:0;position:relative;background:var(--cp);border:1px solid #ffffff14}
-.cin{padding:calc(30*var(--u)) calc(14*var(--u)) calc(26*var(--u))}
+.cin{padding:calc(18*var(--u)) calc(14*var(--u)) calc(26*var(--u))}
 /* The bars sit outside the card, touching its border. Each one is two layers, so its edge also follows the ramps: the bar shows through as the edge, and ::before is the fill */
 .bar{position:absolute;left:-1px;right:-1px;height:calc(15*var(--u))}
 .bar::before{content:"";position:absolute;inset:2px}
@@ -209,7 +243,7 @@ h2.grp::after{content:"";flex:1;height:1px;background:var(--line)}
 /* Card widths have fractions of a pixel: the red bar covers the seam, so the blue one can never round into it */
 .comp .c-red .bar{left:-2px}
 .comp .c-red{border-color:#0000}
-.card h3{text-align:center;font-size:calc(20*var(--u));font-weight:600;margin-bottom:calc(14*var(--u))}
+.card h3{text-align:center;font-size:calc(20*var(--u));font-weight:600;margin-bottom:calc(10*var(--u))}
 .card h3 a:hover{text-decoration:underline}
 .top{display:grid;grid-template-columns:1fr auto 1fr;gap:calc(14*var(--u));align-items:center;margin-bottom:calc(16*var(--u))}
 .sym{width:100%;max-width:calc(60*var(--u));aspect-ratio:1;justify-self:center}
@@ -486,7 +520,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-bar{display:flex;flex-wrap:wrap;gap:6px 28px;padding:6px 14px;background:#0f0f10;border:1px solid var(--line);border-bottom:2px solid var(--red)}
 .calc-bar[hidden]{display:none}
 .calc-bar-item{display:flex;align-items:center;gap:10px;min-width:0}
-.calc-bar-item .calc-icon{width:30px;height:30px}
+.calc-bar-item .calc-icon{width:34px;height:34px}
 .calc-bar-item output{display:block;font-size:16px;font-weight:700}
 .calc-bar-item output.short{color:#ff6b6b}
 .calc-bar-item small{display:block;font-size:11px;color:var(--mute)}
@@ -506,6 +540,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-check{display:flex;align-items:flex-start;gap:9px;font-size:14px;cursor:pointer}
 .calc-check input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--red)}
 .calc-check small{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
+.calc-check.has-icon .calc-icon{width:26px;height:26px;margin-top:-3px}
 /* The board: starting balance, the patches in the middle with a step button at each side, and what every patch leaves.
    Wide screens fit it in one view; the final balance column scrolls inside itself */
 .calc-board{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
@@ -520,10 +555,10 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-side-nav:disabled{opacity:.3;cursor:default}
 /* Starting balance: Black Cards across the top, the other six in pairs */
 .calc-money{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
-.calc-coin{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:4px 6px;min-width:0;padding:5px 7px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
+.calc-coin{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:4px 6px;min-width:0;padding:5px 7px;background:#0f0f10;border:1px solid var(--line);border-radius:4px}
 .calc-coin:first-child{grid-column:1/-1}
 /* Icon and name share the top row, so the box below gets the full width for six digits and the spin arrows */
-.calc-coin .calc-icon{width:22px;height:22px}
+.calc-coin .calc-icon{width:28px;height:28px}
 .calc-coin input{grid-column:1/-1}
 .calc-coin small{min-width:0;font-size:11px;line-height:1.2;color:var(--mute);overflow-wrap:anywhere}
 #calc .calc-coin input{height:30px;padding:0 6px;font-size:14px}
@@ -562,7 +597,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-ev>span:first-of-type{flex:1;min-width:0}
 .calc-ev-gains{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px 10px}
 .calc-ev-gain{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#dcdce0}
-.calc-ev-gain .calc-icon{width:18px;height:18px}
+.calc-ev-gain .calc-icon{width:22px;height:22px}
 @media (max-width:760px){
   .calc-events{width:100%;max-width:none;margin:auto 0 0;max-height:85dvh;border-radius:12px 12px 0 0}
   .calc-ev{flex-wrap:wrap}
@@ -596,7 +631,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-stop-top .calc-tag{position:absolute;top:-10px;right:8px;padding:1px 5px;font-size:9px}
 .calc-stop small{font-size:11px;color:var(--mute)}
 .calc-stop-bc{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
-.calc-stop-bc .calc-icon{width:22px;height:22px}
+.calc-stop-bc .calc-icon{width:26px;height:26px}
 .calc-stop-bc .short{color:#ff6b6b}
 /* The picked patch: its income in a row under the belt, then passes and spending side by side when there is room */
 .calc-patch{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:4px;padding-top:12px;border-top:1px solid var(--line)}
@@ -604,7 +639,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-income{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .calc-income>small{margin-right:10px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .calc-gain{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:64px;min-width:0;padding:6px 2px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-.calc-gain .calc-icon{width:30px;height:30px}
+.calc-gain .calc-icon{width:36px;height:36px}
 .calc-patch .calc-head{justify-content:center;text-align:center}
 .calc-patch .calc-head h3,.calc-patch .calc-meta{justify-content:center}
 .calc-side{display:flex;flex-direction:column;min-width:0}
@@ -617,6 +652,12 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-copy{padding:7px 12px;font-size:12px}
 .calc-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
 .calc-passes{display:grid;gap:6px}
+.calc-passes[hidden]{display:none}
+.calc-fold{display:flex;align-items:center;gap:6px;width:100%;padding:0;background:none;border:0;font-family:inherit;text-align:left;cursor:pointer}
+.calc-fold:hover{color:var(--txt)}
+.calc-fold small{font-size:inherit;font-weight:600;letter-spacing:.06em;text-transform:none;color:var(--mute)}
+.calc-fold span{margin-left:auto;font-size:13px;transition:transform .15s}
+.calc-fold[aria-expanded="false"] span{transform:rotate(-90deg)}
 .calc-pass{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0;padding:5px 8px;background:#0f0f10;border:1px solid var(--line);border-radius:4px;color:#dcdce0;cursor:pointer}
 .calc-pass .calc-icon{width:34px;height:34px}
 .calc-pass-tx{min-width:0}
@@ -627,7 +668,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-legend-part:first-child{min-width:138px}
 .calc-legend i{flex:none;min-width:34px;font-style:normal;font-weight:400;color:var(--mute)}
 .calc-reward{display:inline-flex;align-items:center;gap:3px;line-height:16px;font-variant-numeric:tabular-nums}
-.calc-mini{display:block;width:16px;height:16px}
+.calc-mini{display:block;width:20px;height:20px}
 .calc-mini img{display:block;width:100%;height:100%;object-fit:contain}
 #calc .calc-pass select{width:52px;height:32px;padding:0 6px}
 .calc-pass input[type=checkbox]{justify-self:end;width:20px;height:20px;margin:0 8px;accent-color:var(--red)}
@@ -659,7 +700,7 @@ nav a.sr{justify-content:flex-start;align-items:center;gap:10px;padding:6px 8px;
 .calc-final-row>b{font-size:14px}
 .calc-final-coins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
 .calc-final-coin{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
-.calc-final-coin .calc-icon{width:20px;height:20px}
+.calc-final-coin .calc-icon{width:25px;height:25px}
 .calc-final-coin output{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .calc-final-coin output.short{color:#ff6b6b}
 .calc-notes{display:grid;gap:0 24px}
@@ -785,6 +826,9 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .wpn h3{margin-top:0}
 .wpn img{object-fit:contain}
 .empty{color:var(--mute);padding:40px;border:1px dashed var(--line);text-align:center}
+a.empty-link{display:block;text-decoration:none;transition:border-color .15s,background .15s,color .15s}
+a.empty-link u{color:#fff}
+a.empty-link:hover{border-color:var(--red);background:#ffffff08;color:var(--txt)}
 /* Sliding cards: with less room than this three cards no longer fit at a readable size, so they keep their size and go side by
    side, one in the center and the next ones peeking. It reads the room left by the side menu, not the window.
    The swipe is the browser's scroll snap. Keep in sync with isSliding in app.js */
@@ -818,8 +862,8 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 #langBtn{display:flex;margin-top:2px;font-size:14px;font-weight:400;color:var(--mute)}
 #langBtn b{font-weight:400}
 #langBtn b.on{font-weight:700;color:var(--txt)}
-/* Locked while the translation is unfinished (I18N_ENABLED in i18n.js) */
-#langBtn:disabled{cursor:not-allowed;opacity:.55}
+/* Credits and Privacy: rarely used, so quieter than Updates */
+.nav-minor{font-size:14px;font-weight:400;color:var(--mute)}
 #teamsBtn:has(+[hidden] a.on),#assetsBtn:has(+[hidden] a.on),.sub:has(+[hidden] a.on){background:var(--side-on);box-shadow:inset 3px 0 0 var(--red);color:#fff}
 @media(min-width:761px) and (hover:hover){
 #pinBtn{display:flex;margin-top:2px;font-size:14px;font-weight:400;color:var(--mute)}
@@ -945,6 +989,13 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .tl-soon.late em{color:#e6bd52}
 .tl-soon.empty{display:block;min-height:50px;padding:4px 8px;background:transparent;border-style:dashed;font-size:11px;color:var(--mute)}
 .tl-soon.empty:empty{visibility:hidden}
+#timeline .calc-tabs{flex-wrap:wrap}
+.tl-server{display:flex;gap:8px;margin-left:auto}
+.tl-soonbox h3{display:flex;align-items:center;gap:8px}
+.tl-more{padding:2px 0;background:none;border:0;font:inherit;font-size:12px;font-weight:600;letter-spacing:normal;text-transform:none;color:var(--mute);cursor:pointer}
+.tl-more:hover{color:var(--txt);text-decoration:underline}
+.tl-rank>.tl-more{margin-top:6px}
+.tl-rank ol.all{max-height:calc(10 * 34px + 9 * 4px);overflow-y:auto;padding-right:4px}
 .tl-rank ol{min-height:calc(6 * 34px + 5 * 4px)}
 .tl-average.dim{opacity:.35}
 .tl-averages summary{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);cursor:pointer}
@@ -1005,6 +1056,8 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .tl-zoom b{min-width:28px;text-align:center}
 .tl-zoom .tool:disabled{opacity:.4;cursor:default}
 .tl-collab{background:#7aa8ff}
+.tl-prac{left:auto;right:-2px;background:#e6bd52;font-style:normal}
+.tl-item .tl-prac,.tl-soon .tl-prac{position:static;display:inline-block;margin-left:6px;vertical-align:1px}
 .tl-chips{display:flex;flex-wrap:wrap;gap:4px}
 .tl-chips span{padding:2px 6px;background:#0f0f10;border:1px solid var(--line);border-radius:3px;font-size:11px;color:#e6bd52}
 .tl-watch{grid-column:1/-1}
@@ -1297,6 +1350,8 @@ a.wpn{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 12px;align-ite
 .cx-search:focus{outline:none;border-color:#d8d8dc}
 .wtype{display:inline-block;width:100%;height:100%;background:#e5e5e5;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
 .wtype-card .slot{display:grid;place-items:center;padding:3px}
+.cx-wtype{display:flex;align-items:center;gap:6px}
+.cx-wtype .wtype{flex:none;width:16px;height:16px}
 .wtype-head{display:flex;align-items:center;gap:10px}
 .wtype-head .wtype{width:44px;height:44px;flex:none}
 .tb-search{display:block;width:100%;max-width:320px;margin:0 0 12px}
@@ -1378,14 +1433,29 @@ a.ctile:hover{border-color:color-mix(in srgb,var(--c) 60%,#fff0);transform:trans
 .ed-page-option{grid-template-rows:34px 2.4em;align-content:start;height:76px}
 .ed-page-option>span{display:grid;align-items:center;overflow:hidden}
 .ed-team-side{display:grid;gap:16px;min-width:0}
-.ed-team-actions{display:grid;gap:8px;padding:14px;background:var(--bg);border:1px solid var(--line);border-left:2px solid var(--red);border-radius:6px}
-.ed-team-actions .tool{width:100%;padding:11px 14px;text-align:center}
-.ed-team-actions .ed-primary{background:var(--red);border-color:var(--red);color:#fff;font-size:14px}
-.ed-team-actions .ed-primary:hover:not(:disabled){background:#e3202e}
-.ed-team-actions .ed-danger{background:none;color:var(--mute)}
-.ed-team-actions .ed-danger:hover{background:#cf142426;border-color:var(--red);color:#fff}
-.ed-team-actions .ed-send{max-width:none;margin:4px 0 0;padding:12px;background:var(--panel)}
-@media(max-width:760px){.ed-team-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.ed-team-actions>:is(.ed-team-heading,.ed-send){grid-column:1/-1}}
+/* Team Builder step 2: the chosen page on the left, the share actions on the right, both small */
+.ed-topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;margin:0 0 12px;padding:0 0 12px;border-bottom:1px solid var(--line)}
+.ed-topbar-page{display:flex;align-items:center;gap:10px;min-width:0}
+.ed-topbar-page img{width:30px;height:30px;object-fit:contain}
+.ed-topbar-page>span{display:grid;line-height:1.2}
+.ed-topbar-page small{color:var(--mute);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.ed-topbar-page b{font-size:15px}
+.ed-topbar-actions{display:flex;flex-wrap:wrap;gap:6px}
+.ed-pill{padding:5px 11px;background:none;border:1px solid var(--line);border-radius:4px;color:var(--mute);font:600 12px "Quantico";cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+.ed-pill:hover:not(:disabled){border-color:#fff;color:#fff}
+.ed-pill:disabled{opacity:.45;cursor:default}
+.ed-pill-main{border-color:var(--red);color:#fff}
+.ed-pill-main:hover:not(:disabled){background:var(--red);border-color:var(--red)}
+.ed-pill-danger:hover:not(:disabled){background:#cf142426;border-color:var(--red)}
+.ed-topbar+.ed-send{margin:0 0 14px auto}
+/* Team Builder step 1: the element or Effect of the team, with bigger buttons */
+.ed-choose{display:grid;gap:10px;padding:20px 22px 22px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
+.ed-choose h2{font-size:20px}
+.ed-choose .sub{margin:0 0 6px}
+.ed-page-step{gap:18px 30px}
+.ed-page-step .ed-page-option{width:92px;height:100px;grid-template-rows:48px 2.4em;padding:10px 6px;font-size:12px}
+.ed-page-step .ed-page-option img{width:48px;height:48px}
+@media(max-width:560px){.ed-choose{padding:14px}.ed-page-step .ed-page-option{width:72px;height:86px;grid-template-rows:38px 2.4em;font-size:10px}.ed-page-step .ed-page-option img{width:38px;height:38px}}
 .ed-order-chip:not(:has(img)){width:auto;min-width:56px;padding:15px 10px 5px}
 .ed-status{position:fixed;z-index:60;left:50%;bottom:20px;transform:translate(-50%,12px);width:max-content;max-width:min(92vw,560px);padding:12px 18px;background:#1c1c1f;border:1px solid var(--red);border-left-width:4px;border-radius:6px;box-shadow:0 8px 28px #000c;color:#fff;font:600 14px/1.4 "Quantico";overflow-wrap:anywhere;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,transform .2s,visibility 0s .2s}
 .ed-status.on{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .2s,transform .2s}
@@ -1393,7 +1463,7 @@ a.ctile:hover{border-color:color-mix(in srgb,var(--c) 60%,#fff0);transform:trans
 
 .calc-level{grid-template-columns:auto 76px;justify-content:start;gap:14px;margin-top:10px}
 /* Narrow phones (Mobile S/M): stack each income icon over its number and let the pass legend wrap, so nothing spills out of its box */
-@media(max-width:400px){.calc-gain{flex-direction:column;gap:2px;padding:6px 2px}.calc-gain .calc-icon{width:28px;height:28px}.calc-legend-part{flex-wrap:wrap;white-space:normal}.calc-legend-part:first-child{min-width:0}.calc-pass-own{flex-direction:column;align-items:stretch;gap:4px}#calc .calc-pass-own input{width:100%}}
+@media(max-width:400px){.calc-gain{flex-direction:column;gap:2px;padding:6px 2px}.calc-gain .calc-icon{width:34px;height:34px}.calc-legend-part{flex-wrap:wrap;white-space:normal}.calc-legend-part:first-child{min-width:0}.calc-pass-own{flex-direction:column;align-items:stretch;gap:4px}#calc .calc-pass-own input{width:100%}}
 /* Rotation builder of a position: tabs, move buttons, turns and steps. The detail cards are narrow, so everything wraps */
 .ed-tabs{clear:both;display:flex;gap:4px;margin:0 0 12px}
 .ed-tabs button{flex:1;min-height:36px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:#dcdce0;font:600 12px "Quantico";cursor:pointer}
@@ -1450,3 +1520,202 @@ a.ctile:hover{border-color:color-mix(in srgb,var(--c) 60%,#fff0);transform:trans
 .art-zoom .prev,.art-zoom .next{top:50%;transform:translateY(-50%);width:48px;height:64px;font-size:40px}
 .art-zoom .prev{left:10px;right:auto}
 .art-zoom .next{right:10px}
+/* Damage calculator on a construct page. Bars: Energy hits in the site red, Effect hits in blue (validated pair on --panel) */
+.dmg{--dmg-energy:#cf1424;--dmg-effect:#3b8ee8;container-type:inline-size;display:grid;gap:14px;margin:12px 0 24px;padding:16px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red)}
+.dmg-note,.dmg-ref{font-size:13px;line-height:1.5;color:var(--mute)}
+.dmg-seg{display:inline-flex;flex-wrap:wrap;gap:0;justify-self:start;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.dmg-seg .tool{border:0;border-radius:0;background:transparent}
+.dmg-seg .tool+.tool{border-left:1px solid var(--line)}
+.dmg-seg .tool:hover{background:#222224}
+.dmg-seg .tool.on{background:#d8d8dc;color:#0b0b0c}
+.dmg-mode .tool{padding:9px 16px;font-size:14px}
+.dmg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.dmg-field{display:grid;gap:4px;min-width:0;font-size:12px;color:var(--mute)}
+.dmg-field.wide{grid-column:span 2}
+.dmg :is(select,input[type=number]){width:100%;min-width:0;height:36px;padding:0 10px;background:var(--bg);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:600 14px "Quantico";color-scheme:dark}
+.dmg :is(select,input[type=number]):focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.dmg select{cursor:pointer}
+.dmg select:disabled{opacity:.5;cursor:default}
+.dmg-more{border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.015)}
+.dmg-more>summary{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:14px;font-weight:700;cursor:pointer;list-style:none}
+.dmg-more>summary::-webkit-details-marker{display:none}
+.dmg-more>summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(-45deg);transition:transform .15s}
+.dmg-more[open]>summary::before{transform:rotate(45deg)}
+.dmg-more>summary:hover{background:rgba(255,255,255,.03)}
+.dmg-more>summary small{margin-left:auto;white-space:nowrap;padding:2px 9px;border-radius:999px;background:#ffffff14;font-size:12px;font-weight:600;color:var(--mute)}
+.dmg-more[open]>summary{border-bottom:1px solid var(--line)}
+.dmg-tune{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px;padding:12px}
+.dmg-box{min-width:0;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.dmg-box-wide{grid-column:1/-1}
+.dmg-box h4{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txt)}
+.dmg-box h4 small{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--mute)}
+.dmg-lv{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dmg-box .dmg-lv{margin-bottom:8px}
+.dmg-lv-name{font-size:12px;font-weight:600;color:var(--mute);white-space:nowrap}
+.dmg-lv.changed .dmg-lv-name{color:var(--txt)}
+.dmg-lv.changed input[type=number]{border-color:#d8d8dc88}
+.dmg-step{display:grid;grid-template-columns:28px 44px 28px;gap:4px}
+.dmg-step .tool{padding:0;height:28px;font-size:16px;line-height:1}
+.dmg .dmg-step input[type=number]{height:28px;padding:0 2px;text-align:center;appearance:textfield;-moz-appearance:textfield}
+.dmg-step input::-webkit-inner-spin-button,.dmg-step input::-webkit-outer-spin-button{display:none}
+.dmg-togs{display:grid;gap:6px}
+.dmg-tog{position:relative;display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer;transition:border-color .15s,background .15s}
+.dmg-tog:hover{border-color:#4a4a50}
+.dmg-tog.on{border-color:#cf142488;background:color-mix(in srgb,var(--red) 9%,var(--panel))}
+.dmg-tog input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.dmg-sw{position:relative;width:36px;height:20px;border-radius:999px;background:#3a3a3f;transition:background .15s}
+.dmg-sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#d8d8dc;transition:transform .15s}
+.dmg-tog.on .dmg-sw{background:var(--red)}
+.dmg-tog.on .dmg-sw::after{transform:translateX(16px);background:#fff}
+.dmg-tog input:focus-visible+.dmg-sw{outline:2px solid #fff;outline-offset:2px}
+.dmg-tog-text{min-width:0;display:grid;gap:2px}
+.dmg-tog-text b{font-size:13px;line-height:1.3}
+.dmg-tog-text small{font-size:12px;line-height:1.4;color:var(--mute)}
+.dmg-tog.on .dmg-tog-text small{color:#c9c9cf}
+.dmg-badge{align-self:start;padding:2px 7px;border:1px solid var(--line);border-radius:4px;font:700 11px "Quantico";color:var(--mute);white-space:nowrap}
+.dmg-tog.locked{cursor:not-allowed;opacity:.55}
+.dmg-tog.locked:hover{border-color:var(--line)}
+.dmg-badge.locked{border-color:transparent;background:#ffffff10}
+.dmg-tune-foot{display:flex;justify-content:flex-end}
+/* Settings and results: one column, two once the panel is wide enough (the settings then stay in view while the list scrolls) */
+.dmg-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.dmg-set,.dmg-out{display:grid;gap:12px;min-width:0;align-content:start}
+.dmg-set .dmg-mode{display:flex;justify-self:stretch}
+.dmg-set .dmg-mode .tool{flex:1 1 auto}
+@container (min-width:720px){.dmg-layout{grid-template-columns:minmax(0,390px) minmax(0,1fr)}
+  .dmg-set{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;padding-right:6px;scrollbar-width:thin;scrollbar-gutter:stable}}
+/* The buffs inside "Class, weapon, memories and team": one column of sections split by a line, not boxes inside a box */
+.dmg-set .dmg-tune{grid-template-columns:minmax(0,1fr);gap:0;padding:0 12px}
+.dmg-more .dmg-box{padding:12px 0;background:none;border:0;border-radius:0}
+.dmg-more .dmg-box+.dmg-box{border-top:1px solid var(--line)}
+/* Rank effects: what the chosen rank turns on, and dimmed, what a higher rank adds */
+.dmg-ranks{display:grid;gap:4px;margin:0;padding:0;list-style:none;font-size:12px;line-height:1.4}
+.dmg-ranks li{border-radius:4px}
+.dmg-ranks li.on{color:var(--txt);background:rgba(255,255,255,.025)}
+.dmg-ranks summary,.dmg-rank-plain{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px;list-style:none;cursor:pointer}
+.dmg-rank-plain{grid-template-columns:auto minmax(0,1fr);cursor:default}
+.dmg-ranks summary::-webkit-details-marker{display:none}
+.dmg-ranks summary:hover{background:rgba(255,255,255,.04)}
+.dmg-ranks summary b{font-size:12.5px}
+.dmg-ranks summary::after{content:"";width:7px;height:7px;margin:0 4px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);transition:transform .15s}
+.dmg-ranks details[open]>summary::after{transform:rotate(225deg)}
+.dmg-ranks summary{grid-template-columns:auto minmax(0,1fr) auto auto}
+.dmg-ranks summary:not(:has(.dmg-in)){grid-template-columns:auto minmax(0,1fr) auto}
+.dmg-ranks summary b small{margin-left:4px;font-weight:600;color:var(--mute)}
+.dmg-in{padding:1px 6px;border-radius:3px;background:#ffffff14;font:700 10px "Quantico";letter-spacing:.06em;color:var(--txt)}
+.cx-sk-body.dmg-rank-text{margin:0;padding:0 8px 8px;font-size:12.5px;line-height:1.5}
+.dmg-ranks li.on .dmg-badge{border-color:var(--red);color:#fff;background:color-mix(in srgb,var(--red) 30%,transparent)}
+.dmg-ranks li.locked{color:var(--mute);opacity:.6}
+#dmgEmpty{padding:16px}
+.dmg-ranks-none{font-size:12px;color:var(--mute)}
+/* One box per skill: icon, name and level, the skill's conditions, then its hits */
+.dmg-skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:10px;align-items:start}
+.dmg-sk .dmg-row>summary{padding:7px 10px;gap:3px 10px}
+.dmg-sk .dmg-name{font-size:13px}
+.dmg-sk .dmg-val{font-size:15px}
+.dmg-sk .dmg-tog-text b{font-size:12.5px}
+.dmg-sk{display:grid;gap:8px;min-width:0;padding:10px;background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.dmg-sk[hidden]{display:none}
+.dmg-sk-head{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px}
+.dmg-sk-head .slot{width:36px;aspect-ratio:1}
+.dmg-sk-head b{font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.dmg-sk.fixed .dmg-sk-head{grid-template-columns:minmax(0,1fr)}
+.dmg-sk .dmg-tog{padding:7px 10px}
+.dmg-sk .dmg-rows:empty{display:none}
+.dmg-rows:not(.with-icon) .dmg-row>summary{grid-template-columns:minmax(0,1fr) auto}
+.dmg-rows:not(.with-icon) .dmg-bar{grid-column:1/-1}
+/* The calculator's tab, beside the skill tabs */
+.cx-tabs .dmg-tab{background:var(--red);border-color:var(--red);color:#fff}
+.cx-tabs .dmg-tab:hover{background:#e01b2c}
+.cx-tabs .dmg-tab.on{background:var(--red);border-color:#fff;color:#fff;box-shadow:0 0 0 1px #fff}
+.dmg-tune-foot .tool{padding:7px 14px;font-size:12px}
+.dmg-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;padding-top:4px;border-top:1px solid var(--line)}
+.dmg-stats{display:flex;flex-wrap:wrap;gap:8px 22px;padding-top:10px}
+.dmg-stat{display:grid;gap:2px}
+.dmg-stat small{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.dmg-stat b{font:700 16px "Quantico";font-variant-numeric:tabular-nums}
+.dmg-sort .tool{padding:6px 12px;font-size:12px}
+.dmg-rows{display:grid;gap:6px}
+.dmg-row{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:4px}
+.dmg-row[open]{border-color:#4a4a50}
+.dmg-row>summary{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:9px 12px;list-style:none;cursor:pointer}
+.dmg-row>summary::-webkit-details-marker{display:none}
+.dmg-row>summary:hover{background:rgba(255,255,255,.03)}
+.dmg-row .slot{grid-row:span 2;width:40px;aspect-ratio:1}
+.dmg-fx-icon{display:grid;place-items:center;padding:6px}
+.dmg-fx-icon :is(img,svg){width:100%;height:100%;object-fit:contain}
+.dmg-name{min-width:0;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.dmg-name small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--mute)}
+.dmg-val{font:700 16px "Quantico";color:#fff;font-variant-numeric:tabular-nums;text-align:right}
+.dmg-bar{grid-column:2/-1;height:6px;border-radius:0 4px 4px 0;background:linear-gradient(90deg,var(--dmg-energy) var(--w),transparent var(--w))}
+.dmg-row.fx-hit .dmg-bar{background:linear-gradient(90deg,var(--dmg-effect) var(--w),transparent var(--w))}
+.dmg-factors{display:grid;gap:5px;margin:0 12px;padding:10px 0 12px 52px;border-top:1px solid var(--line);font-size:13px;list-style:none}
+.dmg-factors li{display:flex;justify-content:space-between;gap:12px;color:var(--mute)}
+.dmg-factors b{color:var(--txt);font-weight:600;font-variant-numeric:tabular-nums}
+.dmg-factors .dmg-total{margin-top:3px;padding-top:6px;border-top:1px dashed var(--line);color:var(--txt);font-weight:600}
+.dmg-assumed{padding-left:18px;font-size:12px;line-height:1.5;color:var(--mute)}
+@media(max-width:560px){.dmg{padding:14px 12px}.dmg-field.wide{grid-column:1/-1}.dmg-factors{padding-left:0}.dmg-mode{justify-self:stretch}.dmg-mode .tool{flex:1}}
+@media(max-width:560px){.dmg-tune{padding:8px;gap:8px}.dmg-box{padding:10px}.dmg-sk{padding:8px}.dmg-tog{grid-template-columns:36px minmax(0,1fr)}.dmg-tog .dmg-badge{grid-column:2;justify-self:start}}
+
+/* Accounts: the box in the side menu, the build buttons, /account, the report form and /admin */
+/* Last item of the menu, like the account icon at the bottom of other sidebars */
+.nav-account{margin-top:2px}
+.nav-account:empty{display:none}
+.nav-account img{width:24px;height:24px;flex:none;object-fit:contain}
+/* The Sign in page: a list of the ways to log in, each a full-width button */
+.signin-card{max-width:460px}
+.signin-options{display:grid;gap:8px;margin:16px 0}
+.signin-option{display:flex;align-items:center;justify-content:center;gap:12px;min-height:46px;padding:8px 16px;background:#5865f2;border:1px solid #7983f5;border-radius:6px;color:#fff;font:700 15px "Quantico";text-decoration:none;transition:background .15s}
+.signin-option:hover{background:#4752c4}
+.signin-option img{width:22px;height:22px;object-fit:contain}
+.account-initial{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font:700 13px "Quantico"}
+.account-initial.big{width:56px;height:56px;font-size:24px}
+.account-me span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team-actions{display:contents}
+.like-btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.like-btn.on{background:var(--red);border-color:var(--red);color:#fff}
+.like-btn.on:hover{background:#e0263a}
+.comp-tools .ed-danger{background:none;color:var(--mute)}
+.brow-likes{color:#ff8a94}
+.empty a,.privacy-page a,.account-card a:not(.tool,.signin-option){color:#fff;text-decoration:underline}
+.account-card{max-width:760px;margin-bottom:16px;padding:20px 22px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red);font-family:var(--prose);font-size:15px;line-height:1.55}
+.account-card h2{margin-bottom:10px;font-size:18px}
+.account-who{display:flex;align-items:center;gap:14px}
+.account-who strong{display:block;font:700 20px "Quantico"}
+.account-who small{color:var(--mute)}
+.account-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.account-buttons .ed-danger{background:none;color:#ff8a94;border-color:#6b2a30}
+.account-teams{display:grid;gap:8px;padding:0;list-style:none}
+.account-teams small{color:var(--mute)}
+.report-box{width:min(460px,calc(100vw - 32px));padding:22px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red);color:var(--txt)}
+.report-box::backdrop{background:#000b}
+.report-box h2{font-size:20px}
+.report-reasons{display:grid;gap:8px;margin:4px 0 16px;font-family:var(--prose);font-size:15px}
+.report-reasons label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.report-box textarea{width:100%;padding:8px;background:var(--bg);border:1px solid var(--line);color:var(--txt);font:15px var(--prose);resize:vertical}
+.report-status{min-height:1.4em;margin:10px 0;color:#dcdce0;font-family:var(--prose)}
+.report-buttons{display:flex;justify-content:flex-end;gap:8px}
+.report-box .ed-primary{background:var(--red);border-color:var(--red);color:#fff}
+.privacy-page{max-width:760px;font-family:var(--prose);font-size:16px;line-height:1.6;color:#dcdce0}
+.privacy-page h2{margin:26px 0 8px;font:700 19px "Quantico";color:#fff}
+.privacy-page p+p{margin-top:10px}
+.adm-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:8px}
+.adm-tabs{display:flex;flex-wrap:wrap;gap:6px}
+.adm-bar select,.adm-bar input{padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--txt);font:14px var(--prose)}
+.adm-bar input{flex:1 1 220px}
+.adm-message{min-height:1.4em;margin-bottom:8px;color:#ffd75a;font-family:var(--prose)}
+.adm-list{display:grid;gap:10px;padding:0;list-style:none}
+.adm-item{padding:14px 16px;background:var(--panel);border:1px solid var(--line);font-family:var(--prose);font-size:14.5px;line-height:1.5}
+.adm-item a{color:#fff;text-decoration:underline}
+.adm-head strong{font:700 16px "Quantico"}
+.adm-head small,.adm-item>small{display:block;color:var(--mute)}
+.adm-log small{display:inline}
+.adm-tag{padding:1px 7px;border-radius:999px;background:#ffffff1a;font-style:normal;font-size:12px}
+.adm-chars{margin-top:4px;color:#dcdce0}
+.adm-reports{margin:8px 0 0;padding:8px 12px 8px 28px;background:#3a1418;border-left:3px solid var(--red);color:#ffd0d4}
+.adm-item details{margin-top:8px}
+.adm-item details p{margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}
+.adm-item summary{cursor:pointer;color:var(--mute)}
+.adm-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.adm-actions:empty{display:none}
+.adm-actions .ed-danger{background:none;color:#ff8a94;border-color:#6b2a30}

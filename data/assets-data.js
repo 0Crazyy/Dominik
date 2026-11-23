@@ -1033,8 +1033,9 @@ const CUB_SKILLS = {
   ]
 };
 
-// CUBs that no build on the site uses yet, as [name, owner, rank, element, folder of the art, has skill icons].
-// The art is "CUB - <name>.png" in the folder, the skill icons "CUB - Skill 1.png" to "CUB - Skill 6.png". Rank A CUBs have no owner.
+// Every CUB on the site, as [name, owner, rank, element, folder of the art, skill icons, file type].
+// The art is "CUB - <name>.<type>" in the folder (type "png" when left out), the skill icons "CUB - Skill 1.<type>" to "CUB - Skill 6.<type>".
+// Skill icons: true for that order, a list of numbers for another order, false for none. Rank A CUBs have no owner.
 // Their skills are in CUB_SKILLS above, by the last part of the folder. Source: https://huaxu.app/na/wiki/cubs
 const EXTRA_CUBS = [
   ["Yuan Ye", "", "A", "Fire", "assets/cubs/yuan-ye", true],
@@ -1058,7 +1059,29 @@ const EXTRA_CUBS = [
   ["Diamaton", "Ishmael: Parhelion", "S", "Nihil", "assets/characters/ishmael-parhelion", true],
   ["Huiyu", "Qu: Shukra", "S", "Ice", "assets/characters/qu-shukra", true],
   ["Mirage Blades", "Vergil", "S", "Physical", "assets/characters/vergil", true],
-  ["Cavaliere", "Dante", "S", "Fire", "assets/characters/dante", true]
+  ["Cavaliere", "Dante", "S", "Fire", "assets/characters/dante", true],
+  ["Shadow Wing", "Watanabe: Epitaph", "S", "Fire", "assets/characters/watanabe-epitaph", true],
+  ["Wrathfang", "Vera: Geiravor", "S", "Fire", "assets/characters/vera-geiravor", true],
+  ["Ignis", "Kamui: Aeternion", "S", "Fire", "assets/characters/kamui-aeternion", true],
+  ["Corvus", "Lucia: Pyroath", "S", "Fire", "assets/characters/lucia-pyroath", true, "webp"],
+  ["Grand Duke", "Helentine: Lacrimosa", "S", "Lightning", "assets/characters/helentine-lacrimosa", true, "webp"],
+  ["Levvi", "Liv: Limpidity", "S", "Lightning", "assets/characters/liv-limpidity", true],
+  ["Bramble Angler", "Nanami: Startrail", "S", "Lightning", "assets/characters/nanami-startrail", true],
+  ["Vulpecula", "Leia: Fortunaster", "S", "Ice", "assets/characters/leia-fortunaster", true],
+  ["Allos", "Lucia: Inverse Crown", "S", "Ice", "assets/characters/lucia-inverse-crown", true, "webp"],
+  ["Beep-Boop", "Teddy: Spectre", "S", "Ice", "assets/characters/teddy-spectre", true],
+  ["Snowveil", "Wanshi: Lucid Dreamer", "S", "Ice", "assets/characters/wanshi-lucid-dreamer", true],
+  ["Snow Waltz", "Selena: Pianissimo", "S", "Physical", "assets/characters/selena-pianissimo", true],
+  ["Scaled Rampart", "Veronica: Aegis", "S", "Physical", "assets/characters/veronica-aegis", [3, 2, 1, 4, 5, 6]],
+  ["Patrick", "Karenina: Effulgence", "S", "Physical", "assets/characters/karenina-effulgence", true, "webp"],
+  ["Dreamwing", "Hanying: Solacetune", "S", "Physical", "assets/characters/hanying-solacetune", true],
+  ["Noctiluca", "Bianca: Crepuscule", "S", "Dark", "assets/characters/bianca-crepuscule", true],
+  ["Kelpie", "Adelyde: Anabasis", "S", "Dark", "assets/characters/adelyde-anabasis", true, "webp"],
+  ["Buzzling", "Rosetta: Arete", "S", "Dark", "assets/characters/rosetta-arete", true, "webp"],
+  ["Billie", "Lilith: Daemonissa", "S", "Dark", "assets/characters/lilith-daemonissa", true],
+  ["Zafkiel", "Kurumi Tokisaki", "S", "Dark", "assets/characters/kurumi-tokisaki", true, "webp"],
+  ["Guardrake", "Luna: Oblivion", "S", "Nihil", "assets/characters/luna-oblivion", true],
+  ["Morigan", "Nirvatia: Dirge", "S", "Nihil", "assets/characters/nirvatia-dirge", true, "webp"]
 ];
 
 // C.U.B.s with the Active skill icon in every element: "CUB - Active <element>.<ext>" next to "CUB - Skill 1". In the game the Active skill
@@ -1270,66 +1293,3 @@ const SIGNATURE_MEMORY = {
   "Pulao: Dragontoll": "Marco", "Haicma: Starveil": "Isabel", "Bianca: Stigmata": "Charlotte", "Ayla: Kaleido": "Aline",
   "Lucia: Crimson Weave": "Diesel"
 };
-
-// Rotations of the Leia teams, from the steps on screen in Spider 2B's guide. "Ult" there is "Signature" here, and "Alpha" is Lucia.
-// "1st Orb" is the first orb of the bar, whatever its color. A character's turns follow the order the team plays them.
-// A step with a list shows each option under the same number, so "Repeat steps 1-5" keeps matching the guide.
-const LEIA_GUIDE = "https://www.youtube.com/watch?v=h_L6-d0c5Wk";
-const ROTATION_LEIA_SS = ["Swap in", "Tap 1st Orb 6x, or until Signature is up", "Tap Signature", "Hold 1st Orb until Signature is up", "Tap Signature"];
-const ROTATION_LEIA_SS3_START = ["Swap in", "Tap 1st Orb 3x", "Tap Signature", "Hold 1st Orb until Signature is up", "Tap Signature", "Tap 1st Orb 3x"];
-const ROTATION_LEIA_SS3_ULT = ["Swap in", "Tap 1st Orb", "Tap Signature", "Hold 1st Orb until Signature is up", "Tap Signature", "Tap 1st Orb 3x", "Tap Signature", "Tap 1st Orb 3x and repeat the team rotation"];
-const ROTATION_LUCIA = [
-  ["SS: Hold 1st Orb until 3/4 of the top Signature gauge is full", "SS3+: Hold 1st Orb until the center gauge is full"],
-  "Hold Basic Attack", "3-Ping", "Tap Signature", "Hold Basic Attack to use orbs, or tap Signature again to nuke",
-  "SS3+: Repeat steps 1-5 (skip if lower)",
-  ["SS: 3-Ping and hold 1st Orb until 3/4 of the top Signature gauge is full", "SS3+: Hold 1st Orb and quickly release"],
-  "Hold Basic Attack to prep Signature, then swap out"
-];
-const ROTATION_LUCIA_NOTE = "With SS Lucia, use Leia first. With SS3 or higher, use Lucia first, for her QTE buff.";
-const ROTATION_TEDDY_STALL = ["Tap Yellow Orb ASAP", "Tap Signature", "Tap White Orbs 4x", "Tap Basic Attack, then Yellow Orb", "Tap Signature"];
-const ROTATION_START = (who, next) => [`Start on ${who}, then swap to ${next}`];
-// One team: its order goes on the rotation of each member
-const teamRotation = (order, members) => Object.fromEntries(Object.entries(members).map(([name, turns]) => [name, { order, turns }]));
-const alphaRotation = (order, lucia, leia) => teamRotation(order, {
-  teddy: [{ turn: "Turn 1: Start", steps: ROTATION_START("Teddy", "Lucia") }, { turn: "Turn 4: Stall", steps: ROTATION_TEDDY_STALL }],
-  lucia: [{ turn: "Turn 2", steps: ROTATION_LUCIA, note: ROTATION_LUCIA_NOTE }, { turn: "Turn 5", steps: lucia }],
-  leia
-});
-const LUCIA_AMP_WINDOW = "Swap back to use 2-3 Signatures in the Amplifier window, now that Signature is prepped";
-const altIceRotation = leia => teamRotation("Wanshi → Leia → Teddy → Wanshi", {
-  wanshi: [{ turn: "Turn 1: Start", steps: ROTATION_START("Wanshi", "Leia") },
-    { turn: "Turn 4: Single Signature", steps: ["3-Ping or Matrix Ping", "Hold Red Orb, then release", "Spam Red Orb until Signature is available", "Use Signature and swap to Leia", "Repeat the team rotation"] }],
-  leia,
-  teddy: [{ turn: "Turn 3: Double Signature", steps: ["Tap Yellow Orb ASAP", "Tap Signature", "Tap White Orbs 4x", "Tap Basic Attack + Yellow Orb", "Hold Basic Attack + Blue Orb", "Auto Signature", "Tap White Orbs 3x + tap Red Orb", "Repeat steps 1-6 again"] }]
-});
-const glaciationRotation = leia => teamRotation("Teddy or Alisa → Leia → Helentine → Teddy or Alisa", {
-  teddy: [{ turn: "Turn 1: Start", steps: ROTATION_START("Teddy or Alisa", "Leia") },
-    { turn: "Turn 4: Alisa: Echo", steps: ["Hold Dodge", "Tap Dodge 3x", "Hold Basic Attack", "Signature", "Can repeat if needed to stall, then swap back to Leia"], note: "The guide only shows this turn on Alisa: Echo." }],
-  leia,
-  helentine: [{ turn: "Turn 3", steps: ["Hold Dodge", "Matrix Blue/Yellow Ping", "Green Orb", "Red Orb", "Green Orb", "Signature 2x", "3-Ping Blue/Yellow", "Green Orb", "Red Orb 2x", "Signature 2x",
-    ["Without DLT: Red Orb 2x and swap", "With DLT: Ping all Red Orbs, Signature 2x and swap"]] }]
-});
-const LEIA_ROTATIONS = {
-  alphaSS: alphaRotation("Teddy → Lucia → Leia → Teddy → Lucia", [LUCIA_AMP_WINDOW, "Repeat the steps of Turn 2", "Repeat the team rotation"],
-    [{ turn: "Turn 3", steps: ROTATION_LEIA_SS }]),
-  alphaSS3: alphaRotation("Teddy → Lucia → Leia → Teddy → Lucia → Leia", [LUCIA_AMP_WINDOW, "Repeat the steps of Turn 2"],
-    [{ turn: "Turn 3: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 6: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }]),
-  altIceSS: altIceRotation([{ turn: "Turn 2", steps: ROTATION_LEIA_SS }]),
-  altIceSS3: altIceRotation([{ turn: "Turn 2: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 2 after that: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }]),
-  glaciationSS: glaciationRotation([{ turn: "Turn 2", steps: ROTATION_LEIA_SS }]),
-  glaciationSS3: glaciationRotation([{ turn: "Turn 2: Starter, only once", steps: ROTATION_LEIA_SS3_START }, { turn: "Turn 2 after that: Triple Signature", steps: ROTATION_LEIA_SS3_ULT }])
-};
-
-// Player03's SS Leia rotation, written for Leia alone. His "Ult 1" and "Ult 2" are Signature here. Not from Spider 2B's guide, so it has its own source
-const PLAYER03_ORBS_END = ["Red Orb 2x", "Gravity Orb", "Swap out"];
-const LEIA_PLAYER03 = {
-  source: { label: "Player03's Ice Warzone run", href: "https://youtu.be/YXq7LQmhTfw" },
-  turns: [
-    { turn: "Rotation", steps: ["Swap in", "Red Orb until the Passive Gauge is full", "Gravity Orb 2x", "Hold Gravity Orb", "Signature", "Hold Gravity Orb", "Signature", "Swap out"],
-      note: "Assumes the build is 4pc Mousme and 4pc Chen Jiyuan." },
-    { turn: "Variant: first rotation", steps: ["Swap in", "Red Orb until the Passive Gauge is full", "Gravity Orb 2x", "Hold Gravity Orb", "Signature", "Hold Gravity Orb", "Signature", ...PLAYER03_ORBS_END] },
-    { turn: "Variant: subsequent rotations", steps: ["Gravity Orb", "Gravity Orb 2x", "Signature", "Hold Gravity Orb", "Signature", ...PLAYER03_ORBS_END] }
-  ]
-};
-// A team's rotations with Leia's swapped for Player03's. The team order is the guide's, so it stays
-const withPlayer03Leia = rotations => ({ ...rotations, leia: { ...LEIA_PLAYER03, order: rotations.leia.order } });

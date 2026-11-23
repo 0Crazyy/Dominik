@@ -80,7 +80,9 @@ for (const name of Object.keys(d.CONSTRUCTS)) {
   const find = re => list.find(f => re.test(f));
   const portrait = find(/^Awaken - /), weapon = find(/^Arma[ -]/), cub = find(/^CUB - (?!Skill |Active )/);
   if (!portrait) continue;
-  const skills = [1, 2, 3, 4, 5, 6].map(i => find(new RegExp(`^CUB - Skill ${i}\\.`)));
+  // EXTRA_CUBS can give the skill icons another order (a list of numbers), which teams already saved count on
+  const order = d.EXTRA_CUBS.find(c => c[1] === name && c[4] === dir && Array.isArray(c[5]))?.[5] || [1, 2, 3, 4, 5, 6];
+  const skills = order.map(i => find(new RegExp(`^CUB - Skill ${i}\\.`)));
   const whole = cub && skills.every(Boolean);
   characters.set(name, { kit: { name, symbol: symbolOf(name), portrait: `${dir}/${portrait}`, weapon: weapon ? `${dir}/${weapon}` : "",
     construct: whole ? `${dir}/${cub}` : "", skills: whole ? skills.map(s => `${dir}/${s}`) : [] } });

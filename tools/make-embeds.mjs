@@ -44,7 +44,7 @@ const usedIn = test => plural(builds.filter(b => test(b.card)).length, "build");
 const cubs = [...new Map(builds.filter(({ card }) => card.construct?.split("/").at(-2) === charId(card.name)).map(({ card }) =>
   [fileName(card.construct), { name: fileName(card.construct), owner: card.name, rank: "S", element: CONSTRUCTS[card.name]?.[1] || "", art: card.construct }])).values()];
 // The CUBs no build uses yet
-for (const [name, owner, rank, element, dir] of EXTRA_CUBS) if (!cubs.some(c => c.name === name)) cubs.push({ name, owner, rank, element, art: `${dir}/CUB - ${name}.png` });
+for (const [name, owner, rank, element, dir, , ext = "png"] of EXTRA_CUBS) if (!cubs.some(c => c.name === name)) cubs.push({ name, owner, rank, element, art: `${dir}/CUB - ${name}.${ext}` });
 
 // The file has to exist, or the card would show a broken picture. Discord keeps a preview picture per URL, so new art needs a new file name
 const DEFAULT_IMAGE = "assets/embed-icon-4.png";
@@ -153,6 +153,9 @@ const sFrames = TIMELINE.filter(c => c.rank === "S" && !c.collab), newestFrame =
 add("timeline", "Meta Timeline", `How long each of ${sFrames.length} S-Rank frames held its place in the meta before a newer one replaced it, with rankings, class averages and a replacement watch.\nNewest: ${newestFrame.name}`, image(newestFrame.head));
 add("editor", "Team Builder", "Put a full team together from the site's characters, memories and resonances, see its cards as the site shows them, and share it as a link or an image.", DEFAULT_IMAGE);
 add("updates", "Updates", "Changes made to Dominik, post by post: new pages, tools, builds and fixes.", DEFAULT_IMAGE);
+add("privacy", "Privacy", "How Dominik handles your data: what logging in with Discord shares, the cookies, how long things are kept, and your rights under the LGPD and the GDPR.", DEFAULT_IMAGE);
+add("account", "Account", "Your Dominik account: your teams, and your data to download or erase.", DEFAULT_IMAGE);
+add("admin", "Admin panel", "Moderation of the teams published on Dominik.", DEFAULT_IMAGE);
 add("credits", "Credits", "Found a wrong build, or have a question or suggestion? Message me on Discord (crazy117). Also the credits of the people behind the site's data and art.", image("assets/credits/crazy117.png"));
 
 /* ---------- writing ---------- */

@@ -2,39 +2,44 @@
 # Clique em "Send Request" acima de cada bloco. Os blocos são separados por ###.
 #
 # Local: node tools/deploy.mjs --stage-only, depois
-#   npx wrangler@4 d1 execute dominik --local --file server/schema.sql
-#   npx wrangler@4 pages dev .deploy --port 8788
-# O .dev.vars usa as chaves de teste do Turnstile, que sempre passam.
+#   npx wrangler d1 migrations apply dominik --local
+#   npx wrangler pages dev .deploy --port 8788 --ip 127.0.0.1
+# O .dev.vars usa as chaves de teste do Turnstile, que sempre passam, e DEV_LOGIN=1, que libera /api/auth/dev.
 #
-# A chave do admin NÃO fica neste arquivo (ele vai para o git). Guarde-a nas configurações do
-# VS Code do usuário (settings.json), assim:
+# Login: as rotas usam o cookie da sessão. Abra no navegador
+#   http://127.0.0.1:8788/api/auth/dev?as=user     (ou as=admin, as=other)
+# copie o cookie dk_session (F12 > Application > Cookies) e guarde nas configurações do VS Code do usuário:
 #   "rest-client.environmentVariables": {
-#     "local": { "host": "http://localhost:8788", "adminKey": "<ADMIN_KEY do .dev.vars>" },
-#     "producao": { "host": "https://dominiko.pages.dev", "adminKey": "<ADMIN_KEY de produção>" }
+#     "local": { "host": "http://127.0.0.1:8788", "session": "<valor do cookie dk_session>" }
 #   }
 # Escolha o ambiente em "Rest Client: Switch Environment" (ctrl+alt+e).
+# Toda rota que muda algo exige Origin igual ao do site: os blocos abaixo já mandam.
 
-### Times aprovados (o que o site lê). Vem do KV, então fica [] até alguém aprovar.
-GET {{host}}/api/teams
+### Times no site (o que as páginas leem). Com ?fresh=1 pula o cache de 30 s
+GET {{host}}/api/teams?fresh=1
+
+### Quem está logado (user: null quando não há sessão)
+GET {{host}}/api/me?teams=1
+Cookie: dk_session={{session}}
 
 ### 1/2: abre o formulário. A resposta traz a "stamp" assinada, usada no próximo bloco.
 # @name form
 GET {{host}}/api/submit
 
-### 2/2: envia um time válido. Espere 10 s depois do bloco anterior ou volta {"error":"early"}.
-# Repetir o mesmo time dá "duplicate"; mais de 3 por hora ou 5 por dia dá "limit".
-# O token é qualquer texto: com as chaves de teste do Turnstile ele sempre passa.
+### 2/2: publica um time. Espere 10 s depois do bloco anterior ou volta {"error":"early"}.
+# Repetir o mesmo time dá "duplicate"; mais de 3 por hora ou 5 por dia dá "limit"; sem sessão dá "login".
 POST {{host}}/api/submit
 Content-Type: application/json
+Origin: {{host}}
+Cookie: dk_session={{session}}
 
 {
   "stamp": "{{form.response.body.$.stamp}}",
   "token": "XXXX.DUMMY.TOKEN.XXXX",
-  "author": "tester",
   "team": {
     "page": "energy/fire",
     "name": "Teste REST Client",
-    "order": "A > B > C",
+    "order": "",
     "cards": [
       { "char": "Adelyde: Anabasis", "mem": ["Frederick", "Cottie", "Darwin", "Frederick", "Cottie", "Darwin"] },
       { "char": "Bianca: Crepuscule", "mem": ["Frederick", "Cottie", "Darwin", "Frederick", "Cottie", "Darwin"] },
@@ -43,42 +48,53 @@ Content-Type: application/json
   }
 }
 
-### Erro esperado: stamp inválida -> 400 {"error":"stale"}
+### Erro esperado: sem Origin -> 403 {"error":"origin"}
 POST {{host}}/api/submit
 Content-Type: application/json
+Cookie: dk_session={{session}}
 
-{ "stamp": "1.abc", "token": "x", "team": {} }
+{}
 
-### Erro esperado: campo escondido preenchido (bot) -> 200 {"ok":true}, mas nada é gravado
-POST {{host}}/api/submit
+### Curtir (on: false desfaz)
+POST {{host}}/api/like
 Content-Type: application/json
+Origin: {{host}}
+Cookie: dk_session={{session}}
 
-{ "website": "spam" }
+{ "id": 1, "on": true }
 
-### Admin: lista os times pendentes que o bot ainda não postou
-GET {{host}}/api/admin
-Authorization: Bearer {{adminKey}}
-
-### Admin: aprova o time de id 1 (regrava a chave "teams" do KV)
-POST {{host}}/api/admin
-Authorization: Bearer {{adminKey}}
+### Denunciar (reason precisa ser uma da lista de functions/api/report.js)
+POST {{host}}/api/report
 Content-Type: application/json
+Origin: {{host}}
+Cookie: dk_session={{session}}
 
-{ "id": 1, "action": "approve" }
+{ "id": 1, "reason": "Spam or advertising", "note": "teste" }
 
-### Admin: rejeita o time de id 1, com motivo
-POST {{host}}/api/admin
-Authorization: Bearer {{adminKey}}
+### Admin: times com denúncia aberta (status: approved, removed, pending, rejected ou reported)
+GET {{host}}/api/admin/teams?status=reported
+Cookie: dk_session={{session}}
+
+### Admin: tirar um time do ar (remove, restore, approve, reject, dismiss)
+POST {{host}}/api/admin/teams
 Content-Type: application/json
-
-{ "id": 1, "action": "reject", "reason": "Teste de rejeição" }
-
-### Admin: tira do site um time já aprovado
-POST {{host}}/api/admin
-Authorization: Bearer {{adminKey}}
-Content-Type: application/json
+Origin: {{host}}
+Cookie: dk_session={{session}}
 
 { "id": 1, "action": "remove" }
 
-### Erro esperado: sem chave -> 401 {"error":"denied"}
-GET {{host}}/api/admin
+### Admin: contas
+GET {{host}}/api/admin/users?q=
+Cookie: dk_session={{session}}
+
+### Admin: banir (ban, unban, promote, demote). removeTeams tira os times da conta do ar
+POST {{host}}/api/admin/users
+Content-Type: application/json
+Origin: {{host}}
+Cookie: dk_session={{session}}
+
+{ "id": "dev-other", "action": "ban", "removeTeams": false }
+
+### Admin: registro de ações
+GET {{host}}/api/admin/log
+Cookie: dk_session={{session}}

@@ -24,7 +24,7 @@
 
 ## About
 
-Dominik is a fan-made website for Punishing: Gray Raven players. It brings team compositions, character builds and game data such as memories, weapons and C.U.B.s together in one place, along with tools for planning your pulls.
+Dominik is a fan-made website for Punishing: Gray Raven players. It brings team compositions shared by its players, character builds and game data such as memories, weapons and C.U.B.s together in one place, along with tools for planning your pulls.
 
 ## Purpose
 
@@ -37,7 +37,7 @@ Information about the game is spread across guides, videos and spreadsheets. Dom
 
 ## How to use the site
 
-The site works on desktop and phones, with nothing to install and no account to create.
+The site works on desktop and phones, with nothing to install. Browsing needs no account; logging in with Discord lets you publish teams, like them and report the ones that break the rules. See the [Privacy page](https://dominiko.pages.dev/privacy) for what the site keeps.
 
 To jump straight to something, use the search box in the menu. It finds constructs, teams, memories, weapons, resonances and C.U.B.s, and it shows the closest match first.
 
@@ -50,6 +50,10 @@ To jump straight to something, use the search box in the menu. It finds construc
 
 To share a build, copy the page address, which always points to the team on screen. You can also use **Export image** to save the build as a picture.
 
+### Share your own team
+
+Every team on the site is made by its players in the [Team Builder](https://dominiko.pages.dev/editor). Put a team together, log in with Discord and press **Publish**: it shows up on its page right away, under your Discord name. You can delete it from your [Account page](https://dominiko.pages.dev/account).
+
 ### Browse the game data
 
 | Page | What you will find |
@@ -59,6 +63,10 @@ To share a build, copy the page address, which always points to the team on scre
 | [Weapons](https://dominiko.pages.dev/assets/weapons) | A table of weapons you can sort by column. |
 | [Weapon Resonance](https://dominiko.pages.dev/assets/resonances) | A table of weapon resonances you can sort by column. |
 | [C.U.B.s](https://dominiko.pages.dev/assets/cubs) | A table of C.U.B.s you can sort by column. |
+
+### Stay up to date
+
+The [Updates](https://dominiko.pages.dev/updates) page lists what changed on the site, newest first.
 
 ### Plan your pulls
 
@@ -81,6 +89,15 @@ The [Meta Timeline](https://dominiko.pages.dev/timeline) shows how long each S-R
 
 Dates follow the Chinese server, which gets each frame first, so Global release dates are not considered. Collabs and uniframes are not counted.
 
+## For developers
+
+Plain HTML, CSS and JavaScript with no build step and no runtime dependencies. It is hosted on Cloudflare Pages: `functions/api/` holds the API (Discord login, published teams, likes, reports, moderation) on a D1 database, and `server/` holds what the API shares. `npm install` only brings in the dev tools (ESLint, Playwright, Wrangler).
+
+- `npm run lint`: ESLint over all the code
+- `npm run smoke`: opens every page in Edge on desktop and phone and checks for JS errors, 404s, blank pages and sideways scrolling
+- `node tools/check-assets.mjs`: checks that every image used exists
+- `node tools/deploy.mjs`: builds the publishable copy and deploys it
+
 ## Useful links
 
 - [Dominik](https://dominiko.pages.dev/): the live site
@@ -88,7 +105,6 @@ Dates follow the Chinese server, which gets each frame first, so Global release 
 - [Huaxu wiki](https://huaxu.app/na/wiki): game data and art
 - [GRAY RAVENS wiki](https://grayravens.com/wiki): skills and patch history
 - [Chinese wiki](https://wiki.biligame.com/zspms/%E6%88%98%E5%8F%8C%E5%A4%A7%E4%BA%8B%E8%AE%B0): the Chinese server's history, used for the timeline
-- [Spider 2B on YouTube](https://www.youtube.com/@Spider2B): guides behind several builds
 
 ## Feedback
 
@@ -101,7 +117,6 @@ If the site helps you, you can [support it on Ko-fi](https://ko-fi.com/ofcrazy).
 - **[blacknovatech](https://huaxu.app/na/wiki)**, creator of Huaxu, for the assets ([support on Ko-fi](https://ko-fi.com/blacknova))
 - **sidewayz.**, for helping with the site's overall design
 - **[GRAY RAVENS wiki](https://grayravens.com/wiki)**, for skills and the patch history
-- **[Spider 2B](https://www.youtube.com/@Spider2B)**, for the guides behind several builds
 
 ## Disclaimer
 

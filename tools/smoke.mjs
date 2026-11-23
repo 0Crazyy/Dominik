@@ -23,7 +23,7 @@ const SIZES = {
   mobile: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
 };
 // Default run: one page of each kind gets a screenshot, since all of them together would be too many to look at
-const SHOT_PAGES = ["/", "/constructs", "/energy/fire", "/constructs/fortunaster", "/calculator", "/timeline", "/assets/memories"];
+const SHOT_PAGES = ["/", "/constructs", "/energy/fire", "/constructs/fortunaster", "/calculator", "/timeline", "/assets/memories", "/privacy", "/account"];
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".xml": "application/xml", ".txt": "text/plain" };
 
 // The rules _headers gives every page. The strict Content-Security-Policy there blocks things only on the published site, so it has to apply here too
@@ -75,8 +75,6 @@ function watch(page, size, where, base) {
   page.on("pageerror", e => report(size, where, `erro de JavaScript: ${e.message}`));
   page.on("console", m => {
     // "Failed to load resource" repeats what the response listener below says, with less detail
-    // axe re-reads the cross-origin font stylesheet from the page, which the CSP blocks; that only happens with --a11y and is not a site bug
-    if (A11Y && /fonts.googleapis.com/.test(m.text())) return;
     if (m.type() === "error" && !m.text().startsWith("Failed to load resource") && (ours(m.location().url || base) || /Content Security Policy/i.test(m.text()))) report(size, where, `console: ${m.text()}`);
   });
   page.on("response", r => { if (ours(r.url()) && r.status() >= 400) report(size, where, `${r.status()} em ${decodeURI(r.url().slice(base.length))}`); });
@@ -159,17 +157,32 @@ const FLOWS = {
     await page.waitForURL(url => url.pathname !== "/");
     await page.waitForSelector("#main h1");
   },
-  // The list of a team page: the search hides rows, a row opens the build's page with its cards, and the back link returns
-  "lista de builds": async page => {
+  // The smoke has no API, so a team page has no teams: it points to the Team Builder instead. The old build links open their page
+  // only on the published site (_redirects), so they are not tried here
+  "página sem times": async page => {
     await page.goto("/energy/ice");
-    await page.fill(".bsearch input", "zzzz");
-    await page.waitForSelector(".picker > .empty:not([hidden])");
-    await page.fill(".bsearch input", "");
-    await page.click(".brow");
-    await page.waitForURL(/\/energy\/ice\/[^/]+$/);
-    await page.waitForSelector("#compBox .card");
-    await page.click("#main a.back");
-    await page.waitForSelector(".brow");
+    await page.click('#main a.empty-link[href="/editor"]');
+    await page.waitForURL(/\/editor$/);
+  },
+  // Logged out (no API here), the side menu offers "Sign in", which opens /account as the Sign in page; /admin says what it needs
+  "conta deslogada": async page => {
+    await page.goto("/energy/ice");
+    await page.waitForSelector('#accountBox a[data-signin][href="/account?back=%2Fenergy%2Fice"]', { state: "attached" });
+    await page.goto("/account?back=/energy/ice");
+    await page.waitForSelector('#main .signin-option[href="/api/auth/login?back=%2Fenergy%2Fice"]');
+    // The login link has to leave the page for the server: the site's own navigation must not catch it
+    const caught = await page.evaluate(() => new Promise(done => {
+      addEventListener("click", e => { done(e.defaultPrevented); e.preventDefault(); }, { once: true });
+      document.querySelector("#main .signin-option").click();
+    }));
+    if (caught) throw new Error("a navegação do site interceptou o link de login (ele precisa ir ao servidor)");
+    // Another site in back= is ignored: the login comes back to /account
+    await page.goto("/account?back=//example.com");
+    await page.waitForSelector('#main .signin-option[href="/api/auth/login?back=%2Faccount"]');
+    await page.goto("/admin");
+    await page.waitForSelector('#main a[href="/account?back=%2Fadmin"]');
+    await page.goto("/privacy");
+    if ((await page.locator("#main .privacy-page section").count()) < 8) throw new Error("a página de privacidade não mostrou as seções");
   },
   "detalhe de arma": async page => {
     await page.goto("/assets/weapons");
@@ -189,6 +202,63 @@ const FLOWS = {
   "página de skills": async page => {
     await page.goto("/assets/skill/leia-fortunaster");
     await page.waitForFunction(() => /Skills|Passive/i.test(document.querySelector("#main")?.textContent) && !/Loading|Could not load/.test(document.querySelector("#main").textContent));
+  },
+  // The damage tab of a construct page: the Effect switch, a higher rank and a buff change the numbers
+  "cálculo de dano": async page => {
+    await page.goto("/constructs/pianissimo");
+    await page.click('[data-sk-tab="DMG"]');
+    await page.waitForSelector("#dmgRows .dmg-row");
+    if (await page.locator("#cxSkillBody").isVisible()) throw new Error("a aba DMG Calculator não escondeu as skills");
+    const values = () => page.locator("#dmgRows .dmg-val").allInnerTexts().then(list => list.join("|"));
+    const first = await values();
+    await page.click('[data-dmg-mode="effect"]');
+    if (!(await page.locator("#dmgRows .dmg-row.fx-hit").count())) throw new Error("o modo de efeito não mostrou golpes de efeito");
+    await page.selectOption('[data-dmg="rank"]', "SSS");
+    await page.waitForFunction(() => document.querySelector('[data-dmg="rank"]')?.value === "SSS");
+    if (await page.locator('[data-dmg="atk"]').inputValue() === "1957") throw new Error("mudar o rank não recalculou o ATK");
+    // Rank bonuses have no switch: the summary under the Rank field lists the ones in effect
+    if (await page.locator('[data-dmg-opt="qte"]').count()) throw new Error("um bônus de rank ainda tem interruptor");
+    if (await page.locator("#dmgRanks li.on").count() !== 4) throw new Error("o resumo de rank no SSS não mostrou os 4 níveis liberados (S5, SS, SS3, SSS)");
+    // Skill conditions sit in their skill's box
+    if (!(await page.locator('[data-dmg-sk="basic"] [data-dmg-opt="notes2"]').count())) throw new Error("a condição das Musical Notes não está na caixa do Basic Attack");
+    await page.click('[data-dmg-mode="energy"]');
+    const higher = await values();
+    if (higher === first) throw new Error("mudar o rank não mudou o dano");
+    await page.click(".dmg-more > summary");
+    await page.click('.dmg-tog:has([data-dmg-opt="burana4"])');
+    if (await page.locator('[data-dmg-opt="burana4"]').isChecked()) throw new Error("o interruptor do bônus não desligou");
+    const off = await values();
+    if (off === higher) throw new Error("desligar um bônus não mudou o dano");
+    await page.click('[data-dmg-step="red"][data-d="1"]');
+    if (await page.locator('[data-dmg-level="red"]').inputValue() !== "19") throw new Error("o botão + do nível não subiu o nível");
+    if (await values() === off) throw new Error("subir o nível do Red Orb não mudou o dano");
+    await page.click("[data-dmg-reset]");
+    if (await page.locator('[data-dmg-level="red"]').inputValue() !== "18" || !(await page.locator('[data-dmg-opt="burana4"]').isChecked()))
+      throw new Error("o Reset não voltou à build de referência");
+    if (await page.locator('.dmg-tog.locked [data-dmg-opt]:checked').count()) throw new Error("um bônus de rank bloqueado aparece ligado");
+    await page.click("#dmgRows .dmg-row > summary");
+    await page.waitForSelector("#dmgRows .dmg-row[open] .dmg-factors li");
+    // An elemental construct (Kamui) has no CRIT field, and with the ATK cleared the results ask for it
+    await page.goto("/constructs/aeternion");
+    await page.click('[data-sk-tab="DMG"]');
+    await page.waitForSelector("#dmgRows .dmg-row");
+    if (!(await page.locator('[data-dmg-sk="yellow"] [data-dmg-opt="sunfire"]').count())) throw new Error("o Sunfire não está na caixa do Yellow Orb");
+    if (await page.locator('#cxDamage [data-dmg="critStat"]').count()) throw new Error("um personagem elemental não deveria ter campo de CRIT");
+    await page.fill('#cxDamage [data-dmg="atk"]', "");
+    await page.waitForFunction(() => !document.querySelector("#dmgRows .dmg-row"));
+    await page.fill('#cxDamage [data-dmg="atk"]', "2000");
+    await page.waitForSelector("#dmgRows .dmg-row");
+    // The two team options exclude each other
+    await page.click(".dmg-more > summary");
+    await page.click('.dmg-tog:has([data-dmg-opt="hazeFire"])');
+    if (await page.locator('[data-dmg-opt="hazePlasma"]').isChecked()) throw new Error("ligar o time sem Plasma Beam não desligou o time com Plasma Beam");
+    // Vera: the six Absolute Pyre options sit in the Signature box and exclude each other
+    await page.goto("/constructs/geiravor");
+    await page.click('[data-sk-tab="DMG"]');
+    await page.waitForSelector("#dmgRows .dmg-row");
+    if (await page.locator('[data-dmg-sk="signature"] [data-dmg-opt^="pyre"]').count() !== 6) throw new Error("as 6 opções de Absolute Pyre não estão na caixa da Signature");
+    await page.click('.dmg-tog:has([data-dmg-opt="pyre3"])');
+    if (await page.locator('[data-dmg-opt="pyre6"]').isChecked()) throw new Error("Absolute Pyre de 3 orbes não desligou o de 6");
   },
   // Done or Skip on an event in the Events List takes its rewards out of the patch, and pressing it again brings them back
   "planner: lista de eventos": async page => {
@@ -241,19 +311,32 @@ const FLOWS = {
     try {
     if (size === "desktop") await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto("/editor");
+    // A new team starts on step 1, the choice of its page; picking one opens the cards
+    step = "choosing the team's page";
+    await page.waitForSelector(".ed-choose [data-ed-page]");
+    if (await page.locator("#edStage").count()) throw new Error("o Team Builder mostrou os cards antes de escolher a página");
+    await page.locator(".ed-choose [data-ed-page]").first().click();
     step = "checking fresh empty editor";
     await page.waitForSelector("#edStage .card .rank[data-ed-drop]",{state:"attached"});
+    await page.waitForSelector('.ed-topbar [data-ed="choose"]');
+    // "Change" goes back to step 1 and "Back to the team" returns, keeping the page
+    await page.click('.ed-topbar [data-ed="choose"]');
+    await page.click('.ed-choose [data-ed="back"]');
+    await page.waitForSelector("#edStage .card");
     const emptyState = await page.evaluate(() => localStorage.getItem("dominik-editor"));
     const emptyArtifacts = await page.locator("#edStage .rank img, #edStage .wp img, #edStage .mem img, #edStage .mx img, #edStage .kit .cell img")
       .evaluateAll(items => items.map(item => `${item.closest(".card")?.dataset.edCard}:${item.parentElement?.className}:${item.getAttribute("src") || item.textContent}`));
     if ((emptyState && JSON.parse(emptyState).cards.some(card => card.char || card.cub || card.weapon || card.mem.some(Boolean))) || emptyArtifacts.length)
       throw new Error(`o Team Builder não abriu vazio por padrão: ${emptyArtifacts.join(",")}`);
-    await page.evaluate(() => localStorage.setItem("dominik-editor", JSON.stringify({
+    // Dark, the element of the test characters, so the picker lists them first. CATALOG is a name of the page's scripts, so read as text
+    const firstPage = await page.evaluate('CATALOG.pages.find(p => p.name === "Dark").path');
+    await page.evaluate(teamPage => localStorage.setItem("dominik-editor", JSON.stringify({
+      page: teamPage,
       cards: [
         { char: "Adelyde: Anabasis", cub: "assets/characters/adelyde-anabasis/CUB - Kelpie.webp", mem: ["Cottie", "Cottie"] },
         { char: "Bianca: Crepuscule" }
       ]
-    })));
+    })), firstPage);
     step = "loading test team";
     await page.reload();
     await page.waitForSelector("#edStage .card");
@@ -506,6 +589,8 @@ const FLOWS = {
       throw new Error("selecionar um personagem existente não trocou os slots");
     step = "equipping the signature weapon on a new character";
     await cards.nth(2).locator(".portrait").click();
+    // Watanabe is not of the team's element (Dark), so he is behind the "Others" button
+    await page.click("#edPickerOptions [data-ed-more]");
     await page.locator('.ed-picker-option[data-ed-picker-value="Watanabe: Epitaph"]').click();
     const added = (await state()).cards[2];
     if (added.weapon !== "Watanabe: Epitaph" || added.weaponRank !== "6")

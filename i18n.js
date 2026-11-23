@@ -25,7 +25,7 @@ const LANG = (() => {
 document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
 // The dictionary is one small script that only a Portuguese visit downloads. It must be there before app.js runs
 const I18N_PT = {};
-if (LANG === "pt") for (const file of ["ui", "splashes", "teams", "assets", "cubs"]) document.write(`<script src="data/pt/${file}.js"></script>`);
+if (LANG === "pt") for (const file of ["ui", "splashes", "assets", "cubs"]) document.write(`<script src="data/pt/${file}.js"></script>`);
 const fill = (text, vars) => vars ? text.replace(/\{(\w+)\}/g, (all, k) => k in vars ? vars[k] : all) : text;
 const t = (text, vars) => fill((LANG === "pt" && I18N_PT[text]) || text, vars);
 // Plural: tn(n, "{n} build", "{n} builds"). In Portuguese the entry is [one, many], keyed by the English singular
@@ -53,12 +53,8 @@ if (LANG === "pt") document.addEventListener("DOMContentLoaded", translateStatic
 // The button of the side menu: picking the other language saves it and reloads, so every page draws again in it
 const langBtn = document.getElementById("langBtn");
 if (langBtn) langBtn.innerHTML = `<svg class="ico" aria-hidden="true"><use href="#i-lang"/></svg><span>${LANGS.map(l => `<b${l === LANG ? ' class="on"' : ""}>${l.toUpperCase()}</b>`).join(" | ")}</span>`;
-// Locked while the translation is off: it shows the languages but does nothing
-if (langBtn && !I18N_ENABLED) {
-  langBtn.disabled = true;
-  langBtn.title = "Portuguese version coming soon";
-  langBtn.setAttribute("aria-label", "Language: Portuguese version coming soon");
-}
+// Hidden while the translation is off: a button that does nothing looks broken
+if (langBtn && !I18N_ENABLED) langBtn.remove();
 if (langBtn && I18N_ENABLED) {
   langBtn.onclick = () => {
     const next = LANGS[(LANGS.indexOf(LANG) + 1) % LANGS.length];

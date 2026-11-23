@@ -43,6 +43,36 @@ const PATCH_NAMES = {
 // Dates of the tab that the other sources correct: the Chinese wiki (战双大事记) and grayravens.com/wiki/Patches. Aegis follows the wiki alone
 const CN_DATES = { "2024-08-26": "2024-09-26", "2025-10-10": "2025-09-25", "2026-03-16": "2026-03-17" };
 
+// The Global release of each China release date, for the Global view of the page. Before the Where Nightmares Dwell patch the servers
+// ran on separate schedules, and from the Stars Ensnared patch on, Global took several China patches at once (integration patches).
+// Source: the "CN Release" and "GL Release" of grayravens.com/wiki/Patches, checked against the RESUME tab of the PGR Global Tickets
+// Income sheet (1r8iFS0PIB6KDwWg35MxwjZ0MBaIOjW1GYO5_qcvOYR4). The base game came to Global on 2021-07-16. The wiki gives 2025-09-19 for
+// the Through the Tide Home group where the sheet says 18/09/25. From SYNC_DATE on, both servers get a patch on the same day
+const SYNC_DATE = "2025-11-13";
+const GLOBAL_DATES = {
+  "2019-12-05": "2021-07-16", "2019-12-24": "2021-08-03", "2020-02-06": "2021-09-09",
+  "2020-03-19": "2021-10-12", "2020-04-29": "2021-11-17", "2020-06-10": "2021-12-22",
+  "2020-07-23": "2022-01-26", "2020-09-03": "2022-03-02", "2020-10-22": "2022-04-13",
+  "2020-11-26": "2022-05-18", "2021-01-07": "2022-07-05", "2021-02-25": "2022-08-16",
+  "2021-04-08": "2022-09-16", "2021-05-20": "2022-10-18", "2021-07-01": "2022-11-17",
+  "2021-09-30": "2023-01-19", "2021-11-11": "2023-03-01", "2022-01-27": "2023-05-11",
+  "2022-04-21": "2023-07-13", "2022-07-08": "2023-09-26", "2022-08-18": "2023-11-09",
+  "2022-09-29": "2023-12-12", "2022-11-17": "2024-01-18", "2022-12-24": "2024-02-23",
+  "2023-02-09": "2024-04-08", "2023-03-23": "2024-05-09", "2023-04-27": "2024-06-14",
+  "2023-06-08": "2024-07-15", "2023-07-20": "2024-08-21", "2023-08-24": "2024-09-29",
+  "2023-09-28": "2024-10-31", "2023-11-09": "2024-12-04", "2023-12-21": "2025-01-10",
+  "2024-02-01": "2025-01-10", "2024-04-18": "2025-02-20", "2024-05-30": "2025-02-20",
+  "2024-07-11": "2025-04-02", "2024-09-26": "2025-04-02", "2024-11-07": "2025-05-14",
+  "2024-12-19": "2025-05-14", "2025-01-23": "2025-06-25", "2025-03-06": "2025-06-25",
+  "2025-04-10": "2025-06-25", "2025-05-22": "2025-08-06", "2025-07-03": "2025-09-19",
+  "2025-09-25": "2025-09-19"
+};
+function globalDate(date, name) {
+  const gl = date >= SYNC_DATE ? date : GLOBAL_DATES[date];
+  if (!gl) throw new Error(`${name}: sem data do Global para ${date}: atualize GLOBAL_DATES`);
+  return gl;
+}
+
 // A-Rank frames and collabs are not in the sheet tab, so their China release dates are written by hand: [date, patch].
 // Source: the patch blocks of https://punishing-gray-raven.fandom.com/wiki/Characters ("China Server Release" and the constructs of each).
 // Kurumi Tokisaki has no block there yet, so it takes the start of its patch in calculator-data.js
@@ -125,7 +155,8 @@ for (const [column, [element, role]] of Object.entries(COLUMNS)) {
   if (group.length !== days.length) throw new Error(`${element} ${role}: ${group.length} personagens na wiki e ${days.length} datas na planilha`);
   group.forEach((c, i) => {
     const name = `${c.characterName}: ${c.frameName}`, onSite = site[name] || site[name.replace("No. ", "No.")];
-    entries.push({ name, date: CN_DATES[days[i]] || days[i], patch: patchOf(days[i]), element, role, effect: onSite?.[4] || "", head: `${FOLDER}/${slug(name)}.png`, rank: "S", icon: c.icons.normal });
+    const date = CN_DATES[days[i]] || days[i];
+    entries.push({ name, date, gl: globalDate(date, name), patch: patchOf(days[i]), element, role, effect: onSite?.[4] || "", head: `${FOLDER}/${slug(name)}.png`, rank: "S", icon: c.icons.normal });
   });
 }
 if (entries.length !== frames.length) throw new Error(`${frames.length - entries.length} personagens da wiki sem coluna: atualize COLUMNS`);
@@ -136,7 +167,7 @@ const wikiAll = wikiData(await (await get(WIKI)).text());
 for (const [name, [date, patch]] of Object.entries(EXTRA_DATES)) {
   const c = wikiAll.find(item => wikiName(item) === name), onSite = site[name];
   if (!c || !onSite) throw new Error(`${name}: não achei na wiki ou no site`);
-  entries.push({ name, date, patch, element: onSite[1], role: onSite[2], effect: onSite[4] || "", head: `${FOLDER}/${slug(name)}.png`, rank: onSite[3], ...(c.characterName === c.frameName ? { collab: true } : {}), icon: c.icons.normal });
+  entries.push({ name, date, gl: globalDate(date, name), patch, element: onSite[1], role: onSite[2], effect: onSite[4] || "", head: `${FOLDER}/${slug(name)}.png`, rank: onSite[3], ...(c.characterName === c.frameName ? { collab: true } : {}), icon: c.icons.normal });
 }
 
 mkdirSync(join(ROOT, FOLDER), { recursive: true });

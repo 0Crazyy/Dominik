@@ -1,5 +1,5 @@
--- Community teams sent from the Team Builder. Apply with:
---   npx wrangler@4 d1 execute dominik --remote --file server/schema.sql
+-- Community teams sent from the Team Builder: the tables from before accounts. Apply every migration with:
+--   npx wrangler d1 migrations apply dominik --remote      (--local for wrangler pages dev)
 CREATE TABLE IF NOT EXISTS teams (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   page TEXT NOT NULL,                      -- "energy/fire"
@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS teams (
   created INTEGER NOT NULL,                -- milliseconds
   reviewed INTEGER,
   reason TEXT,
-  message TEXT                             -- the Discord message where the bot shows the team for review
+  message TEXT                             -- unused: the Discord bot that reviewed teams is gone
 );
--- Short links of the Team Builder (/editor?s=<code>), made by functions/api/share.js. Same command as above applies this too
+-- Short links of the Team Builder (/editor?s=<code>), made by functions/api/share.js
 CREATE TABLE IF NOT EXISTS shares (
   code TEXT PRIMARY KEY,                   -- 7 letters and digits in the link
   team TEXT NOT NULL,                      -- the clean team as JSON

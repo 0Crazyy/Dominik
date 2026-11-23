@@ -1760,8 +1760,8 @@ const CATALOG = {
   {
    "name": "Wanshi: Lucid Dreamer",
    "symbol": "assets/classes/Tanque.png",
-   "portrait": "assets/characters/roleicon/wanshi_awk.png",
-   "weapon": "assets/weapons/e3revolvermd010011.png",
+   "portrait": "assets/characters/wanshi-lucid-dreamer/Awaken - Wanshi Lucid Dreamer.webp",
+   "weapon": "assets/characters/wanshi-lucid-dreamer/Arma - Wanshi Lucid Dreamer.png",
    "construct": "assets/characters/wanshi-lucid-dreamer/CUB - Snowveil.png",
    "skills": [
     "assets/characters/wanshi-lucid-dreamer/CUB - Skill 1.png",
@@ -1990,7 +1990,7 @@ const CATALOG = {
   {
    "name": "Vera: Geiravor",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/vera-geiravor/Awaken - Vera-chan Geiravor.webp",
+   "portrait": "assets/characters/vera-geiravor/Awaken - Vera Geiravor.webp",
    "weapon": "assets/characters/vera-geiravor/Arma - Vera Geiravor.png",
    "construct": "assets/characters/vera-geiravor/CUB - Wrathfang.png",
    "skills": [
@@ -2270,7 +2270,7 @@ const CATALOG = {
   {
    "name": "Kamui: Aeternion",
    "symbol": "assets/classes/Breaker.png",
-   "portrait": "assets/characters/kamui-aeternion/Awaken - Kamui.webp",
+   "portrait": "assets/characters/kamui-aeternion/Awaken - Kamui Aeternion.webp",
    "weapon": "assets/characters/kamui-aeternion/Arma - Kamui Aeternion.png",
    "construct": "assets/characters/kamui-aeternion/CUB - Ignis.png",
    "skills": [
@@ -2326,7 +2326,7 @@ const CATALOG = {
   {
    "name": "Helentine: Lacrimosa",
    "symbol": "assets/classes/Amplifier.png",
-   "portrait": "assets/characters/helentine-lacrimosa/Awaken - Helentine.webp",
+   "portrait": "assets/characters/helentine-lacrimosa/Awaken - Helentine Lacrimosa.webp",
    "weapon": "assets/characters/helentine-lacrimosa/Arma - Helentine Lacrimosa.webp",
    "construct": "assets/characters/helentine-lacrimosa/CUB - Grand Duke.webp",
    "skills": [
@@ -2896,248 +2896,6 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/characters/watanabe-epitaph/Arma - Watanabe Epitaph.png"
-    }
-   ]
-  },
-  {
-   "owner": "Selena: Pianissimo",
-   "name": "Crowned Laurel",
-   "type": "Bowstring Rapier",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2lyreswordmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Wanshi: Lucid Dreamer",
-   "name": "Eternal Peace",
-   "type": "Revolver",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2revolvermd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Helentine: Lacrimosa",
-   "name": "Base Fog",
-   "type": "Folding Buzzsaw",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2chainsawmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Leia: Fortunaster",
-   "name": "Marrow's Glimmer",
-   "type": "Rhythmic Ray",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2gymnasticmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Lucia: Inverse Crown",
-   "name": "BX-02M Fellfrost",
-   "type": "Cylinder Katana",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2ssalphamd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Teddy: Spectre",
-   "name": "Skybound Beats",
-   "type": "Digital Warboots",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2shoesmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Luna: Oblivion",
-   "name": "Dark Moon",
-   "type": "Chakram",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2circlemd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Rosetta: Arete",
-   "name": "Mirage Halberd",
-   "type": "Radiant Halberd",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2halberdmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Nirvatia: Dirge",
-   "name": "Death's Plume",
-   "type": "Judgment Scythe",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2sicklemd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Watanabe: Epitaph",
-   "name": "Pale Plume",
-   "type": "Trailblade",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2sabremd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Vera: Geiravor",
-   "name": "Fiery Twilight",
-   "type": "Dual-Bladed Lance",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2bladespearmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Kamui: Aeternion",
-   "name": "Ray Slasher",
-   "type": "Kinetic Greatsword",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2greatswordmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Lucia: Pyroath",
-   "name": "Mist Netherlight",
-   "type": "Pyro Katana",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2tachiamd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Liv: Limpidity",
-   "name": "Cyan Blossom",
-   "type": "Lotus Wheel",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2lotusblademd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Nanami: Startrail",
-   "name": "Sparkle ZL-09 - Mod",
-   "type": "Shield Axe",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2swordaxemd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Bianca: Crepuscule",
-   "name": "Night Sunderer",
-   "type": "Lashblade",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2chainswordmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Adelyde: Anabasis",
-   "name": "Abyss Forgefire",
-   "type": "Cross Cannon",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2heavycrossmd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Lilith: Daemonissa",
-   "name": "Glazed Enigma",
-   "type": "Moon Umbrella",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2brollymd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Kurumi Tokisaki",
-   "name": "Clock Hands",
-   "type": "Zafkiel: Dual Guns",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2kurumimd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Hanying: Solacetune",
-   "name": "Moonside Petal",
-   "type": "Pipa",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2pipamd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Veronica: Aegis",
-   "name": "Skyradiance",
-   "type": "Lance",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2dragonlancemd020011.png"
-    }
-   ]
-  },
-  {
-   "owner": "Karenina: Effulgence",
-   "name": "Spindrift Shimmer",
-   "type": "Drift Anchor",
-   "ranks": [
-    {
-     "rank": "5",
-     "art": "assets/weapons/5stars/e2anchormd020011.png"
     }
    ]
   },
@@ -4103,6 +3861,17 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "Watanabe: Epitaph",
+   "name": "Pale Plume",
+   "type": "Trailblade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2sabremd020011.png"
+    }
+   ]
+  },
+  {
    "owner": "Qu: Shukra",
    "name": "Phoenix Edge",
    "type": "Longsword",
@@ -4136,6 +3905,17 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "Luna: Oblivion",
+   "name": "Dark Moon",
+   "type": "Chakram",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2circlemd020011.png"
+    }
+   ]
+  },
+  {
    "owner": "Bridget: Ardeo",
    "name": "Cestus",
    "type": "Tactical Tonfas",
@@ -4143,6 +3923,39 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/weapons/6stars/e3tonfamd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Hanying: Solacetune",
+   "name": "Moonside Petal",
+   "type": "Pipa",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2pipamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Wanshi: Lucid Dreamer",
+   "name": "Eternal Peace",
+   "type": "Revolver",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2revolvermd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Pyroath",
+   "name": "Mist Netherlight",
+   "type": "Pyro Katana",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2tachiamd020011.png"
     }
    ]
   },
@@ -4169,6 +3982,17 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "Nanami: Startrail",
+   "name": "Sparkle ZL-09 - Mod",
+   "type": "Shield Axe",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2swordaxemd020011.png"
+    }
+   ]
+  },
+  {
    "owner": "Ishmael: Parhelion",
    "name": "Celestial Reflection",
    "type": "Keystaff",
@@ -4176,6 +4000,28 @@ const CATALOG = {
     {
      "rank": "5",
      "art": "assets/weapons/5stars/e2keywandmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lilith: Daemonissa",
+   "name": "Glazed Enigma",
+   "type": "Moon Umbrella",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2brollymd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Selena: Pianissimo",
+   "name": "Crowned Laurel",
+   "type": "Bowstring Rapier",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2lyreswordmd020011.png"
     }
    ]
   },
@@ -4202,6 +4048,17 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "Vera: Geiravor",
+   "name": "Fiery Twilight",
+   "type": "Dual-Bladed Lance",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2bladespearmd020011.png"
+    }
+   ]
+  },
+  {
    "owner": "Vergil",
    "name": "Yamato - Kageuchi",
    "type": "Yamato",
@@ -4224,6 +4081,17 @@ const CATALOG = {
    ]
   },
   {
+   "owner": "Bianca: Crepuscule",
+   "name": "Night Sunderer",
+   "type": "Lashblade",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2chainswordmd020011.png"
+    }
+   ]
+  },
+  {
    "owner": "Discord: Secator",
    "name": "Osseous Guillotine",
    "type": "Scissors",
@@ -4231,6 +4099,138 @@ const CATALOG = {
     {
      "rank": "6",
      "art": "assets/weapons/6stars/e3shearsmd010011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Veronica: Aegis",
+   "name": "Skyradiance",
+   "type": "Lance",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2dragonlancemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Liv: Limpidity",
+   "name": "Cyan Blossom",
+   "type": "Lotus Wheel",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2lotusblademd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Teddy: Spectre",
+   "name": "Skybound Beats",
+   "type": "Digital Warboots",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2shoesmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Rosetta: Arete",
+   "name": "Mirage Halberd",
+   "type": "Radiant Halberd",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2halberdmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Nirvatia: Dirge",
+   "name": "Death's Plume",
+   "type": "Judgment Scythe",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2sicklemd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Kamui: Aeternion",
+   "name": "Ray Slasher",
+   "type": "Kinetic Greatsword",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2greatswordmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Lucia: Inverse Crown",
+   "name": "BX-02M Fellfrost",
+   "type": "Cylinder Katana",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2ssalphamd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Helentine: Lacrimosa",
+   "name": "Base Fog",
+   "type": "Folding Buzzsaw",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2chainsawmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Karenina: Effulgence",
+   "name": "Spindrift Shimmer",
+   "type": "Drift Anchor",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2anchormd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Kurumi Tokisaki",
+   "name": "Clock Hands",
+   "type": "Zafkiel: Dual Guns",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2kurumimd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Adelyde: Anabasis",
+   "name": "Abyss Forgefire",
+   "type": "Cross Cannon",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2heavycrossmd020011.png"
+    }
+   ]
+  },
+  {
+   "owner": "Leia: Fortunaster",
+   "name": "Marrow's Glimmer",
+   "type": "Rhythmic Ray",
+   "ranks": [
+    {
+     "rank": "5",
+     "art": "assets/weapons/5stars/e2gymnasticmd020011.png"
     }
    ]
   }

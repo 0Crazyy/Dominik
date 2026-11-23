@@ -8,7 +8,7 @@ const ED_BARS = ["blue", "red", "gold"];
 const ED_SLOTS = ["Blue", "Red", "Yellow"];
 const ED_TAGS = ["Budget", "Warzone", "PPC", "General"]; // keep in step with TAGS in server/team.js
 const ED_LIMITS = { name: 60, order: 120, desc: 3000, rotation: 3000 };
-const ED_MAIN = [0, 1, 2, 4], ED_SUB = [3, 5]; // 4 pieces of the main set and 2 of the sub set, as memBuild() lays them out
+const ED_MAIN = [0, 1, 2, 4], ED_SUB = [3, 5]; // 4 pieces of the main set (slots 1, 2, 3, 5) and 2 of the sub set (slots 4, 6)
 const ED_CUB_SKILL_ORDER = [0, 1, 2, 3, 4, 5];
 // Resonance picker art when no character is picked: Lucia: Lotus's Basic Attack, and a plain white card for the rest
 const ED_BASIC_ATTACK_ART = "assets/characters/lucia-lotus/skills/Basic Attack.png", ED_BLANK_RESONANCE = "assets/icons/resonance-blank.png";
@@ -351,29 +351,46 @@ function edTeamBody(team) {
       <label class="ed-team-name"><span>${t("Team name")}</span>
         <input name="name" maxlength="${ED_LIMITS.name}" value="${esc(team.name)}" placeholder="Rosetta Darkflow" autocomplete="off"></label>
       <div class="ed-team-block"><h2 class="ed-team-heading">${t("Tags")}</h2><div id="edTags" class="ed-tags">${edTagsBody(team)}</div></div>
-      <div class="ed-team-block"><h2 class="ed-team-heading">${t("Page")}</h2>
-        <input type="hidden" name="page" value="${esc(team.page)}"><div id="edPageChoice" class="ed-page-groups">${edPageBody(team)}</div></div>
+      <input type="hidden" name="page" value="${esc(team.page)}">
       <div class="ed-team-block"><h2 class="ed-team-heading">${t("Team rotation")}</h2>
         <input type="hidden" name="order" value="${esc(team.order)}"><div id="edOrder">${edOrderBody(team)}</div></div>
     </section>
     <div class="ed-team-side">
       <section id="edRoles" class="ed-team-roles" aria-label="${t("Battle positions")}">${edRolesBody(team)}</section>
-      <section class="ed-team-actions" aria-label="${t("Share and send")}">
-        <h2 class="ed-team-heading">${t("Share")}</h2>
-        <button type="button" class="tool ed-primary" data-ed="send">${t("Submit for review")}</button>
-        <button type="button" class="tool" data-ed="link">${t("Copy link")}</button>
-        <button type="button" class="tool" data-export>${t("Export image")}</button>
-        <button type="button" class="tool ed-danger" data-ed="reset">${t("Start over")}</button>
-        <div id="edSend" class="ed-send" hidden>
-          <p class="ed-hint">${t("Your team goes to a review queue. Once approved, it shows up on its page as a community build.")}</p>
-          <label class="ed-field"><span>${t("Your name · optional")}</span><input id="edAuthor" maxlength="32" autocomplete="off"></label>
-          <label class="ed-trap" aria-hidden="true">Website<input id="edWebsite" tabindex="-1" autocomplete="off"></label>
-          <div id="edCaptcha"></div>
-          <button type="button" class="tool ed-primary" data-ed="confirm" disabled>${t("Send team")}</button>
-        </div>
-      </section>
     </div>
   </div>`;
+}
+// The Team Builder opens on step 1, the choice of the team's element or Effect page, until the draft has one.
+// "Change" on step 2 goes back to it; the team and its equipment stay as they are
+let edChoosing = false;
+function edChooseBody(team) {
+  return `<section class="ed-choose" aria-label="${t("Team page")}">
+    <h2>${t("Which element or Effect is your team for?")}</h2>
+    <p class="sub">${t("The team is published on that page. You can change it later.")}</p>
+    <div class="ed-page-groups ed-page-step">${edPageBody(team)}</div>
+    ${team.page ? `<p><button type="button" class="ed-pill" data-ed="back">← ${t("Back to the team")}</button></p>` : ""}
+  </section>`;
+}
+// Step 2: the chosen page with a button to change it, and the share actions, kept small at the top
+function edTopBar(team) {
+  const page = CATALOG.pages.find(p => p.path === team.page);
+  const dir = page?.kind === "Energy" ? "energy-type" : "effects";
+  return `<div class="ed-topbar">
+      <div class="ed-topbar-page">${page ? menuIcon(dir, page.name) : ""}<span><small>${esc(t(page?.kind || "Page"))}</small><b>${esc(page?.name || "")}</b></span>
+        <button type="button" class="ed-pill" data-ed="choose">${t("Change")}</button></div>
+      <div class="ed-topbar-actions" role="group" aria-label="${t("Share and send")}">
+        <button type="button" class="ed-pill ed-pill-main" data-ed="send">${t("Publish")}</button>
+        <button type="button" class="ed-pill" data-ed="link">${t("Copy link")}</button>
+        <button type="button" class="ed-pill" data-export>${t("Export image")}</button>
+        <button type="button" class="ed-pill ed-pill-danger" data-ed="reset">${t("Start over")}</button>
+      </div>
+    </div>
+    <div id="edSend" class="ed-send" hidden>
+      <p class="ed-hint">${t("Your team goes on its page right away, under your Discord name. Admins take down teams that break the rules.")}</p>
+      <label class="ed-trap" aria-hidden="true">Website<input id="edWebsite" tabindex="-1" autocomplete="off"></label>
+      <div id="edCaptcha"></div>
+      <button type="button" class="tool ed-primary" data-ed="confirm" disabled>${t("Publish team")}</button>
+    </div>`;
 }
 // Reads the form back into a team. Fields the page doesn't show right now keep what the team had
 function edRead(form) {
@@ -1002,7 +1019,7 @@ function edApply(kind, name, i, slot, rank = "", side = "") {
   }
   if (kind === "char") $("#edDetail").innerHTML = edDetailBody();
 }
-/* sending a team for review: /api/submit */
+/* publishing a team: /api/submit. Only logged in accounts can publish */
 const ED_ERRORS = {
   page: "Pick the page this team belongs to before sending it.",
   name: "Give the team a name before sending it.",
@@ -1012,10 +1029,11 @@ const ED_ERRORS = {
   captcha: "The verification failed. Wait for it to finish and send again.",
   early: "That was fast. Wait a few seconds and send again.",
   stale: "This page was open for too long. Send again.",
-  duplicate: "This exact team was already sent.",
-  limit: "You sent several teams in a short time. Try again later.",
-  full: "The review queue is full right now. Try again in a few days.",
-  off: "Sending teams is not available right now.",
+  duplicate: "This exact team is already on the site.",
+  limit: "You published several teams in a short time. Try again later.",
+  login: "Log in with Discord to publish.",
+  origin: "The site could not read this team. Reload the page and send again.",
+  off: "Publishing teams is not available right now.",
   bad: "The site could not read this team. Reload the page and send again.",
   restamped: "This page was open for too long. Wait a few seconds and send again.",
   network: "The team could not be sent. Check your connection and try again."
@@ -1034,6 +1052,11 @@ let edConfig = null, edCaptcha = null, edToken = "", edWidget;
 const edLoadConfig = () => fetch("/api/submit").then(r => r.json()).catch(() => ({ open: false }));
 const edSendButton = on => { const b = $('[data-ed="confirm"]'); if (b) b.disabled = !on; };
 async function edOpenSend() {
+  // The draft stays saved in this browser, so the login can take the visitor away and bring them back to it
+  if (!account.user) {
+    if (account.ready) location.href = signInHref("/editor");
+    return edStatus(ED_ERRORS.login);
+  }
   const problem = edProblem(edDraft);
   if (problem) return edStatus(ED_ERRORS[problem]);
   const config = await edConfig;
@@ -1060,16 +1083,19 @@ async function edSend() {
   edSendButton(false);
   edStatus("Sending...");
   const { stamp } = await edConfig;
-  const body = { team: edDraft, author: $("#edAuthor").value, website: $("#edWebsite").value, stamp, token: edToken };
+  const body = { team: edDraft, website: $("#edWebsite").value, stamp, token: edToken };
   const result = await fetch("/api/submit", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
     .then(r => r.json()).catch(() => ({ error: "network" }));
   // A verification is good for one try: a new one runs and turns the button back on
   edToken = "";
   try { window.turnstile.reset(edWidget); } catch { /* the widget is gone: the next click on Submit draws it again */ }
+  // Published: open the team's own page, asking for the list again so it is there
   if (result.ok) {
-    $("#edSend").hidden = true;
-    return edStatus("Team sent. It shows up on its page once it is reviewed.");
+    markFresh();
+    location.href = buildHref(result.page, `c-${result.id}`);
+    return;
   }
+  if (result.error === "login") { location.href = signInHref("/editor"); return; }
   // A new time stamp starts the 10 seconds the server waits for again, so the message says to wait
   if (result.error === "stale") { edConfig = edLoadConfig(); return edStatus(ED_ERRORS.restamped); }
   edStatus(ED_ERRORS[result.error] || ED_ERRORS.network);
@@ -1083,7 +1109,7 @@ const ED_HELP = [
   "Choose None in a selector to clear its slot. Selecting a character already on the team moves it to the chosen slot.",
   "Each position has Notes and Rotation tabs below the cards. Build a rotation by tapping moves, or switch to \"Edit as text\".",
   "The team stays saved in this browser, and you can share it as a link or an image.",
-  "You can also send it to the site: after a review, it shows up on its page with the other builds."
+  "You can also publish it on the site: log in with Discord, and it shows up on its page right away, under your name."
 ];
 // The how-to opens by itself on the first visit only; after that it stays the way the visitor left it
 const ED_HELP_KEY = "dominik-editor-help";
@@ -1106,7 +1132,9 @@ function teamBuilder() {
   edMessage = "";
   // The cards go out as plain HTML with the page; editable slots are marked once they are in the document
   queueMicrotask(() => { edWire(); edPaint(); edStatus(message); });
-  return `<h1>${t("Team Builder")}</h1>
+  const head = `<h1>${t("Team Builder")}</h1>`;
+  if (edChoosing || !edDraft.page) return `${head}${edChooseBody(edDraft)}<div id="edStatus" class="ed-status" role="status" aria-live="polite"></div>`;
+  return `${head}${edTopBar(edDraft)}
     <details class="ed-help-box" data-ed-help${edHelpOpen() ? " open" : ""}><summary>${t("How to use the Team Builder")}</summary>
     <ul class="ed-help">${ED_HELP.map(line => `<li>${esc(t(line))}</li>`).join("")}</ul></details>
     <form id="edForm" class="ed" autocomplete="off">
@@ -1446,7 +1474,15 @@ addEventListener("click", e => {
       edSave();
       edPickerTarget = null;
       edCubSkillPick = null;
+      edChoosing = false;
       return route();
+    }
+    // Step 1 and back: the team itself is kept
+    if (button.dataset.ed === "choose" || button.dataset.ed === "back") {
+      edChoosing = button.dataset.ed === "choose";
+      edPickerTarget = null;
+      route();
+      return scrollTo({ top: 0 });
     }
     if (button.dataset.ed === "send") edOpenSend();
     if (button.dataset.ed === "confirm") edSend();
@@ -1470,7 +1506,18 @@ addEventListener("click", e => {
   }
 });
 
-/* Team box controls: page icons, rotation chips and tags */
+/* Step 1: picking the page saves it and opens the cards */
+addEventListener("click", e => {
+  const page = e.target.closest?.(".ed-choose [data-ed-page]");
+  if (!page) return;
+  edDraft = edClean({ ...edDraft, page: page.dataset.edPage });
+  edSave();
+  edChoosing = false;
+  route();
+  scrollTo({ top: 0 });
+});
+
+/* Team box controls: rotation chips and tags */
 addEventListener("click", e => {
   const form = $("#edForm");
   if (!form || !e.target.closest) return;
@@ -1478,12 +1525,6 @@ addEventListener("click", e => {
     form.elements[name].value = value;
     form.elements[name].dispatchEvent(new Event("input", { bubbles: true }));
   };
-  const page = e.target.closest("[data-ed-page]");
-  if (page) {
-    set("page", page.dataset.edPage === edDraft.page ? "" : page.dataset.edPage); // a second tap clears it
-    $("#edPageChoice").innerHTML = edPageBody(edDraft);
-    return;
-  }
   const tag = e.target.closest("[data-ed-tag]");
   if (tag) {
     const tags = edDraft.tags.includes(tag.dataset.edTag) ? edDraft.tags.filter(t => t !== tag.dataset.edTag) : [...edDraft.tags, tag.dataset.edTag];

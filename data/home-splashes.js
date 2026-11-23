@@ -178,5 +178,14 @@ const HOME_SPLASHES = [
   "\"We never forget. We don't want to avenge our tragic past, but build a future without the tragedy\" — Naive claim, yet honorable and brave.",
   "Intriguing trickster, hiding himself behind the joker act. We both can see that from a mile away, can't we?",
   "What happened to that \"hyena\" of Alkdilek?",
-  "The little league... What would be the circumstances to make them join forces today, once again?"
+  "The little league... What would be the circumstances to make them join forces today, once again?",
+  "Alisa? Who's that? Are you in a fever dream?",
+  "She'll always have your back, but don't depend on her, even if it's against her will.",
+  "The Purifying Force captain isn't as harsh as she should be, but it seems she can't let go of her grace, unfortunately.",
+  "Bazookas, giant hammers and, now, giant anchors... The Engineering Force captain has a \"bombastic\" taste, doesn't she?",
+  "I used to find it unsettling when that girl from WGAA started to talk, but I got used to it. It's how some people keep themselves sane in these troubled times.",
+  "Losing your memories and forgetting what you loved and cherished must be an indescribable feeling. That young man from Alkdilek went through that once, just like you.",
+  "Luna has changed. She was once a naive kid who thought everything around her was a gray zone, and now she is within the gray zone she once hated, and doesn't even realize it.",
+  "She gave up her good life to prove wrong someone who said \"Your art is inaccurate\", becoming a soldier to learn what real war is, only to die because of it. Arrogance always has a price.",
+  "\"Good morning, have you eaten?\" Surprised? I've seen Pulao greet foreigners this way, and my favorite part was the other side's reaction."
 ];

@@ -5,10 +5,15 @@ import js from "@eslint/js";
 import globals from "globals";
 
 // The site has no modules: index.html loads these as plain scripts, so they all share their top-level names
-const DATA = ["data/assets-data.js", "data/calculator-data.js", "data/timeline-data.js", "data/skills-data.js", "data/catalog-data.js", "data/home-splashes.js", "data/updates-data.js"];
-const SCRIPTS = [...DATA, "i18n.js", "app.js", "editor.js"];
-const shared = Object.fromEntries(SCRIPTS.flatMap(file =>
-  [...readFileSync(new URL(file, import.meta.url), "utf8").matchAll(/^(const|let|function)\s+([\w$]+)/gm)].map(m => [m[2], m[1] === "let" ? "writable" : "readonly"])));
+const DATA = ["data/assets-data.js", "data/calculator-data.js", "data/timeline-data.js", "data/skills-data.js", "data/catalog-data.js", "data/home-splashes.js", "data/updates-data.js", "data/damage-formulas.js", "data/damage-data.js"];
+const SCRIPTS = [...DATA, "i18n.js", "app.js", "editor.js", "admin-panel.js"];
+const declared = SCRIPTS.flatMap(file =>
+  [...readFileSync(new URL(file, import.meta.url), "utf8").matchAll(/^(const|let|function)\s+([\w$]+)/gm)].map(m => [m[2], m[1] === "let" ? "writable" : "readonly", file]));
+const shared = Object.fromEntries(declared.map(([name, kind]) => [name, kind]));
+// Two scripts declaring the same name break the page that loads both ("has already been declared"), and the rules
+// below can't see it, since every file's names are globals to the others
+const twice = declared.filter(([name, , file]) => declared.some(([other, , where]) => other === name && where !== file));
+if (twice.length) throw new Error(`Name declared in more than one script: ${[...new Set(twice.map(([name, , file]) => `${name} (${file})`))].join(", ")}`);
 
 export default [
   { ignores: ["drafts/", "node_modules/", "assets/", "assets-web/", ".deploy/", ".smoke/", ".wrangler/", ".netlify/"] },

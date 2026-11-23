@@ -1,19 +1,14 @@
 /* =====================================================
-   DATA - to add a new composition:
-   1) copy an object in COMPS and change its data
-   2) add its id to the page's "comps" list in PAGES
-   A composition holds either "cards", or "variants" ([{ id, name, cards }]): with variants,
-   (a variant can also have "group" and "label": the picker lists it as "label" under that group)
-   clicking the composition reveals them and the build shows once one is picked.
-   Images (optional): put them in /assets and use the path,
-   e.g. portrait:"assets/rosetta.png". No image = empty slot.
-   Extra fields: symbol (class icon), weapon, wh (Weapon Harmony memory name, framed in
-   WH_FRAME), memories (6), matrix (3 weapon resonances),
-   resonance + core (the two "6x" icons), construct (CUB), skills (6 CUB skills),
-   rank (badge beside the portrait; levels have their own file, like SS3.png. Left out, it is SSS on free frames and SS on the rest).
+   DATA. The site has no builds of its own: every team comes from the Team Builder (/editor), sent by its users,
+   and joins COMPS and PAGES after the page loads (loadCommunity). A card of a team holds:
+   name, portrait, symbol (class icon), weapon, wh (Weapon Harmony memory name, framed in WH_FRAME),
+   memories (6), matrix (3 weapon resonances), resonance + core (the two "6x" icons), construct (CUB), skills (6 CUB skills),
+   rank (badge beside the portrait; left out, it is SSS on free frames and SS on the rest).
    ===================================================== */
 const CHARS = "assets/characters", MEM = "assets/memories", RES = "assets/resonances";
 const WEAPON_RES = n => `${RES}/Ressonancia de Arma - ${n} HD.png`;
+// Read by tools/make-catalog.mjs for the Team Builder
+/* exported ALL_ATK */
 const ALL_ATK = `${RES}/Ressonancia - ALL ATK.png`;
 // Memory resonances of the Team Builder that have their own icon: the four "Ex-" ones and the three orbs.
 /* exported MEMORY_RES, MEMORY_RES_NAMES */ // tools/make-catalog.mjs reads them
@@ -55,65 +50,7 @@ const memSet = name => ["1-4", "2-5", "3-6"].map(p => MEM_INDEX.get(name).ext ? 
 // Full portrait arts ("Art - <name> 1|2|3.png" beside the card icons). Most sets have 3; these are the exceptions
 const MEMORY_ART_COUNT = { "Liv - Reindeer": 1, "Vera - Scarlet Summers": 1, "Lantern Festival - Reunion": 1, "Liv - Ceremony": 1, "Kuriko - Eternal": 1 };
 const memArts = name => Array.from({ length: MEMORY_ART_COUNT[name] ?? 3 }, (_, i) => `${MEM}/${MEM_INDEX.get(name).tab.toLowerCase()}/Art - ${name} ${i + 1}.webp`);
-// 4 pieces of "main" (slots 1, 2, 3, 5) + 2 pieces of "sub" (slots 4, 6)
-const memBuild = (main, sub) => [main[0], main[1], main[2], sub[0], main[1], sub[2]];
 const cubSkills = (dir, ext = "png") => [1, 2, 3, 4, 5, 6].map(i => `${dir}/CUB - Skill ${i}.${ext}`);
-
-const SELENA = `${CHARS}/selena-pianissimo`;
-const WANSHI = `${CHARS}/wanshi-lucid-dreamer`;
-const HELENTINE = `${CHARS}/helentine-lacrimosa`;
-const BURANA = memSet("Burana");
-const LISTON = memSet("Liston");
-const CHEN_JIYUAN = memSet("Chen Jiyuan");
-const COTTIE = memSet("Cottie");
-const GUINEVERE = memSet("Guinevere");
-const DA_VINCI = memSet("Da Vinci");
-const LUCIA_IC = `${CHARS}/lucia-inverse-crown`;
-const TEDDY = `${CHARS}/teddy-spectre`;
-const LEIA = `${CHARS}/leia-fortunaster`;
-const LUNA = `${CHARS}/luna-oblivion`;
-const NIRVATIA = `${CHARS}/nirvatia-dirge`;
-const PAVLICHENKO = memSet("Pavlichenko");
-const JOANNA = memSet("Joanna");
-const MOUSME = memSet("Mousme");
-const GLORIA = memSet("Gloria");
-
-const LUCIA_P = `${CHARS}/lucia-pyroath`;
-const VERA = `${CHARS}/vera-geiravor`;
-const KAMUI = `${CHARS}/kamui-aeternion`;
-const LIV = `${CHARS}/liv-limpidity`;
-const NANAMI = `${CHARS}/nanami-startrail`;
-const BIANCA = `${CHARS}/bianca-crepuscule`;
-const ADELYDE = `${CHARS}/adelyde-anabasis`;
-const ROSETTA = `${CHARS}/rosetta-arete`;
-const LILITH = `${CHARS}/lilith-daemonissa`;
-const KURUMI = `${CHARS}/kurumi-tokisaki`;
-const HANYING = `${CHARS}/hanying-solacetune`;
-const WATANABE = `${CHARS}/watanabe-epitaph`;
-const VERONICA = `${CHARS}/veronica-aegis`;
-const KARENINA = `${CHARS}/karenina-effulgence`;
-const KEATS = memSet("Keats");
-const SANTIAGO = memSet("Santiago");
-const HERACLITUS = memSet("Heraclitus");
-const HERVOR = memSet("Hervor");
-const FEYNMAN = memSet("Feynman");
-const NATASHA = memSet("Natasha");
-const HERSCHELL = memSet("Herschell");
-const JEANNE = memSet("Jeanne");
-const PESANTEUR = memSet("Pesanteur");
-const NIMUE = memSet("Nimue");
-const BARCELO = memSet("Barcelo");
-const DERKETO = memSet("Derketo");
-const CHANG_WUZI = memSet("Chang Wuzi");
-const ALPHONSE = memSet("Alphonse");
-const SHAKESPEARE = memSet("Shakespeare");
-const HEISEN = memSet("Heisen");
-const BATHLON = memSet("Bathlon");
-const PATTON = memSet("Patton");
-const CLEOPATRA = memSet("Cleopatra");
-const BULGAKOV = memSet("Bulgakov");
-// As in the reference image: Nimue and Bulgakov show their 3-6 art first, so the pieces are rotated
-const rotated = ([a, b, c]) => [c, a, b];
 
 // Weapon Harmony: each memory is framed once here, as [x%, y%, zoom]. A card only says wh: "Da Vinci".
 // A memory missing from this list still works: it just shows the whole art until a frame is added.
@@ -175,123 +112,7 @@ const WH_FRAME = {
   "Wilde": [54.2, 28.6, 3.6]
 };
 
-const GA = "Glorious Afterglow", GS = "Glorious Spear", ML = "Matrix Lightning", SAR = "Superconducting Axial Ray",
-  DD = "Domain Deconstruction", INC = "Incandescence", DLT = "Dead Line Timing";
-const matrix = (...names) => names.map(WEAPON_RES);
 const classIcon = name => `assets/classes/${name}.png`;
-
-// Wanshi runs the same build in every team he appears in
-const WANSHI_BUILD = {
-  rank: "assets/rank/SSS.png",
-  symbol: "assets/classes/Tanque.png",
-  portrait: "assets/characters/roleicon/wanshi_awk.png",
-  weapon: "assets/weapons/e3revolvermd010011.png",
-  wh: "Da Vinci",
-  memories: memBuild(LISTON, DA_VINCI),
-  matrix: ["Domain Deconstruction", "Matrix Lightning", "Incandescence"].map(WEAPON_RES),
-  resonance: ALL_ATK,
-  core: `${WANSHI}/Skill - Signature HD.png`,
-  construct: `${WANSHI}/CUB - Snowveil.png`,
-  skills: cubSkills(WANSHI)
-};
-
-// Parts of a character's card that stay the same across teams; each card adds its memories, matrix and desc
-const LUCIA_IC_KIT = {
-  name: "Lucia: Inverse Crown", symbol: classIcon("Attacker"), portrait: `${LUCIA_IC}/Awaken - Lucia Inverse Crown.webp`,
-  weapon: `${LUCIA_IC}/Arma - Lucia Inverse Crown.webp`, matrix: matrix(GA, INC, DLT),
-  resonance: ALL_ATK, core: `${LUCIA_IC}/Skill - Signature HD.png`, construct: `${LUCIA_IC}/CUB - Allos.webp`, skills: cubSkills(LUCIA_IC, "webp")
-};
-const SELENA_KIT = {
-  name: "Selena: Pianissimo", symbol: classIcon("Attacker"), portrait: `${SELENA}/Awaken - Selena Pianissimo.webp`,
-  weapon: `${SELENA}/Arma - Selena Pianissimo.png`, memories: memBuild(BURANA, COTTIE),
-  resonance: ALL_ATK, core: `${SELENA}/Skill - Core Passiva.png`, construct: `${SELENA}/CUB - Snow Waltz.png`, skills: cubSkills(SELENA)
-};
-const LIV_KIT = {
-  name: "Liv: Limpidity", symbol: classIcon("Attacker"), portrait: `${LIV}/Awaken - Liv Limpidity.webp`,
-  weapon: `${LIV}/Arma - Liv Limpidity.png`, matrix: matrix(GA, INC, ML),
-  resonance: ALL_ATK, core: `${LIV}/Skill - Core Passiva HD.png`, construct: `${LIV}/CUB - Levvi.png`, skills: cubSkills(LIV)
-};
-const HANYING_KIT = {
-  name: "Hanying: Solacetune", symbol: classIcon("Tanque"), portrait: `${HANYING}/Awaken - Hanying Solacetune.webp`,
-  weapon: `${HANYING}/Arma - Hanying Solacetune.png`,
-  resonance: ALL_ATK, core: `${HANYING}/Skill - Core Passiva.png`, construct: `${HANYING}/CUB - Dreamwing.png`, skills: cubSkills(HANYING)
-};
-const VERONICA_KIT = {
-  name: "Veronica: Aegis", symbol: classIcon("Amplifier"), portrait: `${VERONICA}/Awaken - Veronica Aegis.webp`,
-  weapon: `${VERONICA}/Arma - Veronica Aegis.png`, wh: "Da Vinci", memories: memBuild(KEATS, DA_VINCI), matrix: matrix(SAR, GS, INC),
-  resonance: ALL_ATK, core: `${VERONICA}/Skill - Signature.png`, construct: `${VERONICA}/CUB - Scaled Rampart.png`,
-  // Order as in the reference images: slots 1 and 3 are her Skill 3 and Skill 1
-  skills: [3, 2, 1, 4, 5, 6].map(i => `${VERONICA}/CUB - Skill ${i}.png`)
-};
-const KARENINA_KIT = {
-  name: "Karenina: Effulgence", symbol: classIcon("Breaker"), portrait: `${KARENINA}/Awaken - Karenina Effulgence.webp`,
-  weapon: `${KARENINA}/Arma - Karenina Effulgence.webp`, wh: "Patton", memories: memBuild(SANTIAGO, PATTON), matrix: matrix(DD, GA, INC),
-  resonance: ALL_ATK, core: `${KARENINA}/Skill - Signature 2X.png`, construct: `${KARENINA}/CUB - Patrick.webp`, skills: cubSkills(KARENINA, "webp")
-};
-const HELENTINE_KIT = {
-  name: "Helentine: Lacrimosa", symbol: classIcon("Amplifier"), portrait: `${HELENTINE}/Awaken - Helentine.webp`,
-  weapon: `${HELENTINE}/Arma - Helentine Lacrimosa.webp`, matrix: matrix(SAR, GS, INC),
-  resonance: ALL_ATK, core: `${HELENTINE}/Skill - Signature 2X.png`, construct: `${HELENTINE}/CUB - Grand Duke.webp`, skills: cubSkills(HELENTINE, "webp")
-};
-const VERA_KIT = {
-  name: "Vera: Geiravor", symbol: classIcon("Amplifier"), portrait: `${VERA}/Awaken - Vera-chan Geiravor.webp`,
-  weapon: `${VERA}/Arma - Vera Geiravor.png`, wh: "Shakespeare", memories: memBuild(HERVOR, SHAKESPEARE), matrix: matrix(SAR, GS, INC),
-  resonance: ALL_ATK, core: `${VERA}/Skill - Signature 2X.png`, construct: `${VERA}/CUB - Wrathfang.png`, skills: cubSkills(VERA)
-};
-const KAMUI_KIT = {
-  name: "Kamui: Aeternion", symbol: classIcon("Breaker"), portrait: `${KAMUI}/Awaken - Kamui.webp`,
-  weapon: `${KAMUI}/Arma - Kamui Aeternion.png`, wh: "Darwin", memories: memBuild(FEYNMAN, COTTIE),
-  resonance: ALL_ATK, core: `${KAMUI}/Skill - Signature 2.png`, construct: `${KAMUI}/CUB - Ignis.png`, skills: cubSkills(KAMUI, "png")
-};
-const TEDDY_KIT = {
-  rank: "assets/rank/SSS.png",
-  name: "Teddy: Spectre", symbol: classIcon("Amplifier"), portrait: `${TEDDY}/Awaken - Teddy Spectre.webp`,
-  weapon: `${TEDDY}/Arma - Teddy Spectre.png`, matrix: matrix(SAR, GS, INC),
-  resonance: ALL_ATK, core: `${TEDDY}/Skill - Signature HD.png`, construct: `${TEDDY}/CUB - Beep-Boop.png`,
-  skills: cubSkills(TEDDY)
-};
-const LEIA_KIT = {
-  name: "Leia: Fortunaster", symbol: classIcon("Breaker"), portrait: `${LEIA}/Awaken - Leia Fortunaster.webp`,
-  weapon: `${LEIA}/Arma - Leia Fortunaster.png`,
-  matrix: matrix(DD, GA, ML), resonance: ALL_ATK, core: `${LEIA}/Skill - Core Passiva.png`, construct: `${LEIA}/CUB - Vulpecula.png`, skills: cubSkills(LEIA)
-};
-const NANAMI_KIT = {
-  name: "Nanami: Startrail", symbol: classIcon("Tanque"), portrait: `${NANAMI}/Awaken - Nanami Startrail.webp`,
-  weapon: `${NANAMI}/Arma - Nanami Startrail.png`, matrix: matrix(DD, ML, INC),
-  resonance: ALL_ATK, core: `${NANAMI}/Skill - Signature HD.png`, construct: `${NANAMI}/CUB - Bramble Angler.png`, skills: cubSkills(NANAMI)
-};
-const ADELYDE_KIT = {
-  name: "Adelyde: Anabasis", symbol: `${ADELYDE}/Classe - Adelyde Anabasis.png`, portrait: `${ADELYDE}/Awaken - Adelyde Anabasis.webp`,
-  weapon: `${ADELYDE}/Arma - Adelyde Anabasis.webp`, wh: "Bathlon", memories: memBuild(PESANTEUR, BATHLON), matrix: matrix(SAR, GS, ML),
-  resonance: ALL_ATK, core: `${ADELYDE}/Skill - Signature 2X.png`, construct: `${ADELYDE}/CUB - Kelpie.webp`, skills: cubSkills(ADELYDE, "webp")
-};
-const ROSETTA_KIT = {
-  name: "Rosetta: Arete", symbol: classIcon("Breaker"), portrait: `${ROSETTA}/Awaken - Rosetta Arete.webp`,
-  weapon: `${ROSETTA}/Arma - Mirage Alberd.webp`, wh: "Cottie", memories: memBuild(NIMUE, COTTIE), matrix: matrix(DD, DLT, GA),
-  resonance: ALL_ATK, core: `${ROSETTA}/Skill - Signature.webp`, construct: `${ROSETTA}/CUB - Buzzling.webp`, skills: cubSkills(ROSETTA, "webp")
-};
-const LILITH_KIT = {
-  name: "Lilith: Daemonissa", symbol: classIcon("Amplifier"), portrait: `${LILITH}/Awaken - Lilith Daemonissa.webp`,
-  weapon: `${LILITH}/Arma - Lilith Daemonissa.png`, resonance: ALL_ATK, core: `${LILITH}/Skill - Signature HD.png`,
-  construct: `${LILITH}/CUB - Billie.png`, skills: cubSkills(LILITH)
-};
-
-const VERA_DESC = "Standard DPS build for Vera-chan. She doesn't need her Signature memories to shine.\n• Below SSS: Hervor lets her do 2 Signatures without DLT, and without forcing a teammate's CUB down to Lingya.\n• Secondary memory: many options at SS/SS3, even more at SSS.\n• If Kamui runs Shakespeare: swap it here for Cottie (the Extra DMG works, since her first Signature enters her passive) or for Guinevere to buff Kamui even more.\n• At SSS: Shakespeare + Cottie together for even more damage.";
-const KAMUI_DESC = "After a hotfix, his yellow orb no longer recovers Signature Energy so easily.\n• Cottie: needed below SS3 to do 2 Signatures smoothly. Like Rosetta, he needs Cottie at lower ranks, but no DLT.\n• 2 Darwin: recommended for maximum output, since he deals a lot of damage before his Signature and uses many 3-pings.\n• 4 Cottie: also works in WZ, but not much in PPC.";
-const LUCIA_IC_DESC = "Standard DPS build for Alpha: Inverse Crown.\n• No Cottie: her Signature runs on Malison, her own energy, which only her skills generate. Only SS3 gives her more energy.\n• Since Cottie is out, other memories work too, even Da Vinci.";
-const VERONICA_DESC ="Support-DPS build for Veronica.\n• Role: bridges Selena's noise system, or backs up Karenina and Hanying.\n• With Selena and everyone below SSS: she finishes her long damage output right in time to switch to Karenina.";
-const KARENINA_DESC = "Build for every Physical need of Karenina.\n• No Cottie: her skills already generate a lot of energy.\n• Exceptions: very specific moments, staying long on the field, or spamming Signatures at SS3 and above.";
-const ROSETTA_DESC ="Cottie is needed at lower ranks for smooth damage loops.\n• DLT at SS0: not needed if she does a single Signature on her first damage loop and then switches. After that, she can do 2 Signatures in a row until the WZ timer runs out.\n• SS3 and above: no DLT needed.";
-const ADELYDE_DESC = "Like Alpha: Inverse Crown, Cottie doesn't work on her.\n• Why: her skills grant Anabasis points, which she uses as Signature Energy, so Cottie's buffs do nothing. Only SS3 and SSS make her faster. She's free, but this hurts players with few vouchers and future players who won't get the Journey of Promise copy.\n• Otherwise: anything works alongside her Signature memory, without DLT.";
-const ADELYDE_QTE_DESC = `${ADELYDE_DESC}\n• QTE: her SSS skill increases any QTE damage by 50%. To abuse the Attacker's SS3 QTE damage, use Da Vinci instead of Bathlon.`;
-
-// Colors sampled from the reference images
-const FIRE_THEME = { c1: "#f57f80", c2: "#170f0f", cp: "#3a2326" };
-const LIGHTNING_THEME = { c1: "#c3a14e", c2: "#13110b", cp: "#332c19" };
-const DARK_THEME = { c1: "#b38aff", c2: "#120f17", cp: "#2a2347" };
-const ICE_THEME = { c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a" };
-const NIHIL_THEME = { c1: "#ee77b2", c2: "#160f12", cp: "#361d2a" };
-const PHYSICAL_THEME = { c1: "#7ff0bc", c2: "#0f1515", cp: "#1e332c" };
 
 // Shown above any build with this character until the date below (Brasília time)
 const NEW_CHARACTER_NOTICE = {
@@ -299,281 +120,12 @@ const NEW_CHARACTER_NOTICE = {
   text: "Leia: Fortunaster is a recent character, so there is little feedback on these builds so far. It's recommended to wait at least 1 week for more information. Take it with a grain of salt."
 };
 
-// Ranks a build is made for
-const RANK_SS = { rank: "assets/rank/SS.png" }, RANK_SS3 = { rank: "assets/rank/SS3.png" };
-const rankArt = c => c.rank || (TL_FREE[c.name] ? "assets/rank/SSS.png" : RANK_SS.rank);
-// A Comet's Afterglow teams follow Spider 2B's Leia guide. Leia's build only changes with her rank
-const LEIA_SS = { ...RANK_SS, wh: "Chen Jiyuan", memories: memBuild(MOUSME, CHEN_JIYUAN),
-  desc: [
-    "Hypertune set for SS and below.",
-    "• No Weapon Harmony: 2 Einsteina instead of 2 Chen Jiyuan.",
-    "• Why no Cottie: without SS3's starting Signature Energy she can't reach her Signature fast, so 4 Chen Jiyuan deals more damage.",
-    "• Bottom resonance: Core Passive gives her the most damage. Pick Breaker class skill if your main DPS is highly invested."
-  ].join("\n") };
-const LEIA_SS3 = { ...RANK_SS3, wh: "Einsteina", memories: memBuild(MOUSME, COTTIE),
-  desc: [
-    "Hypertune set for SS3 and above.",
-    "• Why Cottie: SS3 gives her 20 Signature Energy on entry, so she can use her Signature right after the Gravity Orb form swap.",
-    "• No Weapon Harmony: keep 2 Cottie.",
-    "• Glaciation: if Selena runs 4 Burana + 4 Da Vinci and Helentine runs 4 Guinevere + 2 Cottie + 2 Einsteina, switch to 4 Chen Jiyuan.",
-    "• Bottom resonance: Breaker class skill also works."
-  ].join("\n") };
-const TEDDY_CLASS = { ...TEDDY_KIT, core: `${TEDDY}/Skill - Class Skill.png` };
-// As requested: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
-const TEDDY_SUPPORT = { ...TEDDY_CLASS, wh: "Guinevere", memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]] };
-const WANSHI_COMET = { name: "Wanshi: Lucid Dreamer", ...WANSHI_BUILD, core: `${WANSHI}/Skill - Class Skill.png` };
-const cometTeam = (leia, rotation) => [
-  { bar: "blue", role: "", ...LEIA_KIT, ...leia, rotation: rotation.leia },
-  { bar: "red", role: "captain", ...LUCIA_IC_KIT, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC, rotation: rotation.lucia },
-  { bar: "gold", role: "starter", ...TEDDY_SUPPORT, desc: "", rotation: rotation.teddy }
-];
-const altIceTeam = (leia, rotation) => [
-  { bar: "blue", role: "starter", ...WANSHI_COMET, wh: "Liston", memories: memBuild(DA_VINCI, LISTON),
-    desc: "• No Weapon Harmony: keep 2 Liston.", rotation: rotation.wanshi },
-  { bar: "red", role: "captain", ...LEIA_KIT, ...leia, rotation: rotation.leia },
-  { bar: "gold", role: "", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(JOANNA, GUINEVERE),
-    desc: "Sub DPS build.\n• Bottom resonance: Signature also works, or half of each.", rotation: rotation.teddy }
-];
-const cometGlaciation = (helentine, leia, rotation) => [
-  { bar: "blue", role: "captain", ...HELENTINE_KIT, memories: memBuild(CHEN_JIYUAN, COTTIE), ...helentine, rotation: rotation.helentine },
-  { bar: "red", role: "", ...LEIA_KIT, ...leia, rotation: rotation.leia },
-  { bar: "gold", role: "starter", ...TEDDY_SUPPORT, rotation: rotation.teddy,
-    desc: "Other options for this spot:\n• Alisa: Echo: same build.\n• Wanshi: 4 Liston + 4 Da Vinci, a little worse.\n• Selena: 4 Burana + 4 Da Vinci." }
-];
+// Rank badge of a card: its own, or SSS on free frames and SS on the rest
+const rankArt = c => c.rank || (TL_FREE[c.name] ? "assets/rank/SSS.png" : "assets/rank/SS.png");
 
-// A team is named after the patch (Global) of its newest character. Teams of one page that share
-// a patch go together as "variants" of that patch; newest patch first in PAGES.
-const COMPS = {
-  "glaciation": {
-    name: "Of Solitude and Stillness", c1: "#2fb4e0", c2: "#07131a", cp: "#0d2c3a",
-    cards: [
-      { bar: "blue", role: "captain starter", ...SELENA_KIT, wh: "Klenova", matrix: matrix(DLT, GA, INC),
-        desc: "Standard Glaciation build for Selena.\n• Done right, her final Signature lands during the effect with a little time to spare." },
-      { bar: "red", name: "Wanshi: Lucid Dreamer", role: "", ...WANSHI_BUILD,
-        desc: "Support build.\n• He stacks the effect for everyone.\n• At SSS: do fast Signatures with him and switch to Helentine at maximum stacks." },
-      { bar: "gold", role: "", ...HELENTINE_KIT, wh: "Cottie", memories: memBuild(CHEN_JIYUAN, GUINEVERE),
-        desc: "Standard metan (phentamine) build.\n• She needs Wanshi's stacks to start dealing damage.\n• The effect lasts as long as you have pings and energy." }
-    ]
-  },
-  "comets-afterglow": {
-    name: "A Comet's Afterglow", ...ICE_THEME,
-    variants: [
-      { id: "leia-sub-dps", group: "Spider 2B · Alpha Ice", label: "SS Sub-Dps", name: "Spider 2B SS Leia Sub-Dps", cards: cometTeam(LEIA_SS, LEIA_ROTATIONS.alphaSS) },
-      { id: "leia-cottie", group: "Spider 2B · Alpha Ice", label: "SS3 Cottie", name: "Spider 2B SS3 Leia Cottie", cards: cometTeam(LEIA_SS3, LEIA_ROTATIONS.alphaSS3) },
-      { id: "leia-alt-ice", group: "Spider 2B · Alt Ice", label: "SS", name: "Spider 2B SS Leia Alt Ice", cards: altIceTeam(LEIA_SS, LEIA_ROTATIONS.altIceSS) },
-      { id: "leia-alt-ice-ss3", group: "Spider 2B · Alt Ice", label: "SS3", name: "Spider 2B SS3 Leia Alt Ice", cards: altIceTeam(LEIA_SS3, LEIA_ROTATIONS.altIceSS3) },
-      { id: "leia-pain-cage", group: "Spider 2B · Pain Cage", label: "Leia", name: "Spider 2B Leia Pain Cage", cards: [
-        { bar: "blue", role: "", ...WANSHI_COMET, wh: "Einsteina", memories: memBuild(DA_VINCI, GLORIA), desc: "" },
-        { bar: "red", role: "captain", ...LEIA_KIT, wh: "Cottie", memories: memBuild(MOUSME, COTTIE),
-          desc: "Main DPS for Pain Cage.\n• No Weapon Harmony: keep 2 Cottie." },
-        { bar: "gold", role: "starter", ...TEDDY_CLASS, wh: "Guinevere", memories: memBuild(CHEN_JIYUAN, GUINEVERE), desc: "" }
-      ] },
-      // The same teams as Spider 2B's SS ones, with Leia playing Player03's orb rotation. Lucia, Teddy and Wanshi keep the guide's
-      { id: "leia-orb-alpha", group: "Leia Orb rotation", label: "Alpha Ice · SS Sub-Dps", name: "Leia Orb rotation SS Alpha Ice", cards: cometTeam(LEIA_SS, withPlayer03Leia(LEIA_ROTATIONS.alphaSS)) },
-      { id: "leia-orb-alt-ice", group: "Leia Orb rotation", label: "Alt Ice · SS", name: "Leia Orb rotation SS Alt Ice", cards: altIceTeam(LEIA_SS, withPlayer03Leia(LEIA_ROTATIONS.altIceSS)) }
-    ]
-  },
-  "comets-afterglow-glaciation": {
-    name: "A Comet's Afterglow", ...ICE_THEME,
-    variants: [
-      { id: "leia-glaciation", group: "Spider 2B · Glaciation", label: "SS", name: "Spider 2B SS Leia Glaciation", cards: cometGlaciation(
-        { wh: "Einsteina", desc: "If Leia runs Einsteina instead, use 4 Cottie here." }, LEIA_SS, LEIA_ROTATIONS.glaciationSS) },
-      { id: "leia-glaciation-ss3", group: "Spider 2B · Glaciation", label: "SS3", name: "Spider 2B SS3 Leia Glaciation", cards: cometGlaciation(
-        { wh: "Cottie", desc: "If Leia doesn't run Einsteina, use 2 Cottie and 2 Einsteina here." }, LEIA_SS3, LEIA_ROTATIONS.glaciationSS3) }
-    ]
-  },
-  "better-tomorrow-nihil": {
-    name: "A Better Tomorrow", ...NIHIL_THEME,
-    variants: [{ id: "luna-rosetta-nirvatia", name: "Luna · Rosetta · Nirvatia", cards: [
-      { bar: "blue", name: "Luna: Oblivion", role: "captain",
-        symbol: classIcon("Annihilator"),
-        portrait: `${LUNA}/Awaken - Luna Oblivion.webp`,
-        weapon: `${LUNA}/Arma - Luna Oblivion.png`,
-        wh: "Cottie",
-        memories: memBuild(CLEOPATRA, COTTIE),
-        matrix: matrix(GA, INC, ML),
-        resonance: ALL_ATK,
-        core: `${LUNA}/Skill - Signature HD.png`,
-        construct: `${LUNA}/CUB - Guardrake.png`,
-        skills: cubSkills(LUNA),
-        desc: "\"The\" set for every Nihil occasion; not much to change.\n• Cottie: she still needs it to run smoothly.\n• DLT: not needed for the basics since her leap." },
-      { bar: "red", role: "starter", ...ROSETTA_KIT, wh: "Bathlon", memories: memBuild(rotated(NIMUE), BATHLON), matrix: matrix(DD, ML, GA),
-        resonance: `${ROSETTA}/Skill - Ataque Basico.webp`,
-        desc: "Made for the Nihil team: one Signature per entrance.\n• SS3 and above: still play her as at SS0. Awkward, but every help counts.\n• Bathlon over Cottie: she deals some damage and, with Luna's class skill effect, debuffs enemies, while Cottie would only help herself. A good fit given the lack of Ishmael." },
-      { bar: "gold", name: "Nirvatia: Dirge", role: "",
-        symbol: classIcon("Amplifier"),
-        portrait: `${NIRVATIA}/Awaken - Nirvatia Dirge.webp`,
-        weapon: `${NIRVATIA}/Arma - Obituary for Yesterday..webp`,
-        wh: "Guinevere",
-        memories: memBuild(rotated(BULGAKOV), GUINEVERE),
-        matrix: matrix(SAR, GS, INC),
-        resonance: ALL_ATK,
-        core: `${NIRVATIA}/Skill - Signature HD.png`,
-        construct: `${NIRVATIA}/CUB - Morigan.webp`,
-        skills: cubSkills(NIRVATIA, "webp"),
-        desc: "An odd one.\n• Why no elemental memory: Nihil has none (like Shakespeare or Bathlon for other elements) to give her when a teammate holds Cottie.\n• To buff teammates: Guinevere or Da Vinci, depending on your team.\n• Without Luna and/or Ishmael: Cottie on her is an option too.\n• 2 Signatures: only at SSS. At SS3, DLT wasn't enough; untested whether SSS needs DLT." }
-    ] }]
-  },
-  "homecoming-voyage": {
-    name: "Homecoming Voyage", ...ICE_THEME,
-    variants: [{ id: "ic-ss3", name: "IC SS3", cards: [
-      { bar: "blue", name: "Wanshi: Lucid Dreamer", role: "starter", ...WANSHI_BUILD,
-        desc: "Support DPS build for Wanshi.\n• No Cottie: 2 Cottie's Signature Energy is useless on him, and 4 Cottie's Extra DMG Bonus needs a Signature Move, while half his damage is outside it.\n• Memories: his damage loop doesn't change with any set, so try combos alongside his Signature memory." },
-      { bar: "red", role: "captain", ...LUCIA_IC_KIT, ...RANK_SS3, wh: "Chen Jiyuan", memories: memBuild(PAVLICHENKO, CHEN_JIYUAN), desc: LUCIA_IC_DESC },
-      { bar: "gold", role: "", ...TEDDY_KIT, wh: "Chen Jiyuan", memories: memBuild(JOANNA, CHEN_JIYUAN),
-        desc: "Standard DPS build for Teddy.\n• Memories: anything works alongside her Signature memory. She doesn't need 2 Cottie's Signature Energy, and her damage loop doesn't change.\n• Guinevere: also a good choice, depending on your teammates' memories." }
-    ] }]
-  },
-  "dying-sun-fire": {
-    name: "The Dying Sun", ...FIRE_THEME,
-    variants: [{ id: "watanabe-vera-kamui", name: "Watanabe · Vera · Kamui", cards: [
-      { bar: "blue", name: "Watanabe: Epitaph", role: "starter",
-        symbol: classIcon("Tanque"),
-        portrait: `${WATANABE}/Awaken - Watanabe Epitaph.webp`,
-        weapon: `${WATANABE}/Arma - Watanabe Epitaph.png`,
-        wh: "Da Vinci",
-        memories: memBuild(ALPHONSE, DA_VINCI),
-        matrix: matrix(DD, ML, INC),
-        resonance: `${WATANABE}/Skill - Orb Vermelho.png`,
-        core: `${WATANABE}/Skill - Signature.png`,
-        construct: `${WATANABE}/CUB - Shadow Wing.png`,
-        skills: cubSkills(WATANABE),
-        desc: "Watanabe-kun doesn't fear death; death fears Watanabe. Build for the synergy with Vera-chan and Kamui-kun.\n• One Signature per entrance, since the other two take most of the time with their damage loops.\n• When one finishes and the other is on cooldown, he fills the gap with good damage and a very fast loop, under 4 seconds." },
-      { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
-      { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
-    ] }, { id: "lucia-vera-kamui", name: "Lucia · Vera · Kamui", cards: [
-      { bar: "blue", name: "Lucia: Pyroath", role: "starter",
-        symbol: classIcon("Attacker"),
-        portrait: `${LUCIA_P}/Awaken - Lucia Pyroath.webp`,
-        weapon: `${LUCIA_P}/Arma - Lucia Pyroath.webp`,
-        wh: "Da Vinci",
-        memories: [HERACLITUS[0], HERACLITUS[1], HERACLITUS[2], DA_VINCI[0], HERACLITUS[1], DA_VINCI[2]],
-        matrix: matrix(GA, INC, DLT),
-        resonance: ALL_ATK,
-        core: `${LUCIA_P}/Skill - Signature 2X.webp`,
-        construct: `${LUCIA_P}/CUB - Corvus.webp`,
-        skills: cubSkills(LUCIA_P, "webp"),
-        desc: "She aged badly, and we saw this coming since her release.\n• Da Vinci: buffs the teammates while she does one Signature per entrance.\n• Long Signature only: the short one would need Cottie for 2 Signatures and wastes time better spent on another character. So no DLT either.\n• Only really useful at SS3 and above, for field damage or QTEs of thousands of percent. At SS0, be patient with her." },
-      { bar: "red", role: "", ...VERA_KIT, desc: VERA_DESC },
-      { bar: "gold", role: "captain", ...KAMUI_KIT, matrix: matrix(DD, GA, ML), desc: KAMUI_DESC }
-    ] }]
-  },
-  "helentine-liv-nanami": {
-    name: "Of Solitude and Stillness", ...LIGHTNING_THEME,
-    cards: [
-      { bar: "blue", role: "", ...HELENTINE_KIT, wh: "Guinevere", memories: memBuild(HEISEN, GUINEVERE),
-        desc: "The meta(nphetamine) set for Helentine. I couldn't test her enough to confirm the best build.\n• This build: works well when Nanami runs Da Vinci.\n• Signature + Da Vinci: works well when Nanami runs Heisen." },
-      { bar: "red", role: "captain", ...LIV_KIT, wh: "Heisen", memories: memBuild(NATASHA, HEISEN),
-        desc: "Standard build for Liv. Heisen, Cottie, Signature memory: anything works, so pick by your team.\n• Heisen: if no teammate runs it, put it on her, with Cottie or Signature.\n• Tested: with Nanami on Heisen and Helentine on Da Vinci, Liv's Signature memory and Heisen were almost the same." },
-      { bar: "gold", role: "starter", ...NANAMI_KIT, wh: "Da Vinci", memories: memBuild(HERSCHELL, DA_VINCI),
-        desc: "Since her leap, Nanami unofficially got a Breaker-level upgrade. Before, she needed no secondary memory.\n• If Helentine runs Da Vinci instead of Guinevere: use Heisen here, since her field Tank debuff applies Heisen's effects constantly." }
-    ]
-  },
-  "anchored-dark": {
-    name: "Anchored in Faith", ...DARK_THEME,
-    variants: [{ id: "bianca-adelyde-rosetta", name: "Bianca · Adelyde · Rosetta", cards: [
-      { bar: "blue", name: "Bianca: Crepuscule", role: "starter",
-        symbol: classIcon("Attacker"),
-        portrait: `${BIANCA}/Awaken - Bianca Crepuscule.webp`,
-        weapon: `${BIANCA}/Arma - Bianca Crepuscule.png`,
-        wh: "Bathlon",
-        memories: memBuild(JEANNE, BATHLON),
-        matrix: matrix(GA, ML, DLT),
-        resonance: ALL_ATK,
-        core: `${BIANCA}/Skill - Signature HD.png`,
-        construct: `${BIANCA}/CUB - Noctiluca.png`,
-        skills: cubSkills(BIANCA),
-        desc: "No Cottie below SSS.\n• Cottie: helps her damage loop, but she loses a lot of damage waiting to activate her Signature, which triggers the buffs. Using pings to recover energy is better. Cottie only pays off from SSS.\n• DLT: not used in a trio where everyone does one Signature." },
-      { bar: "red", role: "", ...ADELYDE_KIT,
-        desc: ADELYDE_QTE_DESC },
-      { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
-    ] }, { id: "adelyde-lilith-rosetta", name: "Adelyde · Lilith · Rosetta", cards: [
-      { bar: "blue", role: "", ...ADELYDE_KIT, matrix: matrix(ML, INC, DLT),
-        desc: `${ADELYDE_DESC}\n• Resonances: if Lilith has the Amplifier weapon resonances, focus Adelyde on damage ones. If not, put them here.` },
-      { bar: "red", role: "starter", ...LILITH_KIT, wh: "Da Vinci",
-        memories: memBuild(BARCELO, DA_VINCI),
-        matrix: matrix(SAR, GS, ML),
-        desc: "Support Sub DPS build for Lilith, if you prefer her over Bianca's weak SS0.\n• With Adelyde: works if Lilith is SSS or above, since the Overliker's class skill is quite a clickbait.\n• Resonances: she carries the main Amplifier weapon resonances, so Adelyde can focus on damage ones.\n• Signatures: 4-stack ones over 5-stack ones, to share field time with everyone." },
-      { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
-    ] }, { id: "kurumi-adelyde-rosetta", name: "Kurumi · Adelyde · Rosetta", cards: [
-      { bar: "blue", name: "Kurumi Tokisaki", role: "starter",
-        symbol: classIcon("Attacker"),
-        portrait: `${KURUMI}/Awaken - Kurumi Tokisaki.webp`,
-        weapon: `${KURUMI}/Arma - Kurumi Tokisaki.webp`,
-        wh: "Darwin",
-        memories: memBuild(BATHLON, DERKETO),
-        matrix: matrix(GA, ML, INC),
-        resonance: ALL_ATK,
-        core: `${KURUMI}/Skill - Signature 2X.webp`,
-        construct: `${KURUMI}/CUB - Zafkiel.webp`,
-        skills: cubSkills(KURUMI, "webp"),
-        desc: "Anything works on Kurumi.\n• Cottie and DLT: not needed; her skills generate a lot of energy, even at low rank.\n• 2 Signatures: doable at any rank, but not worth it if Kurumi is below SSS, Adelyde is SSS or Rosetta is SS3.\n• Boone vs Derketo: Boone has 2 more ATK per memory, but Derketo gives a round 7100 BP (SS, fully hypertuned, 6-star weapon). 4 ATK isn't much, so choose your priority." },
-      { bar: "red", role: "", ...ADELYDE_KIT,
-        desc: ADELYDE_QTE_DESC },
-      { bar: "gold", role: "captain", ...ROSETTA_KIT, desc: ROSETTA_DESC }
-    ] }]
-  },
-  "hanying-adelyde-rosetta": {
-    name: "Anchored in Faith", ...PHYSICAL_THEME,
-    cards: [
-      { bar: "blue", role: "", ...HANYING_KIT, wh: "Da Vinci", memories: memBuild(CHANG_WUZI, DA_VINCI), matrix: matrix(DD, ML, INC),
-        desc: "Support Sub-DPS build for Hanying. Alongside Adelyde, she builds the Ultima Slash stacks.\n• One Signature is enough with Adelyde's effect; 2 is overkill for Rosetta's effect.\n• Domain Deconstruction: if both Hanying and Rosetta have weapon resonances, put it on Hanying." },
-      { bar: "red", role: "", ...ADELYDE_KIT, wh: "Patton", memories: memBuild(PESANTEUR, PATTON),
-        desc: "A great stacker for Ultima Slash.\n• Cottie doesn't work on her (same as Alpha: Inverse Crown), but that doesn't hurt her Ultima Slash performance.\n• Stacks: grow over time in the seconds after her Signature, with decent Ultima Slash damage and few orbs, unlike Hanying.\n• Patton: the best choice here, since Cottie doesn't work." },
-      { bar: "gold", role: "captain starter", ...ROSETTA_KIT, matrix: matrix(GA, ML, INC),
-        desc: "As the starter, Rosetta saves plenty of pings for when she returns; with Adelyde's entrance, DLT isn't needed.\n• Domain Deconstruction: if Hanying has it, focus Rosetta on the damage resonances above. If not, put DD back on her.\n• Grayscale Link: in my tests, same colors on her first Signature after entering, then different colors on her second before leaving, shared the damage better.\n• 2 Signatures: 4 Cottie worked better than 2 Cottie + Weapon Harmony Darwin, for the same reason." }
-    ]
-  },
-  "kamui-lilith-nanami": {
-    name: "The Dying Sun", ...LIGHTNING_THEME,
-    cards: [
-      { bar: "blue", role: "captain", ...KAMUI_KIT, matrix: matrix(GA, ML, INC),
-        desc: "DPS build that speeds up his damage steps (see the Fire team notes). Needed here to race the short Plasma Beam window.\n• Enough for 2 full Signatures plus his strong basic attacks, with about a second to spare.\n• Rotation: 3-pings and tapped yellow orb for the first Signature, held yellow orb for the second.\n• Resonances: if Nanami has no weapon resonance for Domain Deconstruction but Kamui-kun does, use DD first, then Glorious Afterglow, then Matrix Lightning." },
-      { bar: "red", role: "", ...LILITH_KIT, wh: "Guinevere",
-        // As in the reference image: 4x Da Vinci + 2x Guinevere, with Guinevere in slots 1 and 3
-        memories: [GUINEVERE[0], DA_VINCI[1], GUINEVERE[2], DA_VINCI[0], DA_VINCI[1], DA_VINCI[2]],
-        matrix: matrix(SAR, GS, INC),
-        desc: "Support build for the Plasma Beam effect.\n• She only activates the effect by herself, so Kamui deals his damage in time. She needs no memories for that.\n• Support memories: buff everyone who spends more time on the field than her." },
-      { bar: "gold", role: "starter", ...NANAMI_KIT, wh: "Heisen", memories: memBuild(HERSCHELL, HEISEN),
-        desc: "The DPS build for Nanami in every case; the same one from her Lightning release.\n• Deals good Lightning damage without worrying about the effect timer.\n• Buffs teammates with Heisen.\n• Fills the gap between Lilith and Kamui. She'll stay in this effect for a long time." }
-    ]
-  },
-  "steering-physical": {
-    name: "Steering by Light", ...PHYSICAL_THEME,
-    variants: [{ id: "selena-veronica-karenina", name: "Selena · Veronica · Karenina", cards: [
-      { bar: "blue", role: "", ...SELENA_KIT, wh: "Cottie", matrix: matrix(GA, INC, DLT),
-        desc: "Since her second leap (and another Za Warudo), Selena has a use in the Physical team, if your Hanying isn't a higher rank than your Karenina.\n• Cottie: its DMG Boost works better, since entering her passive counts as her 1st Signature." },
-      { bar: "red", role: "starter", ...VERONICA_KIT, desc: VERONICA_DESC },
-      { bar: "gold", role: "captain", ...KARENINA_KIT, desc: KARENINA_DESC }
-    ] }, { id: "hanying-veronica-karenina", name: "Hanying · Veronica · Karenina", cards: [
-      { bar: "blue", role: "", ...HANYING_KIT, wh: "Patton", memories: memBuild(CHANG_WUZI, PATTON), matrix: matrix(DD, DLT, INC),
-        desc: "If your Hanying is a higher rank than your Karenina, use her instead of Selena: her Tank debuffs are very strong, even at only 10%.\n• Since her leap, anything works alongside her Signature memory.\n• Domain Deconstruction: if both Hanying and Karenina have weapon resonances, put it on Hanying and a damage resonance on Karenina." },
-      { bar: "red", role: "starter", ...VERONICA_KIT, desc: VERONICA_DESC },
-      { bar: "gold", role: "captain", ...KARENINA_KIT, desc: KARENINA_DESC }
-    ] }]
-  },
-  "liv-vera-karenina": {
-    name: "Steering by Light", ...DARK_THEME,
-    cards: [
-      { bar: "blue", role: "starter", ...LIV_KIT, wh: "Bathlon", memories: memBuild(COTTIE, BATHLON),
-        desc: "Darkflow set for Liv.\n• Starter: she's the only one of the trio that consumes stacks; the others only add stacks or don't use them.\n• Below SSS: Core Passive as the memory skill." },
-      { bar: "red", role: "", ...VERA_KIT, wh: "Guinevere", memories: memBuild(DA_VINCI, GUINEVERE),
-        desc: "Pure support build for Vera-chan.\n• She only stacks Darkflow for the others, so one Signature does it all, and her Signature memory would only add orbs she doesn't need.\n• Thanks to her core passive, she still deals decent damage when you charge her power through her QTEs." },
-      { bar: "gold", role: "captain", ...KARENINA_KIT, wh: "Bathlon", memories: memBuild(SANTIAGO, BATHLON),
-        desc: "Same as her Physical build, swapping the Physical memory for the Dark one, Bathlon. Nothing else changes." }
-    ]
-  },
-  "homecoming-ignition": {
-    name: "Homecoming Voyage", ...FIRE_THEME,
-    cards: [
-      { bar: "blue", role: "captain", ...LUCIA_IC_KIT, wh: "Shakespeare", memories: memBuild(PAVLICHENKO, SHAKESPEARE), desc: LUCIA_IC_DESC },
-      { bar: "red", role: "starter", ...VERONICA_KIT, wh: "Shakespeare", memories: memBuild(KEATS, SHAKESPEARE),
-        desc: "Standard Ignition DPS build for Veronica. Almost anything works: she has no energy needs that call for Cottie.\n• 4 Guinevere: can replace 4 Shakespeare to buff everyone.\n• 4 Cottie + 4 Shakespeare: also usable, dropping Keats." },
-      { bar: "gold", role: "", ...NANAMI_KIT, wh: "Da Vinci", memories: memBuild(HERSCHELL, DA_VINCI),
-        desc: "Standard Ignition DPS build for Nanami. Any memory set works with her Signature memory, so adapt to your team.\n• Solo: she needs DLT and Cottie to sustain.\n• Team: Da Vinci is the better call." }
-    ]
-  }
-};
+// Compositions by id, and the ids each page lists (PAGES, below). The site has no builds of its own:
+// the community teams of the Team Builder fill both after the page loads (loadCommunity)
+const COMPS = {};
 
 // Left to right on the home grid and top to bottom in the menu
 const ENERGY = ["Fire", "Lightning", "Ice", "Dark", "Physical", "Nihil"];
@@ -593,26 +145,18 @@ const TILE_COLOR = {
   "Fire": "#ff6a5e", "Lightning": "#e6bd52", "Ice": "#3fc1ff", "Physical": "#5fdca6", "Dark": "#b38aff", "Nihil": "#ac2c75",
   "Ignition": "#ff6a5e", "Plasma Beam": "#e6bd52", "Glaciation": "#3fc1ff", "Ultima Slash": "#5fdca6", "Darkflow": "#b38aff"
 };
-// Home conveyor: these characters come first, then everyone else who has a build
+// Home conveyor: these characters come first
 const HERO_FIRST = ["Wanshi: Lucid Dreamer", "Vera: Geiravor", "Nanami: Startrail", "Lilith: Daemonissa", "Veronica: Aegis"];
+// Everyone on the conveyor, in order (each needs its square in assets/home/<slug>.jpg)
+const HOME_BELT = [...HERO_FIRST, "Selena: Pianissimo", "Helentine: Lacrimosa", "Leia: Fortunaster", "Lucia: Inverse Crown", "Teddy: Spectre",
+  "Luna: Oblivion", "Rosetta: Arete", "Nirvatia: Dirge", "Watanabe: Epitaph", "Kamui: Aeternion", "Lucia: Pyroath", "Liv: Limpidity",
+  "Bianca: Crepuscule", "Adelyde: Anabasis", "Kurumi Tokisaki", "Hanying: Solacetune", "Karenina: Effulgence"];
 // Each page lists its available compositions (COMPS ids)
-const PAGES = {
-  "energy/fire": ["dying-sun-fire"],
-  "energy/lightning": ["helentine-liv-nanami"],
-  "energy/ice": ["comets-afterglow", "homecoming-voyage"],
-  "energy/physical": ["steering-physical"],
-  "energy/dark": ["anchored-dark"],
-  "energy/nihil": ["better-tomorrow-nihil"],
-  "effect/ignition": ["homecoming-ignition"],
-  "effect/plasma-beam": ["kamui-lilith-nanami"],
-  "effect/glaciation": ["comets-afterglow-glaciation", "glaciation"],
-  "effect/ultima-slash": ["hanying-adelyde-rosetta"],
-  "effect/darkflow": ["liv-vera-karenina"]
-};
+const PAGES = {};
 
 const $ = (s, r = document) => r.querySelector(s);
 const slug = s => s.toLowerCase().replace(/\s+/g, "-");
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 // Images load from the light copies made by tools/optimize-images.mjs. The data keeps the original path, which stays in
 // data-full: the error handler falls back to it, and style.css reads its extension to scale the memory art
 // ?v=4: browsers kept the old rank badges for 7 days under these same names, and a new address is the only way past that copy
@@ -864,8 +408,8 @@ function rotationLine(name, text) {
 function rotationBox(c) {
   const turns = c.rotation.turns.map(({ turn, steps, note }) => `<h4>${esc(tRot(turn))}</h4>
     <ol>${steps.map(step => `<li>${[step].flat().map(text => rotationLine(c.name, text)).join("")}</li>`).join("")}</ol>${note ? `<p class="rot-note">${esc(t(note))}</p>` : ""}`).join("");
-  // A rotation with source: null (one written in the Team Builder) shows no source link
-  const source = c.rotation.source === undefined ? { label: "Spider 2B's Leia guide", href: LEIA_GUIDE } : c.rotation.source;
+  // A rotation without a source (as the Team Builder writes them) shows no source link
+  const source = c.rotation.source;
   return `<p class="rot-order">${esc(t(c.rotation.order))}</p>${turns}${source ? `<a class="rot-source" href="${esc(source.href)}" target="_blank" rel="noopener noreferrer">${esc(t("Source: {label}", { label: t(source.label) }))}</a>` : ""}`;
 }
 // With a rotation, the text box of the card gets a tab for each. A card with no notes opens on the rotation
@@ -1192,16 +736,15 @@ function cubList() {
     const name = iconName(card.construct);
     if (!found.has(name)) found.set(name, { name, owner: ch.name, rank: "S", element: CONSTRUCTS[ch.name][1], art: card.construct, skills: card.skills || [] });
   }
-  // The CUBs no build uses yet, from EXTRA_CUBS
-  for (const [name, owner, rank, element, dir, icons] of EXTRA_CUBS) {
-    if (!found.has(name)) found.set(name, { name, owner, rank, element, art: `${dir}/CUB - ${name}.png`, skills: icons ? cubSkills(dir) : [] });
+  // Every other CUB, from EXTRA_CUBS
+  for (const [name, owner, rank, element, dir, icons, ext = "png"] of EXTRA_CUBS) {
+    const skills = Array.isArray(icons) ? icons.map(i => `${dir}/CUB - Skill ${i}.${ext}`) : icons ? cubSkills(dir, ext) : [];
+    if (!found.has(name)) found.set(name, { name, owner, rank, element, art: `${dir}/CUB - ${name}.${ext}`, skills });
   }
   return [...found.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
-function heroChars() {
-  const rank = c => { const i = HERO_FIRST.indexOf(c.name); return i < 0 ? HERO_FIRST.length : i; };
-  return characters().map(c => ({ ...c, href: characterHref(c.name) })).sort((a, b) => rank(a) - rank(b));
-}
+// A fixed list, since the community teams arrive after the page is drawn and may name frames with no square
+const heroChars = () => HOME_BELT.map(name => ({ name, portrait: constructPortrait(name), href: characterHref(name) }));
 function heroBelt() {
   const chars = heroChars();
   const link = (c, copy) => `<a href="${c.href}"${copy ? ` tabindex="-1" aria-hidden="true"` : ""}>
@@ -1214,8 +757,8 @@ function heroBelt() {
 }
 // Below the team grid, and quieter than it: the tools, then the game data with live counts
 function homeLinks() {
-  // Constructs, Memories, Weapon Resonance and C.U.B.s use the drawn art, like the side menu; the rest are the symbols in index.html
-  const artIcons = new Set(["constructs", "memories", "resonance", "cubs"]);
+  // Constructs, Memories, Weapons, Weapon Resonance and C.U.B.s use the drawn art, like the side menu; the rest are the symbols in index.html
+  const artIcons = new Set(["constructs", "memories", "weapons", "resonance", "cubs"]);
   const link = ([name, href, icon, text]) => `<a class="home-link" href="${href}"><span class="hl-art">${
     artIcons.has(icon)
       ? `<span class="ico ico-art ico-${icon}" aria-hidden="true"></span>`
@@ -1322,7 +865,7 @@ function home() {
 let shown = "", chosen = "";
 // Every build of a page, flat: a composition with variants gives one per variant
 const pageBuilds = path => PAGES[path].flatMap(id => (COMPS[id].variants || [{ id, name: COMPS[id].name, cards: COMPS[id].cards }])
-  .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, author: v.author, date: v.date, cards: v.cards })));
+  .map(v => ({ comp: id, variant: COMPS[id].variants ? v.id : "", name: v.name, group: v.group, author: v.author, date: v.date, cards: v.cards, likes: v.likes })));
 // "2026-11-15" as "Nov 15, 2026"; empty for a build without a date
 const postedOn = date => /^\d{4}-\d\d-\d\d$/.test(date || "") ? new Date(date + "T12:00:00Z").toLocaleDateString(loc("en-US"), { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "";
 const byLine = (author, date) => [author && t("by {name}", { name: esc(author) }), postedOn(date) && `<time datetime="${esc(date)}">${postedOn(date)}</time>`].filter(Boolean).join(" · ");
@@ -1336,7 +879,7 @@ function listRow(path, b) {
   const key = isNewTeam(b.comp) && `row:${b.variant || b.comp}`, tag = key && !isSeen(key) ? key : "";
   return `<a class="brow" href="${buildHref(path, b.variant || b.comp)}" data-search="${esc(search)}"${tag ? ` data-new="${esc(tag)}"` : ""}>
     <span class="brow-art">${main.portrait ? pic(main.portrait) : ""}</span>
-    <span class="brow-tx"><b>${esc(b.name)}</b>${b.author || b.date ? `<span class="brow-by">${byLine(b.author, b.date)}</span>` : ""}
+    <span class="brow-tx"><b>${esc(b.name)}</b>${b.author || b.date ? `<span class="brow-by">${byLine(b.author, b.date)}${b.likes ? ` · <span class="brow-likes">♥ ${b.likes}</span>` : ""}</span>` : ""}
       <small>${t("{main} with {mates}", { main: `<em>${esc(main.name)}</em>`, mates: mates.map(c => esc(c.name.split(":")[0])).join(t(" and ")) })}</small>
       <span class="brow-tags">${buildTags(b.comp, b.group, tag)}</span></span>
     <span class="b-mates brow-mates" aria-hidden="true">${mates.map(c => `<span class="slot">${c.portrait ? pic(c.portrait) : ""}</span>`).join("")}</span>
@@ -1366,7 +909,7 @@ function compBody(sel) {
   const shownCards = pickedCards(sel);
   if (!shownCards) return "";
   shownTeam = { id: sel, title: [COMPS[sel].name, pickedVariant(sel)?.name].filter(Boolean).join(" · "), cards: shownCards };
-  return `<div class="comp-tools"><button class="tool" data-export>${t("Export image")}</button></div>` + pager(shownCards) + comp(sel, shownCards);
+  return `<div class="comp-tools"><button class="tool" data-export>${t("Export image")}</button>${teamActions(pickedVariant(sel))}</div>` + pager(shownCards) + comp(sel, shownCards);
 }
 function team(path, pick) {
   const [kind, key] = path.split("/");
@@ -1382,7 +925,8 @@ function team(path, pick) {
       <div id="compBox">${compBody(shown)}</div>`;
   }
   const head = `${eyebrow(t(TEAM_LISTS[kind].label))}<h1>${list}</h1>`;
-  if (!ids.length) return head + `<p class="empty">${t("No teams yet.")}</p>`;
+  // The whole box opens the Team Builder
+  if (!ids.length) return head + `<a class="empty empty-link" href="/editor">${t("No teams yet. Make your own in the {link} and publish it.", { link: `<u>${t("Team Builder")}</u>` })}</a>`;
   return head + buildList(path) + pageCharacters(path);
 }
 // Below the list: every character in the builds of the page, each a link to its construct page
@@ -1549,7 +1093,7 @@ const CLASS_ORDER = ["Attacker", "Tank", "Support", "Amplifier", "Breaker", "Ove
 const classOrder = c => { const i = CLASS_ORDER.indexOf(c); return i < 0 ? CLASS_ORDER.length : i; };
 const constructValue = (c, group) => CONSTRUCTS[c.name][CONSTRUCT_FILTERS.indexOf(group) + 1];
 // Class files that are not named after the class. Only rank S has art: any other rank shows its letter
-const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${ADELYDE}/Classe - Adelyde Anabasis.png`, Vanguard: classIcon("Vanguard") };
+const CLASS_ART = { Tank: classIcon("Tanque"), Overlinker: `${CHARS}/adelyde-anabasis/Classe - Adelyde Anabasis.png`, Vanguard: classIcon("Vanguard") };
 const filterIcon = (group, value) => group === "Element" ? menuIcon("energy-type", value) : group === "Effect" ? menuIcon("effects", value)
   : group === "Class" ? pic(CLASS_ART[value] || classIcon(value))
     : ["S", "A", "B"].includes(value) ? pic(`assets/rank-letters/${value}.png`) : `<b>${esc(value)}</b>`;
@@ -1781,8 +1325,7 @@ function charactersPage() {
 const CREDITS = [
   { name: "blacknovatech", text: "creator of Huaxu, for the assets", href: "https://huaxu.app/na/wiki", art: "assets/credits/blacknovatech.png", support: "https://ko-fi.com/blacknova" },
   { name: "sidewayz.", text: "for helping with the site's overall design", art: "assets/credits/sidewayz.png" },
-  { name: "GRAY RAVENS wiki", text: "for skills and the patch history", href: "https://grayravens.com/wiki", art: "assets/credits/grayravens.png" },
-  { name: "Spider 2B", text: "for the guides behind several builds", href: "https://www.youtube.com/@Spider2B", art: "assets/credits/Spider 2B.png" }
+  { name: "GRAY RAVENS wiki", text: "for skills and the patch history", href: "https://grayravens.com/wiki", art: "assets/credits/grayravens.png" }
 ];
 const KOFI = "https://ko-fi.com/ofcrazy";
 const DISCORD_INVITE = "https://discord.gg/cMmqgRaKGq";
@@ -1898,8 +1441,10 @@ const CURRENCIES = [
   { key: "cub", name: "C.U.B. Tickets", art: `${CALC_ART}/cub-ticket.png` },
   { key: "construct", name: "Construct Tickets", art: `${CALC_ART}/construct-ticket.png` },
   { key: "voucher", name: "Vouchers", art: `${CALC_ART}/voucher.png` },
-  { key: "shard", name: "Shards", art: `${CALC_ART}/shard.png` }
+  { key: "shard", name: "Shards", tip: "6★ Weapon Resonance Shards", art: `${CALC_ART}/shard.png` }
 ];
+// Tooltip name: "tip" when the short name is not enough
+const coinTip = c => t(c.tip || c.name);
 // Tactical Assessment pays by level, from the in-game manual. "repeat" pays again at every level from "from" to "to".
 // Basic Intel is free and the spreadsheet already counts all of it in each patch: basicIntel() keeps only the part still to come
 const intelLevels = (gains, ...levels) => levels.map(level => [level, gains]);
@@ -2182,10 +1727,10 @@ function packCost(rc, column) {
 const rcPrice = rc => rc ? t("≈ {usd} · {brl} on Codashop", { usd: packCost(rc, 2).toLocaleString(loc("en-US"), { style: "currency", currency: "USD" }), brl: packCost(rc, 1).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) }) : "";
 const calcIcon = art => `<span class="calc-icon">${pic(art)}</span>`;
 const numberBox = (attr, value, label, step = 1) => `<input type="number" inputmode="numeric" min="0" step="${step}" placeholder="0" ${attr} value="${whole(value) || ""}" aria-label="${esc(label)}">`;
-const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small>${esc(t(c.name))}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
+const currencyGrid = (values, cell) => `<div class="calc-money">${CURRENCIES.map(c => `<div class="calc-coin">${calcIcon(c.art)}<small title="${esc(coinTip(c))}">${esc(t(c.name))}</small>${cell(c, values[c.key])}</div>`).join("")}</div>`;
 const frameLink = name => CONSTRUCTS[name] ? `<a href="${characterHref(name)}">${esc(name)}</a>` : esc(name || t("Frame to be confirmed"));
 // What a pass gives, as small currency icons with amounts: on purchase, once a day, or over the Tactical Assessment levels
-const coinIcon = key => { const { name, art } = CURRENCIES.find(c => c.key === key); return `<span class="calc-mini" title="${esc(t(name))}">${pic(art, `alt="${esc(t(name))}"`)}</span>`; };
+const coinIcon = key => { const c = CURRENCIES.find(c => c.key === key), name = esc(coinTip(c)); return `<span class="calc-mini" title="${name}">${pic(c.art, `alt="${name}"`)}</span>`; };
 const rewardList = gains => Object.entries(gains).filter(([, n]) => n).map(([c, n]) => `<span class="calc-reward">${coinIcon(c)}${amount(n)}</span>`).join("");
 function passLegend({ upfront, daily, days, intel }) {
   const part = (when, gains) => `<span class="calc-legend-part"><i>${when}</i>${rewardList(gains)}</span>`;
@@ -2203,6 +1748,11 @@ function patchStop(patch, today, picked) {
     <span class="calc-stop-bc">${calcIcon(CURRENCIES[0].art)}<output data-stop-bc></output></span><small data-stop-rc></small>
   </button>`;
 }
+// " · 2 planned" beside the Passes heading, so a folded list still tells that a patch has passes in it
+const passCount = plan => {
+  const n = CALC_PASSES.filter(({ key }) => plan[key]).length;
+  return n ? ` · ${t("{n} planned", { n })}` : "";
+};
 function patchCard(patch, today, picked) {
   const plan = calc.plans[calcId(patch)] || {}, time = patchTime(patch, today);
   const field = ({ key, name, note, step = 1 }) => `<div class="calc-field"><span>${esc(t(name))}</span><span class="calc-step"><button type="button" data-step="-${step}" aria-label="${esc(t("Less: {name}", { name: t(name) }))}">−</button>${numberBox(`data-plan="${key}"`, plan[key], t(name))}<button type="button" data-step="${step}" aria-label="${esc(t("More: {name}", { name: t(name) }))}">+</button></span>${note ? `<small>${esc(t(note))}</small>` : ""}</div>`;
@@ -2226,11 +1776,11 @@ function patchCard(patch, today, picked) {
     ? `<p class="calc-label">${t("Income left")}</p><ul class="calc-hint calc-left"><li>${t("{left} of {total} days of dailies", { left: time.daysLeft, total: time.days })}</li><li>${t("{left} of {total} weekly resets", { left: time.weeksLeft, total: time.weeks })}</li>${time.cycles.map(cycle => `<li>${t("{left} of {total} {name} resets", cycle)}</li>`).join("")}<li>${t("{left} of {total} timed events", { left: patch.events.filter(event => event.end >= today).length, total: patch.events.length })}</li></ul>`
     : "";
   return `<section class="calc-patch${patch.collab ? " collab" : ""}" role="tabpanel" data-id="${esc(calcId(patch))}"${picked ? "" : " hidden"}>
-    ${patch.collab ? "" : `<div class="calc-income" role="group" aria-label="${t(time ? "Income left" : "Patch income")}" title="${t("Includes the passes picked in this card")}"><small>${t(time ? "Left" : "Income")}</small>${CURRENCIES.map(c => `<div class="calc-gain" title="${esc(t(c.name))}">${calcIcon(c.art)}<output data-gain="${c.key}" aria-label="${esc(t(c.name))}"></output></div>`).join("")}</div>`}
+    ${patch.collab ? "" : `<div class="calc-income" role="group" aria-label="${t(time ? "Income left" : "Patch income")}" title="${t("Includes the passes picked in this card")}"><small>${t(time ? "Left" : "Income")}</small>${CURRENCIES.map(c => `<div class="calc-gain" title="${esc(coinTip(c))}">${calcIcon(c.art)}<output data-gain="${c.key}" aria-label="${esc(coinTip(c))}"></output></div>`).join("")}</div>`}
     <div class="calc-cols">
       <div>
         <div class="calc-head"><div>${head}</div></div>
-        ${patch.collab ? "" : `<p class="calc-label">${t("Passes")}</p><div class="calc-passes">${passes}</div><label class="calc-own level calc-level"><span>${t("Tactical Assessment level")}<small>${t(time ? "Where you are now" : "Where you expect to be when this patch starts")}</small></span>${numberBox(`data-plan="level" max="${INTEL_TOP}"`, plan.level, t("Tactical Assessment level"))}</label>
+        ${patch.collab ? "" : `<button class="calc-label calc-fold" type="button" data-calc-passes aria-expanded="${!calc.hidePasses}" title="${t(calc.hidePasses ? "Show passes" : "Hide passes")}">${t("Passes")}<small data-pass-count>${passCount(plan)}</small><span aria-hidden="true">▾</span></button><div class="calc-passes"${calc.hidePasses ? " hidden" : ""}>${passes}</div><label class="calc-own level calc-level"><span>${t("Tactical Assessment level")}<small>${t(time ? "Where you are now" : "Where you expect to be when this patch starts")}</small></span>${numberBox(`data-plan="level" max="${INTEL_TOP}"`, plan.level, t("Tactical Assessment level"))}</label>
         <div class="calc-rc-row"><span class="calc-rc">${calcIcon(RC_ART)}<output data-rc></output></span><b data-rc-price></b><small data-monthly></small></div>`}
       </div>
       <div class="calc-side">
@@ -2244,7 +1794,7 @@ function patchCard(patch, today, picked) {
 // One row of the final balance column: what each patch leaves. Picking a row picks that patch
 const finalRow = (patch, picked) => `<button class="calc-final-row" type="button" data-pick="${esc(calcId(patch))}" aria-current="${picked}">
   <b>${esc(patch.collab ? patch.frame || "Collab" : patch.patch)}</b>
-  <span class="calc-final-coins">${CURRENCIES.map(c => `<span class="calc-final-coin" title="${esc(t(c.name))}">${calcIcon(c.art)}<output data-left="${c.key}" aria-label="${esc(t(c.name))}"></output></span>`).join("")}</span>
+  <span class="calc-final-coins">${CURRENCIES.map(c => `<span class="calc-final-coin" title="${esc(coinTip(c))}">${calcIcon(c.art)}<output data-left="${c.key}" aria-label="${esc(coinTip(c))}"></output></span>`).join("")}</span>
 </button>`;
 // The stop picked last time, or the first one when that patch has already left the plan
 const pickedId = patches => patches.some(p => calcId(p) === calc.pick) ? calc.pick : calcId(patches[0]);
@@ -2334,7 +1884,12 @@ const calcNotes = notes => `<dl class="calc-info">${notes.map(([title, text]) =>
 function ownedBox(now) {
   if (!now) return "";
   const today = calcToday(), day = dayNumber(today);
-  const round = ({ key, name }) => `<label class="calc-check"><input type="checkbox" data-round="${key}"${calc.owned.done?.[key] === roundDay(key, day) ? " checked" : ""}><span>${esc(name)}</span></label>`;
+  // The days of the round running now, from its reset to the day before the next one
+  const short = n => new Date(n * 864e5).toLocaleDateString(loc("en-GB"), { day: "numeric", month: "short", timeZone: "UTC" });
+  const round = ({ key, name, weekly }) => {
+    const from = roundDay(key, day), dates = t("Round: {from} – {to}", { from: short(from), to: short(from + (weekly ? 6 : 13)) });
+    return `<label class="calc-check" title="${esc(dates)} · ${t("resets at 05:00 UTC")}"><input type="checkbox" data-round="${key}"${calc.owned.done?.[key] === from ? " checked" : ""}><span>${esc(name)}<small>${esc(dates)}</small></span></label>`;
+  };
   const modes = ROUND_MODES.filter(mode => roundPay(now, mode, patchTime(now, today)));
   return `<p class="calc-label">${t("Already bought")}</p><p class="calc-hint">${t("Only what these still pay from today on is added, in {patch}. Set the Tactical Assessment level, the passes and the day each was bought in the patch card.", { patch: esc(now.patch) })}</p>
     <div class="calc-owned">
@@ -2342,7 +1897,7 @@ function ownedBox(now) {
 }
 // The menu behind the "Events List" button: the timed events of each patch, to tick the ones already done
 function eventsMenu(patches) {
-  const gainChips = gains => CURRENCIES.filter(c => gains[c.key]).map(c => `<span class="calc-ev-gain" title="${t(c.name)}">${calcIcon(c.art)}${amount(gains[c.key])}</span>`).join("");
+  const gainChips = gains => CURRENCIES.filter(c => gains[c.key]).map(c => `<span class="calc-ev-gain" title="${esc(coinTip(c))}">${calcIcon(c.art)}${amount(gains[c.key])}</span>`).join("");
   // An event that already ended is out of the count by itself, so Done and Skip are locked on it
   const today = calcToday(), ended = event => event.end < today;
   const toggle = (event, set, label, tip) => ended(event)
@@ -2374,7 +1929,7 @@ function syncEvents() {
   if (count) count.textContent = total ? ` (${total})` : "";
 }
 function calculatorPage() {
-  const option = (key, name, note) => `<label class="calc-check"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}><span>${esc(t(name))}<small>${esc(t(note))}</small></span></label>`;
+  const option = (key, name, note, art) => `<label class="calc-check${art ? " has-icon" : ""}"><input type="checkbox" data-option="${key}"${calc[key] ? " checked" : ""}>${art ? calcIcon(art) : ""}<span>${esc(t(name))}<small>${esc(t(note))}</small></span></label>`;
   const tab = (key, name) => `<button class="tool${calc.tab === key ? " on" : ""}" type="button" data-calc-tab="${key}">${t(name)}</button>`;
   const margin = (tone, value, what) => `<div class="calc-margin ${tone}"><b>${value}</b><span>${t(what)}</span></div>`;
   const sideNav = (to, label) => `<button class="calc-side-nav" type="button" data-belt="${to}" aria-label="${t(label)}"${picked === calcId(to === "prev" ? patches[0] : patches.at(-1)) ? " disabled" : ""}><span aria-hidden="true">${to === "prev" ? "‹" : "›"}</span><small>${t(label)}</small></button>`;
@@ -2394,9 +1949,9 @@ function calculatorPage() {
       <div class="calc-board">
         <section class="calc-card calc-balance">
           <div class="calc-head"><div><h3>${t("Starting balance")}</h3><p>${t("What you have right now")}</p></div></div>
-          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, t(c.name), 250))}</div>
+          <div class="calc-start">${currencyGrid(calc.balance, (c, value) => numberBox(`data-balance="${c.key}"`, value, coinTip(c), 250))}</div>
           ${ownedBox(runningPatch(patches, today))}
-          <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per Shard, for 6★ Resonance")}</div>
+          <div class="calc-checks">${option("calibration", "Calibration mode", "Counts each weapon at double cost")}${option("useVouchers", "Buy missing Shards with Vouchers", "120 Vouchers per 6★ Weapon Resonance Shard", CURRENCIES.find(c => c.key === "shard").art)}</div>
           <button class="tool calc-events-open" type="button" data-events-open>${t("Events List")}<span id="calcEventsCount"></span></button>
           <button class="tool calc-clear" type="button" data-calc-clear>${t("Clear all")}</button>
         </section>
@@ -2540,6 +2095,17 @@ $("#main").addEventListener("click", e => {
   }
   // The close button, or a click on the backdrop (which lands on the dialog itself)
   if (e.target.closest("[data-events-close]") || e.target.id === "calcEvents") $("#calcEvents").close();
+  // Folding the passes holds for every patch card, and across visits
+  if (e.target.closest("[data-calc-passes]")) {
+    calc.hidePasses = !calc.hidePasses;
+    saveCalc();
+    document.querySelectorAll("[data-calc-passes]").forEach(button => {
+      button.setAttribute("aria-expanded", !calc.hidePasses);
+      button.title = t(calc.hidePasses ? "Show passes" : "Hide passes");
+      $("[data-pass-count]", button).textContent = passCount(calc.plans[button.closest(".calc-patch").dataset.id] || {});
+      button.nextElementSibling.hidden = calc.hidePasses;
+    });
+  }
   if (stop) pickPatch(stop.dataset.pick);
   if (nav) stepBelt(nav.dataset.belt === "next" ? 1 : -1);
   if (rail) {
@@ -2581,7 +2147,8 @@ $("#main").addEventListener("click", e => {
   const exportButton = e.target.closest("[data-calc-export]");
   if (exportButton) exportCalc(exportButton);
   if (!e.target.closest("[data-calc-clear]")) return;
-  calc = newCalc();
+  // Folded passes are a way of viewing the page, not part of the plan, so they stay as they were
+  calc = { ...newCalc(), hidePasses: calc.hidePasses };
   saveCalc();
   route();
 });
@@ -2766,35 +2333,20 @@ function addCommunity(list) {
     }
     const author = typeof item.author === "string" ? item.author.slice(0, 32) : "";
     const date = Number.isFinite(item.created) ? new Date(item.created).toISOString().slice(0, 10) : undefined;
-    COMPS[comp].variants.push({ id, name: team.name.trim() || t("Untitled team"), author: author || undefined, date, cards });
+    // teamId, user and likes are for the buttons of the build page: like, report, delete
+    COMPS[comp].variants.push({ id, name: team.name.trim() || t("Untitled team"), author: author || undefined, date, cards,
+      teamId: item.id, user: typeof item.user === "string" ? item.user : "", likes: Number(item.likes) || 0 });
     added++;
   }
   return added;
 }
-// Official builds the review panel hid (/api/hidden holds the ids: a variant id, or the id of a composition that has no variants).
-// They leave COMPS and PAGES, like a build that was never written. Returns how many went
-function hideOfficial(ids) {
-  let hidden = 0;
-  const drop = id => { for (const path in PAGES) PAGES[path] = PAGES[path].filter(x => x !== id); delete COMPS[id]; };
-  for (const id of Object.keys(COMPS)) {
-    const comp = COMPS[id];
-    if (!comp.variants) { if (ids.includes(id)) { drop(id); hidden++; } continue; }
-    const kept = comp.variants.filter(v => !ids.includes(v.id));
-    hidden += comp.variants.length - kept.length;
-    comp.variants = kept;
-    if (!kept.length) drop(id);
-  }
-  return hidden;
-}
 function loadCommunity() {
   const get = url => fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
-  Promise.all([get("/api/hidden"), get("/api/teams")]).then(async ([hidden, list]) => {
+  get(`/api/teams${freshQuery()}`).then(async list => {
+    if (!Array.isArray(list) || !list.length) return;
     const before = pageSignatures();
-    let changed = Array.isArray(hidden) && hideOfficial(hidden.filter(id => typeof id === "string")) > 0;
-    if (Array.isArray(list) && list.length) {
-      try { await loadEditor(); if (addCommunity(list)) changed = true; } catch { /* the editor did not load: official builds only */ }
-    }
-    if (!changed) return;
+    try { await loadEditor(); } catch { return; /* the editor did not load: the pages stay empty */ }
+    if (!addCommunity(list)) return;
     characterList = null;
     searchItems = null;
     redrawCommunity(before);
@@ -2823,6 +2375,255 @@ function redrawCommunity(before) {
   route(true);
 }
 
+/* ---------- accounts: log in with Discord, like, report and delete teams (functions/api/) ---------- */
+// The account of this browser, from /api/me. ready turns true once the answer arrives, logged in or not
+const account = { user: null, liked: new Set(), ready: false, teams: null };
+const loginHref = (back = location.pathname + location.search) => `/api/auth/login?back=${encodeURIComponent(back)}`;
+// The Sign in page (/account while logged out) lists the ways to log in; it remembers the page to come back to
+const signInHref = (back = location.pathname + location.search) => `/account?back=${encodeURIComponent(back)}`;
+// Only a path of this site, never another site (//example.com) or the Sign in page itself
+const backPath = () => {
+  const back = new URLSearchParams(location.search).get("back") || "";
+  return /^\/(?![/\\])/.test(back) && !/^\/account(?:[/?#]|$)/.test(back) ? back : "/account";
+};
+// After a change of their own (publish, like, delete), the visitor's next pages skip the 30 s cache of /api/teams for a minute
+const FRESH_KEY = "dominik-fresh";
+function markFresh() { try { sessionStorage.setItem(FRESH_KEY, String(Date.now())); } catch { /* storage blocked: the change shows within 30 s */ } }
+function freshQuery() {
+  try { const at = Number(sessionStorage.getItem(FRESH_KEY)); return Date.now() - at < 60e3 ? `?fresh=${at}` : ""; } catch { return ""; }
+}
+const postJson = (url, body, method = "POST") => fetch(url, { method, headers: { "content-type": "application/json" }, body: body && JSON.stringify(body) })
+  .then(async r => ({ status: r.status, ...(await r.json().catch(() => ({}))) })).catch(() => ({ error: "network" }));
+// Keep in step with REASONS in functions/api/report.js
+const REPORT_REASONS = ["Offensive or hateful", "Spam or advertising", "Wrong or misleading build", "Copied from someone else", "Other"];
+// The pages that change with the account, drawn again once it is known: a build page, /account and /admin
+const accountPages = () => ["account", "admin"].includes(location.pathname.split("/")[1]) || Boolean(shown);
+
+function loadAccount() {
+  fetch("/api/me").then(r => r.ok ? r.json() : null).catch(() => null).then(me => {
+    account.user = me?.user || null;
+    account.liked = new Set(me?.liked || []);
+    account.ready = true;
+    drawAccount();
+    if (accountPages()) route(true);
+  });
+}
+const initial = name => esc([...name][0].toUpperCase());
+// The account box of the side menu
+function drawAccount() {
+  const box = $("#accountBox");
+  if (!box) return;
+  const user = account.user;
+  box.innerHTML = user
+    ? `<a class="account-me" href="/account"><span class="account-initial" aria-hidden="true">${initial(user.name)}</span><span>${esc(user.name)}</span></a>`
+      + (user.admin ? `<a class="account-admin" href="/admin"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>${t("Admin panel")}</a>` : "")
+    : `<a class="account-login" href="${esc(signInHref())}" data-signin><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg>${t("Sign in")}</a>`;
+}
+// A login link carries the page the visitor is on, which changes as they browse
+document.addEventListener("click", e => {
+  const login = e.target.closest("[data-login]"), signIn = e.target.closest("[data-signin]");
+  if (login) login.href = loginHref(login.dataset.back || location.pathname + location.search);
+  if (signIn && location.pathname !== "/account") signIn.href = signInHref();
+}, true);
+async function logOut() {
+  await postJson("/api/auth/logout");
+  location.href = "/";
+}
+
+// Like, report and delete, beside Export image on a community build
+function teamActions(v) {
+  if (!v?.teamId) return "";
+  const user = account.user, liked = account.liked.has(v.teamId), mine = Boolean(user) && v.user === user.id;
+  const like = user
+    ? `<button class="tool like-btn${liked ? " on" : ""}" data-like="${v.teamId}" aria-pressed="${liked}" aria-label="${t("Like")}">♥ <span>${v.likes}</span></button>`
+    : `<a class="tool like-btn" href="${esc(signInHref())}" data-signin title="${t("Log in to like")}">♥ <span>${v.likes}</span></a>`;
+  const report = user && !mine ? `<button class="tool" data-report="${v.teamId}">${t("Report")}</button>` : "";
+  const remove = user && (mine || user.admin) ? `<button class="tool ed-danger" data-team-delete="${v.teamId}">${mine ? t("Delete") : t("Remove (admin)")}</button>` : "";
+  return `<span class="team-actions">${like}${report}${remove}</span>`;
+}
+const variantOf = teamId => Object.values(COMPS).flatMap(c => c.variants || []).find(v => v.teamId === teamId);
+async function toggleLike(button) {
+  const id = Number(button.dataset.like), v = variantOf(id), on = !account.liked.has(id);
+  button.disabled = true;
+  const result = await postJson("/api/like", { id, on });
+  button.disabled = false;
+  if (result.error === "login") { location.href = signInHref(); return; }
+  if (result.error) return;
+  if (on) account.liked.add(id); else account.liked.delete(id);
+  if (v) v.likes = result.likes;
+  button.classList.toggle("on", on);
+  button.setAttribute("aria-pressed", on);
+  $("span", button).textContent = result.likes;
+  markFresh();
+}
+async function deleteTeam(id) {
+  const mine = variantOf(id)?.user === account.user?.id;
+  if (!confirm(mine ? t("Delete this team for good? Its likes go with it.") : t("Take this team off the site? It can be restored from the admin panel."))) return;
+  const result = await postJson("/api/team-delete", { id });
+  if (!result.ok) { alert(t("The team could not be deleted. Reload the page and try again.")); return; }
+  markFresh();
+  location.href = `/${location.pathname.split("/").filter(Boolean).slice(0, 2).join("/")}`;
+}
+$("#main").addEventListener("click", e => {
+  const like = e.target.closest("[data-like]"), report = e.target.closest("[data-report]"), remove = e.target.closest("[data-team-delete]");
+  if (like) toggleLike(like);
+  if (report) openReport(Number(report.dataset.report));
+  if (remove) deleteTeam(Number(remove.dataset.teamDelete));
+});
+// The report form: a reason from the list and an optional note
+function openReport(id) {
+  const box = document.createElement("dialog");
+  box.className = "report-box";
+  box.innerHTML = `<h2>${t("Report this team")}</h2><p class="sub">${t("Tell the admins what is wrong with it. They review every report.")}</p>
+    <div class="report-reasons">${REPORT_REASONS.map((r, i) => `<label><input type="radio" name="reportReason" value="${esc(r)}"${i ? "" : " checked"}> ${t(r)}</label>`).join("")}</div>
+    <label class="ed-field"><span>${t("Details · optional")}</span><textarea maxlength="300" rows="3"></textarea></label>
+    <p class="report-status" role="status"></p>
+    <div class="report-buttons"><button class="tool" data-report-cancel>${t("Cancel")}</button><button class="tool ed-primary" data-report-send>${t("Send report")}</button></div>`;
+  document.body.append(box);
+  box.addEventListener("close", () => box.remove());
+  box.addEventListener("click", async e => {
+    if (e.target === box || e.target.closest("[data-report-cancel]")) return box.close();
+    const send = e.target.closest("[data-report-send]");
+    if (!send) return;
+    send.disabled = true;
+    const result = await postJson("/api/report", { id, reason: $("input[name=reportReason]:checked", box).value, note: $("textarea", box).value });
+    const status = $(".report-status", box);
+    if (result.ok) {
+      status.textContent = result.already ? t("You already reported this team.") : t("Thanks. The admins will take a look.");
+      send.hidden = true;
+      $("[data-report-cancel]", box).textContent = t("Close");
+      return;
+    }
+    send.disabled = false;
+    status.textContent = { limit: t("You sent many reports today. Try again tomorrow."), login: t("Log in with Discord to report.") }[result.error]
+      || t("The report could not be sent. Try again.");
+  });
+  box.showModal();
+}
+
+// /account: the visitor's account, their teams, and their data (download or erase)
+const LOGIN_NOTES = {
+  expired: "The login took too long. Try again.",
+  failed: "Discord did not confirm the login. Try again.",
+  banned: "This account is banned from the site."
+};
+function accountPage() {
+  const head = `<h1>${t("Account")}</h1>`, note = LOGIN_NOTES[new URLSearchParams(location.search).get("login")];
+  const notice = note ? `<p class="notice" role="alert">${t(note)}</p>` : "";
+  if (!account.ready) return `${head}${notice}<p class="empty">${t("Loading...")}</p>`;
+  const user = account.user;
+  // Logged out, this is the Sign in page: one button per way to log in (only Discord for now)
+  if (!user) return `<h1>${t("Sign in")}</h1>${notice}<section class="account-card signin-card">
+    <p>${t("Sign in to publish teams from the Team Builder, like teams and report the ones that break the rules.")}</p>
+    <div class="signin-options"><a class="signin-option" href="${esc(loginHref(backPath()))}">${pic("assets/credits/discord.png")}<span>${t("Continue with Discord")}</span></a></div>
+    <p class="sub">${t("The site only reads your Discord id and name.")} <a href="/privacy">${t("How the site handles your data")}</a></p></section>`;
+  if (!account.teams) {
+    account.teams = fetch("/api/me?teams=1").then(r => r.json()).then(me => me.teams || []).catch(() => []);
+    account.teams.then(list => { account.teams = list; if (location.pathname === "/account") route(true); });
+  }
+  const teams = Array.isArray(account.teams) ? account.teams : null;
+  const row = team => `<li><a href="${esc(buildHref(team.page, `c-${team.id}`))}">${esc(team.name)}</a> <small>${esc(team.page)} · ${postedOn(new Date(team.created).toISOString().slice(0, 10))} · ♥ ${team.likes}${team.status === "approved" ? "" : ` · ${t("taken down by an admin")}`}</small></li>`;
+  return `${head}${notice}<section class="account-card">
+      <div class="account-who"><span class="account-initial big" aria-hidden="true">${initial(user.name)}</span><div><strong>${esc(user.name)}</strong>
+        <small>${user.admin ? t("Admin") : t("Member")} · Discord ${esc(user.id)}</small></div></div>
+      <div class="account-buttons">${user.admin ? `<a class="tool" href="/admin">${t("Admin panel")}</a>` : ""}<button class="tool" data-logout>${t("Log out")}</button></div>
+    </section>
+    <section class="account-card"><h2>${t("Your teams")}</h2>
+      ${!teams ? `<p class="sub">${t("Loading...")}</p>` : teams.length ? `<ul class="account-teams">${teams.map(row).join("")}</ul>` : `<p class="sub">${t("You have not published a team yet. Make one in the {link}.", { link: `<a href="/editor">${t("Team Builder")}</a>` })}</p>`}</section>
+    <section class="account-card"><h2>${t("Your data")}</h2>
+      <p class="sub">${t("Download everything the site keeps about your account, or erase the account with your teams, likes and reports. Erasing can't be undone.")} <a href="/privacy">${t("Privacy")}</a></p>
+      <div class="account-buttons"><a class="tool" href="/api/me/export" download>${t("Download my data")}</a>${user.owner ? "" : `<button class="tool ed-danger" data-erase>${t("Delete my account")}</button>`}</div>
+    </section>`;
+}
+async function eraseAccount() {
+  if (!confirm(t("Delete your account? Your teams, likes and reports are erased too, and this can't be undone."))) return;
+  const result = await postJson("/api/me", null, "DELETE");
+  if (!result.ok) { alert(t("The account could not be deleted. Try again.")); return; }
+  markFresh();
+  location.href = "/";
+}
+$("#main").addEventListener("click", e => {
+  if (e.target.closest("[data-logout]")) logOut();
+  if (e.target.closest("[data-erase]")) eraseAccount();
+});
+
+// /admin: the panel itself (admin-panel.js) loads only for admins, on this page. It reuses the Team Builder's code to draw teams
+let adminState = "";
+function adminPage() {
+  const head = `<h1>${t("Admin panel")}</h1>`;
+  if (!account.ready) return `${head}<p class="empty">${t("Loading...")}</p>`;
+  if (!account.user) return `${head}<p class="empty">${t("Log in with an admin account to open this page.")} <a href="${esc(signInHref("/admin"))}">${t("Sign in")}</a></p>`;
+  if (!account.user.admin) return `${head}<p class="empty">${t("Admins only.")}</p>`;
+  if (adminState === "ready") return adminPanel();
+  if (adminState === "failed") return `${head}<p class="empty">${t("The admin panel failed to load. Reload the page to try again.")}</p>`;
+  if (!adminState) {
+    adminState = "loading";
+    loadEditor().then(() => loadScript("admin-panel.js")).then(() => { adminState = "ready"; }, () => { adminState = "failed"; })
+      .then(() => { if (location.pathname === "/admin") route(true); });
+  }
+  return `${head}<p class="empty">${t("Loading...")}</p>`;
+}
+
+/* ---------- Privacy: how the site handles personal data (LGPD, GDPR, CCPA) ---------- */
+// Written for visitors. Change PRIVACY_UPDATED whenever the text changes, and keep it true to what functions/api/ does
+const PRIVACY_UPDATED = "2026-11-23";
+const PRIVACY = [
+  ["Who is responsible", [
+    "Dominik is a fan site run by one person, known on Discord as crazy117, who decides how its data is used (the \"controller\" under Brazil's LGPD and the EU's GDPR). Questions and requests go to crazy117 on Discord; the contact is on the {credits} page.",
+    "The site is not affiliated with Kuro Games."
+  ]],
+  ["What the site collects, and why", [
+    "Browsing needs no account, and the site itself keeps no record of who visits it.",
+    "When you log in with Discord, the site receives your Discord user id and display name, and nothing else: no email, no password, no avatar, no list of servers. The id tells your account apart; the name is shown as the author of your teams.",
+    "What you do with an account is kept with it: the teams you publish, the teams you like, and the reports you send.",
+    "When you publish a team or create a short link in the Team Builder, the site keeps your internet address in hashed form (scrambled with a secret, so it can't be turned back into the address) to limit how many each address can send. It is erased after 2 days.",
+    "Publishing a team runs Cloudflare Turnstile, a check that tells people from bots without puzzles. Cloudflare Web Analytics counts page views without cookies and without identifying anyone."
+  ]],
+  ["Legal basis", [
+    "Your account and what you publish: providing the service you asked for (LGPD art. 7, V; GDPR art. 6(1)(b)).",
+    "Hashed addresses, bot checks and moderation records: the site's legitimate interest in keeping spam and abuse out (LGPD art. 7, IX; GDPR art. 6(1)(f)).",
+    "The site has no advertising and sells no data."
+  ]],
+  ["Cookies", [
+    "The site sets two cookies, both strictly necessary: one that keeps you logged in (for 30 days, or until you log out), and one that lasts 10 minutes during the Discord login to make sure the login came from you. Neither is used for tracking or advertising.",
+    "Strictly necessary cookies don't need consent under the LGPD or the EU ePrivacy rules, so the site shows no cookie banner. The site also keeps a few settings in your browser's own storage (like the open menu or the Team Builder draft); they never leave your device."
+  ]],
+  ["Who else handles the data", [
+    "Cloudflare hosts the site and its database, and runs Turnstile and Web Analytics, as a processor that acts on the site's instructions.",
+    "Discord confirms your login. What Discord itself does with your data is covered by Discord's own privacy policy.",
+    "Nothing is sold or shared with anyone else."
+  ]],
+  ["Data stored outside your country", [
+    "Cloudflare's servers are spread around the world, so your data may be handled outside Brazil or the European Union. Cloudflare covers these transfers with the standard contractual clauses and its data processing terms (LGPD art. 33; GDPR chapter V)."
+  ]],
+  ["How long data is kept", [
+    "Your account, teams, likes and reports: until you delete them or your account.",
+    "Login sessions: 30 days. Hashed addresses: 2 days. The record of admin actions: 1 year.",
+    "A team taken down by an admin stays stored, off the site, so the decision can be reviewed or undone."
+  ]],
+  ["Your rights", [
+    "Under the LGPD (art. 18) you can confirm what is kept, see it, correct it, take a copy, have it erased, and be told who it is shared with. The GDPR (arts. 15 to 21) gives the same rights, plus objecting to processing based on legitimate interest. In California, the CCPA/CPRA gives similar rights; the site does not sell or share personal information.",
+    "On your {account} page you can download everything the site keeps about you, or erase your account with your teams, likes and reports. For anything else, message crazy117 on Discord.",
+    "You can also complain to a data protection authority: the ANPD in Brazil, or the authority of your country."
+  ]],
+  ["Age", [
+    "Accounts need a Discord account, and Discord requires its users to be at least 13 (or older where local law sets a higher age, like 16 in parts of the EU). Children under 13 should not log in."
+  ]],
+  ["Security", [
+    "The site is served only over HTTPS. Login tokens are stored only in hashed form, and the login cookie can't be read by scripts. Every change needs a request from the site itself, admin rights are checked by the server on every action, and admin actions are recorded."
+  ]],
+  ["Changes", [
+    "If this page changes, the date below changes with it, and important changes are announced on the {updates} page."
+  ]]
+];
+function privacyPage() {
+  const links = { credits: `<a href="/credits">${t("Credits")}</a>`, account: `<a href="/account">${t("Account")}</a>`, updates: `<a href="/updates">${t("Updates")}</a>` };
+  return `<div class="privacy-page"><h1>${t("Privacy")}</h1>
+    <p class="sub">${t("How Dominik handles your data, under Brazil's LGPD, the EU's GDPR and similar laws.")}</p>
+    ${PRIVACY.map(([title, paragraphs]) => `<section><h2>${t(title)}</h2>${paragraphs.map(text => `<p>${t(text, links)}</p>`).join("")}</section>`).join("")}
+    <p class="sub">${t("Last updated: {date}", { date: postedOn(PRIVACY_UPDATED) })}</p></div>`;
+}
+
 /* ---------- Meta timeline: who held each class of an element or Effect, from timeline-data.js ---------- */
 const TL_ROLES = ["Attacker", "Tank", "Breaker", "Support", "Amplifier", "Overlinker", "Annihilator", "Observer"];
 // Each class here is the next step of the one before it, so a newer frame of any of them replaces the older ones
@@ -2834,12 +2635,24 @@ const TL_VIEWS = {
   elementA: { field: "element", rank: "A", name: "A-rank Element", groups: () => ENERGY, dir: "energy-type", rule: "class and element", plural: "elements" }
 };
 // The characters a tab counts: its rank, and collabs only when the option is on
-const tlFrames = view => TIMELINE.filter(c => c.rank === view.rank && (timelineCollabs || !c.collab));
+// On the Global calendar a frame takes its Global date. `cn` keeps the China date, which orders frames that arrive on the same day
+const tlFrames = view => TIMELINE.filter(c => c.rank === view.rank && (timelineCollabs || !c.collab)).map(c => ({ ...c, cn: c.date, date: timelineServer === "global" ? c.gl : c.date })).sort((x, y) => x.date.localeCompare(y.date) || x.cn.localeCompare(y.cn));
 const TL_ZOOMS = [1, 2, 4, 8, 16];
 const TL_MONTHS = LANG === "pt" ? ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"] : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 // Effects with no color of their own on the home page
 const tlColor = group => TILE_COLOR[group] || { Disruption: TILE_COLOR.Nihil, Raydiance: "#e6bd52" }[group];
-const TL_SKIP = "Lee: Entropy", TL_SKIP_NOTE = "19 days between Lee: Entropy and Lucia: Crimson Abyss";
+const TL_SKIP = "Lee: Entropy", TL_SKIP_NOTE = () => `${timelineServer === "global" ? 18 : 19} days between Lee: Entropy and Lucia: Crimson Abyss`;
+// Frames the community moved on from before anything newer of their class took their place, and what took it over, by what the tab
+// groups by. The reign ends on the release date of that frame. Pyroath, Pianissimo and Crepuscule: judged from what teams use today
+const TL_PRACTICAL = {
+  "Lucia: Pyroath": { element: "Kamui: Aeternion", effect: "Kamui: Aeternion" },
+  "Selena: Pianissimo": { element: "Karenina: Effulgence", effect: "Leia: Fortunaster" },
+  "Bianca: Crepuscule": { element: "Adelyde: Anabasis" },
+  "Bianca: Stigmata": { effect: "Rosetta: Arete" },
+  // A Tank kept after a Breaker (see timelineLanes), except where the Breaker took over in practice
+  "Watanabe: Epitaph": { effect: "Karenina: Effulgence" },
+  "Karenina: Scire": { element: "Rosetta: Arete", effect: "Kamui: Aeternion" }
+};
 // Frames Kuro lets anyone get without pulling, and how
 const TL_FREE = {
   "Selena: Capriccio": "farmable from the Recitativo di Fantasia mode",
@@ -2855,20 +2668,31 @@ const TL_FREE = {
 const TL_CN_HISTORY = "https://wiki.biligame.com/zspms/%E6%88%98%E5%8F%8C%E5%A4%A7%E4%BA%8B%E8%AE%B0";
 // The first patch both servers got on the same day
 const TL_SYNC = "2025-11-13";
-let timelineView = "element", timelineGroup = "", timelineRole = "", timelineRank = "longest", timelineNow = false, timelineCollabs = false, timelineZoom = 1;
+let timelineView = "element", timelineGroup = "", timelineRole = "", timelineRank = "longest", timelineRankAll = false, timelineNow = false, timelineCollabs = false, timelineZoom = 1;
+let timelineServer = "cn", timelinePractical = true;
 const TL_ROW = 46, TL_RANKED = 6;
 const monthYear = iso => new Date(`${iso}T00:00`).toLocaleDateString(loc("en-GB"), { month: "short", year: "numeric" });
 const roleArt = role => CLASS_ART[role] || classIcon(role);
 // A reign lasts until the next frame of the same class line. With no newer one, it is still running
 function timelineLanes(view, group) {
-  const today = dayNumber(calcToday()), frames = tlFrames(view).filter(c => c[view.field] === group);
+  const today = dayNumber(calcToday()), all = tlFrames(view), frames = all.filter(c => c[view.field] === group);
   return TL_ROLES.map(role => ({ role, reigns: frames.filter(c => c.role === role).map(c => {
-    const next = frames.find(other => other.date > c.date && roleLine(role).includes(other.role));
+    // Two frames of a class line that reach Global the same day (an integration patch): the one released later in China counts as the newer
+    // In practical meta a Breaker does not push out the Tank before it, nor an Overlinker the Amplifier: teams kept using them (Epitaph, Solacetune, Lucid Dreamer, Lilith)
+    const later = other => (other.date > c.date || other.date === c.date && other.cn > c.cn) && roleLine(role).includes(other.role);
+    const kept = other => timelinePractical && (role === "Tank" && other.role === "Breaker" || role === "Amplifier" && other.role === "Overlinker");
+    const real = frames.find(later);
+    let next = frames.find(other => later(other) && !kept(other)), practical = false;
+    const by = timelinePractical && all.find(other => other.name === TL_PRACTICAL[c.name]?.[view.field]);
+    if (by && (!next || by.date < next.date)) { next = by; practical = true; }
     const start = dayNumber(c.date), end = next ? dayNumber(next.date) : today;
-    return { ...c, start, end, days: end - start, next };
+    // `special`: the reign differs from the official one because of the practical meta, and the page marks it
+    return { ...c, start, end, days: end - start, next, practical, special: practical || Boolean(real && real !== next) };
   }) })).filter(lane => lane.reigns.length);
 }
-const reignInfo = r => `${t("Released in {patch}", r)} · ${t("{from} to {to}", { from: monthYear(r.date), to: r.next ? monthYear(r.next.date) : t("today") })} · ${t("{n} days", { n: amount(r.days) })}${r.next ? ` · ${t("replaced by {name}", r.next)}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : ` · ${t("still in place")}`}${r.collab ? " · collab" : ""}${TL_FREE[r.name] ? ` · ${t("free from {where}", { where: t(TL_FREE[r.name]) })}` : ""}`;
+const reignInfo = r => `${t("Released in {patch}", r)} · ${t("{from} to {to}", { from: monthYear(r.date), to: r.next ? monthYear(r.next.date) : t("today") })} · ${t("{n} days", { n: amount(r.days) })}${r.next ? ` · ${t(r.practical ? "replaced in practice by {name}" : r.days ? "replaced by {name}" : "arrived the same day as {name}", r.next)}${r.next.role === r.role ? "" : ` (${r.next.role})`}` : ` · ${t("still in place")}`}${r.collab ? " · collab" : ""}${TL_FREE[r.name] ? ` · ${t("free from {where}", { where: t(TL_FREE[r.name]) })}` : ""}`;
+// The tag of a reign that the practical meta changed, in the colour of "Overdue"
+const practicalTag = (tag = "em") => `<${tag} class="tl-free tl-prac" title="${esc(t("Differs from the official count because of the practical meta"))}">${t("Practical")}</${tag}>`;
 // Expected replacement of whoever holds a class now, by "group|class", filled by timelineBody (see the forecast there)
 let tlForecast = new Map();
 function forecastNote(group, role) {
@@ -2904,7 +2728,7 @@ function timelineChart(view) {
   }).filter(m => m.day > first && m.day < last && m.month);
   const lines = months.map(m => `<i class="mo" style="left:${at(m.day)}%"></i>`).join("") + years.map(year => `<i style="left:${at(dayNumber(`${year}-01-01`))}%"></i>`).join("") + marks.map(mark => `<i class="mark" style="left:${at(dayNumber(mark.date))}%"></i>`).join("");
   // A short reign is stretched to 40px and the next one would cover most of it: short ones go on top, so both stay easy to click
-  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}${at(first + r.end - r.start) < 5 ? " short" : ""}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">${t("Free")}</em>` : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
+  const reign = r => `<a class="tl-reign${r.next ? "" : " now"}${at(first + r.end - r.start) < 5 ? " short" : ""}" data-line="${roleLine(r.role)[0]}"${reignHref(r.name)} style="left:${at(r.start)}%;width:${at(first + r.end - r.start)}%"${tipAttr(r.name, reignInfo(r))}>${pic(r.head, `alt="${esc(r.name)}"`)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">${t("Free")}</em>` : ""}${r.special ? practicalTag() : ""}<span>${amount(r.days)}<small>${esc(r.patch)}</small></span></a>`;
   // A line from a character down to whoever replaced them from the next class of the line
   const link = (r, row, lanes) => {
     const rows = lanes.findIndex(lane => lane.role === r.next?.role) - row;
@@ -2918,7 +2742,7 @@ function timelineChart(view) {
   </div></div>`;
 }
 function timelineList(view) {
-  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">${t("Free")}</em>` : ""}</b><small>${esc(r.patch)}</small><small>${t("{from} to {to}", { from: monthYear(r.date), to: r.next ? monthYear(r.next.date) : t("today") })}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${t("{n} days", { n: amount(r.days) })}</em></a>`;
+  const item = r => `<a class="tl-item${r.next ? "" : " now"}"${reignHref(r.name)}>${pic(r.head, 'alt=""')}<span><b>${esc(r.name)}${r.collab ? `<em class="tl-free tl-collab">Collab</em>` : TL_FREE[r.name] ? `<em class="tl-free">${t("Free")}</em>` : ""}${r.special ? practicalTag() : ""}</b><small>${esc(r.patch)}</small><small>${t("{from} to {to}", { from: monthYear(r.date), to: r.next ? monthYear(r.next.date) : t("today") })}</small>${r.next && r.next.role !== r.role ? `<small class="tl-by">↳ ${esc(r.next.name)} (${esc(r.next.role)})</small>` : ""}</span><em>${t("{n} days", { n: amount(r.days) })}</em></a>`;
   return `<div class="tl-list"><p class="tl-chips">${timelineMarks(view).map(mark => `<span>${monthYear(mark.date)} · ${esc(mark.text)}</span>`).join("")}</p>
     ${timelineShown(view).map(({ group, lanes }, i) => `<details class="tl-fold" style="--c:${tlColor(group)}"${i ? "" : " open"}><summary>${menuIcon(view.dir, group)}${esc(group)}</summary>
       ${lanes.map(({ role, reigns }) => `<p class="tl-lane">${pic(roleArt(role))}${esc(role)}${forecastNote(group, role)}</p>${[...reigns].reverse().map(item).join("")}`).join("")}</details>`).join("")}</div>`;
@@ -2927,7 +2751,8 @@ function timelineBody() {
   const view = TL_VIEWS[timelineView];
   const reigns = view.groups().flatMap(group => timelineLanes(view, group).flatMap(lane => lane.reigns.map(r => ({ ...r, group }))));
   // Only replaced characters have a final number, and the launch-window gap between Lee and Alpha says nothing about the meta
-  const done = reigns.filter(r => r.next && r.name !== TL_SKIP);
+  // Frames that reached Global on the same day as the next one of their line (integration patches) held nothing, so they are left out too
+  const done = reigns.filter(r => r.next && r.days > 0 && r.name !== TL_SKIP);
   const mean = list => list.reduce((total, r) => total + r.days, 0) / list.length;
   const days = n => t("{n} days", { n: amount(Math.round(n)) });
   const byLength = [...done].sort((x, y) => y.days - x.days);
@@ -2963,13 +2788,16 @@ function timelineBody() {
     group: [t(`By ${view.field}`), t(`Longest-lasting ${view.plural}, on average`), () => groups.map(g => [menuIcon(view.dir, g.group), g.group, days(g.days)])]
   };
   const [, rankTitle, rankRows] = RANKINGS[timelineRank] || RANKINGS.longest;
+  // The top few by default; the whole list scrolls inside the box, so the page below stays where it is
+  const rows = rankRows(), more = rows.length > TL_RANKED;
+  const rankMore = more ? `<button class="tl-more" type="button" data-tl-rank-all aria-expanded="${timelineRankAll}">${timelineRankAll ? t("Show top {n}", { n: TL_RANKED }) : t("Show all ({n})", { n: rows.length })}</button>` : "";
   const ranking = `<div class="tl-rank"><div class="tl-seg" role="group" aria-label="${t("Ranking")}">${Object.entries(RANKINGS).map(([key, [label]]) => `<button class="tool${timelineRank === key ? " on" : ""}" type="button" data-tl-rank="${key}" aria-pressed="${timelineRank === key}">${esc(label)}</button>`).join("")}</div>
-    <h3>${esc(rankTitle)}</h3><ol>${rankRows().slice(0, TL_RANKED).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol></div>`;
-  // The next replacements the estimate expects, narrowed by the same filters as the chart
+    <h3>${esc(rankTitle)}</h3><ol${timelineRankAll && more ? ' class="all"' : ""}>${(timelineRankAll ? rows : rows.slice(0, TL_RANKED)).map(([art, name, value]) => `<li>${art}<b>${esc(name)}</b><em>${value}</em></li>`).join("")}</ol>${rankMore}</div>`;
+  // The next replacements the estimate expects, narrowed by the same filters as the chart.
   const soon = forecast.filter(r => (!timelineGroup || r.group === timelineGroup) && (!timelineRole || r.role === timelineRole)).slice(0, 4);
   const soonCard = r => {
     const left = r.expected - today;
-    return `<div class="tl-soon${left > 0 ? "" : " late"}" title="${esc(r.name)}: ${when(r)}">${pic(r.head, `alt="${esc(r.name)}"`)}<span><b>${esc(r.name)}</b><small>${pic(roleArt(r.role), `alt="${esc(r.role)}" title="${esc(r.role)}"`)}${menuIcon(view.dir, r.group)}</small></span><em>${left > 0 ? "≈ " + monthYear(dayDate(r.expected)) : t("Overdue")}<small>${left > 0 ? t("{n} days", { n: amount(left) }) : t("{n} days past", { n: amount(-left) })}</small></em></div>`;
+    return `<div class="tl-soon${left > 0 ? "" : " late"}" title="${esc(r.name)}: ${when(r)}">${pic(r.head, `alt="${esc(r.name)}"`)}<span><b>${esc(r.name)}</b><small>${pic(roleArt(r.role), `alt="${esc(r.role)}" title="${esc(r.role)}"`)}${menuIcon(view.dir, r.group)}${r.special ? practicalTag("i") : ""}</small></span><em>${left > 0 ? "≈ " + monthYear(dayDate(r.expected)) : t("Overdue")}<small>${left > 0 ? t("{n} days", { n: amount(left) }) : t("{n} days past", { n: amount(-left) })}</small></em></div>`;
   };
   // Always four slots, so the boxes below do not move when a filter leaves fewer cards
   const slots = Array.from({ length: 4 }, (_, i) => soon[i] ? soonCard(soon[i]) : `<div class="tl-soon empty">${i || soon.length ? "" : t("No replacement expected for this filter")}</div>`);
@@ -2984,29 +2812,39 @@ function timelineBody() {
       ${averages.map(row => `<div class="tl-average${timelineRole && row.name !== timelineRole ? " dim" : ""}"${nextOf(row.name) ? ` title="${esc(t("Next: {when}", { when: when(nextOf(row.name)) }))}"` : ""}>${pic(roleArt(row.name))}<span>${esc(row.name)}<small>${t("Since {date} · {n} replaced", { date: monthYear(row.first), n: row.replaced })}${nextOf(row.name) ? ` · ${t("next")} ${nextOf(row.name).expected > today ? "≈ " + monthYear(dayDate(nextOf(row.name).expected)) : t("overdue")}` : ""}</small></span><b>${row.days ? days(row.days) : t("None yet")}</b><i style="width:${(row.days / top * 100).toFixed(1)}%"></i></div>`).join("")}
     </details>
   </div>
-  ${calcMore("How replacement works", `<p class="tl-rule">${t(`A character counts as replaced when a new {rank}-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too.`, { rank: view.rank })}${view.rank === "S" ? ` ${t("The numbers above leave out the {gap}. The watch is a guide, not a release date.", { gap: t(TL_SKIP_NOTE) })}` : ` ${t("The dates of A-Rank frames and collabs come from the Fandom wiki.")}`}${view.field === "effect" ? ` ${t("Frames with no Effect are left out.")}` : ""}${timelineCollabs ? ` ${t("Collabs are counted like any other frame.")}` : ""}</p>${timelineNotes()}`)}
+  ${calcMore("How replacement works", `<p class="tl-rule">${t(`A character counts as replaced when a new {rank}-Rank frame with the same ${view.rule} comes out. Breakers are the next step of Tanks, and Amplifiers and Overlinkers of Supports, so they replace them too.`, { rank: view.rank })}${view.rank === "S" ? ` ${t("The numbers above leave out the {gap}. The watch is a guide, not a release date.", { gap: t(TL_SKIP_NOTE()) })}` : ` ${t("The dates of A-Rank frames and collabs come from the Fandom wiki.")}`}${view.field === "effect" ? ` ${t("Frames with no Effect are left out.")}` : ""}${timelineCollabs ? ` ${t("Collabs are counted like any other frame.")}` : ""}${timelinePractical ? ` ${t("Practical meta also counts as replaced the frames the community stopped using.")}` : ""}${timelineServer === "global" ? ` ${t("On Global, frames of a class that arrive on the same day count as one release, and the one released later in China replaces the other.")}` : ""}</p>${timelineNotes()}`)}
   <div class="tl-tools"><div class="tl-filters" role="group" aria-label="${esc(t(view.field === "effect" ? "Effect" : "Element"))}">${groupFilters}</div><div class="tl-filters" role="group" aria-label="${t("Class")}">${roleFilters}</div>
-    <div class="tl-filters tl-opts"><button class="tool tog collab${timelineCollabs ? " on" : ""}" type="button" data-tl-collab aria-pressed="${timelineCollabs}" title="${t("Count collab frames too")}">Collabs</button><button class="tool tog place${timelineNow ? " on" : ""}" type="button" data-tl-now aria-pressed="${timelineNow}" title="${t("Only characters not replaced yet")}">${t("In place")}</button></div>
+    <div class="tl-filters tl-opts"><button class="tool tog collab${timelineCollabs ? " on" : ""}" type="button" data-tl-collab aria-pressed="${timelineCollabs}" title="${t("Count collab frames too")}">Collabs</button><button class="tool tog place${timelineNow ? " on" : ""}" type="button" data-tl-now aria-pressed="${timelineNow}" title="${t("Only characters not replaced yet")}">${t("In place")}</button><button class="tool tog practical${timelinePractical ? " on" : ""}" type="button" data-tl-practical aria-pressed="${timelinePractical}" title="${esc(t("Count as replaced the frames the community stopped using, even with nothing newer of their kind"))}">${t("Practical meta")}</button></div>
     <span class="tl-zoom"><button class="tool" type="button" data-tl-zoom="-1" aria-label="${t("Zoom out")}"${timelineZoom === TL_ZOOMS[0] ? " disabled" : ""}>−</button><b>${timelineZoom}×</b><button class="tool" type="button" data-tl-zoom="1" aria-label="${t("Zoom in")}"${timelineZoom === TL_ZOOMS.at(-1) ? " disabled" : ""}>+</button></span></div>
   ${timelineChart(view)}${timelineList(view)}`;
 }
 // The sources and rules of the page, kept under "How replacement works" so the top of the page goes straight to the data
 const timelineNotes = () => `<ul class="tl-notes">${[
-  t("Dates come from the {sheet} and the {wiki}, and Global release dates are not considered.", { sheet: `<a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">${t("Tickets Income spreadsheet")}</a>`, wiki: `<a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">${t("Chinese wiki")}</a>` }),
+  t("Dates come from the {sheet} and the {wiki}. The Global view uses the Global release dates of the Gray Raven wiki and of the Global Tickets Income sheet.", { sheet: `<a href="${CALC_SHEET}" target="_blank" rel="noopener noreferrer">${t("Tickets Income spreadsheet")}</a>`, wiki: `<a href="${TL_CN_HISTORY}" target="_blank" rel="noopener noreferrer">${t("Chinese wiki")}</a>` }),
   t("Uniframes are not counted, and collabs only when you turn on \"Collabs\"."),
   t("\"Free\" marks frames you can get without pulling."),
-  t("Click a filter icon again to clear it.")
+  t("Click a filter icon again to clear it."),
+  t("Practical meta ends the reign of Lucia: Pyroath, Selena: Pianissimo, Bianca: Crepuscule and Bianca: Stigmata when the frame that replaced them in teams came out. Breakers do not replace the Tanks before them, nor Overlinkers the Amplifiers, which teams kept using. It is a judgment of what teams use today, not a rule of the game.")
 ].map(line => `<li>${line}</li>`).join("")}</ul>`;
+const timelineSub = () => t(timelineServer === "global" ? "How long each character held their place in the meta on the Global server, where several patches of the Chinese server arrive at once." : "How long each character held their place in the meta on the Chinese server, the first to get each frame.");
 function timelinePage() {
   const tab = key => `<button class="tool${timelineView === key ? " on" : ""}" type="button" data-tl-view="${key}">${t(TL_VIEWS[key].name)}</button>`;
-  return `<h1>${t("Meta Timeline")}</h1><p class="sub">${t("How long each character held their place in the meta on the Chinese server, the first to get each frame.")}</p>
-  <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}${tab("elementA")}</div><div id="timelineBody">${timelineBody()}</div></div>`;
+  return `<h1>${t("Meta Timeline")}</h1><p class="sub" id="timelineSub">${timelineSub()}</p>
+  <div id="timeline"><div class="calc-tabs">${tab("element")}${tab("effect")}${tab("elementA")}<span class="tl-server" role="group" aria-label="${t("Server")}">${["cn", "global"].map(key => `<button class="tool${timelineServer === key ? " on" : ""}" type="button" data-tl-server="${key}" aria-pressed="${timelineServer === key}" title="${esc(t(key === "cn" ? "Release dates on the Chinese server" : "Release dates on the Global server, with integration patches"))}">${key === "cn" ? "CN" : "Global"}</button>`).join("")}</span></div><div id="timelineBody">${timelineBody()}</div></div>`;
 }
 $("#main").addEventListener("click", e => {
   const view = e.target.closest("[data-tl-view]"), group = e.target.closest("[data-tl-group]"), now = e.target.closest("[data-tl-now]");
   const collab = e.target.closest("[data-tl-collab]"), zoom = e.target.closest("[data-tl-zoom]");
   const role = e.target.closest("[data-tl-role]"), rank = e.target.closest("[data-tl-rank]");
-  if (!view && !group && !now && !collab && !zoom && !role && !rank) return;
+  const rankAll = e.target.closest("[data-tl-rank-all]"), practical = e.target.closest("[data-tl-practical]"), server = e.target.closest("[data-tl-server]");
+  if (!view && !group && !now && !collab && !zoom && !role && !rank && !rankAll && !practical && !server) return;
+  if (rankAll) timelineRankAll = !timelineRankAll;
+  if (practical) timelinePractical = !timelinePractical;
+  if (server) {
+    timelineServer = server.dataset.tlServer;
+    $("#timelineSub").innerHTML = timelineSub();
+    document.querySelectorAll("[data-tl-server]").forEach(button => { button.classList.toggle("on", button === server); button.setAttribute("aria-pressed", button === server); });
+  }
   if (view) {
     timelineView = view.dataset.tlView;
     timelineGroup = timelineRole = "";
@@ -3166,16 +3004,20 @@ function skillsPanel(ch) {
   if (skillsState !== "ready") return skillList(ch);
   const groups = skillGroups(ch);
   if (!groups.length) return `<p class="empty">${t("No skill text for this character yet.")}</p>`;
-  if (!groups.some(([name]) => name === skillTab)) skillTab = groups[0][0];
-  return `<div class="cx-tabs">${groups.map(([name]) => `<button class="tool${name === skillTab ? " on" : ""}" type="button" data-sk-tab="${name}">${t(name)}</button>`).join("")}</div>
-    <div class="cx-skills" id="cxSkillBody">${skillCards(ch)}</div>`;
+  const calc = dmgHasKit(ch.name);
+  if (!groups.some(([name]) => name === skillTab) && !(skillTab === DMG_TAB && calc)) skillTab = groups[0][0];
+  return `<div class="cx-tabs">${groups.map(([name]) => `<button class="tool${name === skillTab ? " on" : ""}" type="button" data-sk-tab="${name}">${t(name)}</button>`).join("")}${calc ? dmgTabButton() : ""}</div>
+    <div class="cx-skills" id="cxSkillBody"${skillTab === DMG_TAB ? " hidden" : ""}>${skillTab === DMG_TAB ? "" : skillCards(ch)}</div>`;
 }
 $("#main").addEventListener("click", e => {
   const tab = e.target.closest("[data-sk-tab]");
   if (!tab || !skillChar) return;
   skillTab = tab.dataset.skTab;
   document.querySelectorAll("[data-sk-tab]").forEach(b => b.classList.toggle("on", b === tab));
-  $("#cxSkillBody").innerHTML = skillCards(skillChar);
+  const calc = skillTab === DMG_TAB;
+  $("#cxSkillBody").hidden = calc;
+  $("#cxSkillBody").innerHTML = calc ? "" : skillCards(skillChar);
+  if ($("#cxDamage")) $("#cxDamage").hidden = !calc;
 });
 // Only the card that moved is redrawn, so the slider keeps the focus while it is dragged
 $("#main").addEventListener("input", e => {
@@ -3199,8 +3041,11 @@ function characterPage(ch) {
   const [, element, type, rank, effect] = CONSTRUCTS[ch.name];
   const weaponType = weaponTypeOf(ch.name), cub = cubList().find(c => c.owner === ch.name);
   const attr = (group, value) => value ? `<div class="cx-attr"><span class="chip-icon">${filterIcon(group, value)}</span><div><small>${t(group)}</small><span>${esc(group === "Rank" ? t("Rank {n}", { n: value }) : value)}</span></div></div>` : "";
+  // The frame's own weapon, else the 5 star one the site recommends for it. With neither, the card shows only the type
+  const weapon = WEAPONS.find(w => w[0] === ch.name) || WEAPONS.find(w => FIVE_STAR_WEAPON_OWNERS[w[1]] === ch.name);
   const gear = [
-    weaponType && `<div class="acard wpn wtype-card"><div class="slot">${typeIcon(weaponType)}</div><div><h3>${esc(weaponType)}</h3><p>${t("Weapon type")}</p></div></div>`,
+    weapon ? `<a class="acard wpn" href="${weaponHref(weapon[1])}">${thumb(weaponFile(weapon[3]))}<div><h3>${esc(weapon[1])}</h3><p class="cx-wtype">${weaponType ? `${typeIcon(weaponType)}${esc(weaponType)}` : t("Weapon")}</p></div></a>`
+      : weaponType && `<div class="acard wpn wtype-card"><div class="slot">${typeIcon(weaponType)}</div><div><h3>${esc(weaponType)}</h3><p>${t("Weapon type")}</p></div></div>`,
     cub && `<a class="acard wpn" href="${cubHref(cub.name)}">${thumb(cub.art)}<div><h3>${esc(cub.name)}</h3><p>CUB</p></div></a>`
   ].filter(Boolean).join("");
   const pagePath = href => href.split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
@@ -3218,9 +3063,389 @@ function characterPage(ch) {
       <aside class="cx-side"><div class="slot">${pic(ch.portrait, `alt="${esc(ch.name)}"`)}</div>
         <div class="cx-attrs">${attr("Rank", rank)}${attr("Class", type)}${attr("Element", element)}${attr("Effect", effect)}</div>
         <div class="cx-gear">${gear}${jump}</div></aside>
-      <div class="cx-main"><h2 class="grp">${t("Skills")}</h2>${skillsPanel(ch)}${builds}</div>
+      <div class="cx-main"><h2 class="grp">${t("Skills")}</h2>${skillsPanel(ch)}${damageSection(ch)}${builds}</div>
     </div>`;
 }
+
+/* ---------- damage: the calculator on a construct page ---------- */
+// The engine (damage-formulas.js) and its data (damage-data.js) load on the first construct page. Only the frames in
+// DAMAGE_KITS get the section; the others keep an empty placeholder
+// A failed load shows an error, and the next construct page tries again (only the scripts that didn't load)
+// Still being built: tools/deploy.mjs publishes this switched off and leaves damage-formulas.js and damage-data.js out,
+// so the published construct pages have no DMG Calculator tab. The local site keeps it on
+const DAMAGE_ENABLED = true;
+let damageState = "";
+const damageLoaded = new Set();
+function loadDamage() {
+  if (!DAMAGE_ENABLED || (damageState && damageState !== "failed")) return;
+  damageState = "loading";
+  const add = (src, next) => {
+    if (damageLoaded.has(src)) return next();
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => { damageLoaded.add(src); next(); };
+    script.onerror = () => { script.remove(); damageState = "failed"; dmgFill(); };
+    document.head.append(script);
+  };
+  add("data/damage-formulas.js", () => add("data/damage-data.js", () => { damageState = "ready"; dmgFill(); }));
+}
+const DMG_LEVELS = [["red", "Red Orb"], ["yellow", "Yellow Orb"], ["blue", "Blue Orb"], ["basic", "Basic Attack"], ["core", "Core Passive"],
+  ["signature", "Signature"], ["qte", "QTE"], ["class", "Class"]];
+// The result list, one box per skill: its level, its conditions and its hits. "fixed" holds the hits no skill level moves
+const DMG_SKILLS = [...DMG_LEVELS.filter(([key]) => key !== "class"), ["fixed", "Other hits"]];
+const DMG_CRIT = [["average", "Average"], ["crit", "Always CRIT"], ["normal", "Never CRIT"]];
+// Every skill starts at level 18; resonances and Harmony levels are the player's to add
+const DMG_BASE_LEVEL = 18;
+// Every frame starts at SS0, whatever rank its reference build has
+const DMG_START_RANK = "SS";
+// Choices per frame, kept while browsing
+const dmgChoices = new Map();
+// ATK and CRIT of the kit's reference build. A frame without FRAME_STATS has none: the player types the in-game ATK
+// A stat the player typed (s.typed) is kept
+function dmgStats(name, s) {
+  if (!FRAME_STATS[name]) return {};
+  const { atk, crit } = buildStats(FRAME_STATS[name], DAMAGE_KITS[name].build, s, WEAPON_STATS, MEMORY_STATS);
+  const stats = { atk: Math.round(atk), critStat: Math.round(crit) };
+  for (const key of Object.keys(s.typed ?? {})) if (s.typed[key]) delete stats[key];
+  return stats;
+}
+// Physical frames crit and take DEF; elemental and Effect hits never do
+const dmgCrits = name => (DAMAGE_KITS[name].element ?? "Physical") === "Physical";
+// Rank and Phase the way players write them: "SS", "SS3", "SSS+"
+const dmgRankValue = (rank, phase) => rank === "SSS+" || !phase ? rank : `${rank}${phase}`;
+function dmgChoicesOf(name) {
+  if (!dmgChoices.has(name)) {
+    const kit = DAMAGE_KITS[name];
+    // Rank bonuses have no switch: they follow the rank, so they are always in the set
+    const s = { rank: DMG_START_RANK, phase: 0, mode: "energy", crit: "average", target: "gardener", more: false, atk: 0, critStat: 0, typed: {},
+      levels: Object.fromEntries(DMG_LEVELS.map(([key]) => [key, DMG_BASE_LEVEL])),
+      on: new Set(kit.options.filter(o => o.on || o.group === "rank").map(o => o.id)) };
+    dmgChoices.set(name, Object.assign(s, dmgStats(name, s)));
+  }
+  return dmgChoices.get(name);
+}
+const dmgNumber = n => Math.round(n).toLocaleString("en-US");
+// The calculator is a tab beside the skill tabs (Basic, Special...): a red "DMG Calculator" button that shows the panel
+// in place of the skill cards. The button only appears once the data says the frame has a kit
+const DMG_TAB = "DMG";
+const dmgHasKit = name => damageState === "ready" && Boolean(DAMAGE_KITS[name]);
+const dmgTabButton = () => `<button class="tool dmg-tab${skillTab === DMG_TAB ? " on" : ""}" type="button" data-sk-tab="${DMG_TAB}">${t("DMG Calculator")}</button>`;
+function damageSection(ch) {
+  if (damageState !== "ready") loadDamage();
+  return `<div id="cxDamage" data-dmg-char="${esc(ch.name)}"${skillTab === DMG_TAB && dmgHasKit(ch.name) ? "" : " hidden"}>${dmgHasKit(ch.name) ? dmgPanel(ch.name) : ""}</div>`;
+}
+function dmgFill() {
+  const box = $("#cxDamage");
+  if (!box) return;
+  const name = box.dataset.dmgChar;
+  if (damageState === "failed") box.innerHTML = skillTab === DMG_TAB ? `<p class="empty">${t("Could not load the damage calculator. Reload the page to try again.")}</p>` : "";
+  else box.innerHTML = dmgHasKit(name) ? dmgPanel(name) : "";
+  // The skill tabs were drawn before the data arrived: add the button now, or leave a tab this frame doesn't have
+  const tabs = $(".cx-tabs");
+  if (tabs && dmgHasKit(name) && !$("[data-sk-tab=DMG]", tabs)) tabs.insertAdjacentHTML("beforeend", dmgTabButton());
+  if (skillTab === DMG_TAB && damageState !== "failed" && !dmgHasKit(name)) $(".cx-tabs [data-sk-tab]")?.click();
+}
+// Two columns on a wide screen: the settings stay beside the results while the list scrolls
+function dmgPanel(name) {
+  const kit = DAMAGE_KITS[name], s = dmgChoicesOf(name), [, element] = CONSTRUCTS[name];
+  const ranks = RANKS.slice(RANKS.indexOf(FRAME_STATS[name]?.start ?? CONSTRUCTS[name][3]));
+  const crits = dmgCrits(name), hasStats = Boolean(FRAME_STATS[name]);
+  const options = (list, value) => list.map(([v, label]) => `<option value="${esc(v)}"${String(v) === String(value) ? " selected" : ""}>${esc(label)}</option>`).join("");
+  const field = (label, control, wide = false) => `<label class="dmg-field${wide ? " wide" : ""}"><span>${label}</span>${control}</label>`;
+  const { build } = kit;
+  const memories = Object.entries(build.memories.reduce((n, m) => ({ ...n, [m]: (n[m] ?? 0) + 1 }), {})).map(([m, n]) => `${n} ${m}`).join(" + ");
+  return `<section class="dmg">
+      <p class="dmg-note">${t(crits ? "An estimate from the game's skill values. Set ATK and CRIT to the numbers your construct shows in the game." : "An estimate from the game's skill values. Set ATK to the number your construct shows in the game.")}${kit.verified ? "" : ` ${t("This construct's numbers were not checked in game yet.")}`}</p>
+      <div class="dmg-layout">
+        <div class="dmg-set">
+          <div class="dmg-seg dmg-mode" role="group" aria-label="${t("Damage type")}">
+            <button type="button" class="tool${s.mode === "energy" ? " on" : ""}" data-dmg-mode="energy">${esc(element)}</button>
+            <button type="button" class="tool${s.mode === "effect" ? " on" : ""}" data-dmg-mode="effect">${esc(`${kit.effect} (${t(kit.effectLabel)})`)}</button>
+          </div>
+          <div class="dmg-grid">
+            ${field(t("Rank"), `<select data-dmg="rank">${options(ranks.map(r => [r, r]), s.rank)}</select>`)}
+            ${field(t("Phase"), `<select data-dmg="phase"${s.rank === "SSS+" ? " disabled" : ""}>${options(Array.from({ length: 11 }, (_, i) => [i, i]), s.phase)}</select>`)}
+            ${field("ATK", `<input type="number" min="0" step="1" inputmode="numeric" data-dmg="atk" value="${s.atk || ""}" placeholder="${t("In-game ATK")}">`)}
+            ${crits ? field("CRIT", `<input type="number" min="0" step="1" inputmode="numeric" data-dmg="critStat" value="${s.critStat}">`) : ""}
+            ${crits ? field(t("CRIT hits"), `<select data-dmg="crit">${options(DMG_CRIT.map(([v, l]) => [v, t(l)]), s.crit)}</select>`) : ""}
+            ${field(t("Target"), `<select data-dmg="target">${options(ENEMY_PRESETS.map(p => [p.id, p.label]), s.target)}</select>`, true)}
+          </div>
+          ${dmgRanks(name)}
+          ${dmgTuning(name)}
+          <p class="dmg-ref">${hasStats
+            ? `${t(crits ? "ATK and CRIT start from this build: {weapon}, {memories}, every memory with 2 hypertunes and {resonances}." : "ATK starts from this build: {weapon}, {memories}, every memory with 2 hypertunes and {resonances}.", { weapon: build.weapon, memories, resonances: t(build.resonanceText) })}`
+            : t("The site doesn't have this construct's in-game stats yet: type the ATK it shows in the game. The buffs assume this build: {weapon}, {memories}.", { weapon: build.weapon, memories })}${crits ? "" : ` ${t("{element} DMG never crits and ignores DEF.", { element })}`}</p>
+          <div class="dmg-tune-foot"><button type="button" class="tool" data-dmg-reset>${t("Reset to this build")}</button></div>
+        </div>
+        <div class="dmg-out">
+          <div class="dmg-head">
+            <div class="dmg-stats" id="dmgSummary">${dmgSummary(name)}</div>
+            <div class="dmg-seg dmg-sort" role="group" aria-label="${t("Order")}">
+              <button type="button" class="tool${s.sort !== "damage" ? " on" : ""}" data-dmg-sort="kit">${t("Kit order")}</button>
+              <button type="button" class="tool${s.sort === "damage" ? " on" : ""}" data-dmg-sort="damage">${t("Highest first")}</button>
+            </div>
+          </div>
+          <p class="empty" id="dmgEmpty"${s.atk ? " hidden" : ""}>${t("Type the ATK your construct shows in the game to see the damage.")}</p>
+          <div class="dmg-skills" id="dmgRows">${dmgSkills(name)}</div>
+          <div id="dmgNotes">${dmgResults(name).notes}</div>
+        </div>
+      </div>
+    </section>`;
+}
+const dmgOptOn = (s, o) => (o.group === "rank" || s.on.has(o.id)) && rankReached(s.rank, s.phase, o.rank);
+// A skill's level, as a stepper
+function dmgStepper(name, key, label) {
+  const s = dmgChoicesOf(name), changed = s.levels[key] !== DMG_BASE_LEVEL;
+  const skill = t(DMG_LEVELS.find(([k]) => k === key)[1]);
+  return `<div class="dmg-lv${changed ? " changed" : ""}" data-dmg-lv="${key}"><span class="dmg-lv-name">${esc(label)}</span>
+    <div class="dmg-step"><button type="button" class="tool" data-dmg-step="${key}" data-d="-1" aria-label="${esc(t("{name} level down", { name: skill }))}">−</button>
+      <input type="number" min="1" max="35" step="1" inputmode="numeric" data-dmg-level="${key}" value="${s.levels[key]}" aria-label="${esc(t("{name} level", { name: skill }))}">
+      <button type="button" class="tool" data-dmg-step="${key}" data-d="1" aria-label="${esc(t("{name} level up", { name: skill }))}">+</button></div></div>`;
+}
+// A buff's switch. A label "Name: what it does" shows the name in bold and the rest below it
+function dmgToggle(s, o) {
+  const open = rankReached(s.rank, s.phase, o.rank), on = dmgOptOn(s, o);
+  const cut = o.label.indexOf(": ");
+  const title = cut > 0 ? o.label.slice(0, cut) : o.label, detail = cut > 0 ? o.label.slice(cut + 2) : "";
+  const badge = o.rank ? `<span class="dmg-badge${open ? "" : " locked"}">${open ? "" : `<span aria-hidden="true">🔒</span> `}${esc(o.rank)}</span>` : "";
+  return `<label class="dmg-tog${on ? " on" : ""}${open ? "" : " locked"}"${open ? "" : ` title="${esc(t("Needs rank {rank}", { rank: o.rank }))}"`}>
+    <input type="checkbox" role="switch" data-dmg-opt="${o.id}"${on ? " checked" : ""}${open ? "" : " disabled"}><span class="dmg-sw" aria-hidden="true"></span>
+    <span class="dmg-tog-text"><b>${esc(title)}</b>${detail ? `<small>${esc(detail)}</small>` : ""}</span>${badge}</label>`;
+}
+// The levels of the three rank skills, from the game text (skills-data.js): "Lv. 1: [b]Unlocked at S5 Rank[/b]" starts
+// each one. Empty while skills-data.js hasn't loaded
+function dmgRankLevels(name) {
+  if (typeof CHARACTER_SKILLS === "undefined" || !CHARACTER_SKILLS[name]) return [];
+  const head = /Lv\.?\s*(\d+)\s*[:—–-]\s*\[b\]Unlocked at (\S+) Rank\[\/b\]\s*/g;
+  return CHARACTER_SKILLS[name].filter(([type]) => /Rank/.test(type)).flatMap(([, skill, text]) => {
+    const heads = [...text.matchAll(head)];
+    return heads.map((m, i) => ({ skill, level: m[1], rank: m[2], text: text.slice(m.index + m[0].length, heads[i + 1]?.index ?? text.length).trim() }));
+  });
+}
+// What the chosen rank unlocks, right under the Rank field: every level of the rank skills, lit once reached and
+// locked above it, each one closed until clicked (s.rankOpen keeps which are open). "DMG" marks a level whose damage
+// bonuses the kit counts. Rank bonuses have no switch: the rank decides them. Without the game text, the kit's own
+// rank bonuses stand in
+function dmgRanks(name) {
+  const kit = DAMAGE_KITS[name], s = dmgChoicesOf(name);
+  const reached = rank => rankReached(s.rank, s.phase, rank);
+  const badge = rank => `<span class="dmg-badge${reached(rank) ? "" : " locked"}">${reached(rank) ? "" : `<span aria-hidden="true">🔒</span> `}${esc(rank)}</span>`;
+  // A rank also counts when one buff of any option waits for it (Vera's Absolute Pyre carries her SS to SSS3 bonuses)
+  const counted = rank => kit.options.some(o => (o.group === "rank" && o.rank === rank) || o.buffs.some(b => b.rank === rank))
+    || kit.moves.some(m => m.rank === rank);
+  const levels = dmgRankLevels(name);
+  const items = levels.length
+    ? levels.map(l => `<li class="${reached(l.rank) ? "on" : "locked"}"><details data-dmg-rank-lv="${esc(`${l.skill} ${l.level}`)}"${s.rankOpen?.has(`${l.skill} ${l.level}`) ? " open" : ""}><summary>${badge(l.rank)}
+        <b>${esc(l.skill)} <small>Lv. ${l.level}</small></b>${counted(l.rank) ? `<span class="dmg-in" title="${esc(t("The calculator counts this level's damage bonuses"))}">DMG</span>` : ""}</summary>
+        <div class="cx-sk-body dmg-rank-text">${skillBody(l.text, false)}</div></details></li>`)
+    : kit.options.filter(o => o.group === "rank").map(o => `<li class="${reached(o.rank) ? "on" : "locked"}"><div class="dmg-rank-plain">${badge(o.rank)}<span>${esc(o.label.slice(o.label.indexOf(": ") + 2))}</span></div></li>`);
+  if (!items.length) return "";
+  const ranks = levels.length ? levels.map(l => l.rank) : kit.options.filter(o => o.group === "rank").map(o => o.rank);
+  return `<section class="dmg-box dmg-rank-box" id="dmgRanks"><h4>${t("Rank effects at {rank}", { rank: dmgRankValue(s.rank, s.phase) })}<small>${ranks.filter(reached).length}/${ranks.length}</small></h4>
+    <ul class="dmg-ranks">${items.join("")}</ul></section>`;
+}
+// Buffs that don't belong to one skill: class (with the class level), weapon, memories and team
+const DMG_GROUPS = [["class", "Class"], ["weapon", "Weapon"], ["memories", "Memories"], ["cub", "CUB"], ["team", "Team"]];
+const dmgShared = o => DMG_GROUPS.some(([id]) => id === o.group);
+function dmgTuning(name) {
+  const kit = DAMAGE_KITS[name], s = dmgChoicesOf(name);
+  const groups = DMG_GROUPS.map(([id, label]) => {
+    const list = kit.options.filter(o => o.group === id);
+    if (!list.length) return "";
+    const count = list.filter(o => dmgOptOn(s, o)).length;
+    return `<section class="dmg-box" data-dmg-group="${id}"><h4>${esc(t(label))}<small data-dmg-count>${count}/${list.length}</small></h4>
+      ${id === "class" ? dmgStepper(name, "class", t("Class level")) : ""}
+      <div class="dmg-togs">${list.map(o => dmgToggle(s, o)).join("")}</div></section>`;
+  }).join("");
+  const total = kit.options.filter(o => dmgShared(o) && dmgOptOn(s, o)).length;
+  return `<details class="dmg-more" id="dmgTuning"${s.more ? " open" : ""}>
+    <summary><span>${t(kit.options.some(o => o.group === "cub") ? "Class, weapon, memories, CUB and team" : "Class, weapon, memories and team")}</span><small id="dmgOnCount">${t("{n} buffs on", { n: total })}</small></summary>
+    <div class="dmg-tune">${groups}</div></details>`;
+}
+// The skill box a skill condition sits in: "at" in the kit, or the first move its buffs name
+function dmgOptAt(kit, o) {
+  if (o.at) return o.at;
+  const names = o.buffs.flatMap(b => [b.skill ?? []].flat());
+  return kit.moves.find(m => names.includes(m.name))?.level ?? "fixed";
+}
+// After a switch or a level changes: the counters and the highlights, without redrawing (keeps the focus)
+function dmgTuningMarks(name) {
+  const kit = DAMAGE_KITS[name], s = dmgChoicesOf(name);
+  document.querySelectorAll("#cxDamage [data-dmg-opt]").forEach(input => input.closest(".dmg-tog").classList.toggle("on", input.checked));
+  document.querySelectorAll("#cxDamage [data-dmg-group]").forEach(box => {
+    const list = kit.options.filter(o => o.group === box.dataset.dmgGroup);
+    $("[data-dmg-count]", box).textContent = `${list.filter(o => dmgOptOn(s, o)).length}/${list.length}`;
+  });
+  $("#dmgOnCount").textContent = t("{n} buffs on", { n: kit.options.filter(o => dmgShared(o) && dmgOptOn(s, o)).length });
+  document.querySelectorAll("#cxDamage [data-dmg-lv]").forEach(box => box.classList.toggle("changed", s.levels[box.dataset.dmgLv] !== DMG_BASE_LEVEL));
+}
+// The skill type whose icon a move shows (skills/<type>.png in the character's folder); Effect hits show the Effect icon
+const DMG_ICON = { red: "Red Orb", yellow: "Yellow Orb", blue: "Blue Orb", basic: "Basic Attack", core: "Core", signature: "Signature", qte: "QTE" };
+const dmgPercent = value => `${(value * 100).toFixed(2).replace(/\.?0+$/, "")}%`;
+// The hits of each skill box as HTML, the box order and the assumptions behind the numbers.
+// Without ATK the boxes stay (levels and conditions can still change) but list no hits
+function dmgResults(name) {
+  const kit = DAMAGE_KITS[name], s = dmgChoicesOf(name);
+  const preset = ENEMY_PRESETS.find(p => p.id === s.target) ?? ENEMY_PRESETS[0];
+  const rows = kitDamage(kit, { ...s, atk: s.atk || 1, target: presetTarget(preset) });
+  const top = Math.max(...rows.map(r => r.damage), 1);
+  const notes = [...new Set(rows.flatMap(r => r.assumed))];
+  const icon = (move, r) => {
+    const type = move.icon ?? DMG_ICON[move.level];
+    if (type) return thumb(skillIcon(name, type, ""));
+    return `<div class="slot dmg-fx-icon">${r.kind === "energy" ? "" : filterIcon("Effect", kit.effect)}</div>`;
+  };
+  const factor = ([label, value]) => `<li><span>${esc(t(label))}</span><b>${label === "ATK" ? dmgNumber(value) : label === "Skill multiplier" ? dmgPercent(value) : `× ${value.toFixed(3)}`}</b></li>`;
+  const row = (r, move, withIcon) => {
+    const share = r.damage / top;
+    return `<details class="dmg-row${r.kind === "energy" ? "" : " fx-hit"}" style="--w:${(share * 100).toFixed(1)}%"><summary>
+      ${withIcon ? icon(move, r) : ""}
+      <span class="dmg-name">${esc(r.name)}<small>${dmgPercent(r.scale)} ${esc(r.kind === "energy" ? r.element : kit.effect)}</small></span>
+      <b class="dmg-val">${dmgNumber(r.damage)}</b>
+      <span class="dmg-bar" role="img" aria-label="${esc(t("{n}% of the highest", { n: Math.round(share * 100) }))}" title="${esc(t("{n}% of the highest", { n: Math.round(share * 100) }))}"></span></summary>
+      <ul class="dmg-factors">${r.factors.map(factor).join("")}<li class="dmg-total"><span>${t("Damage")}</span><b>${dmgNumber(r.damage)}</b></li></ul></details>`;
+  };
+  const groups = Object.fromEntries(DMG_SKILLS.map(([key]) => [key, []]));
+  for (const r of rows) {
+    const move = kit.moves.find(m => m.name === r.name);
+    (groups[move.level] ?? groups.fixed).push({ r, move });
+  }
+  const html = {}, best = {}, count = {};
+  for (const [key, list] of Object.entries(groups)) {
+    if (s.sort === "damage") list.sort((a, b) => b.r.damage - a.r.damage);
+    html[key] = s.atk ? list.map(({ r, move }) => row(r, move, key === "fixed")).join("") : "";
+    best[key] = Math.max(0, ...list.map(({ r }) => r.damage));
+    count[key] = list.length;
+  }
+  // "Highest first" puts the box with the strongest hit on top, and sorts the hits inside each box
+  const order = Object.fromEntries((s.sort === "damage" ? [...DMG_SKILLS].sort((a, b) => best[b[0]] - best[a[0]]) : DMG_SKILLS).map(([key], i) => [key, i]));
+  return { html, count, order, notes: s.atk && notes.length ? `<ul class="dmg-assumed">${notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : "" };
+}
+// One box per skill: icon, name and level, its hits, then the conditions of that skill below them. A box with no hit in the
+// chosen mode hides
+function dmgSkills(name) {
+  const kit = DAMAGE_KITS[name], s = dmgChoicesOf(name), res = dmgResults(name);
+  return DMG_SKILLS.map(([key, label]) => {
+    const conds = kit.options.filter(o => o.group === "skills" && dmgOptAt(kit, o) === key);
+    const head = key === "fixed" ? `<b>${esc(t(label))}</b>`
+      : `${thumb(skillIcon(name, DMG_ICON[key], ""))}<b>${esc(t(label))}</b>${dmgStepper(name, key, "Lv")}`;
+    return `<section class="dmg-sk${key === "fixed" ? " fixed" : ""}" data-dmg-sk="${key}" style="order:${res.order[key]}"${res.count[key] ? "" : " hidden"}>
+      <div class="dmg-sk-head">${head}</div>
+      <div class="dmg-rows${key === "fixed" ? " with-icon" : ""}" data-dmg-rows="${key}">${res.html[key]}</div>
+      ${conds.length ? `<div class="dmg-togs">${conds.map(o => dmgToggle(s, o)).join("")}</div>` : ""}</section>`;
+  }).join("");
+}
+// ATK, CRIT Rate and target in use, above the results
+function dmgSummary(name) {
+  const s = dmgChoicesOf(name), preset = ENEMY_PRESETS.find(p => p.id === s.target) ?? ENEMY_PRESETS[0];
+  const kit = DAMAGE_KITS[name];
+  const rate = Math.min(100, s.critStat * CRIT_PER_STAT * 100);
+  // The tiles follow the hits listed: a mode can show hits of another kind or element (energy-only moves in Effect
+  // mode, "always" Effect hits in Energy mode). Only Physical Energy hits crit and take DEF; one Resistance per element
+  const rows = kitDamage(kit, { ...s, atk: s.atk || 1, target: presetTarget(preset) });
+  const physical = rows.some(r => r.kind === "energy" && r.element === "Physical");
+  const elements = [...new Set(rows.map(r => r.element))];
+  if (!elements.length) elements.push(s.mode === "energy" ? kit.element ?? "Physical" : kit.effectElement);
+  const tile = (label, value) => `<div class="dmg-stat"><small>${label}</small><b>${value}</b></div>`;
+  const pct = n => `${(n * 100).toFixed(1)}%`;
+  return tile("ATK", s.atk ? dmgNumber(s.atk) : "—") + tile(t("CRIT Rate"), physical ? pct(rate / 100) : t("No CRIT"))
+    + tile(t("Target DEF"), physical ? pct(preset.def) : t("Ignored"))
+    + elements.map(el => tile(t("{name} Resistance", { name: el }),
+      pct(el === "Physical" ? preset.physRes : preset.res?.[el] ?? preset.elemRes))).join("");
+}
+// Rank changes the stats and the locks, so it redraws the whole panel; the other fields only refresh the results,
+// box by box, so a level being typed keeps the focus
+function dmgRefresh(name) {
+  const s = dmgChoicesOf(name), res = dmgResults(name);
+  document.querySelectorAll("#cxDamage [data-dmg-sk]").forEach(box => {
+    const key = box.dataset.dmgSk;
+    $("[data-dmg-rows]", box).innerHTML = res.html[key];
+    box.hidden = !res.count[key];
+    box.style.order = res.order[key];
+  });
+  $("#dmgNotes").innerHTML = res.notes;
+  $("#dmgEmpty").hidden = Boolean(s.atk);
+  $("#dmgSummary").innerHTML = dmgSummary(name);
+}
+$("#main").addEventListener("click", e => {
+  const button = e.target.closest("[data-dmg-mode],[data-dmg-sort]");
+  const box = button && $("#cxDamage");
+  if (!box) return;
+  const name = box.dataset.dmgChar, s = dmgChoicesOf(name), key = button.dataset.dmgMode ? "dmgMode" : "dmgSort";
+  if (key === "dmgMode") s.mode = button.dataset.dmgMode;
+  else s.sort = button.dataset.dmgSort;
+  document.querySelectorAll(`[data-${key === "dmgMode" ? "dmg-mode" : "dmg-sort"}]`).forEach(b => b.classList.toggle("on", b === button));
+  dmgRefresh(name);
+});
+// Level steppers and the reset button
+$("#main").addEventListener("click", e => {
+  const step = e.target.closest("[data-dmg-step]"), reset = e.target.closest("[data-dmg-reset]");
+  const box = (step || reset) && $("#cxDamage");
+  if (!box) return;
+  const name = box.dataset.dmgChar;
+  if (reset) {
+    // Without FRAME_STATS the ATK and CRIT can only come from the player, so they stay
+    const { mode, sort, more, atk, critStat, typed } = dmgChoicesOf(name);
+    dmgChoices.delete(name);
+    Object.assign(dmgChoicesOf(name), { mode, sort, more }, FRAME_STATS[name] ? {} : { atk, critStat, typed });
+    box.innerHTML = dmgPanel(name);
+    return;
+  }
+  const s = dmgChoicesOf(name), key = step.dataset.dmgStep;
+  s.levels[key] = Math.min(35, Math.max(1, s.levels[key] + Number(step.dataset.d)));
+  $(`[data-dmg-level="${key}"]`, box).value = s.levels[key];
+  dmgTuningMarks(name);
+  dmgRefresh(name);
+});
+$("#main").addEventListener("toggle", e => {
+  if (e.target.matches?.(".dmg-more")) dmgChoicesOf($("#cxDamage").dataset.dmgChar).more = e.target.open;
+  const level = e.target.dataset?.dmgRankLv;
+  if (level) {
+    const s = dmgChoicesOf($("#cxDamage").dataset.dmgChar);
+    s.rankOpen ??= new Set();
+    s.rankOpen[e.target.open ? "add" : "delete"](level);
+  }
+}, true);
+function dmgInput(e) {
+  const el = e.target, box = el.closest("#cxDamage");
+  if (!box || !el.matches("[data-dmg],[data-dmg-level],[data-dmg-opt]")) return;
+  const name = box.dataset.dmgChar, s = dmgChoicesOf(name);
+  if (el.dataset.dmgOpt) {
+    s.on[el.checked ? "add" : "delete"](el.dataset.dmgOpt);
+    const others = el.checked ? [DAMAGE_KITS[name].options.find(o => o.id === el.dataset.dmgOpt)?.excludes ?? []].flat() : [];
+    for (const other of others) {
+      s.on.delete(other);
+      const input = $(`[data-dmg-opt="${other}"]`, box);
+      if (input) input.checked = false;
+    }
+  }
+  else if (el.dataset.dmgLevel) {
+    const level = Math.round(Number(el.value));
+    if (el.value === "" || !Number.isFinite(level)) return;
+    s.levels[el.dataset.dmgLevel] = Math.min(35, Math.max(1, level));
+  }
+  else {
+    const key = el.dataset.dmg;
+    s[key] = ["atk", "critStat", "phase"].includes(key) ? Math.max(0, +el.value || 0) : el.value;
+    // A rank counts all the Phases of the ranks below it (phaseBonus in damage-formulas.js)
+    if (key === "rank" || key === "phase") {
+      if (s.rank === "SSS+") s.phase = 0;
+      Object.assign(s, dmgStats(name, s));
+      box.innerHTML = dmgPanel(name);
+      $(`[data-dmg="${key}"]`, box).focus();
+      return;
+    }
+    if (key === "atk" || key === "critStat") s.typed[key] = el.value !== "";
+  }
+  if (el.dataset.dmgOpt || el.dataset.dmgLevel) dmgTuningMarks(name);
+  dmgRefresh(name);
+}
+$("#main").addEventListener("input", e => { if (e.target.matches("input[type=number]")) dmgInput(e); });
+$("#main").addEventListener("change", e => {
+  if (!e.target.matches("input[type=number]")) return dmgInput(e);
+  const box = e.target.closest("#cxDamage"), key = e.target.dataset.dmgLevel;
+  if (box && key) e.target.value = dmgChoicesOf(box.dataset.dmgChar).levels[key];
+});
 
 /* ---------- export a build as an image ---------- */
 // Drawn on a canvas from the same art as the card, so it needs no library and passes the CSP in _headers.
@@ -3783,13 +4008,15 @@ function route(patch = false) {
     history.replaceState(null, "", `${characterHref(character.name)}${location.search}`);
     pageUrl = location.href;
   }
-  const html = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">${t("Page not found.")}</p>`) : charactersPage()) : kind === "credits" ? creditsPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
+  const html = kind === "assets" ? assetsPage(key, pick) : kind === "constructs" ? (key || part ? (character ? characterPage(character) : `<p class="empty">${t("Page not found.")}</p>`) : charactersPage()) : kind === "credits" ? creditsPage() : kind === "account" ? accountPage() : kind === "admin" ? adminPage() : kind === "privacy" ? privacyPage() : kind === "updates" ? updatesPage() : kind === "calculator" ? calculatorPage() : kind === "timeline" ? timelinePage() : kind === "editor" ? editorPage()
     : path ? team(path, pick) : home();
+  // One box around the page, centered on wide screens; each kind of page sets its width in style.css (.page[data-page])
+  const page = `<div class="page" data-page="${esc(TEAM_LISTS[kind] && key ? "team" : kind || "home")}">${html}</div>`;
   if (patch) {
     const next = document.createElement("template");
-    next.innerHTML = html;
+    next.innerHTML = page;
     morph(main, next.content);
-  } else main.innerHTML = html;
+  } else main.innerHTML = page;
   theme(shown || null);
   if (kind === "editor" && editorState === "ready") edPaint();
   if (kind === "calculator") { showCalc(); centerStop(false); syncRail(); }
@@ -3907,7 +4134,8 @@ function pageChanged() {
   const fromBuild = /\/(energy|effect|special)\/[^/]+(\/[^/]+|\?team=)/.test(oldUrl);
   swap(() => { route(); scrollTo(0, fromDetail || fromBuild ? scrollSaved.get(pageUrl) || 0 : 0); });
 }
-// Links inside the site change the page without reloading it. Ctrl+click and the like stay with the browser
+// Links inside the site change the page without reloading it. Ctrl+click and the like stay with the browser,
+// and so do links to the API (the Discord login, the data download) and downloads, which the server answers itself
 addEventListener("click", e => {
   const mark = e.target.closest?.(".hero-mark[data-splash]");
   if (mark) {
@@ -3916,7 +4144,7 @@ addEventListener("click", e => {
     mark.nextElementSibling.innerHTML = splashMarkup(phrase);
     return;
   }
-  const link = e.target.closest?.('a[href^="/"]');
+  const link = e.target.closest?.('a[href^="/"]:not([href^="/api/"]):not([download])');
   if (!link || e.defaultPrevented || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   if (link.pathname === location.pathname && link.search === location.search) return;
@@ -3998,3 +4226,4 @@ dropOldHash();
 pageUrl = location.href;
 route();
 loadCommunity();
+loadAccount();

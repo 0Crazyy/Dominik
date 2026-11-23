@@ -16,8 +16,8 @@ const HEADER = `// Patch income for the BC calculator, from the RESUME tab of th
 // Rows with forecast: true are not in the sheet: the tool works them out from the same period a year before.
 `;
 // Names the site shows instead of the sheet's, and the frames expected after the last patch of the sheet, in order
-const SHEET_NAMES = { "Chrome or Jetavie": "Chrome" };
-const NEXT_FRAMES = ["Jetavie"];
+const SHEET_NAMES = { "Chrome or Jetavie": "Chaos" };
+const NEXT_FRAMES = ["Chrome", "Jetavie"];
 const PATCHES_PER_YEAR = 9;
 // A confirmed patch whose income jumps this much is held back as a likely typo. To accept a real fix: node tools/update-calculator.mjs --force
 const MAX_CHANGE = 0.5, MIN_CHANGE = 500, FORCE = process.argv.includes("--force");

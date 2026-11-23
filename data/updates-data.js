@@ -5,6 +5,62 @@
 // so make each title say what changed.
 const UPDATES = [
   {
+    id: "accounts-and-more",
+    date: "2026-11-23",
+    type: "Update",
+    title: "Accounts with Discord login, teams published straight to the site, and everything else since the Welcome post",
+    summary: "Log in with Discord to publish, like and report teams, manage or delete your data, plus the game's text colors, Event memories, new weapons, C.U.B. icons by element, better search and a new Planner export.",
+    body: `## Accounts: log in with Discord
+- You can now log in with your Discord account. The login is optional: browsing, the Planner and the Meta Timeline work the same without it.
+- The site only stores what it needs to run the account, and the session lives in a protected cookie.
+- The **Account** page shows your data and lets you **download** everything the site has about you or **delete** your account for good.
+- A **Privacy** page explains what is stored and why (LGPD and GDPR).
+
+## Teams: publish, like and report
+- Teams from the Team Builder are now published straight to the site by logged-in accounts. There is no review queue anymore: the author's name shows on the team, and there are limits per account and per IP to keep spam out.
+- Teams on the site are the community's teams. The old official builds were removed, and their old addresses now take you to the matching page.
+- Teams can be **liked**, and you can **report** one that is wrong or abusive.
+- Authors can delete their own team whenever they want.
+- Short share links (\`/editor?s=...\`) keep working.
+- An **admin panel** handles reports, teams, accounts and a log of every moderation action. Only admins can open it.
+
+## Skills and C.U.B.s now use the game's own text colors
+- Skill and C.U.B. descriptions show the same highlights the game uses, so you can spot the key effects at a glance. The words are unchanged, only the colors were copied.
+- Memories, weapon effects and Harmony stay plain, and resonances only color their status.
+- Fixed doubled "Leader - " prefixes and a few typos in the skill texts.
+
+## Memories, weapons and Harmony
+- Event memories were added, and memory pages now show the full art.
+- New 6-star weapons: **Hestia** (Liv: Empyrea) and **Darkness** (Kamui: Tenebrion).
+- Weapon Harmony has a bar and stars, so the level is easier to read.
+- Fixed Ayla: Brilliance's release order (Fallen Star) and marked Camu: Crocotta as Grand Blue.
+- Fixed the Skill 1 element on Boreas, Cavaliere, Zafkiel, Scaled Rampart and Yuan Ye.
+
+## C.U.B.s: icons and skills follow the carrier's element
+- The Active skill icon, name and text change with the element of the character carrying the C.U.B., on its page and on the cards.
+- C.U.B.s that had no passive icon now have one, and the ATK skills share a single icon.
+
+## Finding things faster
+- Tables have a search box, and search now also looks inside effect texts.
+- Constructs filters sit behind a button, and Assets controls are more compact on phones.
+- Build rows show the teammates, team pages show their characters, and construct pages have a shortcut to their builds.
+- The Team Builder help can be collapsed, and the build list has a maximum width on big screens.
+- New Special Effects icon, and the site title is now "Builds & Plans".
+
+## Planner: a better export and more accurate passes
+- Tactical Assessment passes in the running patch now add their RC cost.
+- The starting balance boxes fit six digits and step by 250.
+- The exported image has one panel per patch, drawn as start + earnings - expenses, with the passes and the final balance compared to the patch before.
+- Patch Start, Patch Earnings and Expenses share one evenly spaced box.
+- The preview has an **Export up to** list to pick the last patch. It redraws the image and remembers your choice.
+- The patch forecast was updated, with the next patches and their expected income.
+
+## Other changes
+- The Meta Timeline data was refreshed with the latest frames.
+- New home page quotes, a Weapons icon, and the fonts are now served from the site itself.
+- Awaken art for Helentine, Kamui and Vera was renamed with their full names.`
+  },
+  {
     id: "welcome",
     date: "2026-11-15",
     type: "Welcome",
